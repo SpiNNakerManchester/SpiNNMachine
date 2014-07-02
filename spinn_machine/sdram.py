@@ -1,3 +1,5 @@
+DEFAULT_SDRAM_BYTES = 128 * 1024 * 1024
+
 class SDRAM(object):
     """ Represents the properties of the SDRAM of a chip in the machine
     """
