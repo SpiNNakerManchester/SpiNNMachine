@@ -10,6 +10,8 @@ spinn_machine.exceptions module
 .. autosummary::
     SpinnMachineAlreadyExistsException
     SpinnMachineException
+    SpinnMachineInvalidParameterException
 
 .. autoexception:: SpinnMachineAlreadyExistsException
 .. autoexception:: SpinnMachineException
+.. autoexception:: SpinnMachineInvalidParameterException

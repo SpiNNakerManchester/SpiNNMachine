@@ -16,3 +16,19 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
         :type value: str
         """
         pass
+
+class SpinnMachineInvalidParameterException(SpinnMachineException):
+    """ Indicates that there is a problem with a parameter value
+    """
+    
+    def __init__(self, parameter, value, problem):
+        """
+        
+        :param parameter: The name of the parameter that has an invalid value
+        :type item: str
+        :param value: The value of the parameter that is invalid
+        :type value: str
+        :param problem: The reason for the exception
+        :type problem: str
+        """
+        pass
