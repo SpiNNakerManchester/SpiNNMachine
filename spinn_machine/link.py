@@ -27,9 +27,16 @@ class Link(object):
                     such that multicast traffic received on this link will\
                     default to that link if no routing entry exists, or None
                     if there is no such default link
+        :type multicast_default_to: int
         :raise None: No known exceptions are raised
         """
-        pass
+        self._source_x = source_x
+        self._source_y = source_y
+        self._source_link_id = source_link_id
+        self._destination_x = destination_x
+        self._destination_y = destination_y
+        self._multicast_default_from = multicast_default_from
+        self._multicast_default_to = multicast_default_to
     
     @property
     def source_x(self):
@@ -38,7 +45,7 @@ class Link(object):
         :return: The x-coordinate
         :rtype: int
         """
-        pass
+        return self._source_x
     
     @property
     def source_y(self):
@@ -47,7 +54,7 @@ class Link(object):
         :return: The y-coordinate
         :rtype: int
         """
-        pass
+        return self._source_y
     
     @property
     def source_link_id(self):
@@ -56,7 +63,7 @@ class Link(object):
         :return: The link id
         :rtype: int
         """
-        pass
+        return self._source_link_id
     
     @property
     def destination_x(self):
@@ -65,7 +72,7 @@ class Link(object):
         :return: The x-coordinate
         :rtype: int
         """
-        pass
+        return self._destination_x
     
     @property
     def destination_y(self):
@@ -74,7 +81,7 @@ class Link(object):
         :return: The y-coordinate
         :rtype: int
         """
-        pass
+        return self._destination_y
     
     @property
     def multicast_default_from(self):
@@ -83,7 +90,7 @@ class Link(object):
         :return: The id of a link, or None if no such link
         :rtype: int
         """
-        pass
+        return self._multicast_default_from
     
     @property
     def multicast_default_to(self):
@@ -92,4 +99,4 @@ class Link(object):
         :return: The id of a link, or None if no such link
         :rtype: int
         """
-        pass
+        return self._multicast_default_to

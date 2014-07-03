@@ -17,7 +17,7 @@ class Router(object):
         for link in sorted(links, key=lambda x: x.source_link_id):
             if link.source_link_id in self._links:
                 raise SpinnMachineAlreadyExistsException(
-                        "link", link.source_link_id)
+                        "link", str(link.source_link_id))
             self._links[link.source_link_id] = link
             
     def is_link(self, source_link_id):

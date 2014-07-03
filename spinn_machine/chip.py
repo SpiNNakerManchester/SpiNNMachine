@@ -35,7 +35,7 @@ class Chip(object):
         for processor in sorted(processors, key=lambda x: x.processor_id):
             if processor.processor_id in self._p:
                 raise SpinnMachineAlreadyExistsException("processor", 
-                        processor.processor_id)
+                        str(processor.processor_id))
             self._p[processor.processor_id] = processor
         self._router = router
         self._sdram = sdram

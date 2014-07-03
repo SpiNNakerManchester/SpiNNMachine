@@ -15,7 +15,23 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
         :param value: The value of the item
         :type value: str
         """
-        pass
+        super(SpinnMachineAlreadyExistsException, self).__init__(
+                "There can only be one {} with a value of {}".format(
+                        item, value))
+        self._item = item
+        self._value = value
+        
+    @property
+    def item(self):
+        """ The item of which there is already one
+        """
+        return self._item
+    
+    @property
+    def value(self):
+        """ The value of the item
+        """
+        return self._value
 
 class SpinnMachineInvalidParameterException(SpinnMachineException):
     """ Indicates that there is a problem with a parameter value
@@ -25,10 +41,27 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         """
         
         :param parameter: The name of the parameter that has an invalid value
-        :type item: str
+        :type parameter: str
         :param value: The value of the parameter that is invalid
         :type value: str
         :param problem: The reason for the exception
         :type problem: str
         """
-        pass
+        super(SpinnMachineInvalidParameterException, self).__init__(
+                "It is invalid to set {} to {}: {}".format(
+                        parameter, value, problem))
+        self._parameter = parameter
+        self._value = value
+        self._problem = problem
+        
+    @property
+    def parameter(self):
+        """ The name of the parameter
+        """
+        return self._parameter
+    
+    @property
+    def value(self):
+        """ The value of the parameter
+        """
+        return self._value
