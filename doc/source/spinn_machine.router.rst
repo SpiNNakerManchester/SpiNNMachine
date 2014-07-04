@@ -11,7 +11,10 @@ spinn_machine.router module
     .. rubric:: Attributes
 
     .. autosummary::
+        clock_speed
+        emergency_routing_enabled
         links
+        n_available_multicast_entries
 
     .. rubric:: Methods
 

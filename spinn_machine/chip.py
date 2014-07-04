@@ -3,7 +3,12 @@ from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 class Chip(object):
     """ Represents a chip with a number of cores, an amount of SDRAM shared
-        between the cores, and a router
+        between the cores, and a router.\
+        The chip is iterable over the processors providing\
+        (processor_id, processor) where:
+        
+            * processor_id is the id of a processor
+            * processor is the processor with processor_id
     """
 
     def __init__(self, x, y, processors, router, sdram, ip_address=None):
@@ -42,7 +47,8 @@ class Chip(object):
         self._ip_address = ip_address
 
     def is_processor_with_id(self, processor_id):
-        """ Determines if a processor with the given id exists in the chip
+        """ Determines if a processor with the given id exists in the chip.\
+            Also implemented as __getitem__(processor_id)
 
         :param processor_id: the processor id to check for
         :type processor_id: int
@@ -51,11 +57,17 @@ class Chip(object):
         :raise None: does not raise any known exceptions
         """
         return processor_id in self._p
+    
+    def __getitem__(self, processor_id):
+        """ see :py:meth:`is_processor_with_id`
+        """
+        return self.is_processor_with_id(processor_id)
 
     def get_processor_with_id(self, processor_id):
         """ Return the processor with the specified id or None if the processor\
-            does not exist
-
+            does not exist.\
+            Also implemented as __contains__(processor_id)
+        
         :param processor_id: the id of the processor to return
         :type processor_id: int
         :return: the processor with the specified id or None if no such\
@@ -66,6 +78,11 @@ class Chip(object):
         if processor_id in self._p:
             return self._p[processor_id]
         return None
+    
+    def __contains__(self, processor_id):
+        """ see :py:meth:`get_processor_with_id`
+        """
+        return self.get_processor_with_id(processor_id)
 
     @property
     def x(self):
@@ -96,6 +113,17 @@ class Chip(object):
         :raise None: does not raise any known exceptions
         """
         return self._p.itervalues()
+    
+    def __iter__(self):
+        """ Get an iterable of processor identifiers and processors
+        
+        :return: An iterable of (processor_id, processor) where:
+                    * procssor_id is the id of a processor
+                    * processor is the processor with the id
+        :rtype: iterable of (int, :py:class:spinn_machine.processor.Processor`)
+        :raise None: does not raise any known exceptions
+        """
+        return self._p.iteritems()
 
     @property
     def router(self):

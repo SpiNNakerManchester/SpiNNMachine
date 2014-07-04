@@ -11,5 +11,7 @@ spinn_machine.processor module
     .. rubric:: Attributes
 
     .. autosummary::
+        clock_speed
+        is_monitor
         processor_id
 

@@ -18,15 +18,18 @@ class Link(object):
         :param destination_y: The y-coordinate of the destination chip of the\
                     link
         :type destination_y: int
-        :param multicast_default_from: The id of the link in the source chip\
-                    such that multicast traffic received from that link will\
-                    default to this link if no routing entry exists, or None
-                    if this link is not the default for any link
+        :param multicast_default_from: Traffic received on the link identified\
+                    by multicast_default_from will be sent to the link herein\
+                    defined if no entry is present in the multicast routing\
+                    table.  On SpiNNaker chips, multicast_default_from is\
+                    usually the same as multicast_default_to
         :type multicast_default_from: int
-        :param multicast_default_to: The id of the link in the source chip\
-                    such that multicast traffic received on this link will\
-                    default to that link if no routing entry exists, or None
-                    if there is no such default link
+        :param multicast_default_to: Traffic received on the link herein\
+                    defined will be sent to the link identified by\
+                    multicast_default_from if no entry is present in the\
+                    multicast routing table.  On SpiNNaker chips,\
+                    multicast_default_to is usually the same as\
+                    multicast_default_from
         :type multicast_default_to: int
         :raise None: No known exceptions are raised
         """
