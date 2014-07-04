@@ -9,9 +9,9 @@ class TestingSDRAM(unittest.TestCase):
         ram = sdram.SDRAM(128)
         self.assertEqual(ram.size,128)
 
-    def test_creating_sdram_with_zero_size(self):
-        with self.assertRaises(exc.SpinnMachineInvalidParameterException):
-            ram = sdram.SDRAM(0)
+    def test_creating_new_sdram_with_zero_size(self):
+        ram = sdram.SDRAM(0)
+        self.assertEqual(ram.size,0)
 
     def test_creating_sdram_with_negative_size(self):
         with self.assertRaises(exc.SpinnMachineInvalidParameterException):
