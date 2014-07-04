@@ -81,7 +81,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         a_multicast = mre.MulticastRoutingEntry(key,mask,proc_ids,link_ids)
         b_multicast = mre.MulticastRoutingEntry(key,mask,proc_ids2,link_ids2)
 
-        a_multicast.merge(b_multicast)
+        result_multicast = a_multicast.merge(b_multicast)
         comparison_link_ids = list()
         comparison_proc_ids = list()
         for i in range(6):
@@ -91,10 +91,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             comparison_proc_ids.append(i)
         self.assertEqual(proc_ids + proc_ids2, comparison_proc_ids)
 
-        self.assertEqual(a_multicast.key , key)
-        self.assertEqual(a_multicast.link_ids,set(comparison_link_ids))
-        self.assertEqual(a_multicast.mask,mask)
-        self.assertEqual(a_multicast.processor_ids,set(comparison_proc_ids))
+        self.assertEqual(result_multicast.key , key)
+        self.assertEqual(result_multicast.link_ids,set(comparison_link_ids))
+        self.assertEqual(result_multicast.mask,mask)
+        self.assertEqual(result_multicast.processor_ids,set(comparison_proc_ids))
 
     def test_merger_with_invalid_parameter_key(self):
         with self.assertRaises(exc.SpinnMachineInvalidParameterException):
