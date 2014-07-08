@@ -1,3 +1,4 @@
+from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 DEFAULT_CLOCK_SPEED = 200 * 1000 * 1000
 
 class Processor(object):
@@ -14,8 +15,15 @@ class Processor(object):
         :param is_monitor: Determines if the processor is considered the\
                     monitor processor, and so should not be otherwise allocated
         :type is_monitor: bool
-        :raise None: does not raise any known exceptions
+        :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
+                    If the clock speed is negative
         """
+        
+        if clock_speed < 0:
+            raise SpinnMachineInvalidParameterException(
+                    "clock_speed", clock_speed,
+                    "Clock speed cannot be less than 0")
+        
         self._processor_id = processor_id
         self._clock_speed = clock_speed
         self._is_monitor = is_monitor
