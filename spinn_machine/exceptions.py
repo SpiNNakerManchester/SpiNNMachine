@@ -65,3 +65,9 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         """ The value of the parameter
         """
         return self._value
+    
+    @property
+    def problem(self):
+        """ The problem with the setting of the parameter
+        """
+        return self._problem
