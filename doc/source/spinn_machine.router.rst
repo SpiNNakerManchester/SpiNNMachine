@@ -19,11 +19,13 @@ spinn_machine.router module
     .. rubric:: Methods
 
     .. autosummary::
+        add_link
         get_link
         is_link
 
     .. rubric:: Detailed Methods
 
+    .. automethod:: add_link
     .. automethod:: get_link
     .. automethod:: is_link
 

@@ -30,15 +30,27 @@ class Router(object):
                     any two links have the same source_link_id
         """
         self._links = OrderedDict()
-        for link in sorted(links, key=lambda x: x.source_link_id):
-            if link.source_link_id in self._links:
-                raise SpinnMachineAlreadyExistsException(
-                        "link", str(link.source_link_id))
-            self._links[link.source_link_id] = link
+        for link in links:
+            self.add_link(link)
             
         self._emergency_routing_enabled = emergency_routing_enabled
         self._clock_speed = clock_speed
         self._n_available_multicast_entries = n_available_multicast_entries
+        
+    def add_link(self, link):
+        """ Add a link to the router of the chip
+        
+        :param link: The link to be added
+        :type link: :py:class:`spinn_machine.link.Link`
+        :return: Nothing is returned
+        :rtype: None
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
+                    another link already exists with the same source_link_id
+        """
+        if link.source_link_id in self._links:
+            raise SpinnMachineAlreadyExistsException(
+                    "link", str(link.source_link_id))
+        self._links[link.source_link_id] = link
             
     def is_link(self, source_link_id):
         """ Determine if there is a link with id source_link_id.\
