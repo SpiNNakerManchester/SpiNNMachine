@@ -7,11 +7,27 @@
         * Create a machine which represents the current state of a machine, in\
           terms of the available chips, cores on the chips, SDRAM available,
           routable links between chips and available routing entries.
+          
+        * Create a machine which represents an abstract ideal machine.
+        
+            * There can only be one chip in the machine with given x, y\
+              coordinates
+              
+            * There can only be one processor in each chip with a given\
+              processor id
+            
+            * There can only be one link in the router of each chip with\
+              a given id
         
         * Add a chip to a given machine to represent an external device.
         
+            * A chip with the same x, y coordinates must not already exist\
+              in the machine
+        
         * Add a link to a router of a given chip to represent a connection\
           to an external device.
+          
+            * A link with the given id must not already exist in the chip
           
         * Create a representation of a multicast routing entry to be shared\
           between modules that deal with routing entries.
