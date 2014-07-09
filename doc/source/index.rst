@@ -3,7 +3,8 @@ SpiNNMachine
 
 .. automodule:: spinn_machine
 
-Contents:
+Contents
+--------
 
 .. toctree::
    :maxdepth: 10
@@ -12,7 +13,7 @@ Contents:
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
