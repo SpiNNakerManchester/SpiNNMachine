@@ -1,6 +1,7 @@
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 from collections import OrderedDict
 
+
 class Machine(object):
     """ A Representation of a Machine with a number of Chips.  Machine is also\
         iterable, providing ((x, y), chip) where:
@@ -23,6 +24,9 @@ class Machine(object):
         
         # The maximum chip y coordinate
         self._max_chip_y = 0
+        
+        # The list of chips with ethernet connections
+        self._ethernet_connected_chips = list()
         
         # The dictionary of chips
         self._chips = OrderedDict()
@@ -49,6 +53,9 @@ class Machine(object):
             self._max_chip_x = chip.x
         if chip.y > self._max_chip_y:
             self._max_chip_y = chip.y
+            
+        if chip.ip_address is not None:
+            self._ethernet_connected_chips.append(chip)
 
     def add_chips(self, chips):
         """ Add some chips to the machine
@@ -164,3 +171,12 @@ class Machine(object):
         :rtype: int
         """
         return self._max_chip_y
+    
+    @property
+    def ethernet_connected_chips(self):
+        """ The chips in the machine that have an ethernet connection
+        
+        :return: An iterable of chips
+        :rtype: iterable of :py:class:`spinn_machine.chip.Chip`
+        """
+        return self._ethernet_connected_chips
