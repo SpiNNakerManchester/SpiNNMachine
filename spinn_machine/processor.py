@@ -1,5 +1,5 @@
 from spinn_machine.exceptions import SpinnMachineInvalidParameterException
-DEFAULT_CLOCK_SPEED = 200 * 1000 * 1000
+
 
 class Processor(object):
     """ A processor object included in a chip 

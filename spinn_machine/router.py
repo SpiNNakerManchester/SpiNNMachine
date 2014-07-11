@@ -1,19 +1,21 @@
 from collections import OrderedDict
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
-DEFAULT_AVAILABLE_ENTRIES = 1024
-DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
+ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
+
+ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
+
 
 class Router(object):
     """ Represents a router of a chip, with a set of available links.\
-        The router is iterable over the links, providing (source_link_id, link)\
-        where:
+        The router is iterable over the links, providing (source_link_id,\
+        link) where:
         
             * source_link_id is the id of a link
             * link is the link with id source_link_id
     """
     
-    def __init__(self, links, emergency_routing_enabled, clock_speed, 
+    def __init__(self, links, emergency_routing_enabled, clock_speed,
             n_available_multicast_entries):
         """
         :param links: iterable of links
