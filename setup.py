@@ -8,5 +8,5 @@ setup(
     version="0.1-SNAPSHOT",
     description="Representation of a SpiNNaker Machine",
     url="https://github.com/SpiNNakerManchester/SpiNNMachine",
-    packages=['spinn_machine'],
+    packages=['spinn_machine']
 )
