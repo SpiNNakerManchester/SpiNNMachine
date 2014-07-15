@@ -2,7 +2,7 @@ from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 
 
 class Processor(object):
-    """ A processor object included in a chip 
+    """ A processor object included in a chip
     """
 
     def __init__(self, processor_id, clock_speed, is_monitor=False):
@@ -10,7 +10,8 @@ class Processor(object):
 
         :param processor_id: id of the processor in the chip
         :type processor_id: int
-        :param clock_speed: The number of cpu cycles per second of the processor
+        :param clock_speed: The number of cpu cycles per second of the\
+                    processor
         :type clock_speed: int
         :param is_monitor: Determines if the processor is considered the\
                     monitor processor, and so should not be otherwise allocated
@@ -58,3 +59,11 @@ class Processor(object):
         :raise None: does not raise any known exceptions
         """
         return self._is_monitor
+    
+    def __str__(self):
+        return "[CPU: id={}, clock_speed={} MHz, monitor={}]".format(
+                self._processor_id, (self._clock_speed / 1000000),
+                self._is_monitor)
+    
+    def __repr__(self):
+        return self.__str__()

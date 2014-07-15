@@ -65,8 +65,8 @@ class Machine(object):
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
-                    a chip with the same x and y coordinates as one being added\
-                    already exists
+                    a chip with the same x and y coordinates as one being\
+                    added already exists
         """
         for next_chip in chips:
             self.add_chip(next_chip)
@@ -180,3 +180,10 @@ class Machine(object):
         :rtype: iterable of :py:class:`spinn_machine.chip.Chip`
         """
         return self._ethernet_connected_chips
+    
+    def __str__(self):
+        return "[Machine: max_x={}, max_y={}, chips={}]".format(
+                self._max_chip_x, self._max_chip_y, self._chips.values())
+        
+    def __repr__(self):
+        return self.__str__()

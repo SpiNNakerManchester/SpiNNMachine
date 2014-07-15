@@ -35,14 +35,14 @@ class Chip(object):
         :type ip_address: str
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     processors contains any two processors with the same\
-                    processor_id 
+                    processor_id
         """
         self._x = x
         self._y = y
         self._p = OrderedDict()
         for processor in sorted(processors, key=lambda x: x.processor_id):
             if processor.processor_id in self._p:
-                raise SpinnMachineAlreadyExistsException("processor", 
+                raise SpinnMachineAlreadyExistsException("processor",
                         str(processor.processor_id))
             self._p[processor.processor_id] = processor
         self._router = router
@@ -67,8 +67,8 @@ class Chip(object):
         return self.is_processor_with_id(processor_id)
 
     def get_processor_with_id(self, processor_id):
-        """ Return the processor with the specified id or None if the processor\
-            does not exist.\
+        """ Return the processor with the specified id or None if the\
+            processor does not exist.\
             Also implemented as __contains__(processor_id)
         
         :param processor_id: the id of the processor to return
@@ -158,3 +158,11 @@ class Chip(object):
         :raise None: does not raise any known exceptions
         """
         return self._ip_address
+    
+    def __str__(self):
+        return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"
+                " processors={}]".format(self._x, self._y, self.sdram,
+                       self.ip_address, self.router, self._p.values()))
+        
+    def __repr__(self):
+        return self.__str__()

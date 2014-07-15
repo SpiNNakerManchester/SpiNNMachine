@@ -140,3 +140,14 @@ class Router(object):
         :raise None: does not raise any known exceptions
         """
         return self._n_available_multicast_entries
+    
+    def __str__(self):
+        return ("[Router: clock_speed={} MHz, emergency_routing={},"
+               " available_entries={}, links={}]".format(
+                       (self._clock_speed / 1000000),
+                       self._emergency_routing_enabled,
+                       self._n_available_multicast_entries,
+                       self._links.values()))
+    
+    def __repr(self):
+        return self.__str__()

@@ -137,3 +137,14 @@ class Link(object):
             raise SpinnMachineAlreadyExistsException("multicast_default_to",
                     self._multicast_default_to)
         self._multicast_default_to = multicast_default_to
+    
+    def __str__(self):
+        return ("[Link: source_x={}, source_y={}, source_link_id={},"
+                " destination_x={}, destination_y={}, default_from={},"
+                " default_to={}]".format(self._source_x, self._source_y,
+                        self._source_link_id, self._destination_x,
+                        self._destination_y, self._multicast_default_from,
+                        self._multicast_default_to))
+    
+    def __repr__(self):
+        return self.__str__()
