@@ -1,0 +1,1 @@
+-e git+https://github.com/SpiNNakerManchester/sphinx_python_api_utils.git@master#egg=sphinx_python_api_utils
