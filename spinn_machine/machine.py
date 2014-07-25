@@ -44,8 +44,8 @@ class Machine(object):
         """
         chip_id = (chip.x, chip.y)
         if chip_id in self._chips:
-            raise SpinnMachineAlreadyExistsException(
-                    "chip", "{}, {}".format(chip.x, chip.y))
+            raise SpinnMachineAlreadyExistsException("chip", "{}, {}"
+                                                     .format(chip.x, chip.y))
         
         self._chips[chip_id] = chip
         
