@@ -6,7 +6,7 @@ class Link(object):
     """
     
     def __init__(self, source_x, source_y, source_link_id, destination_x,
-            destination_y, multicast_default_from, multicast_default_to):
+                 destination_y, multicast_default_from, multicast_default_to):
         """
         
         :param source_x: The x-coordinate of the source chip of the link
@@ -111,8 +111,8 @@ class Link(object):
                     a value has already been set
         """
         if self._multicast_default_from is not None:
-            raise SpinnMachineAlreadyExistsException("multicast_default_from",
-                    self._multicast_default_from)
+            raise SpinnMachineAlreadyExistsException(
+                "multicast_default_from", str(self._multicast_default_from))
         self._multicast_default_from = multicast_default_from
     
     @property
@@ -134,17 +134,19 @@ class Link(object):
                     a value has already been set
         """
         if self._multicast_default_to is not None:
-            raise SpinnMachineAlreadyExistsException("multicast_default_to",
-                    self._multicast_default_to)
+            raise SpinnMachineAlreadyExistsException(
+                "multicast_default_to", str(self._multicast_default_to))
         self._multicast_default_to = multicast_default_to
     
     def __str__(self):
         return ("[Link: source_x={}, source_y={}, source_link_id={},"
                 " destination_x={}, destination_y={}, default_from={},"
                 " default_to={}]".format(self._source_x, self._source_y,
-                        self._source_link_id, self._destination_x,
-                        self._destination_y, self._multicast_default_from,
-                        self._multicast_default_to))
+                                         self._source_link_id,
+                                         self._destination_x,
+                                         self._destination_y,
+                                         self._multicast_default_from,
+                                         self._multicast_default_to))
     
     def __repr__(self):
         return self.__str__()

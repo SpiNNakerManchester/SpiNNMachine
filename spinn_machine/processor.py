@@ -25,8 +25,8 @@ class Processor(object):
         
         if clock_speed < 0:
             raise SpinnMachineInvalidParameterException(
-                    "clock_speed", clock_speed,
-                    "Clock speed cannot be less than 0")
+                "clock_speed", str(clock_speed),
+                "Clock speed cannot be less than 0")
         
         self._processor_id = processor_id
         self._clock_speed = clock_speed
@@ -65,8 +65,8 @@ class Processor(object):
     
     def __str__(self):
         return "[CPU: id={}, clock_speed={} MHz, monitor={}]".format(
-                self._processor_id, (self._clock_speed / 1000000),
-                self._is_monitor)
+            self._processor_id, (self._clock_speed / 1000000),
+            self._is_monitor)
     
     def __repr__(self):
         return self.__str__()

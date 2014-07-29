@@ -38,10 +38,10 @@ class Chip(object):
         self._x = x
         self._y = y
         self._p = OrderedDict()
-        for processor in sorted(processors, key=lambda x: x.processor_id):
+        for processor in sorted(processors, key=lambda i: i.processor_id):
             if processor.processor_id in self._p:
-                raise SpinnMachineAlreadyExistsException("processor",
-                        str(processor.processor_id))
+                raise SpinnMachineAlreadyExistsException(
+                    "processor", str(processor.processor_id))
             self._p[processor.processor_id] = processor
         self._router = router
         self._sdram = sdram
@@ -160,7 +160,8 @@ class Chip(object):
     def __str__(self):
         return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"
                 " processors={}]".format(self._x, self._y, self.sdram,
-                       self.ip_address, self.router, self._p.values()))
+                                         self.ip_address, self.router,
+                                         self._p.values()))
         
     def __repr__(self):
         return self.__str__()

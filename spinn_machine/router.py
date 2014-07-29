@@ -16,7 +16,7 @@ class Router(object):
     """
     
     def __init__(self, links, emergency_routing_enabled, clock_speed,
-            n_available_multicast_entries):
+                 n_available_multicast_entries):
         """
         :param links: iterable of links
         :type links: iterable of :py:class:`spinn_machine.link.Link`
@@ -51,7 +51,7 @@ class Router(object):
         """
         if link.source_link_id in self._links:
             raise SpinnMachineAlreadyExistsException(
-                    "link", str(link.source_link_id))
+                "link", str(link.source_link_id))
         self._links[link.source_link_id] = link
             
     def is_link(self, source_link_id):
@@ -142,12 +142,12 @@ class Router(object):
         return self._n_available_multicast_entries
     
     def __str__(self):
-        return ("[Router: clock_speed={} MHz, emergency_routing={},"
-               " available_entries={}, links={}]".format(
-                       (self._clock_speed / 1000000),
-                       self._emergency_routing_enabled,
-                       self._n_available_multicast_entries,
-                       self._links.values()))
+        return (
+            "[Router: clock_speed={} MHz, emergency_routing={},"
+            "available_entries={}, links={}]".format(
+                (self._clock_speed / 1000000),
+                self._emergency_routing_enabled,
+                self._n_available_multicast_entries, self._links.values()))
     
     def __repr(self):
         return self.__str__()
