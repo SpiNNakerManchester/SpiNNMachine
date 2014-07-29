@@ -1,8 +1,6 @@
 from collections import OrderedDict
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
-CHIP_DEFAULT_SDRAM_AVAIABLE = 128 * 1024 * 1024
-
 
 class Chip(object):
     """ Represents a chip with a number of cores, an amount of SDRAM shared

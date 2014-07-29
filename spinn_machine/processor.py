@@ -5,6 +5,9 @@ class Processor(object):
     """ A processor object included in a chip
     """
 
+    CPU_AVAILABLE = 200000
+    DTCM_AVAILABLE = 2 ** 15
+
     def __init__(self, processor_id, clock_speed, is_monitor=False):
         """
 
