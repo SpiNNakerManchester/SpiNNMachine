@@ -6,7 +6,7 @@ class SDRAM(object):
     """
     DEFAULT_SDRAM_BYTES = 128 * 1024 * 1024
 
-    def __init__(self, size):
+    def __init__(self, size=DEFAULT_SDRAM_BYTES):
         """
 
         :param size: size of the SDRAM in bytes
