@@ -6,7 +6,7 @@ class MulticastRoutingEntry(object):
     """ Represents an entry in a multicast routing table
     """
     
-    def __init__(self, key, mask, processor_ids, link_ids):
+    def __init__(self, key, mask, processor_ids, link_ids, defaultable):
         """
         
         :param key: The routing key
@@ -17,12 +17,16 @@ class MulticastRoutingEntry(object):
         :type processor_ids: iterable of int
         :param link_ids: The destination link ids
         :type link_ids: iterable of int
+        :param defaultable: if this entry is defaultable (it receives packets \
+        from its directly opposite route position)
+        :type defaultable: bool
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
                     * If processor_ids contains the same id more than once
                     * If link_ids contains the same id more than once
         """
         self._key = key
         self._mask = mask
+        self._defaultable = defaultable
         
         # Add processor ids, checking that there is only one of each
         self._processor_ids = set()
@@ -75,6 +79,14 @@ class MulticastRoutingEntry(object):
         :rtype: iterable of int
         """
         return self._link_ids
+
+    @property
+    def defaultable(self):
+        """if this entry is a defaultable entry
+        :return: the bool that represents if a entry is defaultable or not
+        :rtype: bool
+        """
+        return self._defaultable
     
     def merge(self, other_entry):
         """ Merges together two multicast routing entries.  The entry to merge\
@@ -100,11 +112,15 @@ class MulticastRoutingEntry(object):
             raise SpinnMachineInvalidParameterException(
                 "other_entry.mask", hex(other_entry.mask),
                 "The mask does not match {}".format(hex(self.mask)))
-        
+
+        defaultable = self._defaultable
+        if self._defaultable != other_entry.defaultable:
+            defaultable = False
+
         new_entry = MulticastRoutingEntry(
             self.key, self.mask,
             self._processor_ids.union(other_entry.processor_ids),
-            self._link_ids.union(other_entry.link_ids))
+            self._link_ids.union(other_entry.link_ids), defaultable)
         return new_entry
     
     def __add__(self, other_entry):
