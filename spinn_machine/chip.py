@@ -12,7 +12,8 @@ class Chip(object):
             * processor is the processor with processor_id
     """
 
-    def __init__(self, x, y, processors, router, sdram, ip_address=None):
+    def __init__(self, x, y, processors, router, sdram, ip_address=None,
+                 virtual=False):
         """
 
         :param x: the x-coordinate of the chip's position in the\
@@ -31,6 +32,10 @@ class Chip(object):
         :param ip_address: the IP address of the chip or None if no ethernet\
                     attached
         :type ip_address: str
+        :param virtual: boolean which defines if this chip isa  virutal one or\
+         not
+         :type virtual: bool
+
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     processors contains any two processors with the same\
                     processor_id
@@ -46,6 +51,7 @@ class Chip(object):
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
+        self._virtual = virtual
 
     def is_processor_with_id(self, processor_id):
         """ Determines if a processor with the given id exists in the chip.\
@@ -114,6 +120,16 @@ class Chip(object):
         :raise None: does not raise any known exceptions
         """
         return self._p.itervalues()
+
+    @property
+    def virtual(self):
+        """ boolean which defines if the chip is virtual or not
+
+        :return: if the chip is virutal
+        :rtype: boolean
+        :raise None: this method does not raise any known exceptions
+        """
+        return self._virtual
     
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors

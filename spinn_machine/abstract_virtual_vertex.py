@@ -27,24 +27,22 @@ class AbstractVirtualVertex(AbstractPartitionableVertex,
         self._virtual_chip_coords = virtual_chip_coords
         self._connected_chip_coords = connected_node_coords
         self._connected_chip_edge = connected_node_edge
+        placement_constaint = \
+            PlacerChipAndCoreConstraint(self._virtual_chip_coords['x'],
+                                        self._virtual_chip_coords['y'])
+        self.add_constraint(placement_constaint)
+
 
     @property
     def model_name(self):
         return "VirtualVertex:{}".format(self.label)
 
-    def add_placement_constrants_to_subverts(self, subverts):
-        for subvert in subverts:
-            placement_constaint = \
-                PlacerChipAndCoreConstraint(self.virtual_chip_coords['x'],
-                                            self.virtual_chip_coords['y'])
-            subvert.add_constraint(placement_constaint)
-
     #inhirrted from partitonable vertex
     def get_cpu_usage_for_atoms(self, lo_atom, hi_atom):
-        return CPUCyclesPerTickResource(0)
+        return 0
 
     def get_sdram_usage_for_atoms(self, lo_atom, hi_atom, vertex_in_edges):
-        return SDRAMResource(0)
+        return 0
 
     def get_dtcm_usage_for_atoms(self, lo_atom, hi_atom):
-        return DTCMResource(0)
+        return 0
