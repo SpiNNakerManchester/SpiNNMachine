@@ -15,8 +15,9 @@ class Router(object):
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
 
     
-    def __init__(self, links, emergency_routing_enabled, clock_speed,
-                 n_available_multicast_entries):
+    def __init__(self, links, emergency_routing_enabled,
+                 clock_speed=ROUTER_DEFAULT_CLOCK_SPEED,
+                 n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
         :param links: iterable of links
         :type links: iterable of :py:class:`spinn_machine.link.Link`
