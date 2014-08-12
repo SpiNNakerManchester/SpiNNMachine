@@ -1,10 +1,10 @@
 from abc import ABCMeta
-
 from six import add_metaclass
 
 from spynnaker.pyNN.models.abstract_models.abstract_recordable_vertex import \
     AbstractRecordableVertex
-from pacman.model.graph.abstract_partitionable_vertex \
+
+from pacman.model.partitionable_graph.abstract_partitionable_vertex \
     import AbstractPartitionableVertex
 from pacman.model.constraints.placer_chip_and_core_constraint import \
     PlacerChipAndCoreConstraint
