@@ -54,6 +54,16 @@ class Processor(object):
 
         """
         return self._dtcm_available
+
+    @property
+    def cpu_cycles_available(self):
+        """the amount of cpu cycles available from this processor
+
+        :return: the amount of cpu cycles avilable on this processor
+        :rtype: int
+        :raise None: does not raise any known exceptions
+        """
+        return Processor.CPU_AVAILABLE
     
     @property
     def clock_speed(self):
