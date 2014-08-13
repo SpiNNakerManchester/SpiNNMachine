@@ -93,11 +93,11 @@ class VirtualMachine(Machine):
 
         processor_count = 0
         for chip in self.chips:
-            processor_count += len(chip.processors)
+            processor_count += len(list(chip.processors))
 
         link_count = 0
         for chip in self.chips:
-            link_count += len(chip.router.links)
+            link_count += len(list(chip.router.links))
 
         logger.debug(
             "Static Allocation Complete. {} calculated app cores and {} links!"
@@ -123,23 +123,16 @@ class VirtualMachine(Machine):
         :type wrap_around: bool
         :return: iterbale of links
         :rtype: iterable of spinnmachine.link.Link
-        :raise SpinnMachineInvalidParameterException: when te virtual machine\
-        cannot figure how to wire it.
+        :raiseNone: this method does not raise any known excpetions
 
         """
         if x_dimension == 2 and y_dimension == 2:
             return self._initlize_neighbour_links_for_4_chip_board(x, y,
                                                                    wrap_around,
                                                                    version)
-        elif x_dimension == 8 and y_dimension == 8:
+        else:
             return self._initlize_neighbour_links_for_other_boards(
                 x, y, x_dimension - 1, y_dimension - 1, wrap_around, version)
-        else:
-            raise exceptions.SpinnMachineInvalidParameterException(
-                "x_dimension, and y_dimension",
-                "the combination has no known wiring,"
-                "EXPLORE: I don't know how to interconnect the chips of "
-                "this machine, needs to be explored dynamically", "")
 
     @staticmethod
     def _initlize_neighbour_links_for_4_chip_board(x, y, wrap_around,
