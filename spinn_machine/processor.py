@@ -9,7 +9,7 @@ class Processor(object):
     DTCM_AVAILABLE = 2 ** 15
 
     def __init__(self, processor_id, clock_speed, is_monitor=False,
-                 dtcm_avilable=DTCM_AVAILABLE):
+                 dtcm_available=DTCM_AVAILABLE):
         """
 
         :param processor_id: id of the processor in the chip
@@ -32,7 +32,7 @@ class Processor(object):
         self._processor_id = processor_id
         self._clock_speed = clock_speed
         self._is_monitor = is_monitor
-        self._dtcm_avilable = dtcm_avilable
+        self._dtcm_available = dtcm_available
 
     @property
     def processor_id(self):
@@ -45,7 +45,7 @@ class Processor(object):
         return self._processor_id
 
     @property
-    def dtcm_avilable(self):
+    def dtcm_available(self):
         """the amount of dtcm avilable on this processor
 
         :return: the amount of dtcm avilable on this processor
@@ -53,7 +53,7 @@ class Processor(object):
         :raise None: does not raise any known exceptions
 
         """
-        return self._dtcm_avilable
+        return self._dtcm_available
     
     @property
     def clock_speed(self):
