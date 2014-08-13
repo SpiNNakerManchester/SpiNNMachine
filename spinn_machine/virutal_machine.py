@@ -365,10 +365,6 @@ class VirtualMachine(Machine):
                                   multicast_default_to=0))
             if y != 0:  # not on the bottom side of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=y - 1,
-                                  destination_x=x - 1, source_link_id=4,
-                                  multicast_default_from=1,
-                                  multicast_default_to=1))
-                links.append(Link(source_x=x, source_y=y, destination_y=y - 1,
                                   destination_x=x, source_link_id=5,
                                   multicast_default_from=2,
                                   multicast_default_to=2))
