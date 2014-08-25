@@ -12,25 +12,24 @@ logger = logging.getLogger(__name__)
 
 
 class VirtualMachine(Machine):
-    """class for using a machien object without a board. virutal based machine
+    """class for using a machine object without a board. virtual based machine
 
     """
 
     def __init__(self, x_dimension, y_dimension, with_wrap_arounds,
                  version=None):
-        """initator for a virtual machine
+        """constructor for a virtual machine
 
         :param x_dimension: the x dimension of the virtual machine
+        :type x_dimension: int
         :param y_dimension: the y dimension of the virtual machine
+        :type y_dimension: int
         :param with_wrap_arounds: bool defining if wrap around links exist
+        :type with_wrap_arounds: bool
         :param version: the version id of a board. if set to none, then a \
         dimensional version of a board is produces, if a version is given the \
         virtual board reflects whatever links exist on that board version
         :type version: int
-        :type x_dimension: int
-        :type y_dimension: int
-        :type with_wrap_arounds: bool
-
         :return: None
         :rtype: None
         :raise None: this emthod does not raise any known exceptions
@@ -41,22 +40,23 @@ class VirtualMachine(Machine):
 
     def _initiate_virtual_machine(self, x_dimension, y_dimension,
                                   with_wrap_arounds, version):
-        """main method to build a virutal machien object
+        """main method to build a virtual machine object
 
         :param x_dimension: the x dimension of the virtual machine
+        :type x_dimension: int
         :param y_dimension: the y dimension of the virtual machine
+        :type y_dimension: int
         :param with_wrap_arounds: bool defining if wrap around links exist
+        :type with_wrap_arounds: bool
         :param version: the version id of a board. if set to none, then a \
         dimensional version of a board is produces, if a version is given the \
         virtual board reflects whatever links exist on that board version
-        :type x_dimension: int
-        :type y_dimension: int
-        :type with_wrap_arounds: bool
         :type version: int
         :return: None
         :rtype: None
-        :raise SpinnMachineInvalidParameterException: when some param is invalid\
-        such as the x_dimension or y_dimension is negative
+        :raise SpinnMachineInvalidParameterException:
+        when some param is invalid such as the x_dimension or y_dimension
+        is negative
         """
 
         if x_dimension < 0 or y_dimension < 0:
@@ -66,7 +66,8 @@ class VirtualMachine(Machine):
                 "machine should not have a negaitve dimension")
 
         # if x and y are none, assume a 48 chip board
-        logger.debug("xdim = {} and ydim  = {}".format(x_dimension, y_dimension))
+        logger.debug("xdim = {} and ydim  = {}"
+                     .format(x_dimension, y_dimension))
         board48gaps = [(0, 4), (0, 5), (0, 6), (0, 7), (1, 5), (1, 6), (1, 7),
                        (2, 6), (2, 7), (3, 7), (5, 0), (6, 0), (6, 1), (7, 0),
                        (7, 1), (7, 2)]
@@ -83,7 +84,7 @@ class VirtualMachine(Machine):
                     for processor_id in range(0, 18):
                         processors.append(Processor(processor_id, 200000000))
                     chip_links = \
-                        self._calcualte_links(i, j, x_dimension, y_dimension,
+                        self._calculate_links(i, j, x_dimension, y_dimension,
                                               with_wrap_arounds, version)
                     chip_router = Router(chip_links, False)
                     sdram = SDRAM()
@@ -103,27 +104,25 @@ class VirtualMachine(Machine):
             "Static Allocation Complete. {} calculated app cores and {} links!"
             .format(processor_count, link_count))
 
-    def _calcualte_links(self, x, y, x_dimension, y_dimension, wrap_around,
+    def _calculate_links(self, x, y, x_dimension, y_dimension, wrap_around,
                          version):
-        """calcualtes the links needed for a machine strucutre
+        """calculates the links needed for a machine structure
 
         :param x: chip x coord
         :param y: chip y coord
-        :param x_dimension: max size of machine in x dimension
-        :param y_dimension: max size of machine in y dimension
-        :param wrap_around: bool saying if wrap arounds should be considered
+        :param x_dimension: the x dimension of the virtual machine
+        :type x_dimension: int
+        :param y_dimension: the y dimension of the virtual machine
+        :type y_dimension: int
+        :param wrap_around: bool defining if wrap around links exist
+        :type wrap_around: bool
         :param version: the version id of a board. if set to none, then a \
         dimensional version of a board is produces, if a version is given the \
         virtual board reflects whatever links exist on that board version
         :type version: int
-        :type x: int
-        :type y: int
-        :type x_dimension: int
-        :type y_dimension: int
-        :type wrap_around: bool
-        :return: iterbale of links
-        :rtype: iterable of spinnmachine.link.Link
-        :raiseNone: this method does not raise any known excpetions
+        :return: iterable of links
+        :rtype: iterable of spinn_machine.link.Link
+        :raiseNone: this method does not raise any known exceptions
 
         """
         if x_dimension == 2 and y_dimension == 2:
@@ -139,19 +138,19 @@ class VirtualMachine(Machine):
                                                    version):
         """creates links for a 4 chip board's chip
 
-        :param x: the x corod of the chip
-        :param y: the y corod of the chip
-        :param wrap_around: bool if wrapa rounds should be considered
-         :param version: the version id of a board. if set to none, then a \
+        :param x: the x coordinate of the chip
+        :type x: int
+        :param y: the y coordinate of the chip
+        :type y: int
+        :param wrap_around: bool if wrap rounds should be considered
+        :type wrap_around: bool
+        :param version: the version id of a board. if set to none, then a \
         dimensional version of a board is produces, if a version is given the \
         virtual board reflects whatever links exist on that board version
         :type version: int
-        :type x: int
-        :type y: int
-        :type wrap_around: bool
-        :return  iterbale of links
-        :rtype: iterable of spinnmachine.link.Link
-        :raise none: this emthod does not raise any known exception
+        :return  iterable of links
+        :rtype: iterable of spinn_machine.link.Link
+        :raise none: this method does not raise any known exception
         """
         links = list()
         if x == 0 and y == 0:
@@ -261,23 +260,23 @@ class VirtualMachine(Machine):
                                                    wrap_around, version):
         """creates links for a 48 chip board's chip
 
-        :param x: the x corod of the chip
-        :param y: the y corod of the chip
+        :param x: the x coordinate of the chip
+        :type x: int
+        :param y: the y coordinate of the chip
+        :type y: int
         :param max_x: the max value of a chip in the x dimension
+        :type max_x: int
         :param max_y: the max value of a chip in the y dimension
-        :param wrap_around: bool if wrapa rounds should be considered
+        :type max_y: int
+        :param wrap_around: bool if wrap rounds should be considered
+        :type wrap_around: bool
         :param version: the version id of a board. if set to none, then a \
         dimensional version of a board is produces, if a version is given the \
         virtual board reflects whatever links exist on that board version
         :type version: int
-        :type x: int
-        :type y: int
-        :type max_x: int
-        :type max_y: int
-        :type wrap_around: bool
-        :return  iterbale of links
-        :rtype: iterable of spinnmachine.link.Link
-        :raise none: this emthod does not raise any known exception
+        :return  iterable of links
+        :rtype: iterable of spinn_machine.link.Link
+        :raise none: this method does not raise any known exception
         """
 
         links = list()
@@ -315,7 +314,8 @@ class VirtualMachine(Machine):
                                   destination_x=x, source_link_id=2,
                                   multicast_default_from=5,
                                   multicast_default_to=5))
-            elif wrap_around and version is None:  # sits on the top edge of the board
+            elif wrap_around and version is None:
+            # sits on the top edge of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=0,
                                   destination_x=x, source_link_id=2,
                                   multicast_default_from=5,
@@ -348,7 +348,8 @@ class VirtualMachine(Machine):
                                   destination_x=x, source_link_id=5,
                                   multicast_default_from=2,
                                   multicast_default_to=2))
-            elif wrap_around and version is None:  # in the bottom side of the board
+            elif wrap_around and version is None:
+            # in the bottom side of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=max_y,
                                   destination_x=x - 1, source_link_id=4,
                                   multicast_default_from=1,
@@ -368,7 +369,8 @@ class VirtualMachine(Machine):
                                   destination_x=x, source_link_id=5,
                                   multicast_default_from=2,
                                   multicast_default_to=2))
-            elif wrap_around and version is None:  # in the bottom corner of the board
+            elif wrap_around and version is None:
+            # in the bottom corner of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=max_y,
                                   destination_x=max_x, source_link_id=4,
                                   multicast_default_from=1,
