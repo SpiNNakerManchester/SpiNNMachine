@@ -46,32 +46,32 @@ class MyTestCase(unittest.TestCase):
                 self.assertTrue(p in c.processors)
 
     def test_create_new_machine_with_invalid_chips(self):
+        flops = 1000
+        (e, ne, n, w, sw, s) = range(6)
+
+        processors = list()
+        for i in range(18):
+            processors.append(proc.Processor(i, flops))
+        links = list()
+        links.append(link.Link(0, 0, 0, 0, 1, s, s))
+
+        _sdram = sdram.SDRAM(128)
+
+        links = list()
+
+        links.append(link.Link(0, 0, 0, 1, 1, n, n))
+        links.append(link.Link(0, 1, 1, 1, 0, s, s))
+        links.append(link.Link(1, 1, 2, 0, 0, e, e))
+        links.append(link.Link(1, 0, 3, 0, 1, w, w))
+        r = router.Router(links, False, 100, 1024)
+
+        ip = "192.162.240.253"
+        chips = list()
+        for x in range(5):
+            for y in range(5):
+                chips.append(chip.Chip(x, y, processors, r, _sdram, ip))
+        chips.append(chip.Chip(0, 0, processors, r, _sdram, ip))
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            flops = 1000
-            (e, ne, n, w, sw, s) = range(6)
-
-            processors = list()
-            for i in range(18):
-                processors.append(proc.Processor(i, flops))
-            links = list()
-            links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-            _sdram = sdram.SDRAM(128)
-
-            links = list()
-
-            links.append(link.Link(0, 0, 0, 1, 1, n, n))
-            links.append(link.Link(0, 1, 1, 1, 0, s, s))
-            links.append(link.Link(1, 1, 2, 0, 0, e, e))
-            links.append(link.Link(1, 0, 3, 0, 1, w, w))
-            r = router.Router(links, False, 100, 1024)
-
-            ip = "192.162.240.253"
-            chips = list()
-            for x in range(5):
-                for y in range(5):
-                    chips.append(chip.Chip(x, y, processors, r, _sdram, ip))
-            chips.append(chip.Chip(0, 0, processors, r, _sdram, ip))
             machine.Machine(chips)
 
     def test_machine_add_chip(self):
@@ -119,34 +119,34 @@ class MyTestCase(unittest.TestCase):
                         self.assertTrue(p in processors)
 
     def test_machine_add_duplicate_chip(self):
+        flops = 1000
+        (e, ne, n, w, sw, s) = range(6)
+
+        processors = list()
+        for i in range(18):
+            processors.append(proc.Processor(i, flops))
+
+        links = list()
+        links.append(link.Link(0, 0, 0, 0, 1, s, s))
+
+        _sdram = sdram.SDRAM(128)
+
+        links = list()
+
+        links.append(link.Link(0, 0, 0, 1, 1, n, n))
+        links.append(link.Link(0, 1, 1, 1, 0, s, s))
+        links.append(link.Link(1, 1, 2, 0, 0, e, e))
+        links.append(link.Link(1, 0, 3, 0, 1, w, w))
+        r = router.Router(links, False, 100, 1024)
+
+        ip = "192.162.240.253"
+        chips = list()
+        for x in range(5):
+            for y in range(5):
+                chips.append(chip.Chip(x, y, processors, r, _sdram, ip))
+
+        new_machine = machine.Machine(chips)
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            flops = 1000
-            (e, ne, n, w, sw, s) = range(6)
-
-            processors = list()
-            for i in range(18):
-                processors.append(proc.Processor(i, flops))
-
-            links = list()
-            links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-            _sdram = sdram.SDRAM(128)
-
-            links = list()
-
-            links.append(link.Link(0, 0, 0, 1, 1, n, n))
-            links.append(link.Link(0, 1, 1, 1, 0, s, s))
-            links.append(link.Link(1, 1, 2, 0, 0, e, e))
-            links.append(link.Link(1, 0, 3, 0, 1, w, w))
-            r = router.Router(links, False, 100, 1024)
-
-            ip = "192.162.240.253"
-            chips = list()
-            for x in range(5):
-                for y in range(5):
-                    chips.append(chip.Chip(x, y, processors, r, _sdram, ip))
-
-            new_machine = machine.Machine(chips)
             new_machine.add_chip(chips[3])
 
     def test_machine_add_chips(self):
@@ -195,38 +195,38 @@ class MyTestCase(unittest.TestCase):
                 self.assertTrue(p in c.processors)
 
     def test_machine_add_duplicate_chips(self):
+        flops = 1000
+        (e, ne, n, w, sw, s) = range(6)
+
+        processors = list()
+        for i in range(18):
+            processors.append(proc.Processor(i, flops))
+
+        links = list()
+        links.append(link.Link(0, 0, 0, 0, 1, s, s))
+
+        _sdram = sdram.SDRAM(128)
+
+        links = list()
+
+        links.append(link.Link(0, 0, 0, 1, 1, n, n))
+        links.append(link.Link(0, 1, 1, 1, 0, s, s))
+        links.append(link.Link(1, 1, 2, 0, 0, e, e))
+        links.append(link.Link(1, 0, 3, 0, 1, w, w))
+        r = router.Router(links, False, 100, 1024)
+
+        ip = "192.162.240.253"
+        chips = list()
+        extra_chips = list()
+        for x in range(5):
+            for y in range(5):
+                chips.append(chip.Chip(x, y, processors, r, _sdram, ip))
+                if x == 0:
+                    extra_chips.append(
+                        chip.Chip(x, y, processors, r, _sdram, ip))
+
+        new_machine = machine.Machine(chips)
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            flops = 1000
-            (e, ne, n, w, sw, s) = range(6)
-
-            processors = list()
-            for i in range(18):
-                processors.append(proc.Processor(i, flops))
-
-            links = list()
-            links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-            _sdram = sdram.SDRAM(128)
-
-            links = list()
-
-            links.append(link.Link(0, 0, 0, 1, 1, n, n))
-            links.append(link.Link(0, 1, 1, 1, 0, s, s))
-            links.append(link.Link(1, 1, 2, 0, 0, e, e))
-            links.append(link.Link(1, 0, 3, 0, 1, w, w))
-            r = router.Router(links, False, 100, 1024)
-
-            ip = "192.162.240.253"
-            chips = list()
-            extra_chips = list()
-            for x in range(5):
-                for y in range(5):
-                    chips.append(chip.Chip(x, y, processors, r, _sdram, ip))
-                    if x == 0:
-                        extra_chips.append(
-                            chip.Chip(x, y, processors, r, _sdram, ip))
-
-            new_machine = machine.Machine(chips)
             new_machine.add_chip(chips[3])
 
     def test_machine_get_chip_at(self):

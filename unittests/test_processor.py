@@ -4,7 +4,6 @@ import spinn_machine.processor as proc
 
 class TestingProcessor(unittest.TestCase):
     def test_creating_processors(self):
-        # self.assertEqual(True, False)
         processors = list()
         flops = 1000
         for i in range(18):

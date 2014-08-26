@@ -22,43 +22,43 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(a_multicast.processor_ids, set(proc_ids))
 
     def test_duplicate_processors_ids(self):
+        link_ids = list()
+        proc_ids = list()
+        for i in range(6):
+            link_ids.append(i)
+        for i in range(18):
+            proc_ids.append(i)
+        proc_ids.append(0)
+        key = 1
+        mask = 1
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            link_ids = list()
-            proc_ids = list()
-            for i in range(6):
-                link_ids.append(i)
-            for i in range(18):
-                proc_ids.append(i)
-            proc_ids.append(0)
-            key = 1
-            mask = 1
             mre.MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
 
     def test_duplicate_link_ids(self):
+        link_ids = list()
+        proc_ids = list()
+        for i in range(6):
+            link_ids.append(i)
+        link_ids.append(3)
+        for i in range(18):
+            proc_ids.append(i)
+        key = 1
+        mask = 1
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            link_ids = list()
-            proc_ids = list()
-            for i in range(6):
-                link_ids.append(i)
-            link_ids.append(3)
-            for i in range(18):
-                proc_ids.append(i)
-            key = 1
-            mask = 1
             mre.MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
 
     def test_duplicate_link_ids_and_proc_ids(self):
+        link_ids = list()
+        proc_ids = list()
+        for i in range(6):
+            link_ids.append(i)
+        link_ids.append(3)
+        for i in range(18):
+            proc_ids.append(i)
+        proc_ids.append(0)
+        key = 1
+        mask = 1
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            link_ids = list()
-            proc_ids = list()
-            for i in range(6):
-                link_ids.append(i)
-            link_ids.append(3)
-            for i in range(18):
-                proc_ids.append(i)
-            proc_ids.append(0)
-            key = 1
-            mask = 1
             mre.MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
 
     def test_merger(self):
@@ -134,49 +134,47 @@ class TestMulticastRoutingEntry(unittest.TestCase):
                          set(comparison_proc_ids))
 
     def test_merger_with_invalid_parameter_key(self):
+        link_ids = list()
+        link_ids2 = list()
+        proc_ids = list()
+        proc_ids2 = list()
+        for i in range(3):
+            link_ids.append(i)
+        for i in range(3, 6):
+            link_ids2.append(i)
+        for i in range(9):
+            proc_ids.append(i)
+        for i in range(9, 18):
+            proc_ids2.append(i)
+        key = 1
+        mask = 1
+        a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids,
+                                                link_ids, True)
+        b_multicast = mre.MulticastRoutingEntry(key + 1, mask, proc_ids2,
+                                                link_ids2, True)
         with self.assertRaises(exc.SpinnMachineInvalidParameterException):
-            link_ids = list()
-            link_ids2 = list()
-            proc_ids = list()
-            proc_ids2 = list()
-            for i in range(3):
-                link_ids.append(i)
-            for i in range(3, 6):
-                link_ids2.append(i)
-            for i in range(9):
-                proc_ids.append(i)
-            for i in range(9, 18):
-                proc_ids2.append(i)
-            key = 1
-            mask = 1
-            a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids,
-                                                    link_ids, True)
-            b_multicast = mre.MulticastRoutingEntry(key + 1, mask, proc_ids2,
-                                                    link_ids2, True)
-
             a_multicast.merge(b_multicast)
 
     def test_merger_with_invalid_parameter_mask(self):
+        link_ids = list()
+        link_ids2 = list()
+        proc_ids = list()
+        proc_ids2 = list()
+        for i in range(3):
+            link_ids.append(i)
+        for i in range(3, 6):
+            link_ids2.append(i)
+        for i in range(9):
+            proc_ids.append(i)
+        for i in range(9, 18):
+            proc_ids2.append(i)
+        key = 1
+        mask = 1
+        a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids,
+                                                link_ids, True)
+        b_multicast = mre.MulticastRoutingEntry(key, mask + 1, proc_ids2,
+                                                link_ids2, True)
         with self.assertRaises(exc.SpinnMachineInvalidParameterException):
-            link_ids = list()
-            link_ids2 = list()
-            proc_ids = list()
-            proc_ids2 = list()
-            for i in range(3):
-                link_ids.append(i)
-            for i in range(3, 6):
-                link_ids2.append(i)
-            for i in range(9):
-                proc_ids.append(i)
-            for i in range(9, 18):
-                proc_ids2.append(i)
-            key = 1
-            mask = 1
-            a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids,
-                                                    link_ids, True)
-            b_multicast = mre.MulticastRoutingEntry(key, mask + 1, proc_ids2,
-                                                    link_ids2, True)
-
             a_multicast.merge(b_multicast)
 
 

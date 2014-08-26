@@ -36,11 +36,11 @@ class TestingRouter(unittest.TestCase):
         self.assertTrue(r.emergency_routing_enabled)
 
     def test_creating_new_router_with_duplicate_links(self):
+        links = list()
+        (e, ne, n, w, sw, s) = range(6)
+        links.append(link.Link(0, 0, 0, 0, 1, s, s))
+        links.append(link.Link(0, 1, 0, 0, 1, s, s))
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            links = list()
-            (e, ne, n, w, sw, s) = range(6)
-            links.append(link.Link(0, 0, 0, 0, 1, s, s))
-            links.append(link.Link(0, 1, 0, 0, 1, s, s))
             router.Router(links, False, 100, 1024)
 
 
