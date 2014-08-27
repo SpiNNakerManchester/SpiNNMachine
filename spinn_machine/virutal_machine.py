@@ -74,7 +74,7 @@ class VirtualMachine(Machine):
         for i in xrange(x_dimension):
             for j in xrange(y_dimension):
                 coords = (i, j)
-                if x_dimension >= 8 and y_dimension >= 8 \
+                if x_dimension == 8 and y_dimension == 8 \
                    and coords in board48gaps:
                     pass
                     # a chip doesn't exist in this static position

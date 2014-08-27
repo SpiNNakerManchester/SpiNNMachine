@@ -152,10 +152,3 @@ class Router(object):
     
     def __repr(self):
         return self.__str__()
-
-    def get_neighbouring_chips_coords(self):
-        next_hop_chips_coords = list()
-        for link in self.links:
-            next_hop_chips_coords.append(
-                {'x': link.destination_x, 'y': link.destination_y})
-        return next_hop_chips_coords
