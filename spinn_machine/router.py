@@ -152,3 +152,17 @@ class Router(object):
     
     def __repr(self):
         return self.__str__()
+
+    def get_neighbouring_chips_coords(self):
+        """utility method to convert links into x and y coords for placers
+
+        :return: iterable list of destination coords in x and y dictonary
+        :rtype: iterable of dict
+        :raise None: this method does not raise any known excpetion
+
+        """
+        next_hop_chips_coords = list()
+        for link in self.links:
+            next_hop_chips_coords.append(
+                {'x': link.destination_x, 'y': link.destination_y})
+        return next_hop_chips_coords
