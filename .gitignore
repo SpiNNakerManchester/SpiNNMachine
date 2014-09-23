@@ -4,3 +4,6 @@
 .settings/
 *.pyc
 doc/build
+build/
+dist/
+SpiNNMachine.egg-info
