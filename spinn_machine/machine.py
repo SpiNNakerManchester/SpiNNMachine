@@ -187,3 +187,23 @@ class Machine(object):
         
     def __repr__(self):
         return self.__str__()
+
+    def cores_and_link_output_string(self):
+        cores = 0
+        links = 0
+        total_links = dict()
+        for chip_key in self._chips.keys():
+            chip = self._chips[chip_key]
+            cores += len(list(chip.processors))
+            for link in chip.router.links:
+                key1 = "{}:{}:{}:{}".format(
+                    link.source_x, link.source_y, link.destination_x,
+                    link.destination_y)
+                key2 = "{}:{}:{}:{}".format(
+                    link.destination_x, link.destination_y, link.source_x,
+                    link.source_y)
+                if (key1 not in total_links.keys()
+                        and key2 not in total_links.keys()):
+                    total_links[key1] = key1
+            links += len(total_links.keys())
+        return "{} cores and {} links".format(cores, links)
