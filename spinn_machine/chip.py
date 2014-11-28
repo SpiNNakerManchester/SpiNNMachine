@@ -12,8 +12,8 @@ class Chip(object):
             * processor is the processor with processor_id
     """
 
-    def __init__(self, x, y, processors, router, sdram, ip_address=None,
-                 virtual=False):
+    def __init__(self, x, y, processors, router, sdram,
+                 ip_address=None, virtual=False):
         """
 
         :param x: the x-coordinate of the chip's position in the\

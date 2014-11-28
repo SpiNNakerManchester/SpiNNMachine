@@ -1,5 +1,7 @@
-from collections import OrderedDict
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+
+from collections import deque
+from collections import OrderedDict
 
 
 class Router(object):
@@ -14,8 +16,7 @@ class Router(object):
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
 
-    
-    def __init__(self, links, emergency_routing_enabled,
+    def __init__(self, links, emergency_routing_enabled, diagnostic_filters,
                  clock_speed=ROUTER_DEFAULT_CLOCK_SPEED,
                  n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
@@ -39,7 +40,10 @@ class Router(object):
         self._emergency_routing_enabled = emergency_routing_enabled
         self._clock_speed = clock_speed
         self._n_available_multicast_entries = n_available_multicast_entries
-        
+        self._diagnostic_filters = deque(maxlen=16)
+        for rounter_filter in diagnostic_filters:
+            self._diagnostic_filters.append(rounter_filter)
+
     def add_link(self, link):
         """ Add a link to the router of the chip
         
