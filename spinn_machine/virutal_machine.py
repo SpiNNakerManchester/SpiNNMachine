@@ -86,7 +86,7 @@ class VirtualMachine(Machine):
                     chip_links = \
                         self._calculate_links(i, j, x_dimension, y_dimension,
                                               with_wrap_arounds, version)
-                    chip_router = Router(chip_links, False)
+                    chip_router = Router(chip_links, False, list())
                     sdram = SDRAM()
 
                     chip = Chip(i, j, processors, chip_router, sdram)
