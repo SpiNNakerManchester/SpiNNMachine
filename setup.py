@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name="SpiNNMachine",
-    version="1.0-rc-1",
+    version="2014.12-rc-01",
     description="Representation of a SpiNNaker Machine",
     url="https://github.com/SpiNNakerManchester/SpiNNMachine",
     license="GNU GPLv3.0",
