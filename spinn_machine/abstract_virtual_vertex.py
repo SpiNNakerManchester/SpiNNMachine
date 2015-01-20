@@ -15,13 +15,11 @@ from pacman.model.resources.sdram_resource import SDRAMResource
 
 
 @add_metaclass(ABCMeta)
-class AbstractVirtualVertex(AbstractPartitionableVertex,
-                            AbstractRecordableVertex):
+class AbstractVirtualVertex(AbstractPartitionableVertex):
 
     def __init__(self, n_neurons, virtual_chip_coords, connected_node_coords,
                  connected_node_edge, machine_time_step, label,
                  max_atoms_per_core):
-        AbstractRecordableVertex.__init__(self, machine_time_step, label)
         AbstractPartitionableVertex.__init__(self, n_neurons, label,
                                              max_atoms_per_core)
         #set up virtual data structures
@@ -42,7 +40,7 @@ class AbstractVirtualVertex(AbstractPartitionableVertex,
     def get_cpu_usage_for_atoms(self, lo_atom, hi_atom):
         return 0
 
-    def get_sdram_usage_for_atoms(self, lo_atom, hi_atom, vertex_in_edges):
+    def get_sdram_usage_for_atoms(self, vertex_slice, vertex_in_edges):
         return 0
 
     def get_dtcm_usage_for_atoms(self, lo_atom, hi_atom):
