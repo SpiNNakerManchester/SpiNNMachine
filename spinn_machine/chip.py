@@ -3,6 +3,7 @@ from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
 class Chip(object):
+
     """ Represents a chip with a number of cores, an amount of SDRAM shared
         between the cores, and a router.\
         The chip is iterable over the processors providing\
@@ -12,8 +13,10 @@ class Chip(object):
             * processor is the processor with processor_id
     """
 
+    IPTAG_IDS = set(range(0, 8))
+
     def __init__(self, x, y, processors, router, sdram,
-                 ip_address=None, virtual=False):
+                 ip_address=None, virtual=False, tag_ids=IPTAG_IDS):
         """
 
         :param x: the x-coordinate of the chip's position in the\
@@ -52,6 +55,8 @@ class Chip(object):
         self._sdram = sdram
         self._ip_address = ip_address
         self._virtual = virtual
+        self._tag_ids = tag_ids
+
 
     def is_processor_with_id(self, processor_id):
         """ Determines if a processor with the given id exists in the chip.\
@@ -172,6 +177,15 @@ class Chip(object):
         :raise None: does not raise any known exceptions
         """
         return self._ip_address
+
+    @property
+    def tag_ids(self):
+        """ returns the ids supported by this chip
+
+        :return: the set of ids.
+        :raise None: this method does not raise any exception
+        """
+        return self._tag_ids
     
     def __str__(self):
         return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"
