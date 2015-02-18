@@ -15,8 +15,9 @@ class Chip(object):
 
     IPTAG_IDS = set(range(0, 8))
 
-    def __init__(self, x, y, processors, router, sdram,
-                 ip_address=None, virtual=False, tag_ids=IPTAG_IDS):
+    def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
+                 nearest_ethernet_y, ip_address=None, virtual=False,
+                 tag_ids=IPTAG_IDS):
         """
 
         :param x: the x-coordinate of the chip's position in the\
@@ -32,6 +33,10 @@ class Chip(object):
         :type router: :py:class:`spinn_machine.router.Router`
         :param sdram: an SDRAM for the chip
         :type sdram: :py:class:`spinn_machine.sdram.SDRAM`
+        :param nearest_ethernet_x: the nearest ethernet x coord
+        :type nearest_ethernet_x: int
+        :param nearest_ethernet_y: the nearest ethernet y coord
+        :type nearest_ethernet_y: int
         :param ip_address: the IP address of the chip or None if no ethernet\
                     attached
         :type ip_address: str
@@ -56,6 +61,8 @@ class Chip(object):
         self._ip_address = ip_address
         self._virtual = virtual
         self._tag_ids = tag_ids
+        self._nearest_ethernet_x = nearest_ethernet_x
+        self._nearest_ethernet_y = nearest_ethernet_y
 
 
     def is_processor_with_id(self, processor_id):
@@ -179,6 +186,26 @@ class Chip(object):
         return self._ip_address
 
     @property
+    def nearest_ethernet_x(self):
+        """ the x coord of the nearest ethernet chip
+
+        :return: the x coord of the nearest ethernet chip
+        :rtype: int
+        :raise None: does not raise any known exceptions
+        """
+        return self._nearest_ethernet_x
+
+    @property
+    def nearest_ethernet_y(self):
+        """ the y coord of the nearest ethernet chip
+
+        :return: the y coord of the nearest ethernet chip
+        :rtype: int
+        :raise None: does not raise any known exceptions
+        """
+        return self._nearest_ethernet_y
+
+    @property
     def tag_ids(self):
         """ returns the ids supported by this chip
 
@@ -189,9 +216,10 @@ class Chip(object):
     
     def __str__(self):
         return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"
-                " processors={}]".format(self._x, self._y, self.sdram,
-                                         self.ip_address, self.router,
-                                         self._p.values()))
+                " processors={}, nearest_ethernet={}:{}]"
+                .format(self._x, self._y, self.sdram, self.ip_address,
+                        self.router, self._p.values(), self._nearest_ethernet_x,
+                        self._nearest_ethernet_y))
         
     def __repr__(self):
         return self.__str__()

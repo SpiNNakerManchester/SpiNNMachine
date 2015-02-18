@@ -18,9 +18,6 @@ class ReverseIPTag(AbstractIPTAG):
         :type destination_y: int
         :param destination_p: The id of the processor to send packets to
         :type destination_p: int
-        :param board_address: The ipaddress of the board to which this tag is
-        to be placed
-        :type board_address: str
         :param port_num: The optional port number to use for SDP packets that\
                     formed on the machine (default is 1)
         :type port_num: int
