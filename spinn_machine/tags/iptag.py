@@ -40,4 +40,4 @@ class IPTag(AbstractIPTAG):
 
     def __str__(self):
         return "IP Tag: tag={} port={} address={}".format(
-                self._tag, self._port, self._address)
+            self._tag, self._port, self._address)

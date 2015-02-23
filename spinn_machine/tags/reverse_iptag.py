@@ -6,7 +6,7 @@ class ReverseIPTag(AbstractIPTAG):
     """
 
     def __init__(self, port, tag, destination_x, destination_y,
-                 destination_p, port_num=1):
+                 destination_p, sdp_port=1):
         """
         :param port: The UDP port on which SpiNNaker will listen for packets
         :type port: int
@@ -18,23 +18,23 @@ class ReverseIPTag(AbstractIPTAG):
         :type destination_y: int
         :param destination_p: The id of the processor to send packets to
         :type destination_p: int
-        :param port_num: The optional port number to use for SDP packets that\
-                    formed on the machine (default is 1)
-        :type port_num: int
+        :param sdp_port: The optional port number to use for SDP packets that\
+                    are formed on the machine (default is 1)
+        :type sdp_port: int
         :raise None: No known exceptions are raised
         """
         AbstractIPTAG.__init__(self, port, tag)
         self._destination_x = destination_x
         self._destination_y = destination_y
         self._destination_p = destination_p
-        self._port_num = port_num
+        self._sdp_port = sdp_port
 
     @property
-    def port_num(self):
-        """returns the port num of the tag
+    def sdp_port(self):
+        """returns the sdp port of the tag
         :return:
         """
-        return self._port_num
+        return self._sdp_port
 
     @property
     def destination_x(self):
@@ -58,4 +58,4 @@ class ReverseIPTag(AbstractIPTAG):
         return "Reverse IP Tag: tag={} port={} x={} y={} p={}, s_pt={}".format(
             self._tag, self._port, self._destination_x,
             self._destination_y, self._destination_p,
-            self._port_num)
+            self._sdp_port)
