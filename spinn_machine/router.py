@@ -1,6 +1,5 @@
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
-from collections import deque
 from collections import OrderedDict
 
 
@@ -8,7 +7,7 @@ class Router(object):
     """ Represents a router of a chip, with a set of available links.\
         The router is iterable over the links, providing (source_link_id,\
         link) where:
-        
+
             * source_link_id is the id of a link
             * link is the link with id source_link_id
     """
@@ -16,9 +15,10 @@ class Router(object):
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
 
-    def __init__(self, links, emergency_routing_enabled, diagnostic_filters,
-                 clock_speed=ROUTER_DEFAULT_CLOCK_SPEED,
-                 n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
+    def __init__(
+            self, links, emergency_routing_enabled,
+            clock_speed=ROUTER_DEFAULT_CLOCK_SPEED,
+            n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
         :param links: iterable of links
         :type links: iterable of :py:class:`spinn_machine.link.Link`
@@ -36,17 +36,14 @@ class Router(object):
         self._links = OrderedDict()
         for link in links:
             self.add_link(link)
-            
+
         self._emergency_routing_enabled = emergency_routing_enabled
         self._clock_speed = clock_speed
         self._n_available_multicast_entries = n_available_multicast_entries
-        self._diagnostic_filters = deque(maxlen=16)
-        for rounter_filter in diagnostic_filters:
-            self._diagnostic_filters.append(rounter_filter)
 
     def add_link(self, link):
         """ Add a link to the router of the chip
-        
+
         :param link: The link to be added
         :type link: :py:class:`spinn_machine.link.Link`
         :return: Nothing is returned
@@ -58,11 +55,11 @@ class Router(object):
             raise SpinnMachineAlreadyExistsException(
                 "link", str(link.source_link_id))
         self._links[link.source_link_id] = link
-            
+
     def is_link(self, source_link_id):
         """ Determine if there is a link with id source_link_id.\
             Also implemented as __contains__(source_link_id)
-        
+
         :param source_link_id: The id of the link to find
         :type source_link_id: int
         :return: True if there is a link with the given id, False otherwise
@@ -70,16 +67,16 @@ class Router(object):
         :raise None: No known exceptions are raised
         """
         return source_link_id in self._links
-    
+
     def __contains__(self, source_link_id):
         """ See :py:meth:`is_link`
         """
         return self.is_link(source_link_id)
-    
+
     def get_link(self, source_link_id):
         """ Get the link with the given id, or None if no such link.\
             Also implemented as __getitem__(source_link_id)
-        
+
         :param source_link_id: The id of the link to find
         :type source_link_id: int
         :return: The link, or None if no such link
@@ -89,12 +86,12 @@ class Router(object):
         if source_link_id in self._links:
             return self._links[source_link_id]
         return None
-    
+
     def __getitem__(self, source_link_id):
         """ See :py:meth:`get_link`
         """
         return self.get_link(source_link_id)
-        
+
     @property
     def links(self):
         """ The available links of this router
@@ -104,10 +101,10 @@ class Router(object):
         :raise None: does not raise any known exceptions
         """
         return self._links.itervalues()
-    
+
     def __iter__(self):
         """ Get an iterable of source link ids and links in the router
-        
+
         :return: an iterable of tuples of (source_link_id, link) where:
                     * source_link_id is the id of the link
                     * link is a router link
@@ -115,37 +112,37 @@ class Router(object):
         :raise None: does not raise any known exceptions
         """
         return self._links.iteritems()
-    
+
     @property
     def emergency_routing_enabled(self):
         """ Indicator of whether emergency routing is enabled
-        
+
         :return: True if emergency routing is enabled, False otherwise
         :rtype: bool
         :raise None: does not raise any known exceptions
         """
         return self._emergency_routing_enabled
-    
+
     @property
     def clock_speed(self):
         """ The clock speed of the router in cycles per second
-        
+
         :return: The clock speed in cycles per second
         :rtype: int
         :raise None: does not raise any known exceptions
         """
         return self._clock_speed
-    
+
     @property
     def n_available_multicast_entries(self):
         """ The number of available multicast entries in the routing tables
-        
+
         :return: The number of available entries
         :rtype: int
         :raise None: does not raise any known exceptions
         """
         return self._n_available_multicast_entries
-    
+
     def __str__(self):
         return (
             "[Router: clock_speed={} MHz, emergency_routing={},"
@@ -153,8 +150,8 @@ class Router(object):
                 (self._clock_speed / 1000000),
                 self._emergency_routing_enabled,
                 self._n_available_multicast_entries, self._links.values()))
-    
-    def __repr(self):
+
+    def __repr__(self):
         return self.__str__()
 
     def get_neighbouring_chips_coords(self):

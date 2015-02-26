@@ -8,7 +8,7 @@ class Chip(object):
         between the cores, and a router.\
         The chip is iterable over the processors providing\
         (processor_id, processor) where:
-        
+
             * processor_id is the id of a processor
             * processor is the processor with processor_id
     """
@@ -64,7 +64,6 @@ class Chip(object):
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
 
-
     def is_processor_with_id(self, processor_id):
         """ Determines if a processor with the given id exists in the chip.\
             Also implemented as __getitem__(processor_id)
@@ -76,7 +75,7 @@ class Chip(object):
         :raise None: does not raise any known exceptions
         """
         return processor_id in self._p
-    
+
     def __getitem__(self, processor_id):
         """ see :py:meth:`is_processor_with_id`
         """
@@ -86,7 +85,7 @@ class Chip(object):
         """ Return the processor with the specified id or None if the\
             processor does not exist.\
             Also implemented as __contains__(processor_id)
-        
+
         :param processor_id: the id of the processor to return
         :type processor_id: int
         :return: the processor with the specified id or None if no such\
@@ -97,7 +96,7 @@ class Chip(object):
         if processor_id in self._p:
             return self._p[processor_id]
         return None
-    
+
     def __contains__(self, processor_id):
         """ see :py:meth:`get_processor_with_id`
         """
@@ -142,10 +141,10 @@ class Chip(object):
         :raise None: this method does not raise any known exceptions
         """
         return self._virtual
-    
+
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors
-        
+
         :return: An iterable of (processor_id, processor) where:
                     * procssor_id is the id of a processor
                     * processor is the processor with the id
@@ -213,13 +212,13 @@ class Chip(object):
         :raise None: this method does not raise any exception
         """
         return self._tag_ids
-    
+
     def __str__(self):
         return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"
                 " processors={}, nearest_ethernet={}:{}]"
                 .format(self._x, self._y, self.sdram, self.ip_address,
-                        self.router, self._p.values(), self._nearest_ethernet_x,
-                        self._nearest_ethernet_y))
-        
+                        self.router, self._p.values(),
+                        self._nearest_ethernet_x, self._nearest_ethernet_y))
+
     def __repr__(self):
         return self.__str__()
