@@ -1,7 +1,7 @@
-from spinn_machine.tags.abstract_tag import AbstractIPTAG
+from spinn_machine.tags.abstract_tag import AbstractTag
 
 
-class ReverseIPTag(AbstractIPTAG):
+class ReverseIPTag(AbstractTag):
     """ Used to hold data that is contained within an IPTag
     """
 
@@ -23,7 +23,7 @@ class ReverseIPTag(AbstractIPTAG):
         :type sdp_port: int
         :raise None: No known exceptions are raised
         """
-        AbstractIPTAG.__init__(self, port, tag)
+        AbstractTag.__init__(self, port, tag)
         self._destination_x = destination_x
         self._destination_y = destination_y
         self._destination_p = destination_p

@@ -1,42 +1,39 @@
-from spinn_machine.tags.abstract_tag import AbstractIPTAG
+from spinn_machine.tags.abstract_tag import AbstractTag
 
 
-class IPTag(AbstractIPTAG):
+class IPTag(AbstractTag):
     """ Used to hold data that is contained within an IPTag
     """
 
-    def __init__(self, address, port, tag, strip_sdp=False):
+    def __init__(self, ip_address, port, tag, strip_sdp=False):
         """
-        :param address: The IP address to which SCP packets with the tag will\
-                    be sent
+        :param ip_address: The IP address to which SDP packets with the tag\
+                    will be sent
         :type address: str
-        :param port: The port to which the SCP packets with the tag will be\
+        :param port: The port to which the SDP packets with the tag will be\
                     sent
         :type port: int
-        :param tag: The tag of the SCP packet
+        :param tag: The tag of the SDP packet
         :type tag: int
         :param strip_sdp: Indicates whether the SDP header should be removed
         :type strip_sdp: bool
         :raise None: No known exceptions are raised
         """
-        AbstractIPTAG.__init__(self, port, tag)
-        self._address = address
+        AbstractTag.__init__(self, port, tag)
+        self._ip_address = ip_address
         self._strip_sdp = strip_sdp
 
     @property
-    def address(self):
+    def ip_address(self):
         """ Return the IP address of the tag
         """
-        return self._address
+        return self._ip_address
 
     @property
     def strip_sdp(self):
         """ Return if the sdp header is to be stripped
         """
         return self._strip_sdp
-
-    def string_representation(self):
-        return self.__str__()
 
     def __str__(self):
         return "IP Tag: tag={} port={} address={}".format(

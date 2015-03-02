@@ -1,4 +1,4 @@
-class AbstractIPTAG(object):
+class AbstractTag(object):
 
     def __init__(self, port, tag):
         self._port = port
