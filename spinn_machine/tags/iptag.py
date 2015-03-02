@@ -5,21 +5,24 @@ class IPTag(AbstractTag):
     """ Used to hold data that is contained within an IPTag
     """
 
-    def __init__(self, ip_address, port, tag, strip_sdp=False):
+    def __init__(self, board_address, tag, ip_address, port, strip_sdp=False):
         """
+        :param board_address: The ip address of the board on which the tag
+            is allocated
+        :type board_address: str
+        :param tag: The tag of the SDP packet
+        :type tag: int
         :param ip_address: The IP address to which SDP packets with the tag\
                     will be sent
-        :type address: str
+        :type ip_address: str
         :param port: The port to which the SDP packets with the tag will be\
                     sent
         :type port: int
-        :param tag: The tag of the SDP packet
-        :type tag: int
         :param strip_sdp: Indicates whether the SDP header should be removed
         :type strip_sdp: bool
         :raise None: No known exceptions are raised
         """
-        AbstractTag.__init__(self, port, tag)
+        AbstractTag.__init__(self, board_address, tag, port)
         self._ip_address = ip_address
         self._strip_sdp = strip_sdp
 
@@ -36,5 +39,5 @@ class IPTag(AbstractTag):
         return self._strip_sdp
 
     def __str__(self):
-        return "IP Tag: tag={} port={} address={}".format(
-            self._tag, self._port, self._address)
+        return "IP Tag on {}: tag={} port={} ip_address={}".format(
+            self._board_address, self._tag, self._port, self._ip_address)

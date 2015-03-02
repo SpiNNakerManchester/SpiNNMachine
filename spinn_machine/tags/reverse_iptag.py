@@ -5,13 +5,16 @@ class ReverseIPTag(AbstractTag):
     """ Used to hold data that is contained within an IPTag
     """
 
-    def __init__(self, port, tag, destination_x, destination_y,
+    def __init__(self, board_address, tag, port, destination_x, destination_y,
                  destination_p, sdp_port=1):
         """
-        :param port: The UDP port on which SpiNNaker will listen for packets
-        :type port: int
+        :param board_address: The ip address of the board on which the tag
+            is allocated
+        :type board_address: str
         :param tag: The tag of the SDP packet
         :type tag: int
+        :param port: The UDP port on which SpiNNaker will listen for packets
+        :type port: int
         :param destination_x: The x-coordinate of the chip to send packets to
         :type destination_x: int
         :param destination_y: The y-coordinate of the chip to send packets to
@@ -23,7 +26,7 @@ class ReverseIPTag(AbstractTag):
         :type sdp_port: int
         :raise None: No known exceptions are raised
         """
-        AbstractTag.__init__(self, port, tag)
+        AbstractTag.__init__(self, board_address, tag, port)
         self._destination_x = destination_x
         self._destination_y = destination_y
         self._destination_p = destination_p
@@ -55,7 +58,7 @@ class ReverseIPTag(AbstractTag):
         return self._destination_p
 
     def __str__(self):
-        return "Reverse IP Tag: tag={} port={} x={} y={} p={}, s_pt={}".format(
-            self._tag, self._port, self._destination_x,
-            self._destination_y, self._destination_p,
-            self._sdp_port)
+        return ("Reverse IP Tag on {}: tag={} port={} x={} y={} p={}, s_pt={}"
+                .format(self._board_address, self._tag, self._port,
+                        self._destination_x, self._destination_y,
+                        self._destination_p, self._sdp_port))
