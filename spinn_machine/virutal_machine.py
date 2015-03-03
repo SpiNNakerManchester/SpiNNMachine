@@ -89,7 +89,8 @@ class VirtualMachine(Machine):
                     chip_router = Router(chip_links, False)
                     sdram = SDRAM()
 
-                    chip = Chip(i, j, processors, chip_router, sdram)
+                    chip = Chip(i, j, processors, chip_router, sdram, 0, 0,
+                                "127.0.0.1")
                     self.add_chip(chip)
 
         processor_count = 0
