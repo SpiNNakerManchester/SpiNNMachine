@@ -9,5 +9,6 @@ setup(
     description="Representation of a SpiNNaker Machine",
     url="https://github.com/SpiNNakerManchester/SpiNNMachine",
     license="GNU GPLv3.0",
-    packages=['spinn_machine']
+    packages=['spinn_machine',
+              'spinn_machine.tags']
 )

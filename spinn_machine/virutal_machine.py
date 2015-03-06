@@ -86,10 +86,11 @@ class VirtualMachine(Machine):
                     chip_links = \
                         self._calculate_links(i, j, x_dimension, y_dimension,
                                               with_wrap_arounds, version)
-                    chip_router = Router(chip_links, False, list())
+                    chip_router = Router(chip_links, False)
                     sdram = SDRAM()
 
-                    chip = Chip(i, j, processors, chip_router, sdram)
+                    chip = Chip(i, j, processors, chip_router, sdram, 0, 0,
+                                "127.0.0.1")
                     self.add_chip(chip)
 
         processor_count = 0
@@ -156,13 +157,16 @@ class VirtualMachine(Machine):
         if x == 0 and y == 0:
             links.append(Link(source_x=0, source_y=0, destination_y=0,
                               destination_x=1, source_link_id=0,
-                              multicast_default_from=3, multicast_default_to=3))
+                              multicast_default_from=3,
+                              multicast_default_to=3))
             links.append(Link(source_x=0, source_y=0, destination_y=1,
                               destination_x=1, source_link_id=1,
-                              multicast_default_from=4, multicast_default_to=4))
+                              multicast_default_from=4,
+                              multicast_default_to=4))
             links.append(Link(source_x=0, source_y=0, destination_y=1,
                               destination_x=0, source_link_id=2,
-                              multicast_default_from=5, multicast_default_to=5))
+                              multicast_default_from=5,
+                              multicast_default_to=5))
             if wrap_around:
                 links.append(Link(source_x=0, source_y=0, destination_y=0,
                                   destination_x=1, source_link_id=5,
@@ -181,10 +185,12 @@ class VirtualMachine(Machine):
         if x == 0 and y == 1:
             links.append(Link(source_x=0, source_y=1, destination_y=1,
                               destination_x=1, source_link_id=0,
-                              multicast_default_from=3, multicast_default_to=3))
+                              multicast_default_from=3,
+                              multicast_default_to=3))
             links.append(Link(source_x=0, source_y=1, destination_y=0,
                               destination_x=0, source_link_id=5,
-                              multicast_default_from=2, multicast_default_to=2))
+                              multicast_default_from=2,
+                              multicast_default_to=2))
             if wrap_around:
                 links.append(Link(source_x=0, source_y=1, destination_y=0,
                                   destination_x=1, source_link_id=1,
@@ -207,10 +213,12 @@ class VirtualMachine(Machine):
         if x == 1 and y == 0:
             links.append(Link(source_x=1, source_y=0, destination_y=1,
                               destination_x=1, source_link_id=2,
-                              multicast_default_from=5, multicast_default_to=5))
+                              multicast_default_from=5,
+                              multicast_default_to=5))
             links.append(Link(source_x=1, source_y=0, destination_y=0,
                               destination_x=0, source_link_id=3,
-                              multicast_default_from=0, multicast_default_to=0))
+                              multicast_default_from=0,
+                              multicast_default_to=0))
             if wrap_around:
                 links.append(Link(source_x=1, source_y=0, destination_y=1,
                                   destination_x=0, source_link_id=4,
@@ -232,13 +240,16 @@ class VirtualMachine(Machine):
         if x == 1 and y == 1:
             links.append(Link(source_x=1, source_y=1, destination_y=0,
                               destination_x=0, source_link_id=4,
-                              multicast_default_from=1, multicast_default_to=1))
+                              multicast_default_from=1,
+                              multicast_default_to=1))
             links.append(Link(source_x=1, source_y=1, destination_y=0,
                               destination_x=1, source_link_id=5,
-                              multicast_default_from=2, multicast_default_to=2))
+                              multicast_default_from=2,
+                              multicast_default_to=2))
             links.append(Link(source_x=1, source_y=1, destination_y=1,
                               destination_x=0, source_link_id=3,
-                              multicast_default_from=0, multicast_default_to=0))
+                              multicast_default_from=0,
+                              multicast_default_to=0))
             if wrap_around:
                 links.append(Link(source_x=1, source_y=1, destination_y=0,
                                   destination_x=1, source_link_id=2,
@@ -280,12 +291,17 @@ class VirtualMachine(Machine):
         """
 
         links = list()
-        #deal with the 3 basic links from 0 to 2
-        if x < max_x:  # sits away from the right edge of the board
+
+        # deal with the 3 basic links from 0 to 2
+        # sits away from the right edge of the board
+        if x < max_x:
             links.append(Link(source_x=x, source_y=y, destination_y=y,
                               destination_x=x + 1, source_link_id=0,
-                              multicast_default_from=3, multicast_default_to=3))
-            if y < max_y:  # sits away from the top edge of the board
+                              multicast_default_from=3,
+                              multicast_default_to=3))
+
+            # sits away from the top edge of the board
+            if y < max_y:
                 links.append(Link(source_x=x, source_y=y, destination_y=y + 1,
                                   destination_x=x + 1, source_link_id=1,
                                   multicast_default_from=4,
@@ -294,7 +310,9 @@ class VirtualMachine(Machine):
                                   destination_x=x, source_link_id=2,
                                   multicast_default_from=5,
                                   multicast_default_to=5))
-            elif wrap_around and version is None:  # top edge of the board
+            elif wrap_around and version is None:
+
+                # top edge of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=0,
                                   destination_x=x + 1, source_link_id=1,
                                   multicast_default_from=4,
@@ -315,30 +333,39 @@ class VirtualMachine(Machine):
                                   multicast_default_from=5,
                                   multicast_default_to=5))
             elif wrap_around and version is None:
-            # sits on the top edge of the board
+
+                # sits on the top edge of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=0,
                                   destination_x=x, source_link_id=2,
                                   multicast_default_from=5,
                                   multicast_default_to=5))
-            #dealing with top right link
+
+            # dealing with top right link
             if wrap_around and version is None:
-                if y < max_y:  # if not at top corner, then  go up and around
+                if y < max_y:
+
+                    # if not at top corner, then  go up and around
                     links.append(Link(source_x=x, source_y=y,
                                       destination_y=y + 1,
                                       destination_x=0, source_link_id=1,
                                       multicast_default_from=4,
                                       multicast_default_to=4))
-                else:  # if at top corner, so around to 0 0
+                else:
+
+                    # if at top corner, so around to 0 0
                     links.append(Link(source_x=x, source_y=y,
                                       destination_y=0,
                                       destination_x=0, source_link_id=1,
                                       multicast_default_from=4,
                                       multicast_default_to=4))
-        #deal with the links 3 4 5
-        if x != 0:  # not on left side of baord
+
+        # deal with the links 3 4 5
+        # not on left side of board
+        if x != 0:
             links.append(Link(source_x=x, source_y=y, destination_y=y,
                               destination_x=x - 1, source_link_id=3,
-                              multicast_default_from=0, multicast_default_to=0))
+                              multicast_default_from=0,
+                              multicast_default_to=0))
             if y != 0:  # not in bottom side of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=y - 1,
                                   destination_x=x - 1, source_link_id=4,
@@ -349,7 +376,8 @@ class VirtualMachine(Machine):
                                   multicast_default_from=2,
                                   multicast_default_to=2))
             elif wrap_around and version is None:
-            # in the bottom side of the board
+
+                # in the bottom side of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=max_y,
                                   destination_x=x - 1, source_link_id=4,
                                   multicast_default_from=1,
@@ -364,13 +392,16 @@ class VirtualMachine(Machine):
                                   destination_x=max_x, source_link_id=3,
                                   multicast_default_from=0,
                                   multicast_default_to=0))
-            if y != 0:  # not on the bottom side of the board
+            if y != 0:
+
+                # not on the bottom side of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=y - 1,
                                   destination_x=x, source_link_id=5,
                                   multicast_default_from=2,
                                   multicast_default_to=2))
             elif wrap_around and version is None:
-            # in the bottom corner of the board
+
+                # in the bottom corner of the board
                 links.append(Link(source_x=x, source_y=y, destination_y=max_y,
                                   destination_x=max_x, source_link_id=4,
                                   multicast_default_from=1,
