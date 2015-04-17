@@ -1,15 +1,23 @@
+"""
+MulticastRoutingEntry
+"""
+# spimmMachien imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 from spinn_machine.exceptions import SpinnMachineInvalidParameterException
+
+# pacman imports
+from pacman import exceptions as pacman_exceptions
 
 
 class MulticastRoutingEntry(object):
     """ Represents an entry in a multicast routing table
     """
     
-    def __init__(self, key_combo, mask, processor_ids, link_ids, defaultable):
+    def __init__(self, key_mask_combo, mask, processor_ids, link_ids,
+                 defaultable):
         """
         
-        :param key_combo: The routing key_combo
+        :param key_mask_combo: The routing key_combo
         key_combope key: int
         :param mask: The route key_combo mask
         :type mask: int
@@ -24,9 +32,15 @@ class MulticastRoutingEntry(object):
                     * If processor_ids contains the same id more than once
                     * If link_ids contains the same id more than once
         """
-        self._key_combo = key_combo
+        self._key_mask_combo = key_mask_combo
         self._mask = mask
         self._defaultable = defaultable
+
+        if (key_mask_combo & mask) != key_mask_combo:
+            raise pacman_exceptions.PacmanRoutingException(
+                "The key combo {} is changed when masked with the mask {}. This"
+                " is determined to be an error in the tool chain. Please "
+                "correct this and try again.".format(key_mask_combo, mask))
         
         # Add processor ids, checking that there is only one of each
         self._processor_ids = set()
@@ -51,7 +65,7 @@ class MulticastRoutingEntry(object):
         :return: The routing key
         :rtype: int
         """
-        return self._key_combo
+        return self._key_mask_combo
     
     @property
     def mask(self):
