@@ -146,12 +146,12 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             proc_ids.append(i)
         for i in range(9, 18):
             proc_ids2.append(i)
-        key = 1
+        key_combo = 1
         mask = 1
-        a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids,
-                                                link_ids, True)
-        b_multicast = mre.MulticastRoutingEntry(key + 1, mask, proc_ids2,
-                                                link_ids2, True)
+        a_multicast = mre.MulticastRoutingEntry(
+            key_combo, mask, proc_ids, link_ids, True)
+        b_multicast = mre.MulticastRoutingEntry(
+            key_combo + 1, mask + 1, proc_ids2, link_ids2, True)
         with self.assertRaises(exc.SpinnMachineInvalidParameterException):
             a_multicast.merge(b_multicast)
 
@@ -172,7 +172,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         mask = 1
         a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids,
                                                 link_ids, True)
-        b_multicast = mre.MulticastRoutingEntry(key, mask + 1, proc_ids2,
+        b_multicast = mre.MulticastRoutingEntry(key + 1, mask + 1, proc_ids2,
                                                 link_ids2, True)
         with self.assertRaises(exc.SpinnMachineInvalidParameterException):
             a_multicast.merge(b_multicast)
