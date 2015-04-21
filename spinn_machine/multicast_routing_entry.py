@@ -5,18 +5,15 @@ MulticastRoutingEntry
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 
-# pacman imports
-from pacman import exceptions as pacman_exceptions
-
 
 class MulticastRoutingEntry(object):
     """ Represents an entry in a multicast routing table
     """
-    
+
     def __init__(self, key_mask_combo, mask, processor_ids, link_ids,
                  defaultable):
         """
-        
+
         :param key_mask_combo: The routing key_combo
         key_combope key: int
         :param mask: The route key_combo mask
@@ -37,11 +34,13 @@ class MulticastRoutingEntry(object):
         self._defaultable = defaultable
 
         if (key_mask_combo & mask) != key_mask_combo:
-            raise pacman_exceptions.PacmanRoutingException(
-                "The key combo {} is changed when masked with the mask {}. This"
+            raise SpinnMachineInvalidParameterException(
+                "key_mask_combo and mask",
+                "{} and {}".format(key_mask_combo, mask),
+                "The key combo is changed when masked with the mask. This"
                 " is determined to be an error in the tool chain. Please "
-                "correct this and try again.".format(key_mask_combo, mask))
-        
+                "correct this and try again.")
+
         # Add processor ids, checking that there is only one of each
         self._processor_ids = set()
         for processor_id in processor_ids:
@@ -49,7 +48,7 @@ class MulticastRoutingEntry(object):
                 raise SpinnMachineAlreadyExistsException(
                     "processor id", str(processor_id))
             self._processor_ids.add(processor_id)
-        
+
         # Add link ids, checking that there is only one of each
         self._link_ids = set()
         for link_id in link_ids:
@@ -57,38 +56,38 @@ class MulticastRoutingEntry(object):
                 raise SpinnMachineAlreadyExistsException(
                     "link id", str(link_id))
             self._link_ids.add(link_id)
-    
+
     @property
     def key_combo(self):
         """ The routing key
-        
+
         :return: The routing key
         :rtype: int
         """
         return self._key_mask_combo
-    
+
     @property
     def mask(self):
         """ The routing mask
-        
+
         :return: The routing mask
         :rtype: int
         """
         return self._mask
-    
+
     @property
     def processor_ids(self):
         """ The destination processor ids
-        
+
         :return: An iterable of processor ids
         :rtype: iterable of int
         """
         return self._processor_ids
-    
+
     @property
     def link_ids(self):
         """ The destination link ids
-        
+
         :return: An iterable of link ids
         :rtype: iterable of int
         """
@@ -101,15 +100,15 @@ class MulticastRoutingEntry(object):
         :rtype: bool
         """
         return self._defaultable
-    
+
     def merge(self, other_entry):
         """ Merges together two multicast routing entries.  The entry to merge\
-            must have the same key and mask.  The merge will join the processor\
-            ids and link ids from both the entries.  This could be used to add\
-            a new destination to an existing route in a routing table.\
-            It is also possible to use the add (+) operator or the or (|)\
-            operator with the same effect.
-            
+            must have the same key and mask.  The merge will join the\
+            processor ids and link ids from both the entries.  This could be\
+            used to add a new destination to an existing route in a\
+            routing table. It is also possible to use the add (+) operator or\
+            the or (|) operator with the same effect.
+
         :param other_entry: The multicast entry to merge with this entry
         :type other_entry: :py:class:`MulticastRoutingEntry`
         :return: A new multicast routing entry with merged destinations
@@ -121,7 +120,7 @@ class MulticastRoutingEntry(object):
             raise SpinnMachineInvalidParameterException(
                 "other_entry.key", hex(other_entry.key_combo),
                 "The key does not match {}".format(hex(self.key_combo)))
-        
+
         if other_entry.mask != self.mask:
             raise SpinnMachineInvalidParameterException(
                 "other_entry.mask", hex(other_entry.mask),
@@ -136,13 +135,13 @@ class MulticastRoutingEntry(object):
             self._processor_ids.union(other_entry.processor_ids),
             self._link_ids.union(other_entry.link_ids), defaultable)
         return new_entry
-    
+
     def __add__(self, other_entry):
         """ Allows overloading of + to merge two entries together.\
             See :py:meth:`merge`
         """
         return self.merge(other_entry)
-    
+
     def __or__(self, other_entry):
         """ Allows overloading of | to merge two entries together.\
             See :py:meth:`merge`
