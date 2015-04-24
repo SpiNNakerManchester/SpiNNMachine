@@ -3,5 +3,6 @@ matrix:
   include:
     - python: "2.7"
       env: TEST_SUITE=suite_2_7
-install: python setup.py
+before_script:
+  - python ./setup.py
 script: python ./unittests/run_tests.py $TEST_SUITE
