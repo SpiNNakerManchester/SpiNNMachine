@@ -3,4 +3,5 @@ matrix:
   include:
     - python: "2.7"
       env: TEST_SUITE=suite_2_7
-script: python ./unittests/run_tests.py
+install: pip install spinnmachine
+script: python ./unittests/run_tests.py $TEST_SUITE
