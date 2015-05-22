@@ -29,8 +29,11 @@ class TestingChip(unittest.TestCase):
         r = router.Router(links, False, 100, 1024)
 
         ip = "192.162.240.253"
+        nearest_ethernet_chip = (0, 0)
 
-        new_chip = chip.Chip(x, y, processors, r, _sdram, ip)
+        new_chip = chip.Chip(
+            x, y, processors, r, _sdram, nearest_ethernet_chip[0],
+            nearest_ethernet_chip[1], ip)
 
         self.assertEqual(new_chip.x, x)
         self.assertEqual(new_chip.y, y)
@@ -63,10 +66,12 @@ class TestingChip(unittest.TestCase):
         links.append(link.Link(1, 1, 2, 0, 0, e, e))
         links.append(link.Link(1, 0, 3, 0, 1, w, w))
         r = router.Router(links, False, 100, 1024)
-
+        nearest_ethernet_chip = (0, 0)
         ip = "192.162.240.253"
+
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            chip.Chip(x, y, processors, r, _sdram, ip)
+            chip.Chip(x, y, processors, r, _sdram, nearest_ethernet_chip[0],
+                      nearest_ethernet_chip[1], ip)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,8 @@
+"""
+a Link in a spinnaker machine
+"""
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-from enum import Enum
+
 
 class Link(object):
     """ Represents a directional link between chips in the machine

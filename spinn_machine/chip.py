@@ -34,9 +34,9 @@ class Chip(object):
         :param sdram: an SDRAM for the chip
         :type sdram: :py:class:`spinn_machine.sdram.SDRAM`
         :param nearest_ethernet_x: the nearest ethernet x coord
-        :type nearest_ethernet_x: int
+        :type nearest_ethernet_x: int or None
         :param nearest_ethernet_y: the nearest ethernet y coord
-        :type nearest_ethernet_y: int
+        :type nearest_ethernet_y: int or None
         :param ip_address: the IP address of the chip or None if no ethernet\
                     attached
         :type ip_address: str
