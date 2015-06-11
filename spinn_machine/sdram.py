@@ -40,7 +40,7 @@ class SDRAM(object):
         :return: The space available in bytes
         :rtype: int
         """
-        return self._system_base_address - self._user_base_addr
+        return self._system_base_address - self._user_base_address
 
     @property
     def user_base_address(self):
