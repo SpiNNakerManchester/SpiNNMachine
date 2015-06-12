@@ -6,12 +6,7 @@ class SDRAM(object):
     """
     DEFAULT_SDRAM_BYTES = 128 * 1024 * 1024
 
-    DEFAULT_BASE_ADDRESS = 0x70000000
-
-    DEFAULT_SYSTEM_ADDRESS = 0x778000000
-
-    def __init__(self, user_base_address=DEFAULT_BASE_ADDRESS,
-                 system_base_address=DEFAULT_SYSTEM_ADDRESS,
+    def __init__(self, user_base_address, system_base_address,
                  total_size=DEFAULT_SDRAM_BYTES):
         """
 
@@ -29,9 +24,9 @@ class SDRAM(object):
         if total_size < 0:
             raise SpinnMachineInvalidParameterException(
                 "size", str(total_size), "Must not be less than 0")
+        self._total_size = total_size
         self._user_base_address = user_base_address
         self._system_base_address = system_base_address
-        self._total_size = total_size
 
     @property
     def size(self):
