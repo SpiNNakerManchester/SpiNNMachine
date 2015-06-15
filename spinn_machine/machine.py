@@ -1,6 +1,15 @@
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-from collections import OrderedDict
+"""
+Machine
+"""
 
+# spinnmanchine imports
+from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine.utilities.ordered_set import OrderedSet
+
+#general imports
+from collections import OrderedDict
+from collections import deque
+import math
 
 class Machine(object):
     """ A Representation of a Machine with a number of Chips.  Machine is also\
@@ -180,7 +189,101 @@ class Machine(object):
         :rtype: iterable of :py:class:`spinn_machine.chip.Chip`
         """
         return self._ethernet_connected_chips
-    
+
+    def generate_radial_chips(
+            self, resource_tracker=None, start_chip_x=0, start_chip_y=0,
+            size_of_list=None):
+        """
+
+        :param resource_tracker: tracker of resoruces, to see if a chip exists
+        :param start_chip_x: the start chip x postition to start radialing out
+        from
+        :type start_chip_x: int
+        :param start_chip_y:the start chip y postition to start radialing out
+        from
+        :type start_chip_y: int
+        :param size_of_list: the number of chips needed from the machine for
+        the list
+        :type size_of_list: int
+        :return: a ordered set of chips radialling out from a given chip.
+        """
+
+        # if no size given, assume all machine is needed
+        if size_of_list is None:
+            size_of_list = len(self._chips)
+
+        # locate first chip
+        first_chip = self.get_chip_at(start_chip_x, start_chip_y)
+        done_chips = set()
+        found_chips = OrderedSet()
+        search = deque([first_chip])
+        while len(search) > 0 and len(found_chips) <= size_of_list:
+            chip = search.pop()
+            if (resource_tracker is None or
+                    resource_tracker.is_chip_available(chip.x, chip.y)):
+                found_chips.add(self.get_chip_at(chip.x, chip.y))
+                done_chips.add(chip)
+
+            # Examine the links of the chip to find the next chips
+            for link in chip.router.links:
+                next_chip = self.get_chip_at(link.destination_x,
+                                             link.destination_y)
+
+                # Don't search found chips again
+                if next_chip not in done_chips:
+                    search.appendleft(next_chip)
+        return found_chips
+
+    def get_cloest_chip_to(self, chip_x, chip_y):
+        """
+        gets the closest chip to a given chip coords
+        :param chip_x: the chip coord in x axis for looking for cloest to
+        :param chip_y: the chip coord in y axis for looking for cloest to
+        :return:
+        """
+        if self.is_chip_at(chip_x, chip_y):
+            return self.get_chip_at(chip_x, chip_y)
+        else:
+            searched_ids = set()
+            pre_visited_chips = set()
+            searched_ids.add("{}:{}".format(chip_x, chip_y))
+            search = deque([(chip_x, chip_y)])
+            found_chip = None
+            while len(search) > 0 and found_chip is None:
+                (chip_x, chip_y) = search.pop()
+                pre_visited_chips.add((chip_x, chip_y))
+                next_chips = self._locate_neighbouring_chips(chip_x, chip_y)
+                for (next_chip_x, next_chip_y) in next_chips:
+                    if (not self.is_chip_at(next_chip_x, next_chip_y) and
+                            (next_chip_x, next_chip_y) not in pre_visited_chips):
+                        search.appendleft((next_chip_x, next_chip_y))
+                    else:
+                        found_chip = self.get_chip_at(next_chip_x, next_chip_y)
+        return found_chip
+
+    def _locate_neighbouring_chips(self, chip_x, chip_y):
+        """
+        locates the chips which reside next to the input chip
+        :param chip_x: the input chips x coordinate
+        :param chip_y: the input chip y coordinate
+        :return: a iterable of tuples containing x and y of neighbouring chips
+        """
+        next_chips = list()
+        removal_chips = list()
+        next_chips.append((chip_x + 1, chip_y))
+        next_chips.append((chip_x + 1, chip_y + 1))
+        next_chips.append((chip_x, chip_y + 1))
+        next_chips.append((chip_x - 1, chip_y))
+        next_chips.append((chip_x - 1, chip_y - 1))
+        next_chips.append((chip_x, chip_y - 1))
+        for (chip_id_x, chip_id_y) in next_chips:
+            if (chip_id_x < 0 or chip_id_x > self._max_chip_x or
+                    chip_id_y < 0 or chip_id_y > self._max_chip_y):
+                removal_chips.append((chip_id_x, chip_id_y))
+        for (chip_id_x, chip_id_y) in removal_chips:
+            next_chips.remove((chip_id_x, chip_id_y))
+        return next_chips
+
     def __str__(self):
         return "[Machine: max_x={}, max_y={}, chips={}]".format(
             self._max_chip_x, self._max_chip_y, self._chips.values())
@@ -189,6 +292,10 @@ class Machine(object):
         return self.__str__()
 
     def cores_and_link_output_string(self):
+        """
+        helper method for figuring the machine's detials
+        :return:
+        """
         cores = 0
         links = 0
         total_links = dict()
