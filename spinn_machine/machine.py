@@ -190,52 +190,6 @@ class Machine(object):
         """
         return self._ethernet_connected_chips
 
-    def generate_radial_chips(
-            self, resource_tracker=None, start_chip_x=0, start_chip_y=0,
-            size_of_list=None):
-        """
-
-        :param resource_tracker: tracker of resoruces, to see if a chip exists
-        :param start_chip_x: the start chip x postition to start radialing out
-        from
-        :type start_chip_x: int
-        :param start_chip_y:the start chip y postition to start radialing out
-        from
-        :type start_chip_y: int
-        :param size_of_list: the number of chips needed from the machine for
-        the list
-        :type size_of_list: int
-        :return: a ordered set of chips radialling out from a given chip.
-        """
-
-        # if no size given, assume all machine is needed
-        if size_of_list is None:
-            size_of_list = len(self._chips)
-
-        # locate first chip
-        first_chip = self.get_chip_at(start_chip_x, start_chip_y)
-        done_chips = set()
-        found_chips = OrderedSet()
-        search = deque([first_chip])
-        while len(search) > 0 and len(found_chips) <= size_of_list:
-            chip = search.pop()
-            if (resource_tracker is None or
-                    resource_tracker.is_chip_available(chip.x, chip.y)):
-                found_chips.add(self.get_chip_at(chip.x, chip.y))
-                done_chips.add(chip)
-
-            # Examine the links of the chip to find the next chips
-            for link in chip.router.links:
-                next_chip = self.get_chip_at(link.destination_x,
-                                             link.destination_y)
-
-                # Don't search found chips again
-                if next_chip not in done_chips:
-                    search.appendleft(next_chip)
-        return found_chips
-
-
-
     def __str__(self):
         return "[Machine: max_x={}, max_y={}, chips={}]".format(
             self._max_chip_x, self._max_chip_y, self._chips.values())
