@@ -6,7 +6,7 @@ object
 from spinn_machine import exceptions
 
 
-def get_cloest_chip_to(chip_x, chip_y, max_x, max_y, invalid_chips):
+def get_cloest_chips_to(chip_x, chip_y, max_x, max_y, invalid_chips):
     """
     gets the closest chip to a given chip coords
     :param chip_x: the chip coord in x axis for looking for cloest to
@@ -16,18 +16,14 @@ def get_cloest_chip_to(chip_x, chip_y, max_x, max_y, invalid_chips):
     :param invalid_chips: list of chips to remove
     :return:
     """
-    if _does_this_chip_exist(chip_x, chip_y, max_x, max_y, invalid_chips):
-        chip = {'x': chip_x, 'y': chip_y}
-        return chip
-    else:
-        neigbhouring_ids = _locate_neighbouring_chips(
-            chip_x, chip_y, max_x, max_y)
-        found_chips = list()
-        for chip_coord in neigbhouring_ids:
-            if ((invalid_chips is not None and
-                    chip_coord not in invalid_chips) or
-                    invalid_chips is None):
-                found_chips.append(chip_coord)
+    neigbhouring_ids = _locate_neighbouring_chips(
+        chip_x, chip_y, max_x, max_y)
+    found_chips = list()
+    for chip_coord in neigbhouring_ids:
+        if ((invalid_chips is not None and
+                chip_coord not in invalid_chips) or
+                invalid_chips is None):
+            found_chips.append(chip_coord)
     if len(found_chips) == 0:
         raise exceptions.SpinnMachineException(
             "no sensible middle chips were found in the middle of the machine,"
