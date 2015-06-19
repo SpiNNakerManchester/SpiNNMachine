@@ -4,12 +4,10 @@ Machine
 
 # spinnmanchine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-from spinn_machine.utilities.ordered_set import OrderedSet
 
-#general imports
+# general imports
 from collections import OrderedDict
-from collections import deque
-import math
+
 
 class Machine(object):
     """ A Representation of a Machine with a number of Chips.  Machine is also\
@@ -198,9 +196,9 @@ class Machine(object):
         return self.__str__()
 
     def cores_and_link_output_string(self):
-        """
-        helper method for figuring the machine's detials
-        :return:
+        """ Get a string detailing the number of cores and links
+
+        :rtype: str
         """
         cores = 0
         total_links = dict()
