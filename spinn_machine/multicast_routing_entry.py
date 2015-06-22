@@ -10,11 +10,11 @@ class MulticastRoutingEntry(object):
     """ Represents an entry in a multicast routing table
     """
 
-    def __init__(self, key_mask_combo, mask, processor_ids, link_ids,
+    def __init__(self, routing_entry_key, mask, processor_ids, link_ids,
                  defaultable):
         """
 
-        :param key_mask_combo: The routing key_combo
+        :param routing_entry_key: The routing key_combo
         key_combope key: int
         :param mask: The route key_combo mask
         :type mask: int
@@ -29,14 +29,14 @@ class MulticastRoutingEntry(object):
                     * If processor_ids contains the same id more than once
                     * If link_ids contains the same id more than once
         """
-        self._key_mask_combo = key_mask_combo
+        self._routing_key_entry = routing_entry_key
         self._mask = mask
         self._defaultable = defaultable
 
-        if (key_mask_combo & mask) != key_mask_combo:
+        if (routing_entry_key & mask) != routing_entry_key:
             raise SpinnMachineInvalidParameterException(
                 "key_mask_combo and mask",
-                "{} and {}".format(key_mask_combo, mask),
+                "{} and {}".format(routing_entry_key, mask),
                 "The key combo is changed when masked with the mask. This"
                 " is determined to be an error in the tool chain. Please "
                 "correct this and try again.")
@@ -58,13 +58,13 @@ class MulticastRoutingEntry(object):
             self._link_ids.add(link_id)
 
     @property
-    def key_combo(self):
+    def routing_entry_key(self):
         """ The routing key
 
         :return: The routing key
         :rtype: int
         """
-        return self._key_mask_combo
+        return self._routing_key_entry
 
     @property
     def mask(self):
@@ -116,10 +116,10 @@ class MulticastRoutingEntry(object):
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
                     If the key and mask of the other entry do not match
         """
-        if other_entry.key_combo != self.key_combo:
+        if other_entry.routing_entry_key != self.routing_entry_key:
             raise SpinnMachineInvalidParameterException(
-                "other_entry.key", hex(other_entry.key_combo),
-                "The key does not match {}".format(hex(self.key_combo)))
+                "other_entry.key", hex(other_entry.routing_entry_key),
+                "The key does not match {}".format(hex(self.routing_entry_key)))
 
         if other_entry.mask != self.mask:
             raise SpinnMachineInvalidParameterException(
@@ -131,7 +131,7 @@ class MulticastRoutingEntry(object):
             defaultable = False
 
         new_entry = MulticastRoutingEntry(
-            self.key_combo, self.mask,
+            self.routing_entry_key, self.mask,
             self._processor_ids.union(other_entry.processor_ids),
             self._link_ids.union(other_entry.link_ids), defaultable)
         return new_entry
