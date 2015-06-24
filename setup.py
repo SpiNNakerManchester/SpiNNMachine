@@ -10,5 +10,6 @@ setup(
     url="https://github.com/SpiNNakerManchester/SpiNNMachine",
     license="GNU GPLv3.0",
     packages=['spinn_machine',
-              'spinn_machine.tags']
+              'spinn_machine.tags',
+              'spinn_machine.utilities']
 )
