@@ -147,3 +147,11 @@ class MulticastRoutingEntry(object):
             See :py:meth:`merge`
         """
         return self.merge(other_entry)
+
+    def __repr__(self):
+        return "{}:{}:{}:{}:{}".format(
+            self._routing_key_entry, self._mask, self._defaultable,
+            self._processor_ids, self._link_ids)
+
+    def __str__(self):
+        return self.__repr__()
