@@ -1,4 +1,11 @@
+"""
+Machine
+"""
+
+# spinnmanchine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+
+# general imports
 from collections import OrderedDict
 
 
@@ -189,10 +196,9 @@ class Machine(object):
         return self.__str__()
 
     def cores_and_link_output_string(self):
-        """
-        calulcates and generates a string that states the number of cores
-        and linsk this machine has.
-        :return:
+        """ Get a string detailing the number of cores and links
+
+        :rtype: str
         """
         cores = 0
         total_links = dict()

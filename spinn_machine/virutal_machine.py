@@ -16,14 +16,14 @@ class VirtualMachine(Machine):
 
     """
 
-    def __init__(self, x_dimension, y_dimension, with_wrap_arounds,
+    def __init__(self, width, height, with_wrap_arounds,
                  version=None):
         """constructor for a virtual machine
 
-        :param x_dimension: the x dimension of the virtual machine
-        :type x_dimension: int
-        :param y_dimension: the y dimension of the virtual machine
-        :type y_dimension: int
+        :param width: the width of the virtual machine in chips
+        :type width: int
+        :param height: the height of the virtual machine in chips
+        :type height: int
         :param with_wrap_arounds: bool defining if wrap around links exist
         :type with_wrap_arounds: bool
         :param version: the version id of a board. if set to none, then a \
@@ -35,47 +35,47 @@ class VirtualMachine(Machine):
         :raise None: this emthod does not raise any known exceptions
         """
         Machine.__init__(self, ())
-        self._initiate_virtual_machine(x_dimension, y_dimension,
+        self._initiate_virtual_machine(width, height,
                                        with_wrap_arounds, version)
 
-    def _initiate_virtual_machine(self, x_dimension, y_dimension,
+    def _initiate_virtual_machine(self, width, height,
                                   with_wrap_arounds, version):
         """main method to build a virtual machine object
 
-        :param x_dimension: the x dimension of the virtual machine
-        :type x_dimension: int
-        :param y_dimension: the y dimension of the virtual machine
-        :type y_dimension: int
+        :param width: the width of the virtual machine in chips
+        :type width: int
+        :param height: the height of the virtual machine in chips
+        :type height: int
         :param with_wrap_arounds: bool defining if wrap around links exist
         :type with_wrap_arounds: bool
         :param version: the version id of a board. if set to none, then a \
-        dimensional version of a board is produces, if a version is given the \
-        virtual board reflects whatever links exist on that board version
+                dimensional version of a board is produces, if a version is \
+                given the virtual board reflects whatever links exist on that \
+                board version
         :type version: int
         :return: None
         :rtype: None
-        :raise SpinnMachineInvalidParameterException:
-        when some param is invalid such as the x_dimension or y_dimension
-        is negative
+        :raise SpinnMachineInvalidParameterException: If the width or height\
+                is negative
         """
 
-        if x_dimension < 0 or y_dimension < 0:
+        if width < 0 or height < 0:
             raise exceptions.SpinnMachineInvalidParameterException(
-                "x_dimension or y_dimension", "value less than 0",
+                "width or height", "value less than 0",
                 "the dimensions of the virtual machine are not supported, as a"
-                "machine should not have a negaitve dimension")
+                "machine should not have a negative dimension")
 
         # if x and y are none, assume a 48 chip board
-        logger.debug("xdim = {} and ydim  = {}"
-                     .format(x_dimension, y_dimension))
+        logger.debug("width = {} and height  = {}"
+                     .format(width, height))
         board48gaps = [(0, 4), (0, 5), (0, 6), (0, 7), (1, 5), (1, 6), (1, 7),
                        (2, 6), (2, 7), (3, 7), (5, 0), (6, 0), (6, 1), (7, 0),
                        (7, 1), (7, 2)]
-        for i in xrange(x_dimension):
-            for j in xrange(y_dimension):
+        for i in xrange(width):
+            for j in xrange(height):
                 coords = (i, j)
-                if x_dimension == 8 and y_dimension == 8 \
-                   and coords in board48gaps:
+                if (width == 8 and height == 8 and
+                        coords in board48gaps):
                     pass
                     # a chip doesn't exist in this static position
                     # on these boards, so nullify it
@@ -83,9 +83,8 @@ class VirtualMachine(Machine):
                     processors = list()
                     for processor_id in range(0, 18):
                         processors.append(Processor(processor_id, 200000000))
-                    chip_links = \
-                        self._calculate_links(i, j, x_dimension, y_dimension,
-                                              with_wrap_arounds, version)
+                    chip_links = self._calculate_links(
+                        i, j, width, height, with_wrap_arounds, version)
                     chip_router = Router(chip_links, False)
                     sdram = SDRAM()
 
@@ -105,34 +104,34 @@ class VirtualMachine(Machine):
             "Static Allocation Complete. {} calculated app cores and {} links!"
             .format(processor_count, link_count))
 
-    def _calculate_links(self, x, y, x_dimension, y_dimension, wrap_around,
-                         version):
-        """calculates the links needed for a machine structure
+    def _calculate_links(self, x, y, width, height, wrap_around, version):
+        """ calculates the links needed for a machine structure
 
         :param x: chip x coord
         :param y: chip y coord
-        :param x_dimension: the x dimension of the virtual machine
-        :type x_dimension: int
-        :param y_dimension: the y dimension of the virtual machine
-        :type y_dimension: int
+        :param width: the width of the virtual machine in chips
+        :type width: int
+        :param height: the height of the virtual machine in chips
+        :type height: int
         :param wrap_around: bool defining if wrap around links exist
         :type wrap_around: bool
         :param version: the version id of a board. if set to none, then a \
-        dimensional version of a board is produces, if a version is given the \
-        virtual board reflects whatever links exist on that board version
+                dimensional version of a board is produces, if a version is \
+                given the virtual board reflects whatever links exist on that \
+                board version
         :type version: int
         :return: iterable of links
         :rtype: iterable of spinn_machine.link.Link
         :raiseNone: this method does not raise any known exceptions
 
         """
-        if x_dimension == 2 and y_dimension == 2:
+        if width == 2 and height == 2:
             return self._initlize_neighbour_links_for_4_chip_board(x, y,
                                                                    wrap_around,
                                                                    version)
         else:
             return self._initlize_neighbour_links_for_other_boards(
-                x, y, x_dimension - 1, y_dimension - 1, wrap_around, version)
+                x, y, width - 1, height - 1, wrap_around, version)
 
     @staticmethod
     def _initlize_neighbour_links_for_4_chip_board(x, y, wrap_around,
