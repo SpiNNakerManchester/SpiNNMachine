@@ -209,7 +209,7 @@ class Machine(object):
                 key1 = (link.source_x, link.source_y, link.source_link_id)
                 key2 = (link.destination_x, link.destination_y,
                         link.multicast_default_from)
-                if (key1 not in total_links and key2 not in total_links):
+                if key1 not in total_links and key2 not in total_links:
                     total_links[key1] = key1
         links = len(total_links.keys())
         return "{} cores and {} links".format(cores, links)
