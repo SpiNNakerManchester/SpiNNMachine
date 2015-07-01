@@ -8,21 +8,20 @@ class SDRAM(object):
 
     DEFAULT_BASE_ADDRESS = 0x70000000
 
-    DEFAULT_SYSTEM_ADDRESS = 0x778000000
+    DEFAULT_SYSTEM_ADDRESS = 0x77800000
 
     def __init__(self, user_base_address=DEFAULT_BASE_ADDRESS,
                  system_base_address=DEFAULT_SYSTEM_ADDRESS,
                  total_size=DEFAULT_SDRAM_BYTES):
         """
-
-        :param size: size of the SDRAM in bytes
-        :type size: int
         :param user_base_address: The start of the space which is available\
                     for use
         :type user_base_address: int
         :param system_base_address: The start of the space which is reserved\
                     for use by the system
         :type user_base_address: int
+        :param total_size: the total size of bytes that this sdram object holds
+        :type total_size: int
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
                     If the size is less than 0
         """
@@ -59,10 +58,10 @@ class SDRAM(object):
         :rtype: int
         :raise None: does not raise any known exceptions
         """
-        return self._size
+        return self._total_size
 
     def __str__(self):
-        return "{} MB".format(self._size / (1024 * 1024))
+        return "{} MB".format(self._total_size / (1024 * 1024))
 
     def __repr__(self):
         return self.__str__()
