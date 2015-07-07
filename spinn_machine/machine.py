@@ -4,9 +4,11 @@ Machine
 
 # spinnmanchine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine import exceptions
 
 # general imports
 from collections import OrderedDict
+from spinn_machine.spinnaker_link_data import SpinnakerLinkData
 
 
 class Machine(object):
@@ -213,3 +215,69 @@ class Machine(object):
                     total_links[key1] = key1
         links = len(total_links.keys())
         return "{} cores and {} links".format(cores, links)
+
+    def locate_connected_chips_coords_and_link(
+            self, version_no, spinnaker_link_no):
+        """
+        checks and verifies that there is a link which can be used to repreent
+        the spinnaker link used on the boards.
+        :param version_no: which version of board to use
+        :param spinnaker_link_no:  which spinnaker link to search for.
+        :return: a dict with "connected_chip_x, connected_chip_y, and
+        connected_link"
+        :raises: SpinnMachineInvalidParameterException when:
+        1. in valid spinnaker link vlaue
+        2. invlaid version number
+        3. uses wrap arounds
+        """
+        if version_no == 3:
+            if spinnaker_link_no > 1 or spinnaker_link_no < 0:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    spinnaker_link_no, spinnaker_link_no,
+                    "can only be either 0 or 1 for a spinn3/2 board")
+            else:
+                if spinnaker_link_no == 0:
+                    chip = self.get_chip_at(0, 0)
+                    if not chip.router.is_link(3):
+                        return SpinnakerLinkData(0, 0, 3)
+                    else:
+                        raise exceptions.SpinnMachineInvalidParameterException(
+                            str(3), str(3),
+                            "the link 3 off chip 0 0 already has a valid chip,"
+                            " which means wrap arounds exist and we currently"
+                            " dont know how to handle this."
+                        )
+                else:
+                    chip = self.get_chip_at(1, 0)
+                    if not chip.router.is_link(0):
+                        return SpinnakerLinkData(1, 0, 0)
+                    else:
+                        raise exceptions.SpinnMachineInvalidParameterException(
+                            str(0), str(0),
+                            "the link 0 off chip 1 0 already has a valid chip,"
+                            " which means wrap arounds exist and we currently"
+                            " dont know how to handle this."
+                        )
+        if version_no == 4 or version_no == 5:
+            if spinnaker_link_no != 0:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    spinnaker_link_no, spinnaker_link_no,
+                    "can only be 0 for a spinn 5/4 board")
+            else:
+                chip = self.get_chip_at(0, 0)
+                if not chip.router.is_link(3):
+                    return SpinnakerLinkData(0, 0, 3)
+                else:
+                    raise exceptions.SpinnMachineInvalidParameterException(
+                        str(3), str(3),
+                        "the link 3 off chip 0 0 already has a valid chip,"
+                        " which means wrap arounds exist and we currently"
+                        " dont know how to handle this."
+                    )
+        else:
+            raise exceptions.SpinnMachineInvalidParameterException(
+                version_no, version_no,
+                "the version number should only be between 3 and 5")
+
+
+
