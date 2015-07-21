@@ -218,17 +218,16 @@ class Machine(object):
 
     def locate_connected_chips_coords_and_link(
             self, version_no, spinnaker_link_no):
-        """
-        checks and verifies that there is a link which can be used to repreent
-        the spinnaker link used on the boards.
+        """ Check and verify that there is a link which can be used to\
+            represent the spinnaker link used on the boards.
+
         :param version_no: which version of board to use
         :param spinnaker_link_no:  which spinnaker link to search for.
-        :return: a dict with "connected_chip_x, connected_chip_y, and
-        connected_link"
+        :return: A SpiNNakerLink object
         :raises: SpinnMachineInvalidParameterException when:
-        1. in valid spinnaker link vlaue
-        2. invlaid version number
-        3. uses wrap arounds
+            1. in valid spinnaker link vlaue
+            2. invalid version number
+            3. uses wrap arounds
         """
         if version_no == 3:
             if spinnaker_link_no > 1 or spinnaker_link_no < 0:
@@ -278,6 +277,3 @@ class Machine(object):
             raise exceptions.SpinnMachineInvalidParameterException(
                 version_no, version_no,
                 "the version number should only be between 3 and 5")
-
-
-
