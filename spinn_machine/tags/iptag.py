@@ -9,7 +9,7 @@ class IPTag(AbstractTag):
         """
         :param board_address: The ip address of the board on which the tag
             is allocated
-        :type board_address: str
+        :type board_address: str or None
         :param tag: The tag of the SDP packet
         :type tag: int
         :param ip_address: The IP address to which SDP packets with the tag\
