@@ -86,7 +86,8 @@ class Processor(object):
         """
         return self._is_monitor
 
-    def set_monitor(self, is_monitor):
+    @is_monitor.setter
+    def is_monitor(self, is_monitor):
         """ Sets the monitor status of this processor
 
         :param is_monitor: True if the processor is to be a monitor, \
