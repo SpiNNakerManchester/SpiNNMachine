@@ -2,6 +2,7 @@
 utility functions for computing information about a machine without having a\
 machine object
 """
+from spinn_machine.spinnaker_link_data import SpinnakerLinkData
 
 
 def get_closest_chips_to(chip_x, chip_y, max_x, max_y, invalid_chips):
@@ -53,3 +54,30 @@ def _locate_neighbouring_chips(chip_x, chip_y, max_x, max_y):
     for (chip_id_x, chip_id_y) in chips_to_remove:
         next_chips.remove((chip_id_x, chip_id_y))
     return next_chips
+
+
+def locate_spinnaker_links(version_no, machine):
+    """ Gets SpiNNaker links that are on a given machine depending on the\
+        version of the board.
+
+    :param version_no: which version of board to use
+    :param machine: the machine to detect the links of
+    :return: A SpiNNakerLink object
+    :raises: SpinnMachineInvalidParameterException when:
+        1. in valid spinnaker link vlaue
+        2. invalid version number
+        3. uses wrap arounds
+    """
+    spinnaker_links = list()
+    if version_no == 3 or version_no == 2:
+        chip = machine.get_chip_at(0, 0)
+        if not chip.router.is_link(3):
+            spinnaker_links.append(SpinnakerLinkData(0, 0, 0, 3))
+        chip = machine.get_chip_at(1, 0)
+        if not chip.router.is_link(0):
+            spinnaker_links.append(SpinnakerLinkData(1, 1, 0, 0))
+    elif version_no == 4 or version_no == 5:
+        chip = machine.get_chip_at(0, 0)
+        if not chip.router.is_link(4):
+            spinnaker_links.append(SpinnakerLinkData(0, 0, 0, 4))
+    return spinnaker_links
