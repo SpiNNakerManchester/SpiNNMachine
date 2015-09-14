@@ -4,11 +4,9 @@ Machine
 
 # spinnmanchine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-from spinn_machine import exceptions
 
 # general imports
 from collections import OrderedDict
-from spinn_machine.spinnaker_link_data import SpinnakerLinkData
 
 
 class Machine(object):
@@ -37,8 +35,8 @@ class Machine(object):
         # The list of chips with ethernet connections
         self._ethernet_connected_chips = list()
 
-        # The list of spinnaker links on the board
-        self._spinnaker_links = list()
+        # The dictionary of spinnaker links by "id" (int)
+        self._spinnaker_links = dict()
 
         # The dictionary of chips
         self._chips = OrderedDict()
@@ -68,11 +66,6 @@ class Machine(object):
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
-
-    def add_spinnaker_link(self, spinnaker_link):
-        """ Adds a spinnaker link to the machine
-        """
-        self._spinnaker_links.append(spinnaker_link)
 
     def add_chips(self, chips):
         """ Add some chips to the machine
@@ -198,6 +191,15 @@ class Machine(object):
         """
         return self._ethernet_connected_chips
 
+    def add_spinnaker_link(self, spinnaker_link):
+        """ Add a spinnaker link to the machine
+        """
+        if spinnaker_link.spinnaker_link_id in self._spinnaker_links:
+            raise SpinnMachineAlreadyExistsException(
+                "spinnaker_link", spinnaker_link.spinnaker_link_id)
+        self._spinnaker_links[
+            spinnaker_link.spinnaker_link_id] = spinnaker_link
+
     @property
     def spinnaker_links(self):
         """ The set of spinnaker links in the machine
@@ -206,9 +208,9 @@ class Machine(object):
         :rtype: iterable of\
             :py:class:`spinn_machine.spinnaker_link_data.SpinnakerLinkData`
         """
-        return self._spinnaker_links
+        return self._spinnaker_links.values()
 
-    def get_spinnaker_link(self, spinnaker_link_id):
+    def get_spinnaker_link_with_id(self, spinnaker_link_id):
         """ Get a spinnaker link with a given id
 
         :param spinnaker_link_id: The id of the link

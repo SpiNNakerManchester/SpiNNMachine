@@ -56,12 +56,12 @@ def _locate_neighbouring_chips(chip_x, chip_y, max_x, max_y):
     return next_chips
 
 
-def locate_spinnaker_links(self, version_no, machine):
+def locate_spinnaker_links(version_no, machine):
     """ Gets SpiNNaker links that are on a given machine depending on the\
         version of the board.
 
     :param version_no: which version of board to use
-    :param spinnaker_link_no:  which spinnaker link to search for.
+    :param machine: the machine to detect the links of
     :return: A SpiNNakerLink object
     :raises: SpinnMachineInvalidParameterException when:
         1. in valid spinnaker link vlaue
@@ -69,15 +69,15 @@ def locate_spinnaker_links(self, version_no, machine):
         3. uses wrap arounds
     """
     spinnaker_links = list()
-    if version_no == 3:
+    if version_no == 3 or version_no == 2:
         chip = machine.get_chip_at(0, 0)
         if not chip.router.is_link(3):
-            spinnaker_links.append(SpinnakerLinkData(0, 0, 3))
-        chip = self.get_chip_at(1, 0)
+            spinnaker_links.append(SpinnakerLinkData(0, 0, 0, 3))
+        chip = machine.get_chip_at(1, 0)
         if not chip.router.is_link(0):
-            spinnaker_links.append(SpinnakerLinkData(1, 0, 0))
+            spinnaker_links.append(SpinnakerLinkData(1, 1, 0, 0))
     elif version_no == 4 or version_no == 5:
-        chip = self.get_chip_at(0, 0)
-        if not chip.router.is_link(3):
-            spinnaker_links.append(SpinnakerLinkData(0, 0, 3))
+        chip = machine.get_chip_at(0, 0)
+        if not chip.router.is_link(4):
+            spinnaker_links.append(SpinnakerLinkData(0, 0, 0, 4))
     return spinnaker_links
