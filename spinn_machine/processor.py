@@ -23,12 +23,12 @@ class Processor(object):
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
                     If the clock speed is negative
         """
-        
+
         if clock_speed < 0:
             raise SpinnMachineInvalidParameterException(
                 "clock_speed", str(clock_speed),
                 "Clock speed cannot be less than 0")
-        
+
         self._processor_id = processor_id
         self._clock_speed = clock_speed
         self._is_monitor = is_monitor
@@ -64,32 +64,42 @@ class Processor(object):
         :raise None: does not raise any known exceptions
         """
         return Processor.CPU_AVAILABLE
-    
+
     @property
     def clock_speed(self):
         """ The clock speed of the processor in cycles per second
-        
+
         :return: The clock speed in cycles per second
         :rtype: int
         :raise None: does not raise any known exceptions
         """
         return self._clock_speed
-    
+
     @property
     def is_monitor(self):
         """ Determines if the processor is the monitor, and therefore not\
             to be allocated
-        
+
         :return: True if the processor is the monitor, False otherwise
         :rtype: bool
         :raise None: does not raise any known exceptions
         """
         return self._is_monitor
-    
+
+    @is_monitor.setter
+    def is_monitor(self, is_monitor):
+        """ Sets the monitor status of this processor
+
+        :param is_monitor: True if the processor is to be a monitor, \
+                    false otherwise
+        :type is_monitor: bool
+        """
+        self._is_monitor = is_monitor
+
     def __str__(self):
         return "[CPU: id={}, clock_speed={} MHz, monitor={}]".format(
             self._processor_id, (self._clock_speed / 1000000),
             self._is_monitor)
-    
+
     def __repr__(self):
         return self.__str__()
