@@ -183,6 +183,14 @@ class Machine(object):
         return self._max_chip_y
 
     @property
+    def n_chips(self):
+        """
+
+        :return:
+        """
+        return len(self._chips)
+
+    @property
     def ethernet_connected_chips(self):
         """ The chips in the machine that have an ethernet connection
 
