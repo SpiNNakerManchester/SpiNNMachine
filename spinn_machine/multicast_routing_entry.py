@@ -119,7 +119,8 @@ class MulticastRoutingEntry(object):
         if other_entry.routing_entry_key != self.routing_entry_key:
             raise SpinnMachineInvalidParameterException(
                 "other_entry.key", hex(other_entry.routing_entry_key),
-                "The key does not match {}".format(hex(self.routing_entry_key)))
+                "The key does not match {}".format(
+                    hex(self.routing_entry_key)))
 
         if other_entry.mask != self.mask:
             raise SpinnMachineInvalidParameterException(
