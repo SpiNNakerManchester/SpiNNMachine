@@ -1,7 +1,4 @@
-"""
-MulticastRoutingEntry
-"""
-# spimmMachien imports
+# spimm_machine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 
@@ -15,7 +12,7 @@ class MulticastRoutingEntry(object):
         """
 
         :param routing_entry_key: The routing key_combo
-        key_combope key: int
+        :type routing_entry_key: int
         :param mask: The route key_combo mask
         :type mask: int
         :param processor_ids: The destination processor ids
