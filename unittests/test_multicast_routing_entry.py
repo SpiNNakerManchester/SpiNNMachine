@@ -16,7 +16,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids, link_ids
                                                 , True)
 
-        self.assertEqual(a_multicast.key_combo, key)
+        self.assertEqual(a_multicast.routing_entry_key, key)
         self.assertEqual(a_multicast.link_ids, set(link_ids))
         self.assertEqual(a_multicast.mask, mask)
         self.assertEqual(a_multicast.processor_ids, set(proc_ids))
@@ -91,7 +91,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             comparison_proc_ids.append(i)
         self.assertEqual(proc_ids + proc_ids2, comparison_proc_ids)
 
-        self.assertEqual(result_multicast.key_combo, key)
+        self.assertEqual(result_multicast.routing_entry_key, key)
         self.assertEqual(result_multicast.link_ids, set(comparison_link_ids))
         self.assertEqual(result_multicast.mask, mask)
         self.assertEqual(result_multicast.processor_ids,
@@ -127,7 +127,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             comparison_proc_ids.append(i)
         self.assertEqual(proc_ids + proc_ids2, comparison_proc_ids)
 
-        self.assertEqual(result_multicast.key_combo, key)
+        self.assertEqual(result_multicast.routing_entry_key, key)
         self.assertEqual(result_multicast.link_ids, set(comparison_link_ids))
         self.assertEqual(result_multicast.mask, mask)
         self.assertEqual(result_multicast.processor_ids,

@@ -2,7 +2,7 @@
 Machine
 """
 
-# spinnmanchine imports
+# spinn_machine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 # general imports
@@ -32,7 +32,7 @@ class Machine(object):
         # The maximum chip y coordinate
         self._max_chip_y = 0
 
-        # The list of chips with ethernet connections
+        # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
 
         # The dictionary of spinnaker links by "id" (int)
@@ -183,8 +183,16 @@ class Machine(object):
         return self._max_chip_y
 
     @property
+    def n_chips(self):
+        """
+
+        :return:
+        """
+        return len(self._chips)
+
+    @property
     def ethernet_connected_chips(self):
-        """ The chips in the machine that have an ethernet connection
+        """ The chips in the machine that have an Ethernet connection
 
         :return: An iterable of chips
         :rtype: iterable of :py:class:`spinn_machine.chip.Chip`
