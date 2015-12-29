@@ -39,6 +39,9 @@ class Machine(object):
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
 
+        # The dictonary of chips via their nearest ethernet connected chip
+        self._chips_by_local_ethernet = dict()
+
         # The dictionary of spinnaker links by "id" (int)
         self._spinnaker_links = dict()
 
@@ -70,6 +73,24 @@ class Machine(object):
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
+
+        chip_id = (chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        if chip_id not in self._chips_by_local_ethernet:
+            self._chips_by_local_ethernet = list()
+        self._chips_by_local_ethernet[chip_id].append(chip)
+
+    def get_chips_via_local_ethernet(self, local_ethernet_x, local_ethernet_y):
+        """
+        returns a list of chips which have the nearest ethenet chip of x and y
+        :param local_ethernet_x: the ethernet chip x coord
+        :param local_ethernet_y: the ethernet chip y coord
+        :return: list of chips
+        """
+        chip_id = (local_ethernet_x, local_ethernet_y)
+        if chip_id not in self._chips_by_local_ethernet:
+            return []
+        else:
+            return self._chips_by_local_ethernet[chip_id]
 
     def add_chips(self, chips):
         """ Add some chips to the machine
