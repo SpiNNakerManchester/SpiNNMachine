@@ -76,7 +76,7 @@ class Machine(object):
 
         chip_id = (chip.nearest_ethernet_x, chip.nearest_ethernet_y)
         if chip_id not in self._chips_by_local_ethernet:
-            self._chips_by_local_ethernet = list()
+            self._chips_by_local_ethernet[chip_id] = list()
         self._chips_by_local_ethernet[chip_id].append(chip)
 
     def get_chips_via_local_ethernet(self, local_ethernet_x, local_ethernet_y):
