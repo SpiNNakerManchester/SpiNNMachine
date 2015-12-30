@@ -8,10 +8,6 @@ from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 # general imports
 from collections import OrderedDict
 
-# current opinions is that the ethernet connected chip can handle 10 udp packets
-# per millisecond
-MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
-
 
 class Machine(object):
     """ A Representation of a Machine with a number of Chips.  Machine is also\
@@ -21,6 +17,10 @@ class Machine(object):
             * y is the y-coordinate of a chip
             * chip is the chip with the given x, y coordinates
     """
+
+    # current opinions is that the ethernet connected chip can handle 10
+    # udp packets per millisecond
+    MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
 
     def __init__(self, chips):
         """
