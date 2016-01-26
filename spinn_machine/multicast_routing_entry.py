@@ -146,6 +146,24 @@ class MulticastRoutingEntry(object):
         """
         return self.merge(other_entry)
 
+    def __eq__(self, other_entry):
+        """
+        supports comparisons
+        :param other_entry: other Multicast_routing_entry
+        :return:
+        """
+        if not isinstance(other_entry, MulticastRoutingEntry):
+            return False
+        else:
+            return (self._defaultable == other_entry.defaultable and
+                    self._link_ids == other_entry.link_ids and
+                    self._mask == other_entry.mask and
+                    self._processor_ids == other_entry.processor_ids and
+                    self._routing_key_entry == other_entry.routing_entry_key)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __repr__(self):
         return "{}:{}:{}:{}:{}".format(
             self._routing_key_entry, self._mask, self._defaultable,
