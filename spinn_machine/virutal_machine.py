@@ -3,6 +3,7 @@ from spinn_machine.machine import Machine
 
 import logging
 from spinn_machine.processor import Processor
+from spinn_machine.progress_bar import ProgressBar
 from spinn_machine.router import Router
 from spinn_machine.chip import Chip
 from spinn_machine.sdram import SDRAM
@@ -101,12 +102,15 @@ class VirtualMachine(Machine):
                 else:
                     chip_ids.append((i, j))
 
+        progress_bar = ProgressBar(
+            width * height,
+            "On generating a virtual machine")
         for i in xrange(width):
             for j in xrange(height):
                 coords = (i, j)
                 if (version == 5 and width == 8 and height == 8 and
                         coords in board48gaps):
-                    pass
+                    progress_bar.update()
                     # a chip doesn't exist in this static position
                     # on these boards, so nullify it
                 else:
@@ -122,6 +126,8 @@ class VirtualMachine(Machine):
                     chip = Chip(i, j, processors, chip_router, sdram, 0, 0,
                                 "127.0.0.1")
                     self.add_chip(chip)
+                    progress_bar.update()
+        progress_bar.end()
 
         processor_count = 0
         for chip in self.chips:
