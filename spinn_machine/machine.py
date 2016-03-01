@@ -1,6 +1,3 @@
-"""
-Machine
-"""
 
 # spinn_machine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
@@ -18,8 +15,8 @@ class Machine(object):
             * chip is the chip with the given x, y coordinates
     """
 
-    # current opinions is that the ethernet connected chip can handle 10
-    # udp packets per millisecond
+    # current opinions is that the Ethernet connected chip can handle 10
+    # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
 
     def __init__(self, chips):
@@ -39,7 +36,7 @@ class Machine(object):
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
 
-        # The dictonary of chips via their nearest ethernet connected chip
+        # The dictionary of chips via their nearest Ethernet connected chip
         self._chips_by_local_ethernet = dict()
 
         # The dictionary of spinnaker links by "id" (int)
@@ -81,9 +78,9 @@ class Machine(object):
 
     def get_chips_via_local_ethernet(self, local_ethernet_x, local_ethernet_y):
         """
-        returns a list of chips which have the nearest ethenet chip of x and y
-        :param local_ethernet_x: the ethernet chip x coord
-        :param local_ethernet_y: the ethernet chip y coord
+        returns a list of chips which have the nearest Ethernet chip of x and y
+        :param local_ethernet_x: the Ethernet chip x coord
+        :param local_ethernet_y: the Ethernet chip y coord
         :return: list of chips
         """
         chip_id = (local_ethernet_x, local_ethernet_y)
