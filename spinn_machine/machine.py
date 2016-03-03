@@ -1,6 +1,3 @@
-"""
-Machine
-"""
 
 # spinn_machine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
@@ -18,6 +15,10 @@ class Machine(object):
             * chip is the chip with the given x, y coordinates
     """
 
+    # current opinions is that the Ethernet connected chip can handle 10
+    # UDP packets per millisecond
+    MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
+
     def __init__(self, chips):
         """
         :param chips: An iterable of chips in the machine
@@ -34,6 +35,9 @@ class Machine(object):
 
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
+
+        # The dictionary of chips via their nearest Ethernet connected chip
+        self._chips_by_local_ethernet = dict()
 
         # The dictionary of spinnaker links by "id" (int)
         self._spinnaker_links = dict()
@@ -66,6 +70,24 @@ class Machine(object):
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
+
+        chip_id = (chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        if chip_id not in self._chips_by_local_ethernet:
+            self._chips_by_local_ethernet[chip_id] = list()
+        self._chips_by_local_ethernet[chip_id].append(chip)
+
+    def get_chips_via_local_ethernet(self, local_ethernet_x, local_ethernet_y):
+        """
+        returns a list of chips which have the nearest Ethernet chip of x and y
+        :param local_ethernet_x: the Ethernet chip x coord
+        :param local_ethernet_y: the Ethernet chip y coord
+        :return: list of chips
+        """
+        chip_id = (local_ethernet_x, local_ethernet_y)
+        if chip_id not in self._chips_by_local_ethernet:
+            return []
+        else:
+            return self._chips_by_local_ethernet[chip_id]
 
     def add_chips(self, chips):
         """ Add some chips to the machine
