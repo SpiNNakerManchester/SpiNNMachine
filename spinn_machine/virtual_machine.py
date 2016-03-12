@@ -22,7 +22,7 @@ class VirtualMachine(Machine):
 
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
-            version=None):
+            version=None, n_cpus_per_chip=18, with_monitors=True):
         """
 
         :param width: the width of the virtual machine in chips
@@ -35,10 +35,15 @@ class VirtualMachine(Machine):
                     created with the correct dimensions, otherwise the machine\
                     will be a single board of the given version
         :type version: int
+        :param n_cpus_per_chip: The number of CPUs to put on each chip
+        :type n_cpus_per_chip: int
+        :param with_monitors: True if CPU 0 should be marked as a monitor
+        :type with_monitors: bool
         """
         Machine.__init__(self, ())
 
-        if width < 0 or height < 0:
+        if ((width is not None and width < 0) or
+                (height is not None and height < 0)):
             raise exceptions.SpinnMachineInvalidParameterException(
                 "width or height", "{} or {}".format(width, height),
                 "Negative dimensions are not supported")
@@ -130,8 +135,11 @@ class VirtualMachine(Machine):
                     pass
                 else:
                     processors = list()
-                    for processor_id in range(0, 18):
-                        processors.append(Processor(processor_id, 200000000))
+                    for processor_id in range(0, n_cpus_per_chip):
+                        processor = Processor(processor_id, 200000000)
+                        if processor_id == 0 and with_monitors:
+                            processor.is_monitor = True
+                        processors.append(processor)
                     chip_links = self._calculate_links(
                         i, j, width, height, with_wrap_arounds, version,
                         chip_ids)
