@@ -1,12 +1,13 @@
 from spinn_machine import exceptions
 from spinn_machine.machine import Machine
-
-import logging
 from spinn_machine.processor import Processor
 from spinn_machine.router import Router
 from spinn_machine.chip import Chip
 from spinn_machine.sdram import SDRAM
 from spinn_machine.link import Link
+from spinn_machine.progress_bar import ProgressBar
+
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,8 @@ class VirtualMachine(Machine):
 
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
-            version=None, n_cpus_per_chip=18, with_monitors=True):
+            version=None, n_cpus_per_chip=18, with_monitors=True,
+            sdram_per_chip=None):
         """
 
         :param width: the width of the virtual machine in chips
@@ -39,6 +41,8 @@ class VirtualMachine(Machine):
         :type n_cpus_per_chip: int
         :param with_monitors: True if CPU 0 should be marked as a monitor
         :type with_monitors: bool
+        :param sdram_per_chip: The amount of SDRAM to give to each chip
+        :type sdram_per_chip: int or None
         """
         Machine.__init__(self, ())
 
@@ -68,7 +72,7 @@ class VirtualMachine(Machine):
                 "A version {} board does not have wrap arounds; set "
                 "version to None or with_wrap_arounds to None".format(version))
 
-        if ((version == 2 or version == 3) and with_wrap_arounds is not None):
+        if (version == 2 or version == 3) and with_wrap_arounds is not None:
             raise exceptions.SpinnMachineInvalidParameterException(
                 "version and with_wrap_arounds",
                 "{} and {}".format(version, with_wrap_arounds),
@@ -123,6 +127,9 @@ class VirtualMachine(Machine):
                 else:
                     chip_ids.append((i, j))
 
+        progress_bar = ProgressBar(
+            width * height, "Generating a virtual machine")
+
         # Create the chips and their links
         for i in xrange(width):
             for j in xrange(height):
@@ -144,11 +151,20 @@ class VirtualMachine(Machine):
                         i, j, width, height, with_wrap_arounds, version,
                         chip_ids)
                     chip_router = Router(chip_links, False)
-                    sdram = SDRAM()
+                    if sdram_per_chip is None:
+                        sdram = SDRAM()
+                    else:
+                        system_base_address = (
+                            SDRAM.DEFAULT_BASE_ADDRESS + sdram_per_chip)
+                        sdram = SDRAM(system_base_address=system_base_address)
 
                     chip = Chip(i, j, processors, chip_router, sdram, 0, 0,
                                 "127.0.0.1")
                     self.add_chip(chip)
+
+                progress_bar.update()
+
+        progress_bar.end()
 
         processor_count = 0
         for chip in self.chips:
