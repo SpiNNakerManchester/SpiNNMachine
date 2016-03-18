@@ -72,7 +72,7 @@ class VirtualMachine(Machine):
                 "A version {} board does not have wrap arounds; set "
                 "version to None or with_wrap_arounds to None".format(version))
 
-        if ((version == 2 or version == 3) and with_wrap_arounds is not None):
+        if (version == 2 or version == 3) and with_wrap_arounds is not None:
             raise exceptions.SpinnMachineInvalidParameterException(
                 "version and with_wrap_arounds",
                 "{} and {}".format(version, with_wrap_arounds),
@@ -151,7 +151,6 @@ class VirtualMachine(Machine):
                         i, j, width, height, with_wrap_arounds, version,
                         chip_ids)
                     chip_router = Router(chip_links, False)
-                    sdram = None
                     if sdram_per_chip is None:
                         sdram = SDRAM()
                     else:
