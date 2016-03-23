@@ -41,3 +41,23 @@ class IPTag(AbstractTag):
     def __str__(self):
         return "IP Tag on {}: tag={} port={} ip_address={}".format(
             self._board_address, self._tag, self._port, self._ip_address)
+
+    def __eq__(self, other):
+        if not isinstance(other, IPTag):
+            return False
+        else:
+            if (self._ip_address == other._ip_address and
+                    self._strip_sdp == other._strip_sdp and
+                    self._board_address == other.board_address and
+                    self._port == other.port and
+                    self._tag == other.tag):
+                return True
+            else:
+                return False
+
+    def __hash__(self):
+        return hash((self._ip_address, self._strip_sdp, self._board_address,
+                     self._port, self._tag))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
