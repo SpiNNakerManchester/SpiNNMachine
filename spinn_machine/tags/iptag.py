@@ -34,7 +34,7 @@ class IPTag(AbstractTag):
 
     @property
     def strip_sdp(self):
-        """ Return if the sdp header is to be stripped
+        """ Return if the SDP header is to be stripped
         """
         return self._strip_sdp
 

@@ -257,9 +257,9 @@ class Machine(object):
         return self.__str__()
 
     def get_cores_and_link_count(self):
-        """
-        returns the number of cores and links from the machine
-        :return: tuple of (core, link)
+        """ Get the number of cores and links from the machine
+
+        :return: tuple of (n_cores, n_links)
         """
         cores = 0
         total_links = dict()
