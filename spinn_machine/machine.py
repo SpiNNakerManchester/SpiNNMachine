@@ -256,10 +256,10 @@ class Machine(object):
     def __repr__(self):
         return self.__str__()
 
-    def cores_and_link_output_string(self):
-        """ Get a string detailing the number of cores and links
+    def get_cores_and_link_count(self):
+        """ Get the number of cores and links from the machine
 
-        :rtype: str
+        :return: tuple of (n_cores, n_links)
         """
         cores = 0
         total_links = dict()
@@ -273,4 +273,12 @@ class Machine(object):
                 if key1 not in total_links and key2 not in total_links:
                     total_links[key1] = key1
         links = len(total_links.keys())
+        return cores, links
+
+    def cores_and_link_output_string(self):
+        """ Get a string detailing the number of cores and links
+
+        :rtype: str
+        """
+        cores, links = self.get_cores_and_link_count()
         return "{} cores and {} links".format(cores, links)
