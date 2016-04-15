@@ -5,6 +5,7 @@ class Processor(object):
     """ A processor object included in a chip
     """
 
+    # ticks per 1 millisecond time step
     CPU_AVAILABLE = 200000
     DTCM_AVAILABLE = 2 ** 15
 
