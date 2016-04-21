@@ -5,10 +5,8 @@ class Processor(object):
     """ A processor object included in a chip
     """
 
-    # assuming this is cpu cycles per millisecond.
+    # ticks per 1 millisecond time step
     CPU_AVAILABLE = 200000
-
-    # dtcm in bytes
     DTCM_AVAILABLE = 2 ** 15
 
     def __init__(self, processor_id, clock_speed, is_monitor=False,
