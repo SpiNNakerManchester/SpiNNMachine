@@ -19,10 +19,12 @@ class Machine(object):
     # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
 
-    def __init__(self, chips):
+    def __init__(self, chips, boot_x, boot_y):
         """
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`spinn_machine.chip.Chip`
+        :param boot_x: The x-coordinate of the chip used to boot the machine
+        :param boot_y: The y-coordinate of the chip used to boot the machine
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     any two chips have the same x and y coordinates
         """
@@ -45,6 +47,10 @@ class Machine(object):
         # The dictionary of chips
         self._chips = OrderedDict()
         self.add_chips(chips)
+
+        # Store the boot chip information
+        self._boot_x = boot_x
+        self._boot_y = boot_y
 
     def add_chip(self, chip):
         """ Add a chip to the machine
@@ -282,3 +288,27 @@ class Machine(object):
         """
         cores, links = self.get_cores_and_link_count()
         return "{} cores and {} links".format(cores, links)
+
+    @property
+    def boot_x(self):
+        """ The x-coordinate of the chip used to boot the machine
+
+        :rtype: int
+        """
+        return self._boot_x
+
+    @property
+    def boot_y(self):
+        """ The y-coordinate of the chip used to boot the machine
+
+        :rtype: int
+        """
+        return self._boot_y
+
+    @property
+    def boot_chip(self):
+        """ The chip used to boot the machine
+
+        :rtype: `py:class:spinn_machine.chip.Chip`
+        """
+        return self._chips[(self._boot_x, self._boot_y)]

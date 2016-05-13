@@ -3,7 +3,7 @@ class SDRAM(object):
     """ Represents the properties of the SDRAM of a chip in the machine
     """
 
-    def __init__(self, size):
+    def __init__(self, size=120 * 1024 * 1024):
         """
         :param free_size: the space available in SDRAM
         :type size: int
