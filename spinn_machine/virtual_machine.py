@@ -44,7 +44,7 @@ class VirtualMachine(Machine):
         :param sdram_per_chip: The amount of SDRAM to give to each chip
         :type sdram_per_chip: int or None
         """
-        Machine.__init__(self, ())
+        Machine.__init__(self, (), 0, 0)
 
         if ((width is not None and width < 0) or
                 (height is not None and height < 0)):
