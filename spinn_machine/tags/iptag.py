@@ -39,8 +39,10 @@ class IPTag(AbstractTag):
         return self._strip_sdp
 
     def __str__(self):
-        return "IP Tag on {}: tag={} port={} ip_address={}".format(
-            self._board_address, self._tag, self._port, self._ip_address)
+        return (
+            "IP Tag on {}: tag={} port={} ip_address={} strip_sdp={}".format(
+                self._board_address, self._tag, self._port, self._ip_address,
+                self._strip_sdp))
 
     def __eq__(self, other):
         if not isinstance(other, IPTag):
