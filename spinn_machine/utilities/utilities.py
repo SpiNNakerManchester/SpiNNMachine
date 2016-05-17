@@ -64,7 +64,7 @@ def locate_spinnaker_links(version_no, machine):
     :param machine: the machine to detect the links of
     :return: A SpiNNakerLink object
     :raises: SpinnMachineInvalidParameterException when:
-        1. in valid spinnaker link vlaue
+        1. in valid spinnaker link value
         2. invalid version number
         3. uses wrap arounds
     """
@@ -81,3 +81,23 @@ def locate_spinnaker_links(version_no, machine):
         if not chip.router.is_link(4):
             spinnaker_links.append(SpinnakerLinkData(0, 0, 0, 4))
     return spinnaker_links
+
+
+# Table of the amount to add to the x and y coordinates to get the coordinates
+# down the given link (0-5)
+link_add_table = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
+
+
+def get_chip_over_link(x, y, link, width, height):
+    """ Get the x and y coordinates of the chip over the given link
+
+    :param x: The x coordinate of the chip to start from
+    :param y: The y coordinate of the chip to start from
+    :param link: The id of the link to traverse, between 0 and 5
+    :param width: The width of the machine being considered
+    :param height: The height of the machine being considered
+    """
+    add_x, add_y = link_add_table[link]
+    link_x = (x + add_x + width) % width
+    link_y = (y + add_y + height) % height
+    return (link_x, link_y)
