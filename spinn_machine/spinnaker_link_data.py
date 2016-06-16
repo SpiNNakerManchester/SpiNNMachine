@@ -7,6 +7,11 @@ class SpinnakerLinkData(object):
     """ Data object for spinnaker links
     """
 
+    __slots__ = (
+        "_spinnaker_link_id", "_connected_chip_x", "_connected_chip_y",
+        "_connected_link"
+    )
+
     def __init__(self, spinnaker_link_id, connected_chip_x, connected_chip_y,
                  connected_link):
         self._spinnaker_link_id = spinnaker_link_id

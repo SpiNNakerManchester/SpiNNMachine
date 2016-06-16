@@ -5,6 +5,8 @@ class SDRAM(object):
 
     DEFAULT_SDRAM_BYTES = 117 * 1024 * 1024
 
+    __slots__ = ("_size")
+
     def __init__(self, size=DEFAULT_SDRAM_BYTES):
         """
         :param free_size: the space available in SDRAM

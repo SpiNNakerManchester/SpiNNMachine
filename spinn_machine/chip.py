@@ -15,6 +15,11 @@ class Chip(object):
 
     IPTAG_IDS = set(range(0, 8))
 
+    __slots__ = (
+        "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
+        "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y"
+    )
+
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
                  nearest_ethernet_y, ip_address=None, virtual=False,
                  tag_ids=IPTAG_IDS):

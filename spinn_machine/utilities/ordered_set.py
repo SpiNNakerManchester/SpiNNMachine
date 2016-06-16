@@ -3,6 +3,10 @@ import collections
 
 class _Node(object):
 
+    __slots__ = (
+        "_key", "_prev_node", "_next_node"
+    )
+
     def __init__(self, key, prev_node, next_node):
         self._key = key
         self._prev_node = prev_node
@@ -30,6 +34,10 @@ class _Node(object):
 
 
 class OrderedSet(collections.MutableSet):
+
+    __slots__ = (
+        "_end", "_map"
+    )
 
     def __init__(self, iterable=None):
 

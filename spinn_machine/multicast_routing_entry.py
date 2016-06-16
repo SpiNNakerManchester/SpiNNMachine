@@ -7,6 +7,11 @@ class MulticastRoutingEntry(object):
     """ Represents an entry in a multicast routing table
     """
 
+    __slots__ = (
+        "_routing_entry_key", "_mask", "_defaultable", "_processor_ids",
+        "_link_ids"
+    )
+
     def __init__(self, routing_entry_key, mask, processor_ids, link_ids,
                  defaultable):
         """
