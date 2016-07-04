@@ -151,7 +151,6 @@ class VirtualMachine(Machine):
                         i, j, width, height, with_wrap_arounds, version,
                         chip_ids)
                     chip_router = Router(chip_links, False)
-                    sdram = None
                     if sdram_per_chip is None:
                         sdram = SDRAM()
                     else:
