@@ -1,6 +1,7 @@
 
 # spinn_machine imports
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine.spinnaker_link_data import SpinnakerLinkData
 
 # general imports
 from collections import OrderedDict
@@ -19,10 +20,16 @@ class Machine(object):
     # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
 
-    def __init__(self, chips):
+    # Table of the amount to add to the x and y coordinates to get the
+    #  coordinates down the given link (0-5)
+    LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
+
+    def __init__(self, chips, boot_x, boot_y):
         """
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`spinn_machine.chip.Chip`
+        :param boot_x: The x-coordinate of the chip used to boot the machine
+        :param boot_y: The y-coordinate of the chip used to boot the machine
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     any two chips have the same x and y coordinates
         """
@@ -45,6 +52,10 @@ class Machine(object):
         # The dictionary of chips
         self._chips = OrderedDict()
         self.add_chips(chips)
+
+        # Store the boot chip information
+        self._boot_x = boot_x
+        self._boot_y = boot_y
 
     def add_chip(self, chip):
         """ Add a chip to the machine
@@ -249,6 +260,47 @@ class Machine(object):
         """
         return self._spinnaker_links[spinnaker_link_id]
 
+    @staticmethod
+    def get_chip_over_link(x, y, link, width, height):
+        """ Get the x and y coordinates of the chip over the given link
+
+        :param x: The x coordinate of the chip to start from
+        :param y: The y coordinate of the chip to start from
+        :param link: The id of the link to traverse, between 0 and 5
+        :param width: The width of the machine being considered
+        :param height: The height of the machine being considered
+        """
+        add_x, add_y = Machine.LINK_ADD_TABLE[link]
+        link_x = (x + add_x + width) % width
+        link_y = (y + add_y + height) % height
+        return link_x, link_y
+
+    def locate_spinnaker_links(self, version_no):
+        """ Gets SpiNNaker links that are on a given machine depending on the\
+            version of the board.
+
+        :param version_no: which version of board to use
+        :param machine: the machine to detect the links of
+        :return: A SpiNNakerLink object
+        :raises: SpinnMachineInvalidParameterException when:
+            1. in valid spinnaker link value
+            2. invalid version number
+            3. uses wrap arounds
+        """
+        spinnaker_links = list()
+        if version_no == 3 or version_no == 2:
+            chip = self.get_chip_at(0, 0)
+            if not chip.router.is_link(3):
+                spinnaker_links.append(SpinnakerLinkData(0, 0, 0, 3))
+            chip = self.get_chip_at(1, 0)
+            if not chip.router.is_link(0):
+                spinnaker_links.append(SpinnakerLinkData(1, 1, 0, 0))
+        elif version_no == 4 or version_no == 5:
+            chip = self.get_chip_at(0, 0)
+            if not chip.router.is_link(4):
+                spinnaker_links.append(SpinnakerLinkData(0, 0, 0, 4))
+        return spinnaker_links
+
     def __str__(self):
         return "[Machine: max_x={}, max_y={}, chips={}]".format(
             self._max_chip_x, self._max_chip_y, self._chips.values())
@@ -282,3 +334,27 @@ class Machine(object):
         """
         cores, links = self.get_cores_and_link_count()
         return "{} cores and {} links".format(cores, links)
+
+    @property
+    def boot_x(self):
+        """ The x-coordinate of the chip used to boot the machine
+
+        :rtype: int
+        """
+        return self._boot_x
+
+    @property
+    def boot_y(self):
+        """ The y-coordinate of the chip used to boot the machine
+
+        :rtype: int
+        """
+        return self._boot_y
+
+    @property
+    def boot_chip(self):
+        """ The chip used to boot the machine
+
+        :rtype: `py:class:spinn_machine.chip.Chip`
+        """
+        return self._chips[(self._boot_x, self._boot_y)]
