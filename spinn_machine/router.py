@@ -16,7 +16,7 @@ class Router(object):
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
 
     def __init__(
-            self, links, emergency_routing_enabled,
+            self, links, emergency_routing_enabled=False,
             clock_speed=ROUTER_DEFAULT_CLOCK_SPEED,
             n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """

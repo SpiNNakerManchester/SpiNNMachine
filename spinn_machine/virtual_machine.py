@@ -44,7 +44,7 @@ class VirtualMachine(Machine):
         :param sdram_per_chip: The amount of SDRAM to give to each chip
         :type sdram_per_chip: int or None
         """
-        Machine.__init__(self, ())
+        Machine.__init__(self, (), 0, 0)
 
         if ((width is not None and width < 0) or
                 (height is not None and height < 0)):
@@ -143,7 +143,7 @@ class VirtualMachine(Machine):
                 else:
                     processors = list()
                     for processor_id in range(0, n_cpus_per_chip):
-                        processor = Processor(processor_id, 200000000)
+                        processor = Processor(processor_id)
                         if processor_id == 0 and with_monitors:
                             processor.is_monitor = True
                         processors.append(processor)
@@ -154,9 +154,7 @@ class VirtualMachine(Machine):
                     if sdram_per_chip is None:
                         sdram = SDRAM()
                     else:
-                        system_base_address = (
-                            SDRAM.DEFAULT_BASE_ADDRESS + sdram_per_chip)
-                        sdram = SDRAM(system_base_address=system_base_address)
+                        sdram = SDRAM(sdram_per_chip)
 
                     chip = Chip(i, j, processors, chip_router, sdram, 0, 0,
                                 "127.0.0.1")

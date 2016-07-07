@@ -5,11 +5,10 @@ class Processor(object):
     """ A processor object included in a chip
     """
 
-    # ticks per 1 millisecond time step
-    CPU_AVAILABLE = 200000
-    DTCM_AVAILABLE = 2 ** 15
+    CLOCK_SPEED = 200 * 1000 * 1000
+    DTCM_AVAILABLE = 2 ** 16
 
-    def __init__(self, processor_id, clock_speed, is_monitor=False,
+    def __init__(self, processor_id, clock_speed=CLOCK_SPEED, is_monitor=False,
                  dtcm_available=DTCM_AVAILABLE):
         """
 
@@ -47,9 +46,9 @@ class Processor(object):
 
     @property
     def dtcm_available(self):
-        """the amount of dtcm avilable on this processor
+        """ The amount of DTCM available on this processor
 
-        :return: the amount of dtcm avilable on this processor
+        :return: the amount of DTCM available on this processor
         :rtype: int
         :raise None: does not raise any known exceptions
 
@@ -58,13 +57,13 @@ class Processor(object):
 
     @property
     def cpu_cycles_available(self):
-        """the amount of cpu cycles available from this processor
+        """ The number of cpu cycles available from this processor per ms
 
-        :return: the amount of cpu cycles avilable on this processor
+        :return: the number of cpu cycles available on this processor
         :rtype: int
         :raise None: does not raise any known exceptions
         """
-        return Processor.CPU_AVAILABLE
+        return self._clock_speed / 1000.0
 
     @property
     def clock_speed(self):
