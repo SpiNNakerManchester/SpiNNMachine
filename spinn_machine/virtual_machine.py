@@ -24,7 +24,7 @@ class VirtualMachine(Machine):
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=18, with_monitors=True,
-            sdram_per_chip=None):
+            sdram_per_chip=None, down_chips=None, down_cores=None):
         """
 
         :param width: the width of the virtual machine in chips
@@ -124,7 +124,7 @@ class VirtualMachine(Machine):
                     # a chip doesn't exist in this static position
                     # on these boards, so nullify it
                     pass
-                else:
+                elif down_chips is None or not down_chips.is_chip(i, j):
                     chip_ids.append((i, j))
 
         progress_bar = ProgressBar(
@@ -143,10 +143,12 @@ class VirtualMachine(Machine):
                 else:
                     processors = list()
                     for processor_id in range(0, n_cpus_per_chip):
-                        processor = Processor(processor_id)
-                        if processor_id == 0 and with_monitors:
-                            processor.is_monitor = True
-                        processors.append(processor)
+                        if down_cores is not None and not down_cores.is_core(
+                                i, j, processor_id):
+                            processor = Processor(processor_id)
+                            if processor_id == 0 and with_monitors:
+                                processor.is_monitor = True
+                            processors.append(processor)
                     chip_links = self._calculate_links(
                         i, j, width, height, with_wrap_arounds, version,
                         chip_ids)
