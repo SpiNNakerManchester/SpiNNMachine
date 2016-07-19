@@ -1,24 +1,29 @@
 """
-SpinnakerLinkData
+AbstractLinkData
 """
+from six import add_metaclass
+from abc import ABCMeta
 
 
-class SpinnakerLinkData(object):
+@add_metaclass(ABCMeta)
+class AbstractLinkData(object):
     """ Data object for spinnaker links
     """
 
-    def __init__(self, spinnaker_link_id, connected_chip_x, connected_chip_y,
-                 connected_link):
-        self._spinnaker_link_id = spinnaker_link_id
+    def __init__(self, connected_chip_x, connected_chip_y, connected_link,
+                 board_address):
+        self._board_address = board_address
         self._connected_chip_x = connected_chip_x
         self._connected_chip_y = connected_chip_y
         self._connected_link = connected_link
 
     @property
-    def spinnaker_link_id(self):
-        """ Get the id of the spinnaker link
+    def board_address(self):
         """
-        return self._spinnaker_link_id
+        property method for board address
+        :return:
+        """
+        return self._board_address
 
     @property
     def connected_chip_x(self):
