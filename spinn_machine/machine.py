@@ -488,6 +488,11 @@ class Machine(object):
                 if not ethernet_connected_chip.router.is_link(4):
                     spinnaker_links.append(SpinnakerLinkData(
                         0, 0, 0, 4, ethernet_connected_chip.ip_address))
+        elif version_no is None:  # multiboard virtual machine
+            for ethernet_connected_chip in machine.ethernet_connected_chips:
+                if not ethernet_connected_chip.router.is_link(4):
+                    spinnaker_links.append(SpinnakerLinkData(
+                        0, 0, 0, 4, ethernet_connected_chip.ip_address))
         return spinnaker_links
 
     def __str__(self):
