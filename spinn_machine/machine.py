@@ -348,44 +348,45 @@ class Machine(object):
 
         # handle left chips (goes up 4)
         for _ in range(0, 3):
-            y += 1
+            y = (y + 1) % (self._max_chip_y + 1)
+            print "A"
             chip = self.get_chip_at(x, y)
             chips['left'].append(chip)
 
         # handle left north (goes accross 4 but add this chip)
         chips['left_north'].append(chip)
         for _ in range(0, 4):
-            x += 1
-            y += 1
+            x = (x + 1) % (self._max_chip_x + 1)
+            y = (y + 1) % (self._max_chip_y + 1)
             chip = self.get_chip_at(x, y)
             chips['left_north'].append(chip)
 
         # handle north (goes left 3 but add this chip)
         chips['north'].append(chip)
         for _ in range(0, 3):
-            x += 1
+            x = (x + 1) % (self._max_chip_x + 1)
             chip = self.get_chip_at(x, y)
             chips['north'].append(chip)
 
         # handle east (goes down 4 but add this chip)
         chips['right'].append(chip)
         for _ in range(0, 4):
-            y -= 1
+            y = (y - 1) % (self._max_chip_y + 1)
             chip = self.get_chip_at(x, y)
             chips['right'].append(chip)
 
         # handle east south (goes down accross 3 but add this chip)
         chips['right_south'].append(chip)
         for _ in range(0, 3):
-            x -= 1
-            y -= 1
+            x = (x - 1) % (self._max_chip_x + 1)
+            y = (y - 1) % (self._max_chip_y + 1)
             chip = self.get_chip_at(x, y)
             chips['right_south'].append(chip)
 
         # handle south (goes accross 3 but add this chip)
         chips['south'].append(chip)
         for _ in range(0, 4):
-            x -= 1
+            x = (x - 1) % (self._max_chip_x + 1)
             chip = self.get_chip_at(x, y)
             chips['south'].append(chip)
 
@@ -406,8 +407,8 @@ class Machine(object):
             elif chip == last:
                 chips_to_fpga[1].append((chip, 3))
             else:
-                chips_to_fpga[1].append((chip, 2))
                 chips_to_fpga[1].append((chip, 3))
+                chips_to_fpga[1].append((chip, 2))
 
         # handle north
         for chip in chips['north']:
