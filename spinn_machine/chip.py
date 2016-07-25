@@ -214,6 +214,15 @@ class Chip(object):
         """
         return self._tag_ids
 
+    @property
+    def resources(self):
+        """ The resources available on the chip
+
+        :rtype:\
+            :py:class:`spinn_machine.resources.resource_container.ResourceContainer`
+        """
+        return self._resources
+
     def __str__(self):
         return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"
                 " processors={}, nearest_ethernet={}:{}]"
