@@ -5,6 +5,23 @@ class ReverseIPTag(AbstractTag):
     """ Used to hold data that is contained within an IPTag
     """
 
+    __slots__ = [
+        # x coord of a chip in the SpiNNaker machine that packets should be
+        # sent to for this reverse iptag
+        "_destination_x",
+
+        # y coord of a chip in the SpiNNaker machine that packets should be
+        # sent to for this reverse iptag
+        "_destination_y",
+
+        # The processor id for the chip at (x,y) that packets should be
+        # send to for this reverse iptag
+        "_destination_p",
+
+        # the port number these packets are to be reiceved on for the processor.
+        "_sdp_port"
+    ]
+
     def __init__(self, board_address, tag, port, destination_x, destination_y,
                  destination_p, sdp_port=1):
         """

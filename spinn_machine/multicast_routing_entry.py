@@ -7,6 +7,23 @@ class MulticastRoutingEntry(object):
     """ Represents an entry in a multicast routing table
     """
 
+    __slots__ = [
+        # the key mask combo (int) used within the routing entry
+        "_routing_key_entry",
+
+        # the mask used within the routing entry
+        "_mask",
+
+        # boolean flag which states if this entry can be removed
+        "_defaultable",
+
+        # the list of processor ids that this entry sends packets to
+        "_processor_ids",
+
+        # the list of link ids that this entry sneds packets to
+        "_link_ids"
+    ]
+
     def __init__(self, routing_entry_key, mask, processor_ids, link_ids,
                  defaultable):
         """

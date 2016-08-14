@@ -13,6 +13,39 @@ class Chip(object):
             * processor is the processor with processor_id
     """
 
+    __slots__ = [
+        # x coord of this chip within the SpiNnaker machine
+        "_x",
+
+        # y coord of this chip within the SpiNnaker machine
+        "_y",
+
+        # ordered dictonary of [id] -> Processor
+        "_p",
+
+        # the router object associated with this chip
+        "_router",
+
+        # the sdram object associated with this chip
+        "_sdram",
+
+        # the ip address of this chip if it is a ethernet connected chip, or
+        # none if the chip is not supporting a ethernet connection
+        "_ip_address",
+
+        # boolean flag which indicates if the chip is a virtual chip or not
+        "_virtual",
+
+        # set of avilable iptags ids.
+        "_tag_ids",
+
+        # the nearest ethernet chip x coord
+        "_nearest_ethernet_x",
+
+        #  the nearest ethernet chip y coord
+        "_nearest_ethernet_y"
+    ]
+
     IPTAG_IDS = set(range(0, 8))
 
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,

@@ -7,6 +7,37 @@ from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 class Link(object):
     """ Represents a directional link between chips in the machine
     """
+
+    __slots__ = [
+        # The x-coordinate of the source chip of the link
+        "_source_x",
+
+        # The y-coordinate of the source chip of the link
+        "_source_y",
+
+        # The id of the link in the source chip
+        "_source_link_id",
+
+        # The x-coordinate of the destination chip of the link
+        "_destination_x",
+
+        # The y-coordinate of the destination chip of the link
+        "_destination_y",
+
+        # Traffic received on the link identifie by multicast_default_from
+        # will be sent to the link herein defined if no entry is present in
+        # the multicast routingtable.  On SpiNNaker chips,
+        # multicast_default_from is usually the same as multicast_default_to.
+        #  None if no such default exists, or the link does not exist.
+        "_multicast_default_from",
+
+        # Traffic received on the link herein defined will be sent to the
+        # link identified by multicast_default_from if no entry is present
+        # in the multicast routing table.  On SpiNNaker chips,
+        # multicast_default_to is usually the same as multicast_default_from.
+        #  None if no such link exists, or the link does not exist.
+        "_multicast_default_to"
+    ]
     
     def __init__(self, source_x, source_y, source_link_id, destination_x,
                  destination_y, multicast_default_from, multicast_default_to):

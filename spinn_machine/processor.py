@@ -5,6 +5,20 @@ class Processor(object):
     """ A processor object included in a chip
     """
 
+    __slots__ = [
+        # the processor id used by the processor
+        "_processor_id",
+
+        # the speed of the cpu (in htz)
+        "_clock_speed",
+
+        # boolean flag that indicates if the processor is a monitor processor
+        "_is_monitor",
+
+        # the amount of dtcm avilable to this processor.
+        "_dtcm_available"
+    ]
+
     CLOCK_SPEED = 200 * 1000 * 1000
     DTCM_AVAILABLE = 2 ** 16
 

@@ -12,6 +12,28 @@ logger = logging.getLogger(__name__)
 class ProgressBar(object):
     """ Progress bar for telling the user where a task is up to
     """
+
+    __slots__ = [
+        # total number of things that need to be complete for this bar to be
+        # 100% complete
+        "_total_number_of_things_to_do",
+
+        # the number of things completed
+        "_currently_completed",
+
+        # the number of chars to put in per updated thing
+        "_chars_per_thing",
+
+        # the last update value
+        "_last_update",
+
+        # how far into the bar we are
+        "_chars_done",
+
+        # output string for the progress bar
+        "_string"
+    ]
+
     MAX_LENGTH_IN_CHARS = 60
 
     def __init__(self, total_number_of_things_to_do,

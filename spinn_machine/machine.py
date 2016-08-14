@@ -16,6 +16,33 @@ class Machine(object):
             * chip is the chip with the given x, y coordinates
     """
 
+    __slots__ = [
+        # max x id for the chips within the machine
+        "_max_chip_x",
+
+        # max y id for the chips wtihin the machine
+        "_max_chip_y",
+
+        # list of chips that are connected to ethernets
+        "_ethernet_connected_chips",
+
+        # dict of [(x,y)] -> list of chips
+        "_chips_by_local_ethernet",
+
+        # dict of [(spinnaker board address, spinnaker link id) -> spinnaker
+        # link data object
+        "_spinnaker_links",
+
+        # ordered dict of [(x,y) -> chip
+        "_chips",
+
+        # the boot chip x coord (int)
+        "_boot_x",
+
+        # the boot cihip y coord (int)
+        "_boot_y"
+    ]
+
     # current opinions is that the Ethernet connected chip can handle 10
     # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256

@@ -3,6 +3,17 @@ class CoreSubset(object):
     """ Represents a subset of the cores on a chip
     """
 
+    __slots__ = [
+        # The x-coordinate of the chip
+        "_x",
+
+        # The y-coordinate of the chip
+        "_y",
+
+        # An iterable of processor ids on the chip
+        "_processor_ids"
+    ]
+
     def __init__(self, x, y, processor_ids):
         """
         :param x: The x-coordinate of the chip

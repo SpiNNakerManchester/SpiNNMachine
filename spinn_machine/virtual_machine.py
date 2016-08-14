@@ -21,6 +21,8 @@ class VirtualMachine(Machine):
     """ A Virtual SpiNNaker machine
     """
 
+    __slots__ = []
+
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=18, with_monitors=True,

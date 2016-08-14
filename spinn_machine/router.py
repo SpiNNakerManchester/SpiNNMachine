@@ -11,6 +11,21 @@ class Router(object):
             * source_link_id is the id of a link
             * link is the link with id source_link_id
     """
+
+    __slots__ = [
+        # ordered dict of [source_link_d] -> links
+        "_links",
+
+        # boolean flag Determines if the router emergency routing is operating
+        "_emergency_routing_enabled",
+
+        # int that contains the speed of the router.
+        "_clock_speed",
+
+        # int that counts how many entries are avilable for setting
+        "_n_available_multicast_entries"
+    ]
+
     ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024

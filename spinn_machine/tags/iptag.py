@@ -5,6 +5,14 @@ class IPTag(AbstractTag):
     """ Used to hold data that is contained within an IPTag
     """
 
+    __slots__ = [
+        # The IP address to which SDP packets with the tag will be sent
+        "_ip_address",
+
+        # Indicates whether the SDP header should be removed
+        "_strip_sdp"
+    ]
+
     def __init__(self, board_address, tag, ip_address, port, strip_sdp=False):
         """
         :param board_address: The ip address of the board on which the tag

@@ -6,6 +6,11 @@ class CoreSubsets(object):
     """ Represents a group of CoreSubsets, with a maximum of one per chip
     """
 
+    __slots__ = [
+        #  An iterable of cores for each desired chip
+        "_core_subsets"
+    ]
+
     def __init__(self, core_subsets=None):
         """
         :param core_subsets: An iterable of cores for each desired chip
