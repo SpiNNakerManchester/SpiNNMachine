@@ -1,7 +1,7 @@
 
 # spinn_machine imports
 from spinn_machine import exceptions
-from spinn_machine.link_data_objects.sata_link_data import SATALinkData
+from spinn_machine.link_data_objects.fpga_link_data import FPGALinkData
 from spinn_machine.link_data_objects.spinnaker_link_data \
     import SpinnakerLinkData
 
@@ -271,8 +271,8 @@ class Machine(object):
         """
         return self._spinnaker_links[board_address][spinnaker_link_id]
 
-    def get_sata_link_with_id(self, board_address, fpga_link_id, fpga_id):
-        """ Get a SATA link data item that corresponds to the FPGA and FPGA\
+    def get_fpga_link_with_id(self, board_address, fpga_link_id, fpga_id):
+        """ Get an FPGA link data item that corresponds to the FPGA and FPGA\
             link for a given board address.
         :param board_address:\
             the board address that this spinnaker link is associated with
@@ -288,8 +288,8 @@ class Machine(object):
             https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
         :type fpga_link_id: int
         :rtype:\
-            :py:class:`spinn_machine.link_data_objects.sata_link_data.SATALinkData`
-        :return: the given SATA link object
+            :py:class:`spinn_machine.link_data_objects.fpga_link_data.FPGALinkData`
+        :return: the given FPGA link object
         """
         for ethernet_connected_chip in self._ethernet_connected_chips:
             if ethernet_connected_chip.ip_address == board_address:
@@ -301,7 +301,7 @@ class Machine(object):
                         "None",
                         "The FPGA link is attempting to connect to a chip that"
                         " does not exist in this machine.")
-                return SATALinkData(fpga_link_id, fpga_id, chip.x, chip.y,
+                return FPGALinkData(fpga_link_id, fpga_id, chip.x, chip.y,
                                     link_id, board_address)
         return None
 
