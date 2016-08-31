@@ -170,8 +170,8 @@ class VirtualMachine(Machine):
                 else:
                     processors = list()
                     for processor_id in range(0, n_cpus_per_chip):
-                        if (down_cores is not None and not down_cores.is_core(
-                                i, j, processor_id)) or down_cores is None:
+                        if down_cores is None or not down_cores.is_core(
+                                i, j, processor_id):
                             processor = Processor(processor_id)
                             if processor_id == 0 and with_monitors:
                                 processor.is_monitor = True
