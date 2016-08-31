@@ -5,7 +5,7 @@ from spinn_machine.link_data_objects.abstract_link_data import AbstractLinkData
 
 
 class SATALinkData(AbstractLinkData):
-    """ Data object for spinnaker links
+    """ Data object for SATA links
     """
 
     def __init__(self, fpga_link_id, fpga_id, connected_chip_x,

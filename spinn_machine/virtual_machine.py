@@ -114,11 +114,12 @@ class VirtualMachine(Machine):
         # if x and y are none, assume a 48 chip board
         logger.debug("width = {} and height  = {}".format(width, height))
 
-        # calculate if theres multiple ethernet connections in the machine
+        # calculate if there are multiple Ethernet connections in the machine
         ethernet_connected_chips = dict()
         ethernet_connected_chip_ids = dict()
         if ((width * height) % 48) == 0:
-            # able to make a valid multiboard machine from size of chips
+
+            # able to make a valid multi-board machine from size of chips
             ethernet_connected_chips[(0, 0)] = list()
             self._locater_extra_ethernet_connected_chips(
                 ethernet_connected_chips, 0, 0, width, height)
@@ -138,7 +139,7 @@ class VirtualMachine(Machine):
             ethernet_connected_chip_ids[(0, 0)] = "127.0.0.1"
             for i in xrange(width):
                 for j in xrange(height):
-                    ethernet_connected_chips[(0,0)].append((i, j))
+                    ethernet_connected_chips[(0, 0)].append((i, j))
 
         # calculate the chip ids which this machine is going to have
         chip_ids = list()
@@ -192,7 +193,7 @@ class VirtualMachine(Machine):
                             ethernet_connected_chip_y = e_y
 
                     if (i, j) in ethernet_connected_chip_ids:
-                        ip_address = ethernet_connected_chip_ids[(i,j)]
+                        ip_address = ethernet_connected_chip_ids[(i, j)]
                     else:
                         ip_address = None
 
@@ -243,8 +244,9 @@ class VirtualMachine(Machine):
     @staticmethod
     def _allocate_chips_to_area_codes(
             ethernet_connected_chips, width, height):
-        # positions to move relative to the ethernet conencted chip.
-        # means move right [first] then move up [second] add [third] going right
+        # positions to move relative to the Ethernet connected chip.
+        # means move right [first] then move up [second] add [third] going
+        # right
         position_edges = ((0, 0, 5), (0, 1, 6), (0, 2, 7),
                           (0, 3, 8), (1, 4, 7), (2, 5, 6),
                           (3, 6, 5), (4, 7, 4))

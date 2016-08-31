@@ -2,7 +2,8 @@
 # spinn_machine imports
 from spinn_machine import exceptions
 from spinn_machine.link_data_objects.sata_link_data import SATALinkData
-from spinn_machine.link_data_objects.spinnaker_link_data import SpinnakerLinkData
+from spinn_machine.link_data_objects.spinnaker_link_data \
+    import SpinnakerLinkData
 
 # general imports
 from collections import OrderedDict
@@ -262,30 +263,33 @@ class Machine(object):
 
         :param spinnaker_link_id: The id of the link
         :type spinnaker_link_id: int
-        :param board_address: the board address that this spinnaker link
-        is associated with
+        :param board_address:\
+            the board address that this spinnaker link is associated with
         :type board_address: str
-        :rtype: :py:class:`spinn_machine.link_data_objects.spinnaker_link_data.SpinnakerLinkData`
+        :rtype:\
+            :py:class:`spinn_machine.link_data_objects.spinnaker_link_data.SpinnakerLinkData`
         """
         return self._spinnaker_links[board_address][spinnaker_link_id]
 
     def get_sata_link_with_id(self, board_address, fpga_link_id, fpga_id):
-        """
-        gets a SATA link data item that corrasponds to the fpga and fpga link
-        for a given board address.
-        :param board_address: the board address that this spinnaker link
-        is associated with
+        """ Get a SATA link data item that corresponds to the FPGA and FPGA\
+            link for a given board address.
+        :param board_address:\
+            the board address that this spinnaker link is associated with
         :type board_address: str
-        :param fpga_link_id: the fpga link id for the fpga. refer to technical
-        dcument spinn4-5.pdf located here for more detail
-        https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
-        :param fpga_id: the fpga id that the data is going through. refer to
-        technical dcument spinn4-5.pdf located here for more detail
-        https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
+        :param fpga_link_id:\
+            the link id of the FPGA. Refer to technical document\
+            spinn4-5.pdf located here for more detail:
+            https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
         :type fpga_id: int
+        :param fpga_id:\
+            the id of the FPGA that the data is going through.  Refer to \
+            technical document spinn4-5.pdf located here for more detail:
+            https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
         :type fpga_link_id: int
-        :rtype: :py:class:`spinn_machine.link_data_objects.sata_link_data.SATALinkData`
-        :return: the given sata link object
+        :rtype:\
+            :py:class:`spinn_machine.link_data_objects.sata_link_data.SATALinkData`
+        :return: the given SATA link object
         """
         for ethernet_connected_chip in self._ethernet_connected_chips:
             if ethernet_connected_chip.ip_address == board_address:
@@ -295,8 +299,8 @@ class Machine(object):
                     raise exceptions.SpinnMachineInvalidParameterException(
                         "fpga_link_id, fpga_id, board_address",
                         "None",
-                        "The fpga link is attemtping to connect to a chip that "
-                        "does not exist in this machine.")
+                        "The FPGA link is attempting to connect to a chip that"
+                        " does not exist in this machine.")
                 return SATALinkData(fpga_link_id, fpga_id, chip.x, chip.y,
                                     link_id, board_address)
         return None
@@ -305,25 +309,26 @@ class Machine(object):
             self, fpga_link_id, fpga_id, ethernet_connected_chip):
         """
 
-        :param fpga_link_id: the fpga link id for the fpga. refer to technical
-        dcument spinn4-5.pdf located here for more detail
-        https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
-        :param fpga_id: the fpga id that the data is going through. refer to
-        technical dcument spinn4-5.pdf located here for more detail
-        https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
+        :param fpga_link_id:\
+            the link id of the FPGA. Refer to technical document\
+            spinn4-5.pdf located here for more detail:
+            https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
         :type fpga_id: int
+        :param fpga_id:\
+            the id of the FPGA that the data is going through.  Refer to \
+            technical document spinn4-5.pdf located here for more detail:
+            https://drive.google.com/drive/folders/0B9312BuJXntlb2w0OGx1OVU5cmc
         :type fpga_link_id: int
-        :param ethernet_connected_chip:
-        chip that is the root of the board that this fpga is connected
+        :param ethernet_connected_chip:\
+            chip that is the root of the board that this FPGA is connected
         :type ethernet_connected_chip: `:py:class:`spinn_machine.chip.Chip`
-        :return: (chip, link_id)
-         data on which real chip the fpga link goes to
+        :return: (chip, link_id) data on which real chip the FPGA link goes to
         :rtype: (:py:class:`spinn_machine.chip.Chip`, int)
         """
 
         chips_to_fpga = {0: [], 1: [], 2: []}
 
-        # the side of the hexigon shape of the board are as follows
+        # the side of the hexagon shape of the board are as follows
         #
         #
         #                 North
@@ -353,7 +358,7 @@ class Machine(object):
             chip = self.get_chip_at(x, y)
             chips['left'].append(chip)
 
-        # handle left north (goes accross 4 but add this chip)
+        # handle left north (goes across 4 but add this chip)
         chips['left_north'].append(chip)
         for _ in range(0, 4):
             x = (x + 1) % (self._max_chip_x + 1)
@@ -375,7 +380,7 @@ class Machine(object):
             chip = self.get_chip_at(x, y)
             chips['right'].append(chip)
 
-        # handle east south (goes down accross 3 but add this chip)
+        # handle east south (goes down across 3 but add this chip)
         chips['right_south'].append(chip)
         for _ in range(0, 3):
             x = (x - 1) % (self._max_chip_x + 1)
@@ -383,14 +388,14 @@ class Machine(object):
             chip = self.get_chip_at(x, y)
             chips['right_south'].append(chip)
 
-        # handle south (goes accross 3 but add this chip)
+        # handle south (goes across 3 but add this chip)
         chips['south'].append(chip)
         for _ in range(0, 4):
             x = (x - 1) % (self._max_chip_x + 1)
             chip = self.get_chip_at(x, y)
             chips['south'].append(chip)
 
-        # map chips to which fpga and fpga link will be used
+        # map chips to which FPGA and FPGA link will be used
         # (array index = fpga_link_id)
 
         # handle left
@@ -443,8 +448,8 @@ class Machine(object):
             else:
                 chips_to_fpga[0].append((chip, 5))
                 chips_to_fpga[0].append((chip, 4))
-                
-        # get fpga link from the arrays
+
+        # get FPGA link from the arrays
         return chips_to_fpga[fpga_id][fpga_link_id]
 
     @staticmethod
@@ -489,7 +494,9 @@ class Machine(object):
                 if not ethernet_connected_chip.router.is_link(4):
                     spinnaker_links.append(SpinnakerLinkData(
                         0, 0, 0, 4, ethernet_connected_chip.ip_address))
-        elif version_no is None:  # multiboard virtual machine
+        elif version_no is None:
+
+            # multi-board virtual machine
             for ethernet_connected_chip in machine.ethernet_connected_chips:
                 if not ethernet_connected_chip.router.is_link(4):
                     spinnaker_links.append(SpinnakerLinkData(
