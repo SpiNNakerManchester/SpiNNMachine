@@ -8,6 +8,10 @@ class SpinnakerLinkData(AbstractLinkData):
     """ Data object for spinnaker links
     """
 
+    __slots__ = (
+        "_spinnaker_link_id"
+    )
+
     def __init__(self, spinnaker_link_id, connected_chip_x, connected_chip_y,
                  connected_link, board_address):
         AbstractLinkData.__init__(

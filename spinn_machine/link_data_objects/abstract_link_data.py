@@ -10,6 +10,13 @@ class AbstractLinkData(object):
     """ Data object for spinnaker links
     """
 
+    __slots__ = (
+        "_board_address",
+        "_connected_chip_x",
+        "_connected_chip_y",
+        "_connected_link"
+    )
+
     def __init__(self, connected_chip_x, connected_chip_y, connected_link,
                  board_address):
         self._board_address = board_address

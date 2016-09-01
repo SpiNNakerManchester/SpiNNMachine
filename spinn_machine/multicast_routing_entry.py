@@ -7,6 +7,11 @@ class MulticastRoutingEntry(object):
     """ Represents an entry in a multicast routing table
     """
 
+    __slots__ = (
+        "_routing_entry_key", "_mask", "_defaultable", "_processor_ids",
+        "_link_ids"
+    )
+
     def __init__(self, routing_entry_key, mask, processor_ids, link_ids,
                  defaultable):
         """
@@ -26,7 +31,7 @@ class MulticastRoutingEntry(object):
                     * If processor_ids contains the same id more than once
                     * If link_ids contains the same id more than once
         """
-        self._routing_key_entry = routing_entry_key
+        self._routing_entry_key = routing_entry_key
         self._mask = mask
         self._defaultable = defaultable
 
@@ -61,7 +66,7 @@ class MulticastRoutingEntry(object):
         :return: The routing key
         :rtype: int
         """
-        return self._routing_key_entry
+        return self._routing_entry_key
 
     @property
     def mask(self):
@@ -171,3 +176,14 @@ class MulticastRoutingEntry(object):
 
     def __str__(self):
         return self.__repr__()
+
+    def __getstate__(self):
+        return dict(
+            (slot, getattr(self, slot))
+            for slot in self.__slots__
+            if hasattr(self, slot)
+        )
+
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            setattr(self, slot, value)

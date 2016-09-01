@@ -14,6 +14,11 @@ class ProgressBar(object):
     """
     MAX_LENGTH_IN_CHARS = 60
 
+    __slots__ = (
+        "_total_number_of_things_to_do", "_currently_completed",
+        "_chars_per_thing", "_last_update", "_chars_done", "_string"
+    )
+
     def __init__(self, total_number_of_things_to_do,
                  string_describing_what_being_progressed):
         self._total_number_of_things_to_do = total_number_of_things_to_do

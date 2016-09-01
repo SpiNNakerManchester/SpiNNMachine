@@ -26,6 +26,19 @@ class Machine(object):
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
+    __slots__ = (
+        "_boot_x",
+        "_boot_y",
+        "_boot_ethernet_address",
+        "_chips",
+        "_chips_by_local_ethernet",
+        "_ethernet_connected_chips",
+        "_fpga_links",
+        "_max_chip_x",
+        "_max_chip_y",
+        "_spinnaker_links"
+    )
+
     def __init__(self, chips, boot_x, boot_y):
         """
         :param chips: An iterable of chips in the machine
@@ -96,17 +109,13 @@ class Machine(object):
         self._chips_by_local_ethernet[chip_id].append(chip)
 
     def get_chips_via_local_ethernet(self, local_ethernet_x, local_ethernet_y):
-        """
-        returns a list of chips which have the nearest Ethernet chip of x and y
+        """ Get a list of chips which have the nearest Ethernet chip of x and y
         :param local_ethernet_x: the Ethernet chip x coord
         :param local_ethernet_y: the Ethernet chip y coord
         :return: list of chips
         """
-        chip_id = (local_ethernet_x, local_ethernet_y)
-        if chip_id not in self._chips_by_local_ethernet:
-            return []
-        else:
-            return self._chips_by_local_ethernet[chip_id]
+        return self._chips_by_local_ethernet.get(
+            (local_ethernet_x, local_ethernet_y), [])
 
     def add_chips(self, chips):
         """ Add some chips to the machine
