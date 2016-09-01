@@ -8,6 +8,10 @@ class Processor(object):
     CLOCK_SPEED = 200 * 1000 * 1000
     DTCM_AVAILABLE = 2 ** 16
 
+    __slots__ = (
+        "_processor_id", "_clock_speed", "_is_monitor", "_dtcm_available"
+    )
+
     def __init__(self, processor_id, clock_speed=CLOCK_SPEED, is_monitor=False,
                  dtcm_available=DTCM_AVAILABLE):
         """

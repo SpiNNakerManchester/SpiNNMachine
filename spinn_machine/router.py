@@ -15,6 +15,11 @@ class Router(object):
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
 
+    __slots__ = (
+        "_clock_speed", "_emergency_routing_enabled", "_links",
+        "_n_available_multicast_entries"
+    )
+
     def __init__(
             self, links, emergency_routing_enabled=False,
             clock_speed=ROUTER_DEFAULT_CLOCK_SPEED,
@@ -155,11 +160,10 @@ class Router(object):
         return self.__str__()
 
     def get_neighbouring_chips_coords(self):
-        """utility method to convert links into x and y coords for placers
+        """ Utility method to convert links into x and y coordinates
 
-        :return: iterable list of destination coords in x and y dictonary
+        :return: iterable list of destination coordinates in x and y dict
         :rtype: iterable of dict
-        :raise None: this method does not raise any known excpetion
 
         """
         next_hop_chips_coords = list()

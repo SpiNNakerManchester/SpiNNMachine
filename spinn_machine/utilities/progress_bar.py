@@ -1,6 +1,3 @@
-"""
-ProgressBar
-"""
 from __future__ import print_function
 import logging
 import sys
@@ -13,6 +10,11 @@ class ProgressBar(object):
     """ Progress bar for telling the user where a task is up to
     """
     MAX_LENGTH_IN_CHARS = 60
+
+    __slots__ = (
+        "_total_number_of_things_to_do", "_currently_completed",
+        "_chars_per_thing", "_last_update", "_chars_done", "_string"
+    )
 
     def __init__(self, total_number_of_things_to_do,
                  string_describing_what_being_progressed):
