@@ -287,144 +287,152 @@ class VirtualMachine(Machine):
         links = list()
 
         if x == 0 and y == 0:
-            if ((0, 0), (0, 1), 0) not in down_links:
+            if down_links is None or ((0, 0), (0, 1), 0) not in down_links:
                 links.append(Link(
                     source_x=0, source_y=0, destination_y=0,
                     destination_x=1, source_link_id=0,
                     multicast_default_from=3, multicast_default_to=3))
-            if ((0, 0), (1, 1), 1) not in down_links:
+            if down_links is None or ((0, 0), (1, 1), 1) not in down_links:
                 links.append(Link(
                     source_x=0, source_y=0, destination_y=1,
                     destination_x=1, source_link_id=1,
                     multicast_default_from=4, multicast_default_to=4))
-            if ((0, 0), (1, 0), 2) not in down_links:
+            if down_links is None or ((0, 0), (1, 0), 2) not in down_links:
                 links.append(Link(
                     source_x=0, source_y=0, destination_y=1,
                     destination_x=0, source_link_id=2,
                     multicast_default_from=5, multicast_default_to=5))
 
             if wrap_around:
-                if ((0, 0), (1, 0), 5) not in down_links:
+                if down_links is None or ((0, 0), (1, 0), 5) not in down_links:
                     links.append(Link(
                         source_x=0, source_y=0, destination_y=1,
                         destination_x=0, source_link_id=5,
                         multicast_default_from=2, multicast_default_to=2))
 
                 if version is None:
-                    if ((0, 0), (1, 1), 4) not in down_links:
+                    if (down_links is None or
+                            ((0, 0), (1, 1), 4) not in down_links):
                         links.append(Link(
                             source_x=0, source_y=0, destination_y=1,
                             destination_x=1, source_link_id=4,
                             multicast_default_from=1, multicast_default_to=1))
-                    if ((0, 0), (0, 1), 3) not in down_links:
+                    if (down_links is None or
+                            ((0, 0), (0, 1), 3) not in down_links):
                         links.append(Link(
                             source_x=0, source_y=0, destination_y=0,
                             destination_x=1, source_link_id=3,
                             multicast_default_from=0, multicast_default_to=0))
 
         if x == 0 and y == 1:
-            if ((0, 1), (1, 1), 0) not in down_links:
+            if down_links is None or ((0, 1), (1, 1), 0) not in down_links:
                 links.append(Link(
                     source_x=0, source_y=1, destination_y=1,
                     destination_x=1, source_link_id=0,
                     multicast_default_from=3, multicast_default_to=3))
-            if ((0, 1), (0, 0), 5) not in down_links:
+            if down_links is None or ((0, 1), (0, 0), 5) not in down_links:
                 links.append(Link(
                     source_x=0, source_y=1, destination_y=0,
                     destination_x=0, source_link_id=5,
                     multicast_default_from=2, multicast_default_to=2))
 
             if wrap_around:
-                if ((0, 1), (0, 1), 1) not in down_links:
+                if down_links is None or ((0, 1), (0, 1), 1) not in down_links:
                     links.append(Link(
                         source_x=0, source_y=1, destination_y=0,
                         destination_x=1, source_link_id=1,
                         multicast_default_from=4, multicast_default_to=4))
-                if ((0, 1), (0, 0), 2) not in down_links:
+                if down_links is None or ((0, 1), (0, 0), 2) not in down_links:
                     links.append(Link(
                         source_x=0, source_y=1, destination_y=0,
                         destination_x=0, source_link_id=2,
                         multicast_default_from=5, multicast_default_to=5))
 
                 if version is None:
-                    if ((0, 1), (1, 1), 3) not in down_links:
+                    if (down_links is None or
+                            ((0, 1), (1, 1), 3) not in down_links):
                         links.append(Link(
                             source_x=0, source_y=1, destination_y=1,
                             destination_x=1, source_link_id=3,
                             multicast_default_from=0, multicast_default_to=0))
-                    if ((0, 1), (0, 1), 4) not in down_links:
+                    if (down_links is None or
+                            ((0, 1), (0, 1), 4) not in down_links):
                         links.append(Link(
                             source_x=0, source_y=1, destination_y=0,
                             destination_x=1, source_link_id=4,
                             multicast_default_from=1, multicast_default_to=1))
 
         if x == 1 and y == 0:
-            if ((1, 0), (1, 1), 2) not in down_links:
+            if down_links is None or ((1, 0), (1, 1), 2) not in down_links:
                 links.append(Link(
                     source_x=1, source_y=0, destination_y=1,
                     destination_x=1, source_link_id=2,
                     multicast_default_from=5, multicast_default_to=5))
-            if ((1, 0), (0, 0), 3) not in down_links:
+            if down_links is None or ((1, 0), (0, 0), 3) not in down_links:
                 links.append(Link(
                     source_x=1, source_y=0, destination_y=0,
                     destination_x=0, source_link_id=3,
                     multicast_default_from=0, multicast_default_to=0))
 
             if wrap_around:
-                if ((1, 0), (1, 0), 4) not in down_links:
+                if down_links is None or ((1, 0), (1, 0), 4) not in down_links:
                     links.append(Link(
                         source_x=1, source_y=0, destination_y=1,
                         destination_x=0, source_link_id=4,
                         multicast_default_from=1, multicast_default_to=1))
-                if ((1, 0), (1, 1), 5) not in down_links:
+                if down_links is None or ((1, 0), (1, 1), 5) not in down_links:
                     links.append(Link(
                         source_x=1, source_y=0, destination_y=1,
                         destination_x=1, source_link_id=5,
                         multicast_default_from=2, multicast_default_to=2))
 
                 if version is None:
-                    if ((1, 0), (1, 0), 1) not in down_links:
+                    if (down_links is None or
+                            ((1, 0), (1, 0), 1) not in down_links):
                         links.append(Link(
                             source_x=1, source_y=0, destination_y=1,
                             destination_x=0, source_link_id=1,
                             multicast_default_from=4, multicast_default_to=4))
-                    if ((1, 0), (0, 0), 0) not in down_links:
+                    if (down_links is None or
+                            ((1, 0), (0, 0), 0) not in down_links):
                         links.append(Link(
                             source_x=1, source_y=0, destination_y=0,
                             destination_x=0, source_link_id=0,
                             multicast_default_from=3, multicast_default_to=3))
 
         if x == 1 and y == 1:
-            if ((1, 1), (0, 0), 4) not in down_links:
+            if down_links is None or ((1, 1), (0, 0), 4) not in down_links:
                 links.append(Link(
                     source_x=1, source_y=1, destination_y=0,
                     destination_x=0, source_link_id=4,
                     multicast_default_from=1, multicast_default_to=1))
-            if ((1, 1), (0, 1), 5) not in down_links:
+            if down_links is None or ((1, 1), (0, 1), 5) not in down_links:
                 links.append(Link(
                     source_x=1, source_y=1, destination_y=0,
                     destination_x=1, source_link_id=5,
                     multicast_default_from=2, multicast_default_to=2))
-            if ((1, 1), (1, 0), 3) not in down_links:
+            if down_links is None or ((1, 1), (1, 0), 3) not in down_links:
                 links.append(Link(
                     source_x=1, source_y=1, destination_y=1,
                     destination_x=0, source_link_id=3,
                     multicast_default_from=0, multicast_default_to=0))
 
             if wrap_around:
-                if ((1, 1), (0, 1), 2) not in down_links:
+                if down_links is None or ((1, 1), (0, 1), 2) not in down_links:
                     links.append(Link(
                         source_x=1, source_y=1, destination_y=0,
                         destination_x=1, source_link_id=2,
                         multicast_default_from=5, multicast_default_to=5))
 
                 if version is None:
-                    if ((1, 1), (0, 0), 1) not in down_links:
+                    if (down_links is None or
+                            ((1, 1), (0, 0), 1) not in down_links):
                         links.append(Link(
                             source_x=1, source_y=1, destination_y=0,
                             destination_x=0, source_link_id=1,
                             multicast_default_from=4, multicast_default_to=4))
-                    if ((1, 1), (1, 0), 0) not in down_links:
+                    if (down_links is None or
+                            ((1, 1), (1, 0), 0) not in down_links):
                         links.append(Link(
                             source_x=1, source_y=1, destination_y=1,
                             destination_x=0, source_link_id=0,
@@ -448,7 +456,8 @@ class VirtualMachine(Machine):
 
             # Not the right edge of the board
             if (x + 1, y) in chip_ids:
-                if ((x, y), (y, x + 1), 0) not in down_links:
+                if (down_links is None or
+                        ((x, y), (y, x + 1), 0) not in down_links):
                     links.append(Link(
                         source_x=x, source_y=y, destination_y=y,
                         destination_x=x + 1, source_link_id=0,
@@ -458,13 +467,15 @@ class VirtualMachine(Machine):
 
                 # Not the top edge of the board
                 if (x + 1, y + 1) in chip_ids:
-                    if ((x, y), (y + 1, x + 1), 1) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y + 1, x + 1), 1) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y + 1,
                             destination_x=x + 1, source_link_id=1,
                             multicast_default_from=4, multicast_default_to=4))
                 if (x, y + 1) in chip_ids:
-                    if ((x, y), (y + 1, x), 2) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y + 1, x), 2) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y + 1,
                             destination_x=x, source_link_id=2,
@@ -474,13 +485,15 @@ class VirtualMachine(Machine):
 
                 # Top non-right edge of the board
                 if (x + 1, 0) in chip_ids:
-                    if ((x, y), (0, x + 1), 1) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (0, x + 1), 1) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=0,
                             destination_x=x + 1, source_link_id=1,
                             multicast_default_from=4, multicast_default_to=4))
                 if (x, 0) in chip_ids:
-                    if ((x, y), (0, x), 2) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (0, x), 2) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=0,
                             destination_x=x, source_link_id=2,
@@ -490,7 +503,8 @@ class VirtualMachine(Machine):
             # Right edge of the board
             if wrap_around:
                 if (0, y) in chip_ids:
-                    if ((x, y), (y, 0), 0) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y, 0), 0) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y,
                             destination_x=0, source_link_id=0,
@@ -500,13 +514,15 @@ class VirtualMachine(Machine):
 
                 # Not the top right corner of the board
                 if (x, y + 1) in chip_ids:
-                    if ((x, y), (y + 1, x), 2) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y + 1, x), 2) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y + 1,
                             destination_x=x, source_link_id=2,
                             multicast_default_from=5, multicast_default_to=5))
                 if (0, y + 1) in chip_ids:
-                    if ((x, y), (y + 1, 0), 1) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y + 1, 0), 1) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y + 1,
                             destination_x=0, source_link_id=1,
@@ -516,13 +532,15 @@ class VirtualMachine(Machine):
 
                 # Top right corner of the board
                 if (x, 0) in chip_ids:
-                    if ((x, y), (0, x), 2) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (0, x), 2) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=0,
                             destination_x=x, source_link_id=2,
                             multicast_default_from=5, multicast_default_to=5))
                 if (0, 0) in chip_ids:
-                    if ((x, y), (0, 0), 1) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (0, 0), 1) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=0,
                             destination_x=0, source_link_id=1,
@@ -533,7 +551,8 @@ class VirtualMachine(Machine):
 
             # Not the left side of board
             if (x - 1, y) in chip_ids:
-                if ((x, y), (y, x - 1), 3) not in down_links:
+                if (down_links is None or
+                        ((x, y), (y, x - 1), 3) not in down_links):
                     links.append(Link(
                         source_x=x, source_y=y, destination_y=y,
                         destination_x=x - 1, source_link_id=3,
@@ -543,13 +562,15 @@ class VirtualMachine(Machine):
 
                 # Not the bottom side of the board
                 if (x - 1, y - 1) in chip_ids:
-                    if ((x, y), (y - 1, x - 1), 4) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y - 1, x - 1), 4) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y - 1,
                             destination_x=x - 1, source_link_id=4,
                             multicast_default_from=1, multicast_default_to=1))
                 if (x, y - 1) in chip_ids:
-                    if ((x, y), (y - 1, x), 5) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y - 1, x), 5) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y - 1,
                             destination_x=x, source_link_id=5,
@@ -559,13 +580,15 @@ class VirtualMachine(Machine):
 
                 # The bottom non-left side of the board
                 if (x - 1, max_y) in chip_ids:
-                    if ((x, y), (max_y, x - 1), 4) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (max_y, x - 1), 4) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=max_y,
                             destination_x=x - 1, source_link_id=4,
                             multicast_default_from=1, multicast_default_to=1))
                 if (x, max_y) in chip_ids:
-                    if ((x, y), (max_y, x), 5) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (max_y, x), 5) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=max_y,
                             destination_x=x, source_link_id=5,
@@ -575,7 +598,8 @@ class VirtualMachine(Machine):
             # The left side of board
             if wrap_around:
                 if (max_x, y) in chip_ids:
-                    if ((x, y), (y, max_x), 3) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y, max_x), 3) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y,
                             destination_x=max_x, source_link_id=3,
@@ -585,13 +609,15 @@ class VirtualMachine(Machine):
 
                 # Not the bottom left corner of the board
                 if (max_x, y - 1) in chip_ids:
-                    if ((x, y), (y - 1, max_x), 4) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y - 1, max_x), 4) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y - 1,
                             destination_x=max_x, source_link_id=4,
                             multicast_default_from=2, multicast_default_to=2))
                 if (x, y - 1) in chip_ids:
-                    if ((x, y), (y - 1, x), 5) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (y - 1, x), 5) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=y - 1,
                             destination_x=x, source_link_id=5,
@@ -601,13 +627,15 @@ class VirtualMachine(Machine):
 
                 # The bottom left corner of the board
                 if (max_x, max_y) in chip_ids:
-                    if ((x, y), (max_y, max_x), 4) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (max_y, max_x), 4) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=max_y,
                             destination_x=max_x, source_link_id=4,
                             multicast_default_from=1, multicast_default_to=1))
                 if (x, max_y) in chip_ids:
-                    if ((x, y), (max_y, x), 5) not in down_links:
+                    if (down_links is None or
+                            ((x, y), (max_y, x), 5) not in down_links):
                         links.append(Link(
                             source_x=x, source_y=y, destination_y=max_y,
                             destination_x=x, source_link_id=5,
