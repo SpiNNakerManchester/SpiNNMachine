@@ -1,6 +1,3 @@
-"""
-AbstractLinkData
-"""
 from six import add_metaclass
 from abc import ABCMeta
 

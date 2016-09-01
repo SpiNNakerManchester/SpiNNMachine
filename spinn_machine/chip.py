@@ -26,10 +26,10 @@ class Chip(object):
         """
 
         :param x: the x-coordinate of the chip's position in the\
-                    two-dimentional grid of chips
+                    two-dimensional grid of chips
         :type x: int
         :param y: the y-coordinate of the chip's position in the\
-                    two-dimentional grid of chips
+                    two-dimensional grid of chips
         :type y: int
         :param processors: an iterable of processor objects
         :type processors: iterable of\
@@ -38,15 +38,14 @@ class Chip(object):
         :type router: :py:class:`spinn_machine.router.Router`
         :param sdram: an SDRAM for the chip
         :type sdram: :py:class:`spinn_machine.sdram.SDRAM`
-        :param nearest_ethernet_x: the nearest ethernet x coord
+        :param nearest_ethernet_x: the nearest Ethernet x coord
         :type nearest_ethernet_x: int or None
-        :param nearest_ethernet_y: the nearest ethernet y coord
+        :param nearest_ethernet_y: the nearest Ethernet y coord
         :type nearest_ethernet_y: int or None
-        :param ip_address: the IP address of the chip or None if no ethernet\
+        :param ip_address: the IP address of the chip or None if no Ethernet\
                     attached
         :type ip_address: str
-        :param virtual: boolean which defines if this chip isa  virutal one or\
-         not
+        :param virtual: boolean which defines if this chip is a virtual one
          :type virtual: bool
 
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
@@ -142,7 +141,7 @@ class Chip(object):
     def virtual(self):
         """ boolean which defines if the chip is virtual or not
 
-        :return: if the chip is virutal
+        :return: if the chip is virtual
         :rtype: boolean
         :raise None: this method does not raise any known exceptions
         """
@@ -183,7 +182,7 @@ class Chip(object):
     def ip_address(self):
         """ The IP address of the chip
 
-        :return: IP address of the chip, or None if there is no ethernet\
+        :return: IP address of the chip, or None if there is no Ethernet\
                     connected to the chip
         :rtype: str
         :raise None: does not raise any known exceptions
@@ -192,9 +191,9 @@ class Chip(object):
 
     @property
     def nearest_ethernet_x(self):
-        """ the x coord of the nearest ethernet chip
+        """ the x coord of the nearest Ethernet chip
 
-        :return: the x coord of the nearest ethernet chip
+        :return: the x coord of the nearest Ethernet chip
         :rtype: int
         :raise None: does not raise any known exceptions
         """
@@ -202,9 +201,9 @@ class Chip(object):
 
     @property
     def nearest_ethernet_y(self):
-        """ the y coord of the nearest ethernet chip
+        """ the y coord of the nearest Ethernet chip
 
-        :return: the y coord of the nearest ethernet chip
+        :return: the y coord of the nearest Ethernet chip
         :rtype: int
         :raise None: does not raise any known exceptions
         """

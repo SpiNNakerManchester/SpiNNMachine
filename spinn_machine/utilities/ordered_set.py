@@ -51,7 +51,7 @@ class OrderedSet(collections.MutableSet):
         # key --> _Node
         self._map = dict()
 
-        # ior is overridden in mutable set; calls add on each element
+        # or is overridden in mutable set; calls add on each element
         if iterable is not None:
             self |= iterable
 

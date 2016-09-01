@@ -1,6 +1,3 @@
-"""
-SpinnakerLinkData
-"""
 from spinn_machine.link_data_objects.abstract_link_data import AbstractLinkData
 
 
