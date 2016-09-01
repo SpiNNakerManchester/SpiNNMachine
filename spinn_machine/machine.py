@@ -67,14 +67,14 @@ class Machine(object):
         # The dictionary of FPGA links by board address, FPGA and link id
         self._fpga_links = dict()
 
-        # The dictionary of chips
-        self._chips = OrderedDict()
-        self.add_chips(chips)
-
         # Store the boot chip information
         self._boot_x = boot_x
         self._boot_y = boot_y
         self._boot_ethernet_address = None
+
+        # The dictionary of chips
+        self._chips = OrderedDict()
+        self.add_chips(chips)
 
     def add_chip(self, chip):
         """ Add a chip to the machine
@@ -100,7 +100,7 @@ class Machine(object):
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
-            if chip.x == self._boot_x and chip.y == self._boot_y:
+            if (chip.x == self._boot_x) and (chip.y == self._boot_y):
                 self._boot_ethernet_address = chip.ip_address
 
         chip_id = (chip.nearest_ethernet_x, chip.nearest_ethernet_y)
@@ -346,7 +346,7 @@ class Machine(object):
 
         :param version_no: which version of board to use
         """
-        if version_no == 4 or version_no == 5:
+        if version_no == 4 or version_no == 5 or version_no is None:
 
             for ethernet_connected_chip in self._ethernet_connected_chips:
 
@@ -379,7 +379,6 @@ class Machine(object):
                 chips['left'].append(chip)
                 for _ in range(0, 3):
                     y = (y + 1) % (self._max_chip_y + 1)
-                    print "A"
                     chip = self.get_chip_at(x, y)
                     chips['left'].append(chip)
 
@@ -496,11 +495,13 @@ class Machine(object):
                         fpga_link += 1
 
     def _add_fpga_link(self, fpga_id, fpga_link, chip, link, board_address):
-        if not chip.router.is_link(link):
-            self._fpga_links[board_address, fpga_id, fpga_link] = FPGALinkData(
-                fpga_link_id=fpga_link, fpga_id=fpga_id,
-                connected_chip_x=chip.x, connected_chip_y=chip.y,
-                connected_link=link, board_address=board_address)
+        if chip is not None:
+            if not chip.router.is_link(link):
+                self._fpga_links[board_address, fpga_id, fpga_link] = \
+                    FPGALinkData(
+                        fpga_link_id=fpga_link, fpga_id=fpga_id,
+                        connected_chip_x=chip.x, connected_chip_y=chip.y,
+                        connected_link=link, board_address=board_address)
 
     def __str__(self):
         return "[Machine: max_x={}, max_y={}, chips={}]".format(
