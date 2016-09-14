@@ -13,7 +13,8 @@ class Chip(object):
             * processor is the processor with processor_id
     """
 
-    IPTAG_IDS = set(range(0, 8))
+    # tag 0 is reserved for stuff like IO STD
+    IPTAG_IDS = set(range(1, 8))
 
     __slots__ = (
         "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
