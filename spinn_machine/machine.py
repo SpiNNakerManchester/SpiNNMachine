@@ -325,14 +325,14 @@ class Machine(object):
         :param version_no: which version of board to use
         """
         if version_no == 3 or version_no == 2:
-            chip = self.get_chip_at(0, 0)
-            if not chip.router.is_link(3):
-                self._spinnaker_links[chip.ip_address, 0] = SpinnakerLinkData(
-                    0, 0, 0, 3, chip.ip_address)
+            chip_0_0 = self.get_chip_at(0, 0)
+            if not chip_0_0.router.is_link(3):
+                self._spinnaker_links[chip_0_0.ip_address, 0] = \
+                    SpinnakerLinkData(0, 0, 0, 3, chip_0_0.ip_address)
             chip = self.get_chip_at(1, 0)
             if not chip.router.is_link(0):
-                self._spinnaker_links[chip.ip_address, 1] = SpinnakerLinkData(
-                    1, 1, 0, 0, chip.ip_address)
+                self._spinnaker_links[chip_0_0.ip_address, 1] = \
+                    SpinnakerLinkData(1, 1, 0, 0, chip_0_0.ip_address)
         elif version_no == 4 or version_no == 5 or version_no is None:
             for chip in self._ethernet_connected_chips:
                 if not chip.router.is_link(4):
