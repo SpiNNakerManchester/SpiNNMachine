@@ -6,7 +6,7 @@ class ReverseIPTag(AbstractTag):
     """
 
     def __init__(self, board_address, tag, port, destination_x, destination_y,
-                 destination_p, sdp_port=1):
+                 destination_p, sdp_port=1, traffic_identifier="DEFAULT"):
         """
         :param board_address: The ip address of the board on which the tag
             is allocated
@@ -26,7 +26,8 @@ class ReverseIPTag(AbstractTag):
         :type sdp_port: int
         :raise None: No known exceptions are raised
         """
-        AbstractTag.__init__(self, board_address, tag, port)
+        AbstractTag.__init__(self, board_address, tag, port,
+                             traffic_identifier=traffic_identifier)
         self._destination_x = destination_x
         self._destination_y = destination_y
         self._destination_p = destination_p
