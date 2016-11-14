@@ -5,8 +5,9 @@ class IPTag(AbstractTag):
     """ Used to hold data that is contained within an IPTag
     """
 
-    def __init__(self, board_address, tag, ip_address, port,
-                 traffic_identifier, strip_sdp=False):
+    def __init__(
+            self, board_address, tag, ip_address, port,
+            traffic_identifier, strip_sdp=False):
         """
         :param board_address: The ip address of the board on which the tag
             is allocated
@@ -19,8 +20,8 @@ class IPTag(AbstractTag):
         :param port: The port to which the SDP packets with the tag will be\
                     sent
         :type port: int
-        :param traffic_identifier: the label for what the data transmitted
-        via this tag is.
+        :param traffic_identifier: the identifier for traffic transmitted\
+             using this tag
         :type traffic_identifier: str
         :param strip_sdp: Indicates whether the SDP header should be removed
         :type strip_sdp: bool
@@ -45,8 +46,8 @@ class IPTag(AbstractTag):
 
     def __str__(self):
         return (
-            "IP Tag on {}: tag={} port={} ip_address={} strip_sdp={}, "
-            "transmission_id={}".format(
+            "IPTag(board_address={}, tag={}, port={}, ip_address={},"
+            " strip_sdp={}, traffic_identifier={})".format(
                 self._board_address, self._tag, self._port, self._ip_address,
                 self._strip_sdp, self._traffic_identifier))
 
@@ -66,7 +67,7 @@ class IPTag(AbstractTag):
 
     def __hash__(self):
         return hash((self._ip_address, self._strip_sdp, self._board_address,
-                     self._port, self._tag))
+                     self._port, self._tag, self._traffic_identifier))
 
     def __ne__(self, other):
         return not self.__eq__(other)

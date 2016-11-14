@@ -14,9 +14,7 @@ class AbstractTag(object):
 
     @property
     def traffic_identifier(self):
-        """ the traffic type of the tag
-
-        :return:
+        """ The traffic type of the tag
         """
         return self._traffic_identifier
 
