@@ -1,6 +1,6 @@
 class AbstractTag(object):
 
-    def __init__(self, board_address, tag, port, traffic_identifier):
+    def __init__(self, board_address, tag, port, traffic_identifier="DEFAULT"):
         self._board_address = board_address
         self._tag = tag
         self._port = port
@@ -29,3 +29,11 @@ class AbstractTag(object):
         """ The port of the tag
         """
         return self._port
+
+    @port.setter
+    def port(self, port):
+        """ Set the port; will fail if the port is already set
+        """
+        if self._port is not None:
+            raise RuntimeError("Port cannot be set more than once")
+        self._port = port

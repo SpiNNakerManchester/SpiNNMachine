@@ -6,8 +6,8 @@ class IPTag(AbstractTag):
     """
 
     def __init__(
-            self, board_address, tag, ip_address, port,
-            traffic_identifier, strip_sdp=False):
+            self, board_address, tag, ip_address, port=None,
+            strip_sdp=False, traffic_identifier="DEFAULT"):
         """
         :param board_address: The ip address of the board on which the tag
             is allocated
@@ -19,12 +19,12 @@ class IPTag(AbstractTag):
         :type ip_address: str
         :param port: The port to which the SDP packets with the tag will be\
                     sent
-        :type port: int
+        :type port: int or None if not yet assigned
+        :param strip_sdp: Indicates whether the SDP header should be removed
+        :type strip_sdp: bool
         :param traffic_identifier: the identifier for traffic transmitted\
              using this tag
         :type traffic_identifier: str
-        :param strip_sdp: Indicates whether the SDP header should be removed
-        :type strip_sdp: bool
         :raise None: No known exceptions are raised
         """
         AbstractTag.__init__(self, board_address, tag, port,
