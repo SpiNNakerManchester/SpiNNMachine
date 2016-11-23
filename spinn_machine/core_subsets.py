@@ -30,7 +30,12 @@ class CoreSubsets(object):
         :return: Nothing is returned
         :rtype: None
         """
-        self._core_subsets[(core_subset.x, core_subset.y)] = core_subset
+        if (core_subset.x, core_subset.y) not in self._core_subsets:
+            self._core_subsets[(core_subset.x, core_subset.y)] = core_subset
+        else:
+            for processor_id in core_subset.processor_ids:
+                self._core_subsets[(core_subset.x, core_subset.y)]\
+                    .add_processor(processor_id)
 
     def add_processor(self, x, y, processor_id):
         """ Add a processor on a given chip to the set
