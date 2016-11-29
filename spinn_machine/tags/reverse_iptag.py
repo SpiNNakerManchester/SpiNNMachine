@@ -6,7 +6,7 @@ class ReverseIPTag(AbstractTag):
     """
 
     def __init__(self, board_address, tag, port, destination_x, destination_y,
-                 destination_p, sdp_port=1, traffic_identifier="DEFAULT"):
+                 destination_p, sdp_port=1):
         """
         :param board_address: The ip address of the board on which the tag
             is allocated
@@ -24,13 +24,9 @@ class ReverseIPTag(AbstractTag):
         :param sdp_port: The optional port number to use for SDP packets that\
                     are formed on the machine (default is 1)
         :type sdp_port: int
-        :param traffic_identifier: the identifier for traffic transmitted\
-             using this tag
-        :type traffic_identifier: str
         :raise None: No known exceptions are raised
         """
-        AbstractTag.__init__(
-            self, board_address, tag, port, traffic_identifier)
+        AbstractTag.__init__(self, board_address, tag, port)
         self._destination_x = destination_x
         self._destination_y = destination_y
         self._destination_p = destination_p
@@ -60,10 +56,10 @@ class ReverseIPTag(AbstractTag):
         """
         return self._destination_p
 
-    def __str__(self):
+    def __repr__(self):
         return (
-            "ReverseIPTag(board_address={}, tag={} port={} x={} y={} p={},"
-            " s_pt={} traffic_identifier={})".format(
+            "ReverseIPTag(board_address={}, tag={}, port={}, destination_x={},"
+            " destination_y={}, destination_p={}, sdp_port={})".format(
                 self._board_address, self._tag, self._port,
                 self._destination_x, self._destination_y,
-                self._destination_p, self._sdp_port, self._traffic_identifier))
+                self._destination_p, self._sdp_port))

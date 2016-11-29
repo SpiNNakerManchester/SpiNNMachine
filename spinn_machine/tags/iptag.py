@@ -27,10 +27,10 @@ class IPTag(AbstractTag):
         :type traffic_identifier: str
         :raise None: No known exceptions are raised
         """
-        AbstractTag.__init__(self, board_address, tag, port,
-                             traffic_identifier=traffic_identifier)
+        AbstractTag.__init__(self, board_address, tag, port)
         self._ip_address = ip_address
         self._strip_sdp = strip_sdp
+        self._traffic_identifier = traffic_identifier
 
     @property
     def ip_address(self):
@@ -44,7 +44,13 @@ class IPTag(AbstractTag):
         """
         return self._strip_sdp
 
-    def __str__(self):
+    @property
+    def traffic_identifier(self):
+        """ The traffic type of the tag
+        """
+        return self._traffic_identifier
+
+    def __repr__(self):
         return (
             "IPTag(board_address={}, tag={}, port={}, ip_address={},"
             " strip_sdp={}, traffic_identifier={})".format(
