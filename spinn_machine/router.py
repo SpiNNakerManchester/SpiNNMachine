@@ -1,4 +1,4 @@
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine import exceptions
 
 from collections import OrderedDict
 
@@ -57,7 +57,7 @@ class Router(object):
                     another link already exists with the same source_link_id
         """
         if link.source_link_id in self._links:
-            raise SpinnMachineAlreadyExistsException(
+            raise exceptions.SpinnMachineAlreadyExistsException(
                 "link", str(link.source_link_id))
         self._links[link.source_link_id] = link
 
@@ -148,16 +148,23 @@ class Router(object):
         """
         return self._n_available_multicast_entries
 
-    def __str__(self):
-        return (
-            "[Router: clock_speed={} MHz, emergency_routing={},"
-            "available_entries={}, links={}]".format(
-                (self._clock_speed / 1000000),
-                self._emergency_routing_enabled,
-                self._n_available_multicast_entries, self._links.values()))
-
-    def __repr__(self):
-        return self.__str__()
+    @staticmethod
+    def convert_routing_table_entry_to_spinnaker_route(routing_table_entry):
+        route_entry = 0
+        for processor_id in routing_table_entry.route.processor_ids:
+            if processor_id > 26 or processor_id < 0:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "route.processor_ids",
+                    str(routing_table_entry.route.processor_ids),
+                    "Processor ids must be between 0 and 26")
+            route_entry |= (1 << (6 + processor_id))
+        for link_id in routing_table_entry.route.link_ids:
+            if link_id > 5 or link_id < 0:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "route.link_ids", str(routing_table_entry.route.link_ids),
+                    "Link ids must be between 0 and 5")
+            route_entry |= (1 << link_id)
+        return route_entry
 
     def get_neighbouring_chips_coords(self):
         """ Utility method to convert links into x and y coordinates
@@ -171,3 +178,15 @@ class Router(object):
             next_hop_chips_coords.append(
                 {'x': link.destination_x, 'y': link.destination_y})
         return next_hop_chips_coords
+
+
+    def __str__(self):
+        return (
+            "[Router: clock_speed={} MHz, emergency_routing={},"
+            "available_entries={}, links={}]".format(
+                (self._clock_speed / 1000000),
+                self._emergency_routing_enabled,
+                self._n_available_multicast_entries, self._links.values()))
+
+    def __repr__(self):
+        return self.__str__()
