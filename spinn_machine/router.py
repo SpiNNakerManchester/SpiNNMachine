@@ -151,17 +151,17 @@ class Router(object):
     @staticmethod
     def convert_routing_table_entry_to_spinnaker_route(routing_table_entry):
         route_entry = 0
-        for processor_id in routing_table_entry.route.processor_ids:
+        for processor_id in routing_table_entry.processor_ids:
             if processor_id > 26 or processor_id < 0:
                 raise exceptions.SpinnMachineInvalidParameterException(
                     "route.processor_ids",
-                    str(routing_table_entry.route.processor_ids),
+                    str(routing_table_entry.processor_ids),
                     "Processor ids must be between 0 and 26")
             route_entry |= (1 << (6 + processor_id))
-        for link_id in routing_table_entry.route.link_ids:
+        for link_id in routing_table_entry.link_ids:
             if link_id > 5 or link_id < 0:
                 raise exceptions.SpinnMachineInvalidParameterException(
-                    "route.link_ids", str(routing_table_entry.route.link_ids),
+                    "route.link_ids", str(routing_table_entry.link_ids),
                     "Link ids must be between 0 and 5")
             route_entry |= (1 << link_id)
         return route_entry
