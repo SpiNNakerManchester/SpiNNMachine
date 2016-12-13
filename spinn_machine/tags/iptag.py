@@ -22,8 +22,8 @@ class IPTag(AbstractTag):
         :type port: int or None if not yet assigned
         :param strip_sdp: Indicates whether the SDP header should be removed
         :type strip_sdp: bool
-        :param traffic_identifier: the identifier for traffic transmitted\
-             using this tag
+        :param traffic_identifier: the human readable identifier for traffic
+        transmitted using this tag
         :type traffic_identifier: str
         :raise None: No known exceptions are raised
         """
@@ -46,7 +46,8 @@ class IPTag(AbstractTag):
 
     @property
     def traffic_identifier(self):
-        """ The traffic type of the tag
+        """ An human readable identifier for what type of traffic is to go
+        through this tag
         """
         return self._traffic_identifier
 
