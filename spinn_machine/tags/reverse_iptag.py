@@ -34,31 +34,32 @@ class ReverseIPTag(AbstractTag):
 
     @property
     def sdp_port(self):
-        """returns the sdp port of the tag
-        :return:
+        """ The SDP port of the tag
         """
         return self._sdp_port
 
     @property
     def destination_x(self):
-        """:return: the destination x for a reverse ip tag
+        """ The destination x for a reverse ip tag
         """
         return self._destination_x
 
     @property
     def destination_y(self):
-        """:return: the destination y for a reverse ip tag
+        """ The destination y for a reverse ip tag
         """
         return self._destination_y
 
     @property
     def destination_p(self):
-        """:return: the destination p for a reverse ip tag
+        """ The destination p for a reverse ip tag
         """
         return self._destination_p
 
-    def __str__(self):
-        return ("Reverse IP Tag on {}: tag={} port={} x={} y={} p={}, s_pt={}"
-                .format(self._board_address, self._tag, self._port,
-                        self._destination_x, self._destination_y,
-                        self._destination_p, self._sdp_port))
+    def __repr__(self):
+        return (
+            "ReverseIPTag(board_address={}, tag={}, port={}, destination_x={},"
+            " destination_y={}, destination_p={}, sdp_port={})".format(
+                self._board_address, self._tag, self._port,
+                self._destination_x, self._destination_y,
+                self._destination_p, self._sdp_port))
