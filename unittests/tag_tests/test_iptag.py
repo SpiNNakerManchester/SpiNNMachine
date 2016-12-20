@@ -17,11 +17,11 @@ class TestingIptag(unittest.TestCase):
         test which tests if a iptag with valid inputs works
         :return:
         """
-        iptag = IPTag("", 0, 0, 0, "", 1)
+        IPTag("", 0, 0, 0, "", 1)
 
     def test_retrival_of_board_address(self):
         """
-        test if the board address retrival works
+        test if the board address retrieval works
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
@@ -30,7 +30,7 @@ class TestingIptag(unittest.TestCase):
 
     def test_retrival_of_ip_address(self):
         """
-        test if the board address retrival works
+        test if the board address retrieval works
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
@@ -39,7 +39,7 @@ class TestingIptag(unittest.TestCase):
 
     def test_retrival_of_tag(self):
         """
-        test if the board address retrival works
+        test if the board address retrieval works
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
@@ -48,7 +48,7 @@ class TestingIptag(unittest.TestCase):
 
     def test_retrival_of_port(self):
         """
-        test if the board address retrival works
+        test if the board address retrieval works
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
@@ -57,7 +57,7 @@ class TestingIptag(unittest.TestCase):
 
     def test_retrival_of_strip_sdp(self):
         """
-        test if the board address retrival works
+        test if the board address retrieval works
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
