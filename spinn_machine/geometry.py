@@ -1,6 +1,9 @@
 class SpiNNakerGeometry(object):
+    """Geometry of a tiled group of SpiNNaker boards.
+    
+    The geometry is defined by the arguments to the constructor; the standard
+    arrangement is in the :py:data:`Spinn5_geometry` object."""
     def __init__(self, width, height, roots, centre):
-        # TODO: make this not assume the basic geometry when generating the offset table.
         self._width = width
         self._height = height
         tiling_roots = [(x+x1, y+y1) for (x,y) in roots \
@@ -36,9 +39,9 @@ class SpiNNakerGeometry(object):
             for y, row in enumerate(tblgen)]
         """SpiNN-5 ethernet connected chip lookup.
 
-        Used by :py:func:`.local_eth_coord`. Given an x and y chip position
-        modulo 12, return the offset of the chip's position from the board's
-        bottom-left chip.
+        Used by :py:meth:`.local_eth_coord`. Given an x and y
+        chip position modulo 12, return the offset of the chip's position from
+        the board's bottom-left chip.
 
         Note: the order of indexes: ``_ETH_OFFSET[y][x]``!
         """
@@ -58,9 +61,9 @@ class SpiNNakerGeometry(object):
             which Ethernet connected chip is considered 'local' to a particular
             SpiNNaker chip.
 
-            :py:func:`.local_eth_coord` will always produce the coordinates
-            of the Ethernet-connected SpiNNaker chip on the same SpiNN-5 board as
-            the supplied chip.
+            :py:meth:`.local_eth_coord` will always produce the
+            coordinates of the Ethernet-connected SpiNNaker chip on the same
+            SpiNN-5 board as the supplied chip.
 
         Parameters
         ----------
@@ -92,9 +95,9 @@ class SpiNNakerGeometry(object):
             The coordinates of the root chip (i.e. the chip used to boot the
             machine).
         """
-        dy = (y - root_y) % self._height
         dx = (x - root_x) % self._width
-        return self._ETH_OFFSET[dy][dy] 
+        dy = (y - root_y) % self._height
+        return self._ETH_OFFSET[dy][dx] 
 
 # Note the centres are slightly offset so as to force which edges are included where
 Spinn5_geometry = SpiNNakerGeometry(12, 12, [(0,0),(4,8),(8,4)], (3.6,3.4))
