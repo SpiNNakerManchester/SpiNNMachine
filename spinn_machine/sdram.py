@@ -1,3 +1,4 @@
+import spinn_machine.exceptions as exc
 
 class SDRAM(object):
     """ Represents the properties of the SDRAM of a chip in the machine
@@ -12,6 +13,8 @@ class SDRAM(object):
         :param free_size: the space available in SDRAM
         :type size: int
         """
+        if (size < 0):
+            raise exc.SpinnMachineInvalidParameterException("size", size, "negative sizes are meaningless")
         self._size = size
 
     @property
