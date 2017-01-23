@@ -6,12 +6,18 @@ class IPTag(AbstractTag):
     """
 
     def __init__(
-            self, board_address, tag, ip_address, port=None,
-            strip_sdp=False, traffic_identifier="DEFAULT"):
+            self, board_address, destination_x, destination_y, tag, ip_address,
+            port=None, strip_sdp=False, traffic_identifier="DEFAULT"):
         """
-        :param board_address: The ip address of the board on which the tag
+        :param board_address: The ip address of the board on which the tag\
             is allocated
         :type board_address: str or None
+        :param destination_x: The x-coordinate where users of this tag should\
+            send packets to
+        :type destination_x: int
+        :param destination_y: The y-coordinate where users of this tag should\
+            send packets to
+        :type destination_y: int
         :param tag: The tag of the SDP packet
         :type tag: int
         :param ip_address: The IP address to which SDP packets with the tag\
@@ -31,6 +37,8 @@ class IPTag(AbstractTag):
         self._ip_address = ip_address
         self._strip_sdp = strip_sdp
         self._traffic_identifier = traffic_identifier
+        self._destination_x = destination_x
+        self._destination_y = destination_y
 
     @property
     def ip_address(self):
@@ -50,12 +58,26 @@ class IPTag(AbstractTag):
         """
         return self._traffic_identifier
 
+    @property
+    def destination_x(self):
+        """ The x-coordinate where users of this tag should send packets to
+        """
+        return self._destination_x
+
+    @property
+    def destination_y(self):
+        """ The y-coordinate where users of this tag should send packets to
+        """
+        return self._destination_y
+
     def __repr__(self):
         return (
-            "IPTag(board_address={}, tag={}, port={}, ip_address={},"
-            " strip_sdp={}, traffic_identifier={})".format(
-                self._board_address, self._tag, self._port, self._ip_address,
-                self._strip_sdp, self._traffic_identifier))
+            "IPTag(board_address={}, destination_x={}, destination_y={},"
+            " tag={}, port={}, ip_address={}, strip_sdp={},"
+            " traffic_identifier={})".format(
+                self._board_address, self._destination_x, self._destination_y,
+                self._tag, self._port, self._ip_address, self._strip_sdp,
+                self._traffic_identifier))
 
     def __eq__(self, other):
         if not isinstance(other, IPTag):
