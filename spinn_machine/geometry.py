@@ -5,8 +5,10 @@ class SpiNNakerGeometry(object):
     arrangement is in the :py:data:`Spinn5_geometry` object.
     """
 
+    Spinn5_geometry = None
+
     @classmethod
-    def create_spinn5_geometry(cls):
+    def get_spinn5_geometry(cls):
         """ creates a system for coping with systems corresponding to sets
         of spinn-5 boards
 
@@ -15,7 +17,10 @@ class SpiNNakerGeometry(object):
 
         # Note the centres are slightly offset so as to force which edges are
         # included where
-        return SpiNNakerGeometry(12, 12, [(0, 0), (4, 8), (8, 4)], (3.6, 3.4))
+        if SpiNNakerGeometry.Spinn5_geometry is None:
+            SpiNNakerGeometry.Spinn5_geometry = SpiNNakerGeometry(
+                12, 12, [(0, 0), (4, 8), (8, 4)], (3.6, 3.4))
+        return SpiNNakerGeometry.Spinn5_geometry
 
     def __init__(self, width, height, roots, centre):
         """ the constructor for the geometry functions
@@ -167,5 +172,5 @@ class SpiNNakerGeometry(object):
 
 
 # Note this must stay down here as python cares about order of file.
-Spinn5_geometry = SpiNNakerGeometry.create_spinn5_geometry()
+Spinn5_geometry = SpiNNakerGeometry.get_spinn5_geometry()
 """The geometry of a SpiNN-5 board."""
