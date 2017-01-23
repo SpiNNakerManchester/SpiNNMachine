@@ -1,7 +1,7 @@
 """
 TestingIptag
 """
-
+from __future__ import absolute_import
 # general imports
 import unittest
 from spinn_machine.tags.iptag import IPTag
