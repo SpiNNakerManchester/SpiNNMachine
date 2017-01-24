@@ -27,7 +27,21 @@ class VirtualMachine(Machine):
     """ A Virtual SpiNNaker machine
     """
 
-    __slots__ = ()
+    __slots__ = (
+        "_n_cpus_per_chip",
+
+        "_with_wrap_arounds",
+
+        "_sdram_per_chip",
+
+        "_with_monitors",
+
+        "_down_chips",
+
+        "_down_cores",
+
+        "_down_links"
+    )
 
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
@@ -129,7 +143,6 @@ class VirtualMachine(Machine):
         # Store the details
         self._n_cpus_per_chip = n_cpus_per_chip
         self._with_wrap_arounds = with_wrap_arounds
-        self._version = version
         self._sdram_per_chip = sdram_per_chip
         self._with_monitors = with_monitors
 
@@ -153,11 +166,54 @@ class VirtualMachine(Machine):
                         n_ethernets += 1
                         self.add_chip(self._create_chip(x, y, ip_address))
 
+    @property
+    def chips(self):
+        for x in range(0, self._max_chip_x + 1):
+            for y in range(0, self._max_chip_y + 1):
+                if (x, y) in self._chips:
+                    yield self._chips[(x, y)]
+                elif (x, y) not in self._down_chips:
+                    self.add_chip(self._create_chip(x, y))
+                    yield self._chips[(x, y)]
+
+    def __iter__(self):
+        for x in range(0, self._max_chip_x + 1):
+            for y in range(0, self._max_chip_y + 1):
+                if (x, y) in self._chips:
+                    yield (x, y), self._chips[(x, y)]
+                elif (x, y) not in self._down_chips:
+                    self.add_chip(self._create_chip(x, y))
+                    yield (x, y), self._chips[(x, y)]
+
+    def get_chip_at(self, x, y):
+        if ((x, y) not in self._chips and (x, y) not in self._down_chips and
+                x <= self._max_chip_x and y <= self._max_chip_y):
+            self.add_chip(self._create_chip(x, y))
+        return Machine.get_chip_at(self, x, y)
+
+    def is_chip_at(self, x, y):
+        return ((x, y) not in self._down_chips and
+                x <= self._max_chip_x and y <= self._max_chip_y)
+
+    @property
+    def n_chips(self):
+        return (self._max_chip_x * self._max_chip_y) - len(self._down_chips)
+
+    def __str__(self):
+        return "[VirtualMachine: max_x={}, max_y={}]".format(
+            self._max_chip_x, self._max_chip_y)
+
+    def get_cores_and_link_count(self):
+        n_cores = (
+            (self.n_chips * self._n_cpus_per_chip) - len(self._down_cores)
+        )
+        n_links = self.n_chips * 6 - len(self._down_links)
+        return n_cores, n_links
+
     def _create_chip(self, x, y, ip_address=None):
         processors = list()
         for processor_id in range(0, self._n_cpus_per_chip):
-            if not self._down_cores.is_core(
-                    x, y, processor_id):
+            if (x, y, processor_id) not in self._down_cores:
                 processor = Processor(processor_id)
                 if processor_id == 0 and self._with_monitors:
                     processor.is_monitor = True
@@ -225,5 +281,3 @@ class VirtualMachine(Machine):
                     destination_y=end_y, source_link_id=link_from,
                     multicast_default_from=link_to,
                     multicast_default_to=link_to))
-
-VirtualMachine(200, 144)
