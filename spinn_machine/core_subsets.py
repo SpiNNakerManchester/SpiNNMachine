@@ -112,3 +112,22 @@ class CoreSubsets(object):
         for (x, y) in self._core_subsets:
             counter += len(self._core_subsets[(x, y)])
         return counter
+
+    def __contains__(self, x_y_tuple):
+        """ True if the given coordinates are in the set
+
+        :param x_y_tuple:\
+            Either a 2-tuple of x, y coordinates or a 3-tuple or x, y,\
+            processor_id coordinates
+        """
+        if len(x_y_tuple) == 2:
+            (x, y) = x_y_tuple
+            return self.is_chip(x, y)
+        else:
+            (x, y, p) = x_y_tuple
+            return self.is_core(x, y, p)
+
+    def __get_item__(self, x_y_tuple):
+        """ The core subset for the given x, y tuple
+        """
+        return self._core_subsets[x_y_tuple]

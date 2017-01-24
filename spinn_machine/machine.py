@@ -108,15 +108,6 @@ class Machine(object):
             self._chips_by_local_ethernet[chip_id] = list()
         self._chips_by_local_ethernet[chip_id].append(chip)
 
-    def get_chips_via_local_ethernet(self, local_ethernet_x, local_ethernet_y):
-        """ Get a list of chips which have the nearest Ethernet chip of x and y
-        :param local_ethernet_x: the Ethernet chip x coord
-        :param local_ethernet_y: the Ethernet chip y coord
-        :return: list of chips
-        """
-        return self._chips_by_local_ethernet.get(
-            (local_ethernet_x, local_ethernet_y), [])
-
     def add_chips(self, chips):
         """ Add some chips to the machine
 
