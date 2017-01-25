@@ -10,18 +10,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-_48_chip_gaps = {
-    (0, 4), (0, 5), (0, 6), (0, 7), (1, 5), (1, 6), (1, 7), (2, 6), (2, 7),
-    (3, 7), (5, 0), (6, 0), (6, 1), (7, 0), (7, 1), (7, 2)
-}
-
-_4_chip_down_links = {
-    ((0, 0), (1, 0), 3), ((0, 0), (1, 1), 4),
-    ((0, 1), (1, 1), 3), ((0, 1), (1, 0), 4),
-    ((1, 0), (0, 0), 0), ((1, 0), (0, 1), 1),
-    ((1, 1), (0, 1), 0), ((1, 1), (0, 0), 1)
-}
-
 
 class VirtualMachine(Machine):
     """ A Virtual SpiNNaker machine
@@ -42,6 +30,13 @@ class VirtualMachine(Machine):
 
         "_down_links"
     )
+
+    _4_chip_down_links = {
+        ((0, 0), (1, 0), 3), ((0, 0), (1, 1), 4),
+        ((0, 1), (1, 1), 3), ((0, 1), (1, 0), 4),
+        ((1, 0), (0, 0), 0), ((1, 0), (0, 1), 1),
+        ((1, 1), (0, 1), 0), ((1, 1), (0, 0), 1)
+    }
 
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
@@ -151,9 +146,9 @@ class VirtualMachine(Machine):
         self._down_chips = down_chips if down_chips is not None else {}
         self._down_links = down_links if down_links is not None else {}
         if version == 4 or version == 5:
-            self._down_chips.update(_48_chip_gaps)
+            self._down_chips.update(Machine.BOARD_48_CHIP_GAPS)
         elif version == 2 or version == 3:
-            self._down_links.update(_4_chip_down_links)
+            self._down_links.update(VirtualMachine._4_chip_down_links)
 
         # Calculate the Ethernet connections in the machine, assuming 48-node
         # boards
@@ -175,6 +170,13 @@ class VirtualMachine(Machine):
                 elif (x, y) not in self._down_chips:
                     self.add_chip(self._create_chip(x, y))
                     yield self._chips[(x, y)]
+
+    @property
+    def chip_coordinates(self):
+        for x in range(0, self._max_chip_x + 1):
+            for y in range(0, self._max_chip_y + 1):
+                if (x, y) not in self._down_chips:
+                    yield (x, y)
 
     def __iter__(self):
         for x in range(0, self._max_chip_x + 1):
@@ -281,3 +283,7 @@ class VirtualMachine(Machine):
                     destination_y=end_y, source_link_id=link_from,
                     multicast_default_from=link_to,
                     multicast_default_to=link_to))
+
+    @property
+    def maximum_user_cores_on_chip(self):
+        return self._n_cpus_per_chip

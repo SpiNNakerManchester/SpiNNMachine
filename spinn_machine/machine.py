@@ -26,17 +26,22 @@ class Machine(object):
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
+    BOARD_48_CHIP_GAPS = {
+        (0, 4), (0, 5), (0, 6), (0, 7), (1, 5), (1, 6), (1, 7), (2, 6), (2, 7),
+        (3, 7), (5, 0), (6, 0), (6, 1), (7, 0), (7, 1), (7, 2)
+    }
+
     __slots__ = (
         "_boot_x",
         "_boot_y",
         "_boot_ethernet_address",
         "_chips",
-        "_chips_by_local_ethernet",
         "_ethernet_connected_chips",
         "_fpga_links",
         "_max_chip_x",
         "_max_chip_y",
-        "_spinnaker_links"
+        "_spinnaker_links",
+        "_maximum_user_cores_on_chip"
     )
 
     def __init__(self, chips, boot_x, boot_y):
@@ -55,11 +60,11 @@ class Machine(object):
         # The maximum chip y coordinate
         self._max_chip_y = 0
 
+        # The maximum number of user cores on any chip
+        self._maximum_user_cores_on_chip = 0
+
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
-
-        # The dictionary of chips via their nearest Ethernet connected chip
-        self._chips_by_local_ethernet = dict()
 
         # The dictionary of spinnaker links by board address and "id" (int)
         self._spinnaker_links = dict()
@@ -103,10 +108,8 @@ class Machine(object):
             if (chip.x == self._boot_x) and (chip.y == self._boot_y):
                 self._boot_ethernet_address = chip.ip_address
 
-        chip_id = (chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-        if chip_id not in self._chips_by_local_ethernet:
-            self._chips_by_local_ethernet[chip_id] = list()
-        self._chips_by_local_ethernet[chip_id].append(chip)
+        if chip.n_user_processors > self._maximum_user_cores_on_chip:
+            self._maximum_user_cores_on_chip = chip.n_user_processors
 
     def add_chips(self, chips):
         """ Add some chips to the machine
@@ -131,6 +134,15 @@ class Machine(object):
         :raise None: does not raise any known exceptions
         """
         return self._chips.itervalues()
+
+    @property
+    def chip_coordinates(self):
+        """ An iterable of chip coordinates in the machine
+
+        :return: An iterable of chip coordinates
+        :rtype: iterable of (int, int)
+        """
+        return self._chips.iterkeys()
 
     def __iter__(self):
         """ Get an iterable of the chip coordinates and chips
@@ -551,3 +563,24 @@ class Machine(object):
         :rtype: `py:class:spinn_machine.chip.Chip`
         """
         return self._chips[(self._boot_x, self._boot_y)]
+
+    def get_chips_on_board(self, chip):
+        """ Get the chips that are on the same board as the given chip
+
+        :param chip: The chip to find other chips on the same board as
+        :return: An iterable of (x, y) coordinates of chips on the same board
+        """
+        eth_x = chip.nearest_ethernet_x
+        eth_y = chip.nearest_ethernet_y
+        for chip_x, chip_y in zip(range(0, 8), range(0, 8)):
+            x = eth_x + chip_x
+            y = eth_y + chip_y
+            if (self.is_chip_at(x, y) and
+                    (x, y) not in Machine.BOARD_48_CHIP_GAPS):
+                yield x, y
+
+    @property
+    def maximum_user_cores_on_chip(self):
+        """ The maximum number of user cores on any chip
+        """
+        return self._maximum_user_cores_on_chip

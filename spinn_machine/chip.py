@@ -18,7 +18,8 @@ class Chip(object):
 
     __slots__ = (
         "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
-        "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y"
+        "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
+        "_n_user_processors"
     )
 
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
@@ -56,12 +57,15 @@ class Chip(object):
         self._x = x
         self._y = y
         self._p = OrderedDict()
+        self._n_user_processors = 0
         for processor in sorted(processors, key=lambda i: i.processor_id):
             if processor.processor_id in self._p:
                 raise SpinnMachineAlreadyExistsException(
                     "processor on {}:{}".format(x, y),
                     str(processor.processor_id))
             self._p[processor.processor_id] = processor
+            if not processor.is_monitor:
+                self._n_user_processors += 1
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
@@ -137,6 +141,18 @@ class Chip(object):
         :raise None: does not raise any known exceptions
         """
         return self._p.itervalues()
+
+    @property
+    def n_processors(self):
+        """ The total number of processors
+        """
+        return len(self._p)
+
+    @property
+    def n_user_processors(self):
+        """ The total number of processors that are not monitors
+        """
+        return self._n_user_processors
 
     @property
     def virtual(self):
