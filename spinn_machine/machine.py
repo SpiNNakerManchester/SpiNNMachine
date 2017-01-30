@@ -200,8 +200,19 @@ class Machine(object):
         :rtype: bool
         :raise None: does not raise any known exceptions
         """
-        chip_id = (x, y)
-        return chip_id in self._chips
+        return (x, y) in self._chips
+
+    def is_link_at(self, x, y, link):
+        """ Determine if a link exists at the given coordinates
+
+        :param x: The x location of the chip to test the link of
+        :type x: int
+        :param y: The y location of the chip to test the link of
+        :type y: int
+        :param link: The link to test the existence of
+        :type link: int
+        """
+        return (x, y) in self._chips and self._chips[x, y].router.is_link(link)
 
     def __contains__(self, x_y_tuple):
         """ Determine if a chip exists at the given coordinates
@@ -373,137 +384,130 @@ class Machine(object):
                 }
 
                 # handle the first chip
-                chip = ethernet_connected_chip
                 x = ethernet_connected_chip.x
                 y = ethernet_connected_chip.y
                 ip = ethernet_connected_chip.ip_address
 
                 # handle left chips (goes up 4)
-                chips['left'].append(chip)
+                chips['left'].append((x, y))
                 for _ in range(0, 3):
                     y = (y + 1) % (self._max_chip_y + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['left'].append(chip)
+                    chips['left'].append((x, y))
 
                 # handle left north (goes across 4 but add this chip)
-                chips['left_north'].append(chip)
+                chips['left_north'].append((x, y))
                 for _ in range(0, 4):
                     x = (x + 1) % (self._max_chip_x + 1)
                     y = (y + 1) % (self._max_chip_y + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['left_north'].append(chip)
+                    chips['left_north'].append((x, y))
 
                 # handle north (goes left 3 but add this chip)
-                chips['north'].append(chip)
+                chips['north'].append((x, y))
                 for _ in range(0, 3):
                     x = (x + 1) % (self._max_chip_x + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['north'].append(chip)
+                    chips['north'].append((x, y))
 
                 # handle east (goes down 4 but add this chip)
-                chips['right'].append(chip)
+                chips['right'].append((x, y))
                 for _ in range(0, 4):
                     y = (y - 1) % (self._max_chip_y + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['right'].append(chip)
+                    chips['right'].append((x, y))
 
                 # handle east south (goes down across 3 but add this chip)
-                chips['right_south'].append(chip)
+                chips['right_south'].append((x, y))
                 for _ in range(0, 3):
                     x = (x - 1) % (self._max_chip_x + 1)
                     y = (y - 1) % (self._max_chip_y + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['right_south'].append(chip)
+                    chips['right_south'].append((x, y))
 
                 # handle south (goes across 3 but add this chip)
-                chips['south'].append(chip)
+                chips['south'].append((x, y))
                 for _ in range(0, 4):
                     x = (x - 1) % (self._max_chip_x + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['south'].append(chip)
+                    chips['south'].append((x, y))
 
                 # handle left
                 fpga_id = 1
                 fpga_link = 0
-                for chip in chips['left']:
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 4, ip)
+                for x, y in chips['left']:
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
                     fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 3, ip)
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
                     fpga_link += 1
 
                 # handle left north
                 first = chips['left_north'][0]
                 last = chips['left_north'][-1]
-                for chip in chips['left_north']:
-                    if chip == first:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 2, ip)
+                for x, y in chips['left_north']:
+                    if (x, y) == first:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
                         fpga_link += 1
-                    elif chip == last:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 3, ip)
+                    elif (x, y) == last:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
                         fpga_link += 1
                     else:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 3, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
                         fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 2, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
                         fpga_link += 1
 
                 # handle north
                 fpga_id = 2
                 fpga_link = 0
-                for chip in chips['north']:
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 2, ip)
+                for x, y in chips['north']:
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
                     fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 1, ip)
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
                     fpga_link += 1
 
                 # handle right
                 first = chips['right'][0]
                 last = chips['right'][-1]
-                for chip in chips['right']:
-                    if chip == first:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 0, ip)
+                for x, y in chips['right']:
+                    if (x, y) == first:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
                         fpga_link += 1
-                    elif chip == last:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 1, ip)
+                    elif (x, y) == last:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
                         fpga_link += 1
                     else:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 1, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
                         fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 0, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
                         fpga_link += 1
 
                 # handle right south
                 fpga_id = 0
                 fpga_link = 0
-                for chip in chips['right_south']:
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 0, ip)
+                for x, y in chips['right_south']:
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
                     fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 5, ip)
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
                     fpga_link += 1
 
                 # handle south
                 first = chips['south'][0]
                 last = chips['south'][-1]
-                for chip in chips['south']:
-                    if chip == first:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 4, ip)
+                for x, y in chips['south']:
+                    if (x, y) == first:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
                         fpga_link += 1
-                    elif chip == last:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 5, ip)
+                    elif (x, y) == last:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
                         fpga_link += 1
                     else:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 5, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
                         fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 4, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
                         fpga_link += 1
 
-    def _add_fpga_link(self, fpga_id, fpga_link, chip, link, board_address):
-        if chip is not None:
-            if not chip.router.is_link(link):
+    def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
+        if self.is_chip_at(x, y):
+            if not self.is_link_at(x, y, link):
                 self._fpga_links[board_address, fpga_id, fpga_link] = \
                     FPGALinkData(
                         fpga_link_id=fpga_link, fpga_id=fpga_id,
-                        connected_chip_x=chip.x, connected_chip_y=chip.y,
+                        connected_chip_x=x, connected_chip_y=y,
                         connected_link=link, board_address=board_address)
 
     def __str__(self):

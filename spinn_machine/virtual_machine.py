@@ -32,10 +32,8 @@ class VirtualMachine(Machine):
     )
 
     _4_chip_down_links = {
-        ((0, 0), (1, 0), 3), ((0, 0), (1, 1), 4),
-        ((0, 1), (1, 1), 3), ((0, 1), (1, 0), 4),
-        ((1, 0), (0, 0), 0), ((1, 0), (0, 1), 1),
-        ((1, 1), (0, 1), 0), ((1, 1), (0, 0), 1)
+        (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
+        (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)
     }
 
     def __init__(
@@ -161,6 +159,9 @@ class VirtualMachine(Machine):
                         n_ethernets += 1
                         self.add_chip(self._create_chip(x, y, ip_address))
 
+        self.add_spinnaker_links(version)
+        self.add_fpga_links(version)
+
     @property
     def chips(self):
         for x in range(0, self._max_chip_x + 1):
@@ -197,6 +198,12 @@ class VirtualMachine(Machine):
         return ((x, y) not in self._down_chips and
                 x <= self._max_chip_x and y <= self._max_chip_y)
 
+    def is_link_at(self, x, y, link):
+        return (
+            self.is_chip_at(x, y) and
+            (x, y, link) not in self._down_links and
+            link >= 0 and link <= 5)
+
     @property
     def n_chips(self):
         return (self._max_chip_x * self._max_chip_y) - len(self._down_chips)
@@ -229,8 +236,8 @@ class VirtualMachine(Machine):
 
         # TODO: Work out the Ethernet Connected Chip
         # !!!!!!!!!!! DO NOT MERGE UNTIL FILLED IN !!!!!!!!!!!!!
-        ethernet_connected_chip_x = None
-        ethernet_connected_chip_y = None
+        ethernet_connected_chip_x = 0
+        ethernet_connected_chip_y = 0
 
         return Chip(
             x, y, processors, chip_router, sdram,
@@ -273,8 +280,7 @@ class VirtualMachine(Machine):
             # Only add links where the destination chip is not down or the
             # link is not marked as down
             if ((end_x, end_y) not in self._down_chips and
-                    ((start_x, start_y), (end_x, end_y), link_from) not in
-                    self._down_links):
+                    (start_x, start_y, link_from) not in self._down_links):
 
                 # Work out the "opposite" link
                 link_to = (link_from + 3) % 6
