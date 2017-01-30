@@ -52,7 +52,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                         x, y, processors, r, _sdram, nearest_ethernet_chip[0],
                         nearest_ethernet_chip[1], ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
 
         self.assertEqual(new_machine.max_chip_x, 4)
         self.assertEqual(new_machine.max_chip_y, 4)
@@ -101,7 +101,7 @@ class SpinnMachineTestCase(unittest.TestCase):
             0, 0, processors, r, _sdram, nearest_ethernet_chip[0],
             nearest_ethernet_chip[1], ip))
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
-            machine.Machine(chips)
+            machine.Machine(chips, 0, 0)
 
     def test_machine_add_chip(self):
         """
@@ -137,7 +137,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                     x, y, processors, r, _sdram, nearest_ethernet_chip[0],
                     nearest_ethernet_chip[1], ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
         processor = list()
         processor.append(proc.Processor(100, 100, False))
         extra_chip = chip.Chip(
@@ -190,7 +190,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                     x, y, processors, r, _sdram, nearest_ethernet_chip[0],
                     nearest_ethernet_chip[1], ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
             new_machine.add_chip(chips[3])
 
@@ -236,7 +236,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                             nearest_ethernet_chip[0], nearest_ethernet_chip[1],
                             ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
         new_machine.add_chips(extra_chips)
 
         self.assertEqual(new_machine.max_chip_x, 5)
@@ -291,7 +291,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                             nearest_ethernet_chip[0], nearest_ethernet_chip[1],
                             ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
         self.assertRaises(exc.SpinnMachineAlreadyExistsException,
                           new_machine.add_chips, extra_chips)
 
@@ -329,7 +329,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                     x, y, processors, r, _sdram, nearest_ethernet_chip[0],
                     nearest_ethernet_chip[1], ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
         self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
 
     def test_machine_get_chip_at_invalid_location(self):
@@ -367,7 +367,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                     x, y, processors, r, _sdram, nearest_ethernet_chip[0],
                     nearest_ethernet_chip[1], ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
         self.assertEqual(None, new_machine.get_chip_at(10, 0))
 
     def test_machine_is_chip_at_true(self):
@@ -405,7 +405,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                     x, y, processors, r, _sdram, nearest_ethernet_chip[0],
                     nearest_ethernet_chip[1], ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
         self.assertTrue(new_machine.is_chip_at(3, 0))
 
     def test_machine_is_chip_at_false(self):
@@ -443,7 +443,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                     x, y, processors, r, _sdram, nearest_ethernet_chip[0],
                     nearest_ethernet_chip[1], ip))
 
-        new_machine = machine.Machine(chips)
+        new_machine = machine.Machine(chips, 0, 0)
         self.assertFalse(new_machine.is_chip_at(10, 0))
 
 
