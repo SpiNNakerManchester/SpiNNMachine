@@ -352,7 +352,7 @@ class Machine(object):
                 if not chip.router.is_link(4):
                     self._spinnaker_links[
                         chip.ip_address, 0] = SpinnakerLinkData(
-                            0, 0, 0, 4, chip.ip_address)
+                            0, chip.x, chip.y, 4, chip.ip_address)
 
     def add_fpga_links(self, version_no):
         """ Add FPGA links that are on a given machine depending on the\
