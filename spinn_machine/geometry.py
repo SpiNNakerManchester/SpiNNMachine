@@ -103,7 +103,7 @@ class SpiNNakerGeometry(object):
         x1, y1, _ = min(
             ((x0, y0, self._hex_metric(x, y, x0 + x_c, y0 + y_c))
              for x0, y0 in tiling_roots),
-            key=lambda (_, __, _measure): _measure)
+            key=lambda tupl: tupl[2])
         return (x1, y1)
 
     def local_eth_coord(self, x, y, width, height, root_x=0, root_y=0):
