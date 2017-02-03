@@ -121,7 +121,7 @@ class SpiNNakerTriadGeometry(object):
             ((x0, y0, self._hexagonal_metric_distance(
                 x, y, x0 + x_c, y0 + y_c))
              for x0, y0 in ethernet_chips),
-            key=lambda (_, __, _measure): _measure)
+            key=lambda tupl: tupl[2])
         return (x1, y1)
 
     def get_ethernet_chip_coordinates(
