@@ -7,6 +7,7 @@ from spinn_machine.sdram import SDRAM
 from spinn_machine.link import Link
 
 import logging
+from spinn_machine.spinnaker_triad_geometry import SpiNNakerTriadGeometry
 
 logger = logging.getLogger(__name__)
 
@@ -114,6 +115,30 @@ class VirtualMachine(Machine):
                 "A version {} board has a width and height of 2; set "
                 "version to None or width and height to None".format(version))
 
+        if (version is None and with_wrap_arounds and
+                not ((width == 8 and height == 8) or
+                     (width == 2 and height == 2) or
+                     (width % 12 == 0 and height % 12 == 0))):
+            raise exceptions.SpinnMachineInvalidParameterException(
+                "version, width, height, with_wrap_arounds",
+                "{}, {}, {}, {}".format(
+                    version, width, height, with_wrap_arounds),
+                "A generic machine with wrap arounds must be either have a"
+                " width and height which are both either 2 or 8 or a width"
+                " and height that are divisible by 12".format(version))
+
+        if (version is None and not with_wrap_arounds and
+                not ((width == 8 and height == 8) or
+                     (width == 2 and height == 2) or
+                     ((width - 4) % 12 == 0 and (height - 4) % 12 == 0))):
+            raise exceptions.SpinnMachineInvalidParameterException(
+                "version, width, height, with_wrap_arounds",
+                "{}, {}, {}, {}".format(
+                    version, width, height, with_wrap_arounds),
+                "A generic machine without wrap arounds must be either have a"
+                " width and height which are both either 2 or 8 or a width - 4"
+                " and height - 4 that are divisible by 12".format(version))
+
         # Get parameters for specific versions of boards
         if version == 5 or version == 4:
             if width is None:
@@ -140,9 +165,9 @@ class VirtualMachine(Machine):
         self._with_monitors = with_monitors
 
         # Store and compute the down items
-        self._down_cores = down_cores if down_cores is not None else {}
-        self._down_chips = down_chips if down_chips is not None else {}
-        self._down_links = down_links if down_links is not None else {}
+        self._down_cores = down_cores if down_cores is not None else set()
+        self._down_chips = down_chips if down_chips is not None else set()
+        self._down_links = down_links if down_links is not None else set()
         if version == 4 or version == 5:
             self._down_chips.update(Machine.BOARD_48_CHIP_GAPS)
         elif version == 2 or version == 3:
@@ -151,13 +176,39 @@ class VirtualMachine(Machine):
         # Calculate the Ethernet connections in the machine, assuming 48-node
         # boards
         n_ethernets = 0
+        ethernet_chips = set()
+        eth_width = width
+        eth_height = height
+        if (version is None and not with_wrap_arounds and
+                width > 8 and width % 12 != 0):
+            eth_width = width - 4
+        if (version is None and not with_wrap_arounds and
+                height > 8 and height % 12 != 0):
+            eth_height = height - 4
         for start_x, start_y in ((0, 0), (8, 4), (4, 8)):
-            for y in range(start_y, height, 12):
-                for x in range(start_x, width, 12):
+            for y in range(start_y, eth_height, 12):
+                for x in range(start_x, eth_width, 12):
                     if (x, y) not in self._down_chips:
                         ip_address = "127.0.0.{}".format(n_ethernets + 1)
                         n_ethernets += 1
+                        ethernet_chips.add((x, y))
                         self.add_chip(self._create_chip(x, y, ip_address))
+
+        # If there are no wrap arounds, and the version is not specified,
+        # remove chips not in the network
+        if version is None and not self._with_wrap_arounds:
+
+            # Find all the chips that are on the board
+            all_chips = {
+                (x + eth_x, y + eth_y) for x in range(8) for y in range(8)
+                for eth_x, eth_y in ethernet_chips
+                if (x, y) not in Machine.BOARD_48_CHIP_GAPS
+            }
+
+            self._down_chips = {
+                (x, y) for x in range(width) for y in range(height)
+                if (x, y) not in all_chips
+            }
 
         self.add_spinnaker_links(version)
         self.add_fpga_links(version)
@@ -236,13 +287,13 @@ class VirtualMachine(Machine):
 
         # TODO: Work out the Ethernet Connected Chip
         # !!!!!!!!!!! DO NOT MERGE UNTIL FILLED IN !!!!!!!!!!!!!
-        ethernet_connected_chip_x = 0
-        ethernet_connected_chip_y = 0
+        geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
+        eth_x, eth_y = geometry.get_ethernet_chip_coordinates(
+            x, y, self._max_chip_x + 1, self._max_chip_y + 1,
+            self._boot_x, self._boot_y)
 
         return Chip(
-            x, y, processors, chip_router, sdram,
-            ethernet_connected_chip_x, ethernet_connected_chip_y,
-            ip_address)
+            x, y, processors, chip_router, sdram, eth_x, eth_y, ip_address)
 
     def _calculate_links(self, x, y):
         """ Calculate the links needed for a machine structure
