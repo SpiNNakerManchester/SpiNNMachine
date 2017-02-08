@@ -17,7 +17,8 @@ class TestingIptag(unittest.TestCase):
         test which tests if a iptag with valid inputs works
         :return:
         """
-        IPTag("", 0, 0, 0, "", 1)
+        iptag = IPTag("", 0, 0, 0, "", 1)
+        self.assertIsNotNone(iptag)
 
     def test_retrival_of_board_address(self):
         """
@@ -25,6 +26,7 @@ class TestingIptag(unittest.TestCase):
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
+        self.assertIsNotNone(iptag)
         board_address = iptag.board_address
         self.assertEqual("", board_address)
 
@@ -34,6 +36,7 @@ class TestingIptag(unittest.TestCase):
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
+        self.assertIsNotNone(iptag)
         ip_address = iptag.ip_address
         self.assertEqual("", ip_address)
 
@@ -43,6 +46,7 @@ class TestingIptag(unittest.TestCase):
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
+        self.assertIsNotNone(iptag)
         tag = iptag.tag
         self.assertEqual(tag, 0)
 
@@ -52,6 +56,7 @@ class TestingIptag(unittest.TestCase):
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
+        self.assertIsNotNone(iptag)
         port = iptag.port
         self.assertEqual(port, 1)
 
@@ -61,8 +66,10 @@ class TestingIptag(unittest.TestCase):
         :return:
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
+        self.assertIsNotNone(iptag)
         strip_sdp = iptag.strip_sdp
         self.assertEqual(strip_sdp, False)
+
 
 if __name__ == '__main__':
     unittest.main()

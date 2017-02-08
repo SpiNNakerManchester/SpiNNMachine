@@ -1,9 +1,8 @@
 import unittest
-from spinn_machine.virtual_machine import VirtualMachine
+# from spinn_machine.virtual_machine import VirtualMachine
 
 
 class TestVirtualMachine(unittest.TestCase):
-
     @unittest.skip("testing skipping")
     def test_new_vm(self):
         self.assertEqual(True, False, "Test not implemented yet")

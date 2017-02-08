@@ -41,5 +41,6 @@ class TestingGeometry(unittest.TestCase):
                     "x at ({},{}): expected ({},{}) but got ({},{})".format(
                         x, y, -px, -py, qx, qy))
 
+
 if __name__ == '__main__':
     unittest.main()
