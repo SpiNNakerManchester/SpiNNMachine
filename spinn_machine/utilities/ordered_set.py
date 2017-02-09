@@ -112,6 +112,7 @@ class OrderedSet(collections.MutableSet):
     def __ne__(self, other):
         """
         comparison  method for comparing ordered sets
+
         :param other: instance of OrderedSet
         :return:
         """

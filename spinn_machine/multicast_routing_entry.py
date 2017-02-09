@@ -154,6 +154,7 @@ class MulticastRoutingEntry(object):
     def __eq__(self, other_entry):
         """
         supports comparisons
+
         :param other_entry: other Multicast_routing_entry
         :return:
         """

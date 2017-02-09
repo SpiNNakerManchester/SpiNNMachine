@@ -110,6 +110,7 @@ class Machine(object):
 
     def get_chips_via_local_ethernet(self, local_ethernet_x, local_ethernet_y):
         """ Get a list of chips which have the nearest Ethernet chip of x and y
+
         :param local_ethernet_x: the Ethernet chip x coord
         :param local_ethernet_y: the Ethernet chip y coord
         :return: list of chips

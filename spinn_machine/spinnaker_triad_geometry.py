@@ -180,7 +180,7 @@ class SpiNNakerTriadGeometry(object):
         :type root_x: int
         :param root_y: The y-coordinate of the boot chip (default 0, 0)
         :type root_y: int
-        :return the coordinates of the chip relative to its board
+        :return: the coordinates of the chip relative to its board
         :rtype: (int, int)
         """
         dx = (x - root_x) % self._triad_width
