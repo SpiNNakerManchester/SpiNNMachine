@@ -32,7 +32,7 @@ class ProgressBar(object):
         """ Update the progress bar by a given amount
 
         :param amount_to_add:
-        :return:
+        :rtype: None
         """
         self._currently_completed += amount_to_add
         self._check_differences()
@@ -63,7 +63,7 @@ class ProgressBar(object):
     def end(self):
         """ Close the progress bar, updating whatever is left if needed
 
-        :return:
+        :rtype: None
         """
         difference = \
             self._total_number_of_things_to_do - self._currently_completed

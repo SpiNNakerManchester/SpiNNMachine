@@ -44,7 +44,6 @@ class Processor(object):
 
         :return: id of the processor
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._processor_id
 
@@ -54,7 +53,6 @@ class Processor(object):
 
         :return: the amount of DTCM available on this processor
         :rtype: int
-        :raise None: does not raise any known exceptions
 
         """
         return self._dtcm_available
@@ -65,7 +63,6 @@ class Processor(object):
 
         :return: the number of cpu cycles available on this processor
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._clock_speed / 1000.0
 
@@ -75,7 +72,6 @@ class Processor(object):
 
         :return: The clock speed in cycles per second
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._clock_speed
 
@@ -86,7 +82,6 @@ class Processor(object):
 
         :return: True if the processor is the monitor, False otherwise
         :rtype: bool
-        :raise None: does not raise any known exceptions
         """
         return self._is_monitor
 

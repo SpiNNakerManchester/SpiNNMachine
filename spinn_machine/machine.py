@@ -235,10 +235,6 @@ class Machine(object):
 
     @property
     def n_chips(self):
-        """
-
-        :return:
-        """
         return len(self._chips)
 
     @property

@@ -114,6 +114,5 @@ class OrderedSet(collections.MutableSet):
         comparison  method for comparing ordered sets
 
         :param other: instance of OrderedSet
-        :return:
         """
         return not self.__eq__(other)

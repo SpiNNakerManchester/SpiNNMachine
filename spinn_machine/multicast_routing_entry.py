@@ -98,6 +98,7 @@ class MulticastRoutingEntry(object):
     @property
     def defaultable(self):
         """if this entry is a defaultable entry
+
         :return: the bool that represents if a entry is defaultable or not
         :rtype: bool
         """
@@ -156,7 +157,6 @@ class MulticastRoutingEntry(object):
         supports comparisons
 
         :param other_entry: other Multicast_routing_entry
-        :return:
         """
         if not isinstance(other_entry, MulticastRoutingEntry):
             return False
