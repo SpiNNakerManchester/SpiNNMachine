@@ -1,5 +1,4 @@
 import unittest
-# from spinn_machine.virtual_machine import VirtualMachine
 
 
 class TestVirtualMachine(unittest.TestCase):
