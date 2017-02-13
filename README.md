@@ -1,3 +1,5 @@
+This package is part of the [SpiNNaker Project](http://apt.cs.manchester.ac.uk/projects/SpiNNaker/) .
+
 This package is used to provide a Python representation of a SpiNNaker machine
 
 User Installation
@@ -36,3 +38,7 @@ To install as a development version in a virtualenv, with the virutalenv
 enabled, run:
 
     python setup.py develop
+
+Documentation
+=============
+[Python code documentation](https://readthedocs.org/projects/spinnmachine/)
