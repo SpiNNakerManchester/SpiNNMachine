@@ -333,13 +333,11 @@ epub_exclude_files = ['search.html']
 
 autoclass_content = 'both'
 
-# Do the rst generation if in READ_THE_DOCS
-if os.environ.get('READTHEDOCS', None) == 'True':
-    from sphinx_python_api_utils.make_rst import make_rst
+# Do the rst generation
+from sphinx import apidoc
 
-    for f in os.listdir("."):
-        if (os.path.isfile(f) and f.endswith(".rst")
-                and f != "index.rst" and f != "modules.rst"):
-            os.remove(f)
-    make_rst(rootpath="../../spinn_machine", excludes=[], destdir=".",
-            force=True, separatemodules=True)
+for f in os.listdir("."):
+    if (os.path.isfile(f) and f.endswith(
+            ".rst") and f != "index.rst" and f != "modules.rst"):
+        os.remove(f)
+apidoc.main([None, '-o', ".", "../../spinn_machine"])
