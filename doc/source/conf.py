@@ -1,4 +1,3 @@
-from sphinx import apidoc
 
 # -*- coding: utf-8 -*-
 #
@@ -16,6 +15,7 @@ from sphinx import apidoc
 
 # import sys
 import os
+from sphinx import apidoc
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -270,7 +270,7 @@ texinfo_documents = [
 epub_title = u'SpiNNMachine'
 epub_author = u''
 epub_publisher = u''
-epub_copyright = u'2014'
+epub_copyright = u'2014-2017'
 
 # The basename for the epub file. It defaults to the project name.
 # epub_basename = u'data_allocation'
