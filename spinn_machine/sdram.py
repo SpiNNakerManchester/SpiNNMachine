@@ -11,7 +11,7 @@ class SDRAM(object):
 
     def __init__(self, size=DEFAULT_SDRAM_BYTES):
         """
-        :param free_size: the space available in SDRAM
+        :param size: the space available in SDRAM
         :type size: int
         """
         if size < 0:
