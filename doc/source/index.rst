@@ -1,5 +1,5 @@
 These pages document the python code for the SpiNNMachine_ module
-which is part of the SpiNNaker_ Project. (Combined_documentation_)
+which is part of the SpiNNaker_ Project (Combined_documentation_).
 
 .. _SpiNNMachine: https://github.com/SpiNNakerManchester/SpiNNMachine
 .. _SpiNNaker: http://apt.cs.manchester.ac.uk/projects/SpiNNaker/
