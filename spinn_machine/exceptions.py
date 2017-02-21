@@ -7,10 +7,10 @@ class SpinnMachineException(Exception):
 class SpinnMachineAlreadyExistsException(SpinnMachineException):
     """ Indicates that something already exists of which there can only be one
     """
-    
+
     def __init__(self, item, value):
         """
-        
+
         :param item: The item of which there is already one of
         :type item: str
         :param value: The value of the item
@@ -21,13 +21,13 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
                 item, value))
         self._item = item
         self._value = value
-        
+
     @property
     def item(self):
         """ The item of which there is already one
         """
         return self._item
-    
+
     @property
     def value(self):
         """ The value of the item
@@ -38,10 +38,10 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
 class SpinnMachineInvalidParameterException(SpinnMachineException):
     """ Indicates that there is a problem with a parameter value
     """
-    
+
     def __init__(self, parameter, value, problem):
         """
-        
+
         :param parameter: The name of the parameter that has an invalid value
         :type parameter: str
         :param value: The value of the parameter that is invalid
@@ -55,19 +55,19 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         self._parameter = parameter
         self._value = value
         self._problem = problem
-        
+
     @property
     def parameter(self):
         """ The name of the parameter
         """
         return self._parameter
-    
+
     @property
     def value(self):
         """ The value of the parameter
         """
         return self._value
-    
+
     @property
     def problem(self):
         """ The problem with the setting of the parameter
