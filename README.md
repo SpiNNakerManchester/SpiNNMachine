@@ -41,5 +41,6 @@ enabled, run:
 
 Documentation
 =============
-[Python code documentation](https://readthedocs.org/projects/spinnmachine/)
-[Combined_documentation] (http://spinnakermanchester.readthedocs.io)
+[SpiNNMachine python documentation](https://readthedocs.org/projects/spinnmachine/)
+
+[Combined python documentation](http://spinnakermanchester.readthedocs.io)
