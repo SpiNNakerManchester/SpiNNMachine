@@ -20,7 +20,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_create_new_machine(self):
         """
         test creating a new machine
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -67,7 +68,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_create_new_machine_with_invalid_chips(self):
         """
         check that building a machine with invalid chips causes errors
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -106,7 +108,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_add_chip(self):
         """
         test the add_chip emthod of the machine object
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -159,7 +162,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_add_duplicate_chip(self):
         """
         test if adding the same chip twice causes an error
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -197,7 +201,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_add_chips(self):
         """
         check that adding range of chips works
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -253,7 +258,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the add_chips emthof of the machine with duplicate chips.
         should produce an error
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -298,7 +304,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_get_chip_at(self):
         """
         test the get_chip_at function from the machine with a valid request
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -336,7 +343,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the machines get_chip_at function with a location thats invalid,
         should return None and not produce an error
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -374,7 +382,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the is_chip_at function of the machine with a postiion to
         request whcih does indeed contain a chip
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
@@ -412,7 +421,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the is_chip_at function of the machine with a postiion to
         request whcih does not contain a chip
-        :return:
+
+        :rtype: None
         """
         flops = 1000
         (e, ne, n, w, sw, s) = range(6)
