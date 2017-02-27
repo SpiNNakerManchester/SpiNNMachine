@@ -13,8 +13,8 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             proc_ids.append(i)
         key = 1
         mask = 1
-        a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids, link_ids
-                                                , True)
+        a_multicast = mre.MulticastRoutingEntry(
+            key, mask, proc_ids, link_ids, True)
 
         self.assertEqual(a_multicast.routing_entry_key, key)
         self.assertEqual(a_multicast.link_ids, set(link_ids))
@@ -76,10 +76,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             proc_ids2.append(i)
         key = 1
         mask = 1
-        a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids, link_ids
-                                                , True)
-        b_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids2, link_ids2
-                                                , True)
+        a_multicast = mre.MulticastRoutingEntry(
+            key, mask, proc_ids, link_ids, True)
+        b_multicast = mre.MulticastRoutingEntry(
+            key, mask, proc_ids2, link_ids2, True)
 
         result_multicast = a_multicast.merge(b_multicast)
         comparison_link_ids = list()
@@ -112,10 +112,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             proc_ids2.append(i)
         key = 1
         mask = 1
-        a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids, link_ids
-                                                , True)
-        b_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids2, link_ids2
-                                                , False)
+        a_multicast = mre.MulticastRoutingEntry(
+            key, mask, proc_ids, link_ids, True)
+        b_multicast = mre.MulticastRoutingEntry(
+            key, mask, proc_ids2, link_ids2, False)
 
         result_multicast = a_multicast.merge(b_multicast)
         comparison_link_ids = list()
@@ -170,10 +170,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             proc_ids2.append(i)
         key = 1
         mask = 1
-        a_multicast = mre.MulticastRoutingEntry(key, mask, proc_ids,
-                                                link_ids, True)
-        b_multicast = mre.MulticastRoutingEntry(key + 1, mask + 1, proc_ids2,
-                                                link_ids2, True)
+        a_multicast = mre.MulticastRoutingEntry(
+            key, mask, proc_ids, link_ids, True)
+        b_multicast = mre.MulticastRoutingEntry(
+            key + 1, mask + 1, proc_ids2, link_ids2, True)
         with self.assertRaises(exc.SpinnMachineInvalidParameterException):
             a_multicast.merge(b_multicast)
 
