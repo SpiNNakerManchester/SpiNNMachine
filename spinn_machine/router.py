@@ -150,6 +150,14 @@ class Router(object):
 
     @staticmethod
     def convert_routing_table_entry_to_spinnaker_route(routing_table_entry):
+        """ Convert a routing table entry represented in software to a\
+            binary routing table entry usable on the machine
+
+        :param routing_table_entry: The entry to convert
+        :type routing_table_entry:\
+            :py:class:`spinnmachine.multicast_routing_entry.MulticastRoutingEntry`
+        :rtype: int
+        """
         route_entry = 0
         for processor_id in routing_table_entry.processor_ids:
             if processor_id > 26 or processor_id < 0:
@@ -178,7 +186,6 @@ class Router(object):
             next_hop_chips_coords.append(
                 {'x': link.destination_x, 'y': link.destination_y})
         return next_hop_chips_coords
-
 
     def __str__(self):
         return (

@@ -6,7 +6,7 @@ class CoreSubsets(object):
     """ Represents a group of CoreSubsets, with a maximum of one per chip
     """
 
-    __slots__ = "_core_subsets"
+    __slots__ = ("_core_subsets")
 
     def __init__(self, core_subsets=None):
         """

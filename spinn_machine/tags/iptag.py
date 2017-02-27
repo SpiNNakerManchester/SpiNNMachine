@@ -87,8 +87,8 @@ class IPTag(AbstractTag):
                     self._strip_sdp == other._strip_sdp and
                     self._board_address == other.board_address and
                     self._port == other.port and
-                        self._tag == other.tag and
-                        self._traffic_identifier == other.traffic_identifier):
+                    self._tag == other.tag and
+                    self._traffic_identifier == other.traffic_identifier):
                 return True
             else:
                 return False
