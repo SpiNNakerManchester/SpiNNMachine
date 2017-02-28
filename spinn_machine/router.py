@@ -119,6 +119,14 @@ class Router(object):
         """
         return self._links.iteritems()
 
+    def __len__(self):
+        """ Get the number of links in the router
+
+        :return: The length of the underlying iterable
+        :rtype: int
+        """
+        return len(self._links)
+
     @property
     def emergency_routing_enabled(self):
         """ Indicator of whether emergency routing is enabled
