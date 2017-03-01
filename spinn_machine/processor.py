@@ -81,6 +81,8 @@ class Processor(object):
         """ Determines if the processor is the monitor, and therefore not\
             to be allocated
 
+        WARNING: Currently rejection processeors are also marked as monitors
+
         :return: True if the processor is the monitor, False otherwise
         :rtype: bool
         """
