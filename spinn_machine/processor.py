@@ -15,7 +15,6 @@ class Processor(object):
     def __init__(self, processor_id, clock_speed=CLOCK_SPEED, is_monitor=False,
                  dtcm_available=DTCM_AVAILABLE):
         """
-
         :param processor_id: id of the processor in the chip
         :type processor_id: int
         :param clock_speed: The number of cpu cycles per second of the\
@@ -24,6 +23,8 @@ class Processor(object):
         :param is_monitor: Determines if the processor is considered the\
                     monitor processor, and so should not be otherwise allocated
         :type is_monitor: bool
+        :param dtcm_available: Data Tightly Coupled Memory available
+        :type dtcm_available: int
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
                     If the clock speed is negative
         """
