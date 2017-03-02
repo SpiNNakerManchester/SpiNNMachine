@@ -87,5 +87,16 @@ class TestingChip(unittest.TestCase):
                 count += 1
         self.assertEquals(count, 1)
 
+    def test_get_first_none_monitor_processor(self):
+        """
+        test the get_first_none_monitor_processor
+
+        NOTE: Not sure if method being tested is required.
+        """
+        new_chip = self._create_chip(self._x, self._y, self._processors,
+                                     self._router, self._sdram, self._ip)
+        non_monitor = new_chip.get_first_none_monitor_processor()
+        self.assertFalse(non_monitor.is_monitor)
+
     if __name__ == '__main__':
         unittest.main()
