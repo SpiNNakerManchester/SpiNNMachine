@@ -583,6 +583,21 @@ class Machine(object):
                     (x, y) not in Machine.BOARD_48_CHIP_GAPS):
                 yield x, y
 
+    def reserve_system_processors(self):
+        """
+        Sets one of the none monitorsystem processors as a system processor
+        on every Chip
+
+        Updates maximum_user_cores_on_chip
+
+        :rtype None
+        """
+        self._maximum_user_cores_on_chip = 0
+        for chip in self._chips:
+            if chip.reserve_a_system_processor() > \
+                self._maximum_user_cores_on_chip:
+                self._maximum_user_cores_on_chip = chip.n_user_processors
+
     @property
     def maximum_user_cores_on_chip(self):
         """ The maximum number of user cores on any chip

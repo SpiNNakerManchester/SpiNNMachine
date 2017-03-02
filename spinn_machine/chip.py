@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-
+from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 
 class Chip(object):
 
@@ -234,6 +234,25 @@ class Chip(object):
         :raise None: this method does not raise any exception
         """
         return self._tag_ids
+
+    def reserve_a_system_processor(self):
+        """
+        This method should ONLY be called via
+        Machine.reserve_system_processors
+
+        Sets one of the none monitor processors as a system processor
+
+        Updates n_user_processors
+
+        :return: The total number of processors that are not system processors
+            including monitors
+        :rtype None
+        """
+        for processor in self._p:
+            if not self._p[processor].is_monitor:
+                self._p[processor].set_as_system_processor()
+                self._n_user_processors -= 1
+                return self._n_user_processors
 
     def __str__(self):
         return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"

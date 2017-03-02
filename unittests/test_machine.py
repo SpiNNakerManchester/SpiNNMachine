@@ -17,40 +17,60 @@ class SpinnMachineTestCase(unittest.TestCase):
     test for testing the python represnetaiton of a spinnaker machine
     """
 
-    def test_create_new_machine(self):
-        """
-        test creating a new machine
-        :return:
-        """
-        flops = 1000
+    def setUp(self):
+        self._sdram = sdram.SDRAM(128)
+
         (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
         links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
         links.append(link.Link(0, 0, 0, 1, 1, n, n))
         links.append(link.Link(0, 1, 1, 1, 0, s, s))
         links.append(link.Link(1, 1, 2, 0, 0, e, e))
         links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
+        self._router = router.Router(links, False, 100, 1024)
 
-        nearest_ethernet_chip = (0, 0)
-        ip = "192.162.240.253"
+        self._nearest_ethernet_chip = (0, 0)
+
+        self._ip = "192.162.240.253"
+
+    def _create_processors(self, monitor=3):
+        """
+        Create a list of processors.
+
+        As some test change the processors this must be called each time.
+
+        :param monitor: Id of process to make the monitor
+        :type monitor: int
+        """
+        flops = 1000
+        processors = list()
+        for i in range(18):
+            if i == monitor:
+                processors.append(proc.Processor(i, flops, is_monitor=True))
+            else:
+                processors.append(proc.Processor(i, flops))
+        return processors
+
+    def _create_chip(self, x, y, processors):
+        return chip.Chip(x, y, processors, self._router, self._sdram,
+                         self._nearest_ethernet_chip[0],
+                         self._nearest_ethernet_chip[1], self._ip)
+
+    def _create_chips(self, processors=None, monitor=3):
+        if not processors:
+            processors = self._create_processors(monitor)
         chips = list()
         for x in range(5):
             for y in range(5):
-                chips.append(
-                    chip.Chip(
-                        x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                        nearest_ethernet_chip[1], ip))
+                chips.append( self._create_chip(x, y, processors))
+        return chips
+
+    def test_create_new_machine(self):
+        """
+        test creating a new machine
+        """
+        processors = self._create_processors()
+
+        chips = self._create_chips(processors)
 
         new_machine = machine.Machine(chips, 0, 0)
 
@@ -58,9 +78,9 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
-            self.assertEqual(c.ip_address, ip)
-            self.assertEqual(c.sdram, _sdram)
-            self.assertEqual(c.router, r)
+            self.assertEqual(c.ip_address, self._ip)
+            self.assertEqual(c.sdram, self._sdram)
+            self.assertEqual(c.router, self._router)
             for p in processors:
                 self.assertTrue(p in c.processors)
 
@@ -69,37 +89,11 @@ class SpinnMachineTestCase(unittest.TestCase):
         check that building a machine with invalid chips causes errors
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        nearest_ethernet_chip = (0, 0)
-        ip = "192.162.240.253"
-
-        chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
+        chips = self._create_chips()
         chips.append(chip.Chip(
-            0, 0, processors, r, _sdram, nearest_ethernet_chip[0],
-            nearest_ethernet_chip[1], ip))
+            0, 0, self._create_processors(), self._router, self._sdram,
+            self._nearest_ethernet_chip[0],
+            self._nearest_ethernet_chip[1], self._ip))
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
             machine.Machine(chips, 0, 0)
 
@@ -108,49 +102,19 @@ class SpinnMachineTestCase(unittest.TestCase):
         test the add_chip emthod of the machine object
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        nearest_ethernet_chip = (0, 0)
-        ip = "192.162.240.253"
-        chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
-
-        new_machine = machine.Machine(chips, 0, 0)
+        processors = self._create_processors()
+        new_machine = machine.Machine(self._create_chips(processors), 0, 0)
         processor = list()
         processor.append(proc.Processor(100, 100, False))
-        extra_chip = chip.Chip(
-            5, 0, processor, r, _sdram, nearest_ethernet_chip[0],
-            nearest_ethernet_chip[1], ip)
+        extra_chip = self._create_chip(5, 0, processor)
         new_machine.add_chip(extra_chip)
         self.assertEqual(new_machine.max_chip_x, 5)
         self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
-            self.assertEqual(c.ip_address, ip)
-            self.assertEqual(c.sdram, _sdram)
-            self.assertEqual(c.router, r)
+            self.assertEqual(c.ip_address, self._ip)
+            self.assertEqual(c.sdram, self._sdram)
+            self.assertEqual(c.router, self._router)
             if c is extra_chip:
                 with self.assertRaises(AssertionError):
                     for p in c.processors:
@@ -161,35 +125,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         test if adding the same chip twice causes an error
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        nearest_ethernet_chip = (0, 0)
-        ip = "192.162.240.253"
-        chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
-
+        chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
             new_machine.add_chip(chips[3])
@@ -199,53 +135,24 @@ class SpinnMachineTestCase(unittest.TestCase):
         check that adding range of chips works
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        ip = "192.162.240.253"
-        nearest_ethernet_chip = (0, 0)
+        processors = self._create_processors()
+        chips = self._create_chips(processors)
+        new_machine = machine.Machine(chips, 0, 0)
 
         extra_chips = list()
-        chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
-                if x == 0:
-                    extra_chips.append(
-                        chip.Chip(
-                            x + 5, y, processors, r, _sdram,
-                            nearest_ethernet_chip[0], nearest_ethernet_chip[1],
-                            ip))
+        extra_chips.append(self._create_chip(5, 0, processors))
+        extra_chips.append(self._create_chip(5, 1, processors))
+        extra_chips.append(self._create_chip(5, 2, processors))
+        extra_chips.append(self._create_chip(5, 3, processors))
 
-        new_machine = machine.Machine(chips, 0, 0)
         new_machine.add_chips(extra_chips)
-
         self.assertEqual(new_machine.max_chip_x, 5)
         self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
-            self.assertEqual(c.ip_address, ip)
-            self.assertEqual(c.sdram, _sdram)
-            self.assertEqual(c.router, r)
+            self.assertEqual(c.ip_address, self._ip)
+            self.assertEqual(c.sdram, self._sdram)
+            self.assertEqual(c.router, self._router)
             for p in processors:
                 self.assertTrue(p in c.processors)
 
@@ -255,43 +162,14 @@ class SpinnMachineTestCase(unittest.TestCase):
         should produce an error
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        ip = "192.162.240.253"
-        nearest_ethernet_chip = (0, 0)
-        chips = list()
-        extra_chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
-                if x == 0:
-                    extra_chips.append(
-                        chip.Chip(
-                            x, y, processors, r, _sdram,
-                            nearest_ethernet_chip[0], nearest_ethernet_chip[1],
-                            ip))
-
+        chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
+
+        processors = self._create_processors()
+        extra_chips = list()
+        extra_chips.append(self._create_chip(6, 0, processors))
+        extra_chips.append(chips[3])
+
         self.assertRaises(exc.SpinnMachineAlreadyExistsException,
                           new_machine.add_chips, extra_chips)
 
@@ -300,34 +178,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         test the get_chip_at function from the machine with a valid request
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        ip = "192.162.240.253"
-        nearest_ethernet_chip = (0, 0)
-        chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
+        chips = self._create_chips()
+        new_machine = machine.Machine(chips, 0, 0)
 
         new_machine = machine.Machine(chips, 0, 0)
         self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
@@ -338,34 +190,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         should return None and not produce an error
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        ip = "192.162.240.253"
-        nearest_ethernet_chip = (0, 0)
-        chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
+        chips = self._create_chips()
 
         new_machine = machine.Machine(chips, 0, 0)
         self.assertEqual(None, new_machine.get_chip_at(10, 0))
@@ -376,34 +201,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         request whcih does indeed contain a chip
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        ip = "192.162.240.253"
-        nearest_ethernet_chip = (0, 0)
-        chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
+        chips = self._create_chips()
 
         new_machine = machine.Machine(chips, 0, 0)
         self.assertTrue(new_machine.is_chip_at(3, 0))
@@ -414,38 +212,9 @@ class SpinnMachineTestCase(unittest.TestCase):
         request whcih does not contain a chip
         :return:
         """
-        flops = 1000
-        (e, ne, n, w, sw, s) = range(6)
-
-        processors = list()
-        for i in range(18):
-            processors.append(proc.Processor(i, flops))
-
-        links = list()
-        links.append(link.Link(0, 0, 0, 0, 1, s, s))
-
-        _sdram = sdram.SDRAM(128)
-
-        links = list()
-
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        r = router.Router(links, False, 100, 1024)
-
-        ip = "192.162.240.253"
-        nearest_ethernet_chip = (0, 0)
-        chips = list()
-        for x in range(5):
-            for y in range(5):
-                chips.append(chip.Chip(
-                    x, y, processors, r, _sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip))
-
+        chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
         self.assertFalse(new_machine.is_chip_at(10, 0))
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -90,15 +90,18 @@ class Processor(object):
         """
         return self._is_monitor
 
-    @is_monitor.setter
-    def is_monitor(self, is_monitor):
-        """ Sets the monitor status of this processor
+    # is_monitor setter no longer available
+    # use Machine.set_reinjection_processors instead
 
-        :param is_monitor: True if the processor is to be a monitor, \
-                    false otherwise
-        :type is_monitor: bool
+    def set_as_system_processor(self):
         """
-        self._is_monitor = is_monitor
+        This method should ONLY be called via
+        Machine.reserve_system_processor
+
+        The current implemenation does not distiquish beteen monitor processors
+        and reinjector ones but could do so at a later stage
+        """
+        self._is_monitor = True
 
     def __str__(self):
         return "[CPU: id={}, clock_speed={} MHz, monitor={}]".format(
