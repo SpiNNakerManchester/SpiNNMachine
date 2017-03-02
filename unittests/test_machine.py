@@ -14,7 +14,7 @@ import unittest
 
 class SpinnMachineTestCase(unittest.TestCase):
     """
-    test for testing the python represnetaiton of a spinnaker machine
+    test for testing the python representation of a spinnaker machine
     """
 
     def setUp(self):
@@ -32,7 +32,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         self._ip = "192.162.240.253"
 
-    def _create_processors(self, monitor=3):
+    def _create_processors(self, monitor=3, number=18):
         """
         Create a list of processors.
 
@@ -43,7 +43,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         flops = 1000
         processors = list()
-        for i in range(18):
+        for i in range(number):
             if i == monitor:
                 processors.append(proc.Processor(i, flops, is_monitor=True))
             else:
@@ -215,6 +215,35 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
         self.assertFalse(new_machine.is_chip_at(10, 0))
+
+    def test_reserve_system_processors(self):
+        processors = self._create_processors()
+        chips = self._create_chips(processors)
+        new_machine = machine.Machine(chips, 0, 0)
+        self.assertEquals(new_machine.maximum_user_cores_on_chip,
+                          len(processors) - 1)
+
+        new_machine.reserve_system_processors()
+        self.assertEquals(new_machine.maximum_user_cores_on_chip,
+                          len(processors) - 2)
+
+    def test_reserve_system_processors_different(self):
+        chips = list()
+        for x in range(2):
+            for y in range(2):
+                processors = self._create_processors(monitor=1+x+y,
+                                                     number=5+x+y)
+                chips.append( self._create_chip(x, y, processors))
+        #processors coming out will be biggest list
+
+        new_machine = machine.Machine(chips, 0, 0)
+        self.assertEquals(new_machine.maximum_user_cores_on_chip,
+                          len(processors) - 1)
+
+        new_machine.reserve_system_processors()
+        self.assertEquals(new_machine.maximum_user_cores_on_chip,
+                          len(processors) - 2)
+
 
 if __name__ == '__main__':
     unittest.main()

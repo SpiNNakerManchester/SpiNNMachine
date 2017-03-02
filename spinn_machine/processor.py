@@ -93,15 +93,19 @@ class Processor(object):
     # is_monitor setter no longer available
     # use Machine.set_reinjection_processors instead
 
-    def set_as_system_processor(self):
+    def clone_as_system_processor(self):
         """
-        This method should ONLY be called via
-        Machine.reserve_system_processor
+        Creates a clone of this processor but changing it to a system processor.
 
         The current implemenation does not distiquish beteen monitor processors
         and reinjector ones but could do so at a later stage
+
+        ;return: A new Processor with the same propertyies INCLUDING id
+            except now set as a System processor
+        :rtype: Processor
         """
-        self._is_monitor = True
+        return Processor(self._processor_id, self._clock_speed,
+                         is_monitor=True, dtcm_available=self._dtcm_available)
 
     def __str__(self):
         return "[CPU: id={}, clock_speed={} MHz, monitor={}]".format(

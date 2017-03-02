@@ -248,9 +248,10 @@ class Chip(object):
             including monitors
         :rtype None
         """
-        for processor in self._p:
-            if not self._p[processor].is_monitor:
-                self._p[processor].set_as_system_processor()
+        for id, processor in self._p.iteritems():
+            if not processor.is_monitor:
+                system_processor = processor.clone_as_system_processor()
+                self._p[id] = system_processor
                 self._n_user_processors -= 1
                 return self._n_user_processors
 
