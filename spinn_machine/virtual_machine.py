@@ -285,8 +285,6 @@ class VirtualMachine(Machine):
         else:
             sdram = SDRAM(self._sdram_per_chip)
 
-        # TODO: Work out the Ethernet Connected Chip
-        # !!!!!!!!!!! DO NOT MERGE UNTIL FILLED IN !!!!!!!!!!!!!
         geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
         eth_x, eth_y = geometry.get_ethernet_chip_coordinates(
             x, y, self._max_chip_x + 1, self._max_chip_y + 1,
