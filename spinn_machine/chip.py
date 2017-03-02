@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-from spinn_machine.exceptions import SpinnMachineInvalidParameterException
+
 
 class Chip(object):
 

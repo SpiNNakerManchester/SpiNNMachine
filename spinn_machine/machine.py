@@ -595,7 +595,7 @@ class Machine(object):
         self._maximum_user_cores_on_chip = 0
         for (id, chip) in self._chips.iteritems():
             if chip.reserve_a_system_processor() > \
-                self._maximum_user_cores_on_chip:
+                    self._maximum_user_cores_on_chip:
                 self._maximum_user_cores_on_chip = chip.n_user_processors
 
     @property

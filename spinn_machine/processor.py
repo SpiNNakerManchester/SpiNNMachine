@@ -95,9 +95,10 @@ class Processor(object):
 
     def clone_as_system_processor(self):
         """
-        Creates a clone of this processor but changing it to a system processor.
+        Creates a clone of this processor but changing it to
+        a system processor.
 
-        The current implemenation does not distiquish beteen monitor processors
+        The current implemenation does not distiquish between monitor processors
         and reinjector ones but could do so at a later stage
 
         ;return: A new Processor with the same propertyies INCLUDING id
