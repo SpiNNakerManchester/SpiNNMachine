@@ -228,12 +228,21 @@ class Chip(object):
 
     @property
     def tag_ids(self):
-        """ returns the ids supported by this chip
+        """ The tag ids supported by this chip
 
         :return: the set of ids.
         :raise None: this method does not raise any exception
         """
         return self._tag_ids
+
+    def get_first_none_monitor_processor(self):
+        """ Get the first processor in the list which is not a monitor core
+
+        :return: a processor
+        """
+        for processor in self.processors:
+            if not processor.is_monitor:
+                return processor
 
     def reserve_a_system_processor(self):
         """
