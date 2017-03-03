@@ -12,5 +12,7 @@ setup(
     packages=['spinn_machine',
               'spinn_machine.link_data_objects',
               'spinn_machine.tags',
-              'spinn_machine.utilities']
+              'spinn_machine.utilities'],
+    install_requires=[
+        'SpiNNUtilities >= 3.0.0']
 )

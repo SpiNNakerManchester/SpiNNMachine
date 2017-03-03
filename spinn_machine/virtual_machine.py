@@ -5,7 +5,7 @@ from spinn_machine.router import Router
 from spinn_machine.chip import Chip
 from spinn_machine.sdram import SDRAM
 from spinn_machine.link import Link
-from spinn_machine.utilities.progress_bar import ProgressBar
+from spinn_utilities.progress_bar import ProgressBar
 
 import logging
 
