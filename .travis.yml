@@ -8,7 +8,7 @@ virtualenv:
   system_site_packages: true
 
 install:
-  - pip install --upgrade git+git://github.com/SpiNNakerManchester/SpiNNUtilities.git@master
+  - pip install --upgrade git+git://github.com/SpiNNakerManchester/SpiNNUtils.git@master
   - python ./setup.py install
 before_script:
   - pip install -r requirements-test.txt
