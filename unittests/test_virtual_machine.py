@@ -32,6 +32,20 @@ class TestVirtualMachine(unittest.TestCase):
                          nearest_ethernet_chip[0],
                          nearest_ethernet_chip[1], _ip)
 
+    def test_version_2(self):
+        vm = virtual_machine.VirtualMachine(version=2, with_wrap_arounds=None)
+        self.assertEqual(vm.max_chip_x, 1)
+        self.assertEqual(vm.max_chip_y, 1)
+        self.assertEquals(4, vm.n_chips)
+        self.assertEquals(1, len(vm.ethernet_connected_chips))
+
+    def test_version_5(self):
+        vm = virtual_machine.VirtualMachine(version=5)
+        self.assertEqual(vm.max_chip_x, 7)
+        self.assertEqual(vm.max_chip_y, 7)
+        self.assertEquals(48, vm.n_chips)
+        self.assertEquals(1, len(vm.ethernet_connected_chips))
+
     def test_new_vm_no_monitor(self):
         n_cpus = 18
         vm = virtual_machine.VirtualMachine(2, 2, n_cpus_per_chip=n_cpus,
@@ -74,6 +88,23 @@ class TestVirtualMachine(unittest.TestCase):
         _chip = self._create_chip(1, 1)
         with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
             vm.add_chip(_chip)
+
+    def test_weird_size(self):
+        with self.assertRaises(exc.SpinnMachineInvalidParameterException):
+            vm = virtual_machine.VirtualMachine(5, 7)
+
+    def test_12_n_plus4_12_m_4(self):
+        size_x = 12*5
+        size_y = 12*7
+        vm = virtual_machine.VirtualMachine(size_x+4, size_y+4)
+        self.assertEquals(size_x*size_y, vm.n_chips)
+
+    def test_12_n_12_m(self):
+        size_x = 12*5
+        size_y = 12*7
+        vm = virtual_machine.VirtualMachine(size_x, size_y,
+                                            with_wrap_arounds=True)
+        self.assertEquals(size_x * size_y, vm.n_chips)
 
     def test_add__chip(self):
         vm = virtual_machine.VirtualMachine(2, 2)

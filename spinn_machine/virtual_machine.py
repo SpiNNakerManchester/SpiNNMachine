@@ -5,6 +5,7 @@ from spinn_machine.router import Router
 from spinn_machine.chip import Chip
 from spinn_machine.sdram import SDRAM
 from spinn_machine.link import Link
+from spinn_machine.utilities.ordered_set import OrderedSet
 
 import logging
 from spinn_machine.spinnaker_triad_geometry import SpiNNakerTriadGeometry
@@ -17,7 +18,7 @@ class VirtualMachine(Machine):
     """
 
     __slots__ = (
-        "_down_chips",
+        "_configured_chips",
         "_down_cores",
         "_down_links",
         "_extra_chips",
@@ -36,7 +37,7 @@ class VirtualMachine(Machine):
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=18, with_monitors=True,
-            sdram_per_chip=None, down_chips=None, down_cores=None,
+            sdram_per_chip=None, down_chips=[], down_cores=None,
             down_links=None):
         """
 
@@ -60,6 +61,8 @@ class VirtualMachine(Machine):
         Machine.__init__(self, (), 0, 0)
 
         # Verify the machine
+
+
         if ((width is not None and width < 0) or
                 (height is not None and height < 0)):
             raise exceptions.SpinnMachineInvalidParameterException(
@@ -110,7 +113,6 @@ class VirtualMachine(Machine):
                 "{}, {}, {}".format(version, width, height),
                 "A version {} board has a width and height of 2; set "
                 "version to None or width and height to None".format(version))
-
         if (version is None and with_wrap_arounds and
                 not ((width == 8 and height == 8) or
                      (width == 2 and height == 2) or
@@ -166,20 +168,19 @@ class VirtualMachine(Machine):
         else:
             self._with_monitors = 0
 
-        # Store and compute the down items
+        # Store the down items
         self._down_cores = down_cores if down_cores is not None else set()
-        self._down_chips = down_chips if down_chips is not None else set()
         self._down_links = down_links if down_links is not None else set()
-        self._extra_chips = set()
-        if version == 4 or version == 5:
-            self._down_chips.update(Machine.BOARD_48_CHIP_GAPS)
-        elif version == 2 or version == 3:
+        if version == 2 or version == 3:
             self._down_links.update(VirtualMachine._4_chip_down_links)
+
+        #add storage for any chips added later
+        self._extra_chips = OrderedSet()
 
         # Calculate the Ethernet connections in the machine, assuming 48-node
         # boards
         n_ethernets = 0
-        ethernet_chips = set()
+        ethernet_chips = []
         eth_width = width
         eth_height = height
         if (version is None and not with_wrap_arounds and
@@ -191,30 +192,32 @@ class VirtualMachine(Machine):
         for start_x, start_y in ((0, 0), (8, 4), (4, 8)):
             for y in range(start_y, eth_height, 12):
                 for x in range(start_x, eth_width, 12):
-                    if (x, y) not in self._down_chips:
-                        ip_address = "127.0.0.{}".format(n_ethernets + 1)
+                    if (x, y) not in down_chips:
                         n_ethernets += 1
-                        ethernet_chips.add((x, y))
-                        new_chip = self._create_chip(x, y, ip_address)
-                        Machine.add_chip(self, new_chip)
+                        ethernet_chips.append((x, y))
 
-        # If there are no wrap arounds, and the version is not specified,
-        # remove chips not in the network
-        if version is None and not self._with_wrap_arounds:
-
+        # Compute list of chips that are possible based on configuration
+        # If there are no wrap arounds, and the the size is not 2 * 2,
+        # the possible chips depend on the 48 chip board's gaps
+        if height > 2 and not self._with_wrap_arounds:
             # Find all the chips that are on the board
-            all_chips = {
+            self._configured_chips = OrderedSet({
                 (x + eth_x, y + eth_y) for x in range(8) for y in range(8)
                 for eth_x, eth_y in ethernet_chips
-                if (x, y) not in Machine.BOARD_48_CHIP_GAPS
-            }
+                if (x, y) not in Machine.BOARD_48_CHIP_GAPS and
+                (x, y) not in down_chips
+            })
+        else:
+            self._configured_chips = OrderedSet((x, y) for x in range(height)
+                                                for y in range(width) if
+                                                (x, y) not in down_chips)
 
-            self._down_chips = {
-                (x, y) for x in range(width) for y in range(height)
-                if (x, y) not in all_chips
-            }
-            if down_chips is not None:
-                self._down_chips.update(down_chips)
+        for i in range(len(ethernet_chips)):
+            (a, b) = divmod(i+1, 128)
+            ip_address = "127.0.{}.{}".format(a, b)
+            (x, y) =  ethernet_chips[i]
+            new_chip = self._create_chip(x, y, ip_address)
+            Machine.add_chip(self, new_chip)
 
         self.add_spinnaker_links(version)
         self.add_fpga_links(version)
@@ -233,10 +236,7 @@ class VirtualMachine(Machine):
             raise exceptions.SpinnMachineAlreadyExistsException(
                 "chip", "{}, {}".format(chip.x, chip.y))
         Machine.add_chip(self, chip)
-        if (chip.x < self._original_width and chip.y < self._original_height):
-            self._down_chips.remove((chip.x, chip.y))
-        else:
-            self._extra_chips.add((chip.x, chip.y))
+        self._extra_chips.add((chip.x, chip.y))
 
     @property
     def chips(self):
@@ -247,11 +247,9 @@ class VirtualMachine(Machine):
 
     @property
     def chip_coordinates(self):
-        for x in range(0, self._original_width):
-            for y in range(0, self._original_height):
-                if (x, y) not in self._down_chips:
-                    yield (x, y)
         for (x, y) in self._extra_chips:
+            yield (x, y)
+        for (x, y) in self._configured_chips:
             yield (x, y)
 
     def __iter__(self):
@@ -269,10 +267,11 @@ class VirtualMachine(Machine):
         return self._chips[chip_id]
 
     def is_chip_at(self, x, y):
+        if (x, y) in self._configured_chips:
+            return True
         if (x, y) in self._extra_chips:
             return True
-        return ((x, y) not in self._down_chips and
-                x < self._original_width and y < self._original_height)
+        return False
 
     def is_link_at(self, x, y, link):
         if (x, y) in self._chips:
@@ -284,8 +283,7 @@ class VirtualMachine(Machine):
 
     @property
     def n_chips(self):
-        return (self._original_height * self._original_width) - \
-            len(self._down_chips) + len(self._extra_chips)
+        return len(self._configured_chips) + len(self._extra_chips)
 
     def __str__(self):
         return "[VirtualMachine: max_x={}, max_y={}]".format(
@@ -359,7 +357,7 @@ class VirtualMachine(Machine):
 
             # Only add links where the destination chip is not down or the
             # link is not marked as down
-            if ((end_x, end_y) not in self._down_chips and
+            if ((end_x, end_y) in self._configured_chips and
                     (start_x, start_y, link_from) not in self._down_links):
 
                 # Work out the "opposite" link
