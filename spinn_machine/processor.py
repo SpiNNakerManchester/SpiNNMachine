@@ -98,8 +98,8 @@ class Processor(object):
         Creates a clone of this processor but changing it to
         a system processor.
 
-        The current implemenation does not distiquish between monitor processors
-        and reinjector ones but could do so at a later stage
+        The current implemenation does not distiquish between
+        monitor processors and reinjector ones but could do so at a later stage
 
         ;return: A new Processor with the same propertyies INCLUDING id
             except now set as a System processor
