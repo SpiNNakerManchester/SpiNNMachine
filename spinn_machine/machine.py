@@ -585,7 +585,7 @@ class Machine(object):
 
     def reserve_system_processors(self):
         """
-        Sets one of the none monitorsystem processors as a system processor
+        Sets one of the none monitor system processors as a system processor
         on every Chip
 
         Updates maximum_user_cores_on_chip
