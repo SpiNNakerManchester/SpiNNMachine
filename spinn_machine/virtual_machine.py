@@ -61,58 +61,69 @@ class VirtualMachine(Machine):
         Machine.__init__(self, (), 0, 0)
 
         # Verify the machine
-
-
+        # Check for not enough info or out of range
         if ((width is not None and width < 0) or
                 (height is not None and height < 0)):
             raise exceptions.SpinnMachineInvalidParameterException(
                 "width or height", "{} or {}".format(width, height),
                 "Negative dimensions are not supported")
-
         if version is None and (width is None or height is None):
             raise exceptions.SpinnMachineInvalidParameterException(
                 "version, width, height",
                 "{}, {}, {}".format(version, width, height),
                 "Either version must be specified, "
                 "or width and height must both be specified")
-
         if version is not None and (version < 2 or version > 5):
             raise exceptions.SpinnMachineInvalidParameterException(
                 "version", str(version),
                 "Version must be between 2 and 5 inclusive or None")
 
-        if ((version == 5 or version == 4) and
-                with_wrap_arounds is not None and with_wrap_arounds):
-            raise exceptions.SpinnMachineInvalidParameterException(
-                "version and with_wrap_arounds",
-                "{} and True".format(version),
-                "A version {} board does not have wrap arounds; set "
-                "version to None or with_wrap_arounds to None".format(version))
+        # Version 2/3
+        if (version == 2 or version == 3):
+            if with_wrap_arounds is not None:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "version and with_wrap_arounds",
+                    "{} and {}".format(version, with_wrap_arounds),
+                    "A version {} board has complex wrap arounds; set "
+                    "version to None or with_wrap_arounds to None"
+                    .format(version))
+            if ((width is not None and width != 2) or
+                    (height is not None and height != 2)):
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "version, width, height",
+                    "{}, {}, {}".format(version, width, height),
+                    "A version {} board has a width and height of 2; set "
+                    "version to None or width and height to None"
+                    .format(version))
+            if width is None:
+                width = 2
+            if height is None:
+                height = 2
+            with_wrap_arounds = True
 
-        if (version == 2 or version == 3) and with_wrap_arounds is not None:
-            raise exceptions.SpinnMachineInvalidParameterException(
-                "version and with_wrap_arounds",
-                "{} and {}".format(version, with_wrap_arounds),
-                "A version {} board has complex wrap arounds; set "
-                "version to None or with_wrap_arounds to None".format(version))
+        # Version 4/5
+        if (version == 5 or version == 4):
+            if with_wrap_arounds is not None and with_wrap_arounds:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "version and with_wrap_arounds",
+                    "{} and True".format(version),
+                    "A version {} board does not have wrap arounds; set "
+                    "version to None or with_wrap_arounds to None"
+                    .format(version))
+            if ((width is not None and width != 8) or
+                    (height is not None and height != 8)):
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "version, width, height",
+                    "{}, {}, {}".format(version, width, height),
+                    "A version {} board has a width and height of 8; set "
+                    "version to None or width and height to None"
+                    .format(version))
+            if width is None:
+                width = 8
+            if height is None:
+                height = 8
+            with_wrap_arounds = False
 
-        if ((version == 5 or version == 4) and (
-                (width is not None and width != 8) or
-                (height is not None and height != 8))):
-            raise exceptions.SpinnMachineInvalidParameterException(
-                "version, width, height",
-                "{}, {}, {}".format(version, width, height),
-                "A version {} board has a width and height of 8; set "
-                "version to None or width and height to None".format(version))
-
-        if ((version == 2 or version == 3) and (
-                (width is not None and width != 2) or
-                (height is not None and height != 2))):
-            raise exceptions.SpinnMachineInvalidParameterException(
-                "version, width, height",
-                "{}, {}, {}".format(version, width, height),
-                "A version {} board has a width and height of 2; set "
-                "version to None or width and height to None".format(version))
         if (version is None and with_wrap_arounds and
                 not ((width == 8 and height == 8) or
                      (width == 2 and height == 2) or
@@ -137,19 +148,6 @@ class VirtualMachine(Machine):
                 " width and height which are both either 2 or 8 or a width - 4"
                 " and height - 4 that are divisible by 12".format(version))
 
-        # Get parameters for specific versions of boards
-        if version == 5 or version == 4:
-            if width is None:
-                width = 8
-            if height is None:
-                height = 8
-            with_wrap_arounds = False
-        if version == 2 or version == 3:
-            if width is None:
-                width = 2
-            if height is None:
-                height = 2
-            with_wrap_arounds = True
         logger.debug("width = {} and height  = {}".format(width, height))
 
         # Set up the maximum chip x and y
@@ -174,7 +172,7 @@ class VirtualMachine(Machine):
         if version == 2 or version == 3:
             self._down_links.update(VirtualMachine._4_chip_down_links)
 
-        #add storage for any chips added later
+        # add storage for any chips added later
         self._extra_chips = OrderedSet()
 
         # Calculate the Ethernet connections in the machine, assuming 48-node
@@ -215,7 +213,7 @@ class VirtualMachine(Machine):
         for i in range(len(ethernet_chips)):
             (a, b) = divmod(i+1, 128)
             ip_address = "127.0.{}.{}".format(a, b)
-            (x, y) =  ethernet_chips[i]
+            (x, y) = ethernet_chips[i]
             new_chip = self._create_chip(x, y, ip_address)
             Machine.add_chip(self, new_chip)
 
@@ -300,7 +298,7 @@ class VirtualMachine(Machine):
             return self._creatable_link(link_from=link,
                                         source_x=x, source_y=x,
                                         destination_x=x, destination_y=y-1)
-        return False # Illegal link value
+        return False  # Illegal link value
 
     @property
     def n_chips(self):
@@ -356,16 +354,6 @@ class VirtualMachine(Machine):
 
     def _add_link(self, links, link_from, source_x, source_y,
                   destination_x, destination_y):
-        if self._with_wrap_arounds:
-            # Correct for wrap around
-            if source_x == self._original_width:
-                source_x = 0
-            if source_y == self._original_height:
-                source_y = 0
-            if source_x == 0:
-                source_x = self._original_width - 1
-            if source_y < 0:
-                source_y = self._original_height - 1
         if self._creatable_link(link_from, source_x, source_y,
                                 destination_x, destination_y):
             link_to = (link_from + 3) % 6
@@ -378,11 +366,23 @@ class VirtualMachine(Machine):
 
     def _creatable_link(self, link_from, source_x, source_y,
                         destination_x, destination_y):
+        if self._with_wrap_arounds:
+            # Correct for wrap around
+            if destination_x == self._original_width:
+                destination_x = 0
+            if destination_y == self._original_height:
+                destination_y = 0
+            if destination_x == -1:
+                destination_x = self._original_width - 1
+            if destination_y == -1:
+                destination_y = self._original_height - 1
         # Check only against creatable chips.
         # Chips directly added will have the links directly added as well
         if not (source_x, source_y) in self._configured_chips:
             return False
         if not (destination_x, destination_y) in self._configured_chips:
+            return False
+        if (source_x, source_y, link_from) in self._down_links:
             return False
         return True
 
