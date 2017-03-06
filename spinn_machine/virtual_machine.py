@@ -276,10 +276,31 @@ class VirtualMachine(Machine):
     def is_link_at(self, x, y, link):
         if (x, y) in self._chips:
             return self._chips[x, y].router.is_link(link)
-        return (
-            self.is_chip_at(x, y) and
-            (x, y, link) not in self._down_links and
-            link >= 0 and link <= 5)
+        if link == 0:
+            return self._creatable_link(link_from=link,
+                                        source_x=x, source_y=x,
+                                        destination_x=x+1, destination_y=y)
+        if link == 1:
+            return self._creatable_link(link_from=link,
+                                        source_x=x, source_y=x,
+                                        destination_x=x+1, destination_y=y+1)
+        if link == 2:
+            return self._creatable_link(link_from=link,
+                                        source_x=x, source_y=x,
+                                        destination_x=x, destination_y=y+1)
+        if link == 3:
+            return self._creatable_link(link_from=link,
+                                        source_x=x, source_y=x,
+                                        destination_x=x-1, destination_y=y)
+        if link == 4:
+            return self._creatable_link(link_from=link,
+                                        source_x=x, source_y=x,
+                                        destination_x=x-1, destination_y=y-1)
+        if link == 5:
+            return self._creatable_link(link_from=link,
+                                        source_x=x, source_y=x,
+                                        destination_x=x, destination_y=y-1)
+        return False # Illegal link value
 
     @property
     def n_chips(self):
@@ -298,14 +319,13 @@ class VirtualMachine(Machine):
 
     def _create_chip(self, x, y, ip_address=None):
         processors = list()
-        monitor_count = 0
-        for processor_id in range(0, self._n_cpus_per_chip):
+        for processor_id in range(0,  self._with_monitors):
             if (x, y, processor_id) not in self._down_cores:
-                if monitor_count < self._with_monitors:
-                    processor = Processor(processor_id, is_monitor=True)
-                    monitor_count += 1
-                else:
-                    processor = Processor(processor_id, is_monitor=False)
+                processor = Processor(processor_id, is_monitor=True)
+                processors.append(processor)
+        for processor_id in range(self._with_monitors, self._n_cpus_per_chip):
+            if (x, y, processor_id) not in self._down_cores:
+                processor = Processor(processor_id, is_monitor=False)
                 processors.append(processor)
         chip_links = self._calculate_links(x, y)
         chip_router = Router(chip_links, False)
@@ -334,39 +354,37 @@ class VirtualMachine(Machine):
         self._add_link(links, 5, x, y, x, y - 1)
         return links
 
-    def _add_link(self, links, link_from, start_x, start_y, end_x, end_y):
+    def _add_link(self, links, link_from, source_x, source_y,
+                  destination_x, destination_y):
+        if self._with_wrap_arounds:
+            # Correct for wrap around
+            if source_x == self._original_width:
+                source_x = 0
+            if source_y == self._original_height:
+                source_y = 0
+            if source_x == 0:
+                source_x = self._original_width - 1
+            if source_y < 0:
+                source_y = self._original_height - 1
+        if self._creatable_link(link_from, source_x, source_y,
+                                destination_x, destination_y):
+            link_to = (link_from + 3) % 6
+            links.append(
+                Link(source_x=source_x, source_y=source_y,
+                     destination_x=destination_x, destination_y=destination_y,
+                     source_link_id=link_from,
+                     multicast_default_from=link_to,
+                     multicast_default_to=link_to))
 
-        # Work out if the link is wrap around
-        wrap_around = False
-        if end_x > self._max_chip_x:
-            wrap_around = True
-            end_x = 0
-        if end_y > self._max_chip_y:
-            wrap_around = True
-            end_y = 0
-        if end_x < 0:
-            wrap_around = True
-            end_x = self._max_chip_x
-        if end_y < 0:
-            wrap_around = True
-            end_y = self._max_chip_y
-
-        # If wrap-arounds is enabled add all links, otherwise only add links
-        # where the end isn't a wrap-around
-        if self._with_wrap_arounds or not wrap_around:
-
-            # Only add links where the destination chip is not down or the
-            # link is not marked as down
-            if ((end_x, end_y) in self._configured_chips and
-                    (start_x, start_y, link_from) not in self._down_links):
-
-                # Work out the "opposite" link
-                link_to = (link_from + 3) % 6
-                links.append(Link(
-                    source_x=start_x, source_y=start_y, destination_x=end_x,
-                    destination_y=end_y, source_link_id=link_from,
-                    multicast_default_from=link_to,
-                    multicast_default_to=link_to))
+    def _creatable_link(self, link_from, source_x, source_y,
+                        destination_x, destination_y):
+        # Check only against creatable chips.
+        # Chips directly added will have the links directly added as well
+        if not (source_x, source_y) in self._configured_chips:
+            return False
+        if not (destination_x, destination_y) in self._configured_chips:
+            return False
+        return True
 
     def reserve_system_processors(self):
         """
