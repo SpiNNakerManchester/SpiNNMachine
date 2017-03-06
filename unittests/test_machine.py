@@ -61,7 +61,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = list()
         for x in range(5):
             for y in range(5):
-                chips.append( self._create_chip(x, y, processors))
+                chips.append(self._create_chip(x, y, processors))
         return chips
 
     def test_create_new_machine(self):
@@ -233,8 +233,8 @@ class SpinnMachineTestCase(unittest.TestCase):
             for y in range(2):
                 processors = self._create_processors(monitor=1+x+y,
                                                      number=5+x+y)
-                chips.append( self._create_chip(x, y, processors))
-        #processors coming out will be biggest list
+                chips.append(self._create_chip(x, y, processors))
+        # processors coming out will be biggest list
 
         new_machine = machine.Machine(chips, 0, 0)
         self.assertEquals(new_machine.maximum_user_cores_on_chip,

@@ -11,12 +11,13 @@ class TestingChip(unittest.TestCase):
         self._y = 1
 
         # create processor
-        self._monitor_id =3
+        self._monitor_id = 3
         flops = 1000
         self._processors = list()
         for i in range(18):
             if i == self._monitor_id:
-                self._processors.append(proc.Processor(i, flops, is_monitor=True))
+                self._processors.append(proc.Processor(i, flops,
+                                                       is_monitor=True))
             else:
                 self._processors.append(proc.Processor(i, flops))
 
@@ -51,7 +52,8 @@ class TestingChip(unittest.TestCase):
             # warning the chip will clone a processor if it changes it
             # For example if reserve_a_system_processor() is called
             self.assertTrue(p in new_chip.processors)
-        self.assertEquals(new_chip.n_user_processors, len(self._processors) -1)
+        self.assertEquals(new_chip.n_user_processors,
+                          len(self._processors) - 1)
 
     def test_create_chip_with_duplicate_processors(self):
         flops = 1000
@@ -68,7 +70,8 @@ class TestingChip(unittest.TestCase):
     def test_reserve_a_system_processor(self):
         new_chip = self._create_chip(self._x, self._y, self._processors,
                                      self._router, self._sdram, self._ip)
-        self.assertEquals(new_chip.n_user_processors, len(self._processors) -1)
+        self.assertEquals(new_chip.n_user_processors,
+                          len(self._processors) - 1)
 
         monitor = new_chip.get_processor_with_id(self._monitor_id)
         self.assertTrue(monitor.is_monitor)
@@ -78,7 +81,8 @@ class TestingChip(unittest.TestCase):
                              processor.processor_id != self._monitor_id)
 
         new_chip.reserve_a_system_processor()
-        self.assertEquals(new_chip.n_user_processors, len(self._processors) -2)
+        self.assertEquals(new_chip.n_user_processors,
+                          len(self._processors) - 2)
 
         count = 0
         for processor in new_chip.processors:
