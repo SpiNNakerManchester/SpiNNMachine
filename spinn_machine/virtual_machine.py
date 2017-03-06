@@ -40,7 +40,6 @@ class VirtualMachine(Machine):
             sdram_per_chip=None, down_chips=[], down_cores=None,
             down_links=None):
         """
-
         :param width: the width of the virtual machine in chips
         :type width: int
         :param height: the height of the virtual machine in chips
@@ -124,7 +123,30 @@ class VirtualMachine(Machine):
                 height = 8
             with_wrap_arounds = False
 
-        if (version is None and with_wrap_arounds and
+        if (version is None and with_wrap_arounds is None):
+            if (width == 2 and height == 2):
+                # assume the special version 2 or 3 wrap arrounds
+                version == 2
+                self._with_wrap_arounds = True
+            elif (width == 8 and height == 8):
+                self._with_wrap_arounds = False
+            elif (width % 12 == 0 and height % 12 == 0):
+                self._with_wrap_arounds = True
+            elif ((width - 4) % 12 == 0 and (height - 4) % 12 == 0):
+                self._with_wrap_arounds = False
+            else:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "version, width, height, with_wrap_arounds",
+                    "{}, {}, {}, {}".format(
+                        version, width, height, with_wrap_arounds),
+                    "A generic machine with wrap arounds None"
+                    " must be either have a width and height "
+                    " which are both either 2 or 8 or a width"
+                    " and height that are divisible by 12"
+                    " or a width - 4 and height - 4 that are divisible by 12"
+                    .format(version))
+
+        if (version is None and (with_wrap_arounds is True) and
                 not ((width == 8 and height == 8) or
                      (width == 2 and height == 2) or
                      (width % 12 == 0 and height % 12 == 0))):
@@ -136,7 +158,7 @@ class VirtualMachine(Machine):
                 " width and height which are both either 2 or 8 or a width"
                 " and height that are divisible by 12".format(version))
 
-        if (version is None and not with_wrap_arounds and
+        if (version is None and (with_wrap_arounds is False) and
                 not ((width == 8 and height == 8) or
                      (width == 2 and height == 2) or
                      ((width - 4) % 12 == 0 and (height - 4) % 12 == 0))):
@@ -148,7 +170,13 @@ class VirtualMachine(Machine):
                 " width and height which are both either 2 or 8 or a width - 4"
                 " and height - 4 that are divisible by 12".format(version))
 
-        logger.debug("width = {} and height  = {}".format(width, height))
+        if with_wrap_arounds is None:
+            logger.debug("width = {}, height = {} and auto wrap arounds"
+                         .format(width, height))
+        else:
+            self._with_wrap_arounds = with_wrap_arounds
+            logger.debug("width = {}, height = {} and wrap arounds {}"
+                         .format(width, height, self._with_wrap_arounds))
 
         # Set up the maximum chip x and y
         self._max_chip_x = width - 1
@@ -159,7 +187,6 @@ class VirtualMachine(Machine):
 
         # Store the details
         self._n_cpus_per_chip = n_cpus_per_chip
-        self._with_wrap_arounds = with_wrap_arounds
         self._sdram_per_chip = sdram_per_chip
         if with_monitors:
             self._with_monitors = 1
@@ -171,6 +198,8 @@ class VirtualMachine(Machine):
         self._down_links = down_links if down_links is not None else set()
         if version == 2 or version == 3:
             self._down_links.update(VirtualMachine._4_chip_down_links)
+        if down_chips is None:
+            down_chips = []
 
         # add storage for any chips added later
         self._extra_chips = OrderedSet()
