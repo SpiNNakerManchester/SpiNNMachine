@@ -1,0 +1,1 @@
+-e git+https://github.com/SpiNNakerManchester/SpiNNUtils.git@master#egg=spinn_utilities
