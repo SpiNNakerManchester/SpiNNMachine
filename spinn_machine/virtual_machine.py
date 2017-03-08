@@ -12,13 +12,13 @@ from spinn_machine.spinnaker_triad_geometry import SpiNNakerTriadGeometry
 
 logger = logging.getLogger(__name__)
 
-
 class VirtualMachine(Machine):
     """ A Virtual SpiNNaker machine
     """
 
     __slots__ = (
         "_configured_chips",
+        "_default_processors",
         "_down_cores",
         "_down_links",
         "_extra_chips",
@@ -126,7 +126,7 @@ class VirtualMachine(Machine):
         if (version is None and with_wrap_arounds is None):
             if (width == 2 and height == 2):
                 # assume the special version 2 or 3 wrap arrounds
-                version == 2
+                version = 2
                 self._with_wrap_arounds = True
             elif (width == 8 and height == 8):
                 self._with_wrap_arounds = False
@@ -192,6 +192,7 @@ class VirtualMachine(Machine):
             self._with_monitors = 1
         else:
             self._with_monitors = 0
+        self._default_processors = dict()
 
         # Store the down items
         self._down_cores = down_cores if down_cores is not None else set()
@@ -344,7 +345,17 @@ class VirtualMachine(Machine):
         n_links = self.n_chips * 6 - len(self._down_links)
         return n_cores, n_links
 
-    def _create_chip(self, x, y, ip_address=None):
+    def _create_processors_general(self, num_monitors):
+        processors = list()
+        for processor_id in range(0,  num_monitors):
+            processor = Processor(processor_id, is_monitor=True)
+            processors.append(processor)
+        for processor_id in range(num_monitors, self._n_cpus_per_chip):
+            processor = Processor(processor_id, is_monitor=False)
+            processors.append(processor)
+        return processors
+
+    def _create_processors_specific(self, x, y):
         processors = list()
         for processor_id in range(0,  self._with_monitors):
             if (x, y, processor_id) not in self._down_cores:
@@ -354,6 +365,22 @@ class VirtualMachine(Machine):
             if (x, y, processor_id) not in self._down_cores:
                 processor = Processor(processor_id, is_monitor=False)
                 processors.append(processor)
+        return processors
+
+    def _create_chip(self, x, y, ip_address=None):
+        down = False
+        for id in range(self._n_cpus_per_chip):
+            if (x, y, id) in self._down_cores:
+                down = True
+                break
+        if down:
+            processors = self._create_processors_specific(x, y)
+        else:
+            if not self._with_monitors in self._default_processors:
+                self._default_processors[self._with_monitors] = \
+                    self._create_processors_general(self._with_monitors)
+            processors = self._default_processors[self._with_monitors]
+            #processors = self._create_processors_general(self._with_monitors)
         chip_links = self._calculate_links(x, y)
         chip_router = Router(chip_links, False)
         if self._sdram_per_chip is None:
