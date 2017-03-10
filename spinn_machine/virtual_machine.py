@@ -12,6 +12,7 @@ from spinn_machine.spinnaker_triad_geometry import SpiNNakerTriadGeometry
 
 logger = logging.getLogger(__name__)
 
+
 class VirtualMachine(Machine):
     """ A Virtual SpiNNaker machine
     """
@@ -376,11 +377,10 @@ class VirtualMachine(Machine):
         if down:
             processors = self._create_processors_specific(x, y)
         else:
-            if not self._with_monitors in self._default_processors:
+            if self._with_monitors not in self._default_processors:
                 self._default_processors[self._with_monitors] = \
                     self._create_processors_general(self._with_monitors)
             processors = self._default_processors[self._with_monitors]
-            #processors = self._create_processors_general(self._with_monitors)
         chip_links = self._calculate_links(x, y)
         chip_router = Router(chip_links, False)
         if self._sdram_per_chip is None:
