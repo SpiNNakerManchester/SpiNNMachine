@@ -40,16 +40,17 @@ class Chip(object):
         :type router: :py:class:`spinn_machine.router.Router`
         :param sdram: an SDRAM for the chip
         :type sdram: :py:class:`spinn_machine.sdram.SDRAM`
-        :param nearest_ethernet_x: the nearest Ethernet x coord
-        :type nearest_ethernet_x: int or None
-        :param nearest_ethernet_y: the nearest Ethernet y coord
-        :type nearest_ethernet_y: int or None
         :param ip_address: the IP address of the chip or None if no Ethernet\
                     attached
         :type ip_address: str
         :param virtual: boolean which defines if this chip is a virtual one
-         :type virtual: bool
-
+        :type virtual: bool
+        :param tag_ids: Id to identify the chip for SDP
+        :type tag_ids: iterable of int
+        :param nearest_ethernet_x: the nearest Ethernet x coord
+        :type nearest_ethernet_x: int or None
+        :param nearest_ethernet_y: the nearest Ethernet y coord
+        :type nearest_ethernet_y: int or None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     processors contains any two processors with the same\
                     processor_id

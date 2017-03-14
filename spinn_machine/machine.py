@@ -50,7 +50,9 @@ class Machine(object):
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`spinn_machine.chip.Chip`
         :param boot_x: The x-coordinate of the chip used to boot the machine
+        :type boot_x: int
         :param boot_y: The y-coordinate of the chip used to boot the machine
+        :type boot_y: int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     any two chips have the same x and y coordinates
         """
@@ -249,10 +251,6 @@ class Machine(object):
 
     @property
     def n_chips(self):
-        """
-
-        :return:
-        """
         return len(self._chips)
 
     @property

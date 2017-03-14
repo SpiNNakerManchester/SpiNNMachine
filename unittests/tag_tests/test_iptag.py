@@ -15,7 +15,8 @@ class TestingIptag(unittest.TestCase):
     def test_create_valid_iptag(self):
         """
         test which tests if a iptag with valid inputs works
-        :return:
+
+        :rtype: None
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
@@ -23,7 +24,8 @@ class TestingIptag(unittest.TestCase):
     def test_retrival_of_board_address(self):
         """
         test if the board address retrieval works
-        :return:
+
+        :rtype: None
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
@@ -33,7 +35,8 @@ class TestingIptag(unittest.TestCase):
     def test_retrival_of_ip_address(self):
         """
         test if the board address retrieval works
-        :return:
+
+        :rtype: None
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
@@ -43,7 +46,8 @@ class TestingIptag(unittest.TestCase):
     def test_retrival_of_tag(self):
         """
         test if the board address retrieval works
-        :return:
+
+        :rtype: None
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
@@ -53,7 +57,8 @@ class TestingIptag(unittest.TestCase):
     def test_retrival_of_port(self):
         """
         test if the board address retrieval works
-        :return:
+
+        :rtype: None
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
@@ -63,7 +68,8 @@ class TestingIptag(unittest.TestCase):
     def test_retrival_of_strip_sdp(self):
         """
         test if the board address retrieval works
-        :return:
+
+        :rtype: None
         """
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)

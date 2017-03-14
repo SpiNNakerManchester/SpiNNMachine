@@ -15,7 +15,6 @@ class Processor(object):
     def __init__(self, processor_id, clock_speed=CLOCK_SPEED, is_monitor=False,
                  dtcm_available=DTCM_AVAILABLE):
         """
-
         :param processor_id: id of the processor in the chip
         :type processor_id: int
         :param clock_speed: The number of cpu cycles per second of the\
@@ -24,6 +23,8 @@ class Processor(object):
         :param is_monitor: Determines if the processor is considered the\
                     monitor processor, and so should not be otherwise allocated
         :type is_monitor: bool
+        :param dtcm_available: Data Tightly Coupled Memory available
+        :type dtcm_available: int
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
                     If the clock speed is negative
         """
@@ -44,7 +45,6 @@ class Processor(object):
 
         :return: id of the processor
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._processor_id
 
@@ -54,7 +54,6 @@ class Processor(object):
 
         :return: the amount of DTCM available on this processor
         :rtype: int
-        :raise None: does not raise any known exceptions
 
         """
         return self._dtcm_available
@@ -65,7 +64,6 @@ class Processor(object):
 
         :return: the number of cpu cycles available on this processor
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._clock_speed / 1000.0
 
@@ -75,7 +73,6 @@ class Processor(object):
 
         :return: The clock speed in cycles per second
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._clock_speed
 
@@ -84,9 +81,10 @@ class Processor(object):
         """ Determines if the processor is the monitor, and therefore not\
             to be allocated
 
+        WARNING: Currently rejection processeors are also marked as monitors
+
         :return: True if the processor is the monitor, False otherwise
         :rtype: bool
-        :raise None: does not raise any known exceptions
         """
         return self._is_monitor
 

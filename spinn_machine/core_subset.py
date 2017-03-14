@@ -25,8 +25,8 @@ class CoreSubset(object):
     def add_processor(self, processor_id):
         """ Adds a processor id to this subset
 
-        :param processor_ids: A processor id
-        :type processor_ids: int
+        :param processor_id: A processor id
+        :type processor_id: int
         :return: Nothing is returned
         :rtype: None
         """

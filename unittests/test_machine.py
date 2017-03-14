@@ -87,7 +87,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_create_new_machine_with_invalid_chips(self):
         """
         check that building a machine with invalid chips causes errors
-        :return:
+
+        :rtype: None
         """
         chips = self._create_chips()
         chips.append(chip.Chip(
@@ -100,7 +101,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_add_chip(self):
         """
         test the add_chip method of the machine object
-        :return:
+
+        :rtype: None
         """
         processors = self._create_processors()
         new_machine = machine.Machine(self._create_chips(processors), 0, 0)
@@ -123,7 +125,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_add_duplicate_chip(self):
         """
         test if adding the same chip twice causes an error
-        :return:
+
+        :rtype: None
         """
         chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
@@ -133,7 +136,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_add_chips(self):
         """
         check that adding range of chips works
-        :return:
+
+        :rtype: None
         """
         processors = self._create_processors()
         chips = self._create_chips(processors)
@@ -160,7 +164,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the add_chips method of the machine with duplicate chips.
         should produce an error
-        :return:
+
+        :rtype: None
         """
         chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
@@ -176,7 +181,8 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_get_chip_at(self):
         """
         test the get_chip_at function from the machine with a valid request
-        :return:
+
+        :rtype: None
         """
         chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
@@ -186,7 +192,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the machines get_chip_at function with a location thats invalid,
         should return None and not produce an error
-        :return:
+
+        :rtype: None
         """
         chips = self._create_chips()
 
@@ -197,7 +204,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the is_chip_at function of the machine with a position to
         request which does indeed contain a chip
-        :return:
+
+        :rtype: None
         """
         chips = self._create_chips()
 
@@ -208,7 +216,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the is_chip_at function of the machine with a position to
         request which does not contain a chip
-        :return:
+
+        :rtype: None
         """
         chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
