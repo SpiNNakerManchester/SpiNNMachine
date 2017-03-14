@@ -230,6 +230,7 @@ class VirtualMachine(Machine):
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
         if height > 2 and not self._with_wrap_arounds:
+
             # Find all the chips that are on the board
             self._configured_chips = OrderedSet({
                 (x + eth_x, y + eth_y) for x in range(8) for y in range(8)
@@ -242,6 +243,7 @@ class VirtualMachine(Machine):
                                                 for y in range(width) if
                                                 (x, y) not in down_chips)
 
+        # Assign "ip addresses" to the Ethernet chips
         for i in range(len(ethernet_chips)):
             (a, b) = divmod(i + 1, 128)
             ip_address = "127.0.{}.{}".format(a, b)
@@ -277,9 +279,9 @@ class VirtualMachine(Machine):
 
     @property
     def chip_coordinates(self):
-        for (x, y) in self._extra_chips:
-            yield (x, y)
         for (x, y) in self._configured_chips:
+            yield (x, y)
+        for (x, y) in self._extra_chips:
             yield (x, y)
 
     def __iter__(self):
@@ -454,10 +456,25 @@ class VirtualMachine(Machine):
         :rtype None
         """
         # Handle existing chips
-        Machine.reserve_system_processors(self)
+        reserved_cores, failed_chips = Machine.reserve_system_processors(self)
+
+        # Go through the remaining cores and get a virtual unused core
+        for x, y in self.chip_coordinates:
+            if (x, y) not in self._chips:
+                core_added = False
+                for processor_id in range(0, self._with_monitors):
+                    if (x, y, processor_id) not in self._down_cores:
+                        reserved_cores.add_processor(x, y, processor_id)
+                        core_added = True
+                        break
+
+                if not core_added:
+                    failed_chips.append((x, y))
 
         # Ensure future chips get an extra monitor
         self._with_monitors += 1
+
+        return reserved_cores, failed_chips
 
     @property
     def maximum_user_cores_on_chip(self):

@@ -2,6 +2,7 @@
 # spinn_machine imports
 from spinn_machine import exceptions
 from spinn_machine.link_data_objects.fpga_link_data import FPGALinkData
+from spinn_machine.core_subsets import CoreSubsets
 from spinn_machine.link_data_objects.spinnaker_link_data \
     import SpinnakerLinkData
 
@@ -589,13 +590,30 @@ class Machine(object):
 
         Updates maximum_user_cores_on_chip
 
-        :rtype None
+        :return:\
+            A CoreSubsets of reserved cores, and a list of (x, y) of chips\
+            where a non-system core was not available
+        :rtype:\
+            (:py:class:`spinn_machine.core_subsets.CoreSubsets`,\
+            list of (int, int))
         """
         self._maximum_user_cores_on_chip = 0
+        reserved_cores = CoreSubsets()
+        failed_chips = list()
         for chip in self._chips.itervalues():
-            if (chip.reserve_a_system_processor() >
-                    self._maximum_user_cores_on_chip):
+
+            # Try to get a new system processor
+            core_reserved = chip.reserve_a_system_processor()
+            if core_reserved is None:
+                failed_chips.append((chip.x, chip.y))
+            else:
+                reserved_cores.add_processor(chip.x, chip.y, core_reserved)
+
+            # Update the maximum user cores either way
+            if (chip.n_user_processors > self._maximum_user_cores_on_chip):
                 self._maximum_user_cores_on_chip = chip.n_user_processors
+
+        return reserved_cores, failed_chips
 
     @property
     def maximum_user_cores_on_chip(self):

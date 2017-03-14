@@ -252,16 +252,19 @@ class Chip(object):
 
         Updates n_user_processors
 
-        :return: The total number of processors that are not system processors
-            including monitors
-        :rtype None
+        :return:\
+            The id of the processor reserved, or None if no processor could\
+            be found
+        :rtype: int or None
         """
         for processor_id, processor in self._p.iteritems():
             if not processor.is_monitor:
                 system_processor = processor.clone_as_system_processor()
                 self._p[processor_id] = system_processor
                 self._n_user_processors -= 1
-                return self._n_user_processors
+                return processor_id
+
+        return None
 
     def __str__(self):
         return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"
