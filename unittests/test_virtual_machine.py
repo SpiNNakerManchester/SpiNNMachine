@@ -17,7 +17,7 @@ class TestVirtualMachine(unittest.TestCase):
             else:
                 processors.append(proc.Processor(i, flops))
 
-        (e, ne, n, w, sw, s) = range(6)
+        (e, _, n, w, _, s) = range(6)
         links = list()
         links.append(link.Link(0, 0, 0, 1, 1, n, n))
         links.append(link.Link(0, 1, 1, 1, 0, s, s))
@@ -135,7 +135,7 @@ class TestVirtualMachine(unittest.TestCase):
                                             with_monitors=True)
         self.assertEqual(vm.max_chip_x, 1)
         self.assertEqual(vm.max_chip_y, 1)
-        self.assertEqual(n_cpus-1, vm.maximum_user_cores_on_chip)
+        self.assertEqual(n_cpus - 1, vm.maximum_user_cores_on_chip)
         _chip = vm.get_chip_at(1, 1)
         self.assertEqual(n_cpus, _chip.n_processors)
         monitors = 0
@@ -145,7 +145,7 @@ class TestVirtualMachine(unittest.TestCase):
                 monitors += 1
             else:
                 normal += 1
-        self.assertEqual(n_cpus-1, normal)
+        self.assertEqual(n_cpus - 1, normal)
         self.assertEqual(1, monitors)
 
     def test_iter_chips(self):
@@ -178,14 +178,14 @@ class TestVirtualMachine(unittest.TestCase):
             virtual_machine.VirtualMachine(5, 7)
 
     def test_12_n_plus4_12_m_4(self):
-        size_x = 12*5
-        size_y = 12*7
-        vm = virtual_machine.VirtualMachine(size_x+4, size_y+4)
-        self.assertEqual(size_x*size_y, vm.n_chips)
+        size_x = 12 * 5
+        size_y = 12 * 7
+        vm = virtual_machine.VirtualMachine(size_x + 4, size_y + 4)
+        self.assertEqual(size_x * size_y, vm.n_chips)
 
     def test_12_n_12_m(self):
-        size_x = 12*5
-        size_y = 12*7
+        size_x = 12 * 5
+        size_y = 12 * 7
         vm = virtual_machine.VirtualMachine(size_x, size_y,
                                             with_wrap_arounds=True)
         self.assertEqual(size_x * size_y, vm.n_chips)
@@ -279,7 +279,7 @@ class TestVirtualMachine(unittest.TestCase):
 
         vm.reserve_system_processors()
         self.assertEqual(vm.maximum_user_cores_on_chip,
-                         n_chips-2)
+                         n_chips - 2)
 
     @unittest.skip("skipping test_initlize_neighbour_links_for_other_boards")
     def test_initlize_neighbour_links_for_other_boards(self):

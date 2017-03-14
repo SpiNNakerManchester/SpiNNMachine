@@ -1,8 +1,8 @@
 """
-test for testing the python represnetaiton of a spinnaker machine
+test for testing the python representation of a spinnaker machine
 """
 
-# spinnmanchine imports
+# spinnmachine imports
 from spinn_machine import processor as proc, link as link, sdram as sdram, \
     router as router, chip as chip
 import spinn_machine.exceptions as exc
@@ -20,7 +20,7 @@ class SpinnMachineTestCase(unittest.TestCase):
     def setUp(self):
         self._sdram = sdram.SDRAM(128)
 
-        (e, ne, n, w, sw, s) = range(6)
+        (e, _, n, w, _, s) = range(6)
         links = list()
         links.append(link.Link(0, 0, 0, 1, 1, n, n))
         links.append(link.Link(0, 1, 1, 1, 0, s, s))
@@ -99,7 +99,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_machine_add_chip(self):
         """
-        test the add_chip emthod of the machine object
+        test the add_chip method of the machine object
         :return:
         """
         processors = self._create_processors()
@@ -158,7 +158,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_machine_add_duplicate_chips(self):
         """
-        test the add_chips emthof of the machine with duplicate chips.
+        test the add_chips method of the machine with duplicate chips.
         should produce an error
         :return:
         """
@@ -180,8 +180,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         chips = self._create_chips()
         new_machine = machine.Machine(chips, 0, 0)
-
-        new_machine = machine.Machine(chips, 0, 0)
         self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
 
     def test_machine_get_chip_at_invalid_location(self):
@@ -197,8 +195,8 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_machine_is_chip_at_true(self):
         """
-        test the is_chip_at function of the machine with a postiion to
-        request whcih does indeed contain a chip
+        test the is_chip_at function of the machine with a position to
+        request which does indeed contain a chip
         :return:
         """
         chips = self._create_chips()
@@ -208,8 +206,8 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_machine_is_chip_at_false(self):
         """
-        test the is_chip_at function of the machine with a postiion to
-        request whcih does not contain a chip
+        test the is_chip_at function of the machine with a position to
+        request which does not contain a chip
         :return:
         """
         chips = self._create_chips()
@@ -231,8 +229,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = list()
         for x in range(2):
             for y in range(2):
-                processors = self._create_processors(monitor=1+x+y,
-                                                     number=5+x+y)
+                processors = self._create_processors(
+                    monitor=1 + x + y, number=5 + x + y)
                 chips.append(self._create_chip(x, y, processors))
         # processors coming out will be biggest list
 

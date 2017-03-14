@@ -94,14 +94,14 @@ class Processor(object):
     # use Machine.set_reinjection_processors instead
 
     def clone_as_system_processor(self):
-        """
-        Creates a clone of this processor but changing it to
-        a system processor.
+        """ Creates a clone of this processor but changing it to a system\
+            processor.
 
-        The current implemenation does not distiquish between
-        monitor processors and reinjector ones but could do so at a later stage
+        The current implementation does not distinguish between\
+        monitor processors and reinjector ones but could do so at a later\
+        stage.
 
-        ;return: A new Processor with the same propertyies INCLUDING id
+        :return: A new Processor with the same properties INCLUDING id\
             except now set as a System processor
         :rtype: Processor
         """

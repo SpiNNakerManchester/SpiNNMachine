@@ -245,9 +245,8 @@ class Chip(object):
                 return processor
 
     def reserve_a_system_processor(self):
-        """
-        This method should ONLY be called via
-        Machine.reserve_system_processors
+        """ This method should ONLY be called via\
+            Machine.reserve_system_processors
 
         Sets one of the none monitor processors as a system processor
 
@@ -257,10 +256,10 @@ class Chip(object):
             including monitors
         :rtype None
         """
-        for id, processor in self._p.iteritems():
+        for processor_id, processor in self._p.iteritems():
             if not processor.is_monitor:
                 system_processor = processor.clone_as_system_processor()
-                self._p[id] = system_processor
+                self._p[processor_id] = system_processor
                 self._n_user_processors -= 1
                 return self._n_user_processors
 

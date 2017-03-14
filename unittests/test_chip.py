@@ -22,7 +22,7 @@ class TestingChip(unittest.TestCase):
                 self._processors.append(proc.Processor(i, flops))
 
         # create router
-        (e, ne, n, w, sw, s) = range(6)
+        (e, _, n, w, _, s) = range(6)
         links = list()
         links.append(link.Link(0, 0, 0, 1, 1, n, n))
         links.append(link.Link(0, 1, 1, 1, 0, s, s))

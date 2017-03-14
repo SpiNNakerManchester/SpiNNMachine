@@ -126,7 +126,8 @@ class VirtualMachine(Machine):
 
         if (version is None and with_wrap_arounds is None):
             if (width == 2 and height == 2):
-                # assume the special version 2 or 3 wrap arrounds
+
+                # assume the special version 2 or 3 wrap arounds
                 version = 2
                 self._with_wrap_arounds = True
             elif (width == 8 and height == 8):
@@ -242,7 +243,7 @@ class VirtualMachine(Machine):
                                                 (x, y) not in down_chips)
 
         for i in range(len(ethernet_chips)):
-            (a, b) = divmod(i+1, 128)
+            (a, b) = divmod(i + 1, 128)
             ip_address = "127.0.{}.{}".format(a, b)
             (x, y) = ethernet_chips[i]
             new_chip = self._create_chip(x, y, ip_address)
@@ -306,29 +307,29 @@ class VirtualMachine(Machine):
         if (x, y) in self._chips:
             return self._chips[x, y].router.is_link(link)
         if link == 0:
-            return self._creatable_link(link_from=link,
-                                        source_x=x, source_y=x,
-                                        destination_x=x+1, destination_y=y)
+            return self._creatable_link(
+                link_from=link, source_x=x, source_y=x,
+                destination_x=x + 1, destination_y=y)
         if link == 1:
-            return self._creatable_link(link_from=link,
-                                        source_x=x, source_y=x,
-                                        destination_x=x+1, destination_y=y+1)
+            return self._creatable_link(
+                link_from=link, source_x=x, source_y=x,
+                destination_x=x + 1, destination_y=y + 1)
         if link == 2:
-            return self._creatable_link(link_from=link,
-                                        source_x=x, source_y=x,
-                                        destination_x=x, destination_y=y+1)
+            return self._creatable_link(
+                link_from=link, source_x=x, source_y=x,
+                destination_x=x, destination_y=y + 1)
         if link == 3:
-            return self._creatable_link(link_from=link,
-                                        source_x=x, source_y=x,
-                                        destination_x=x-1, destination_y=y)
+            return self._creatable_link(
+                link_from=link, source_x=x, source_y=x,
+                destination_x=x - 1, destination_y=y)
         if link == 4:
-            return self._creatable_link(link_from=link,
-                                        source_x=x, source_y=x,
-                                        destination_x=x-1, destination_y=y-1)
+            return self._creatable_link(
+                link_from=link, source_x=x, source_y=x,
+                destination_x=x - 1, destination_y=y - 1)
         if link == 5:
-            return self._creatable_link(link_from=link,
-                                        source_x=x, source_y=x,
-                                        destination_x=x, destination_y=y-1)
+            return self._creatable_link(
+                link_from=link, source_x=x, source_y=x,
+                destination_x=x, destination_y=y - 1)
         return False  # Illegal link value
 
     @property
@@ -348,7 +349,7 @@ class VirtualMachine(Machine):
 
     def _create_processors_general(self, num_monitors):
         processors = list()
-        for processor_id in range(0,  num_monitors):
+        for processor_id in range(0, num_monitors):
             processor = Processor(processor_id, is_monitor=True)
             processors.append(processor)
         for processor_id in range(num_monitors, self._n_cpus_per_chip):
@@ -358,7 +359,7 @@ class VirtualMachine(Machine):
 
     def _create_processors_specific(self, x, y):
         processors = list()
-        for processor_id in range(0,  self._with_monitors):
+        for processor_id in range(0, self._with_monitors):
             if (x, y, processor_id) not in self._down_cores:
                 processor = Processor(processor_id, is_monitor=True)
                 processors.append(processor)
@@ -370,8 +371,8 @@ class VirtualMachine(Machine):
 
     def _create_chip(self, x, y, ip_address=None):
         down = False
-        for id in range(self._n_cpus_per_chip):
-            if (x, y, id) in self._down_cores:
+        for processor_id in range(self._n_cpus_per_chip):
+            if (x, y, processor_id) in self._down_cores:
                 down = True
                 break
         if down:
@@ -423,6 +424,7 @@ class VirtualMachine(Machine):
     def _creatable_link(self, link_from, source_x, source_y,
                         destination_x, destination_y):
         if self._with_wrap_arounds:
+
             # Correct for wrap around
             if destination_x == self._original_width:
                 destination_x = 0
@@ -432,7 +434,8 @@ class VirtualMachine(Machine):
                 destination_x = self._original_width - 1
             if destination_y == -1:
                 destination_y = self._original_height - 1
-        # Check only against creatable chips.
+
+        # Check only against chips that can be created
         # Chips directly added will have the links directly added as well
         if not (source_x, source_y) in self._configured_chips:
             return False
@@ -443,9 +446,8 @@ class VirtualMachine(Machine):
         return True
 
     def reserve_system_processors(self):
-        """
-        Sets one of the none monitor system processors as a system processor
-        on every Chip
+        """ Sets one of the none monitor system processors as a system\
+            processor on every Chip
 
         Updates maximum_user_cores_on_chip
 
@@ -453,6 +455,7 @@ class VirtualMachine(Machine):
         """
         # Handle existing chips
         Machine.reserve_system_processors(self)
+
         # Ensure future chips get an extra monitor
         self._with_monitors += 1
 

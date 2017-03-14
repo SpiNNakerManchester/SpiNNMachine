@@ -584,18 +584,17 @@ class Machine(object):
                 yield x, y
 
     def reserve_system_processors(self):
-        """
-        Sets one of the none monitor system processors as a system processor
-        on every Chip
+        """ Sets one of the none monitor system processors as a system\
+            processor on every Chip
 
         Updates maximum_user_cores_on_chip
 
         :rtype None
         """
         self._maximum_user_cores_on_chip = 0
-        for (id, chip) in self._chips.iteritems():
-            if chip.reserve_a_system_processor() > \
-                    self._maximum_user_cores_on_chip:
+        for chip in self._chips.itervalues():
+            if (chip.reserve_a_system_processor() >
+                    self._maximum_user_cores_on_chip):
                 self._maximum_user_cores_on_chip = chip.n_user_processors
 
     @property
