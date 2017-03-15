@@ -1,8 +1,8 @@
 from six import add_metaclass
-from abc import ABCMeta
+from spinn_utilities.abstract_base import AbstractBase
 
 
-@add_metaclass(ABCMeta)
+@add_metaclass(AbstractBase)
 class AbstractLinkData(object):
     """ Data object for spinnaker links
     """
