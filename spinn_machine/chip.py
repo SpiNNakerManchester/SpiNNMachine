@@ -18,7 +18,8 @@ class Chip(object):
 
     __slots__ = (
         "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
-        "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y"
+        "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
+        "_n_user_processors"
     )
 
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
@@ -39,16 +40,17 @@ class Chip(object):
         :type router: :py:class:`spinn_machine.router.Router`
         :param sdram: an SDRAM for the chip
         :type sdram: :py:class:`spinn_machine.sdram.SDRAM`
-        :param nearest_ethernet_x: the nearest Ethernet x coord
-        :type nearest_ethernet_x: int or None
-        :param nearest_ethernet_y: the nearest Ethernet y coord
-        :type nearest_ethernet_y: int or None
         :param ip_address: the IP address of the chip or None if no Ethernet\
                     attached
         :type ip_address: str
         :param virtual: boolean which defines if this chip is a virtual one
-         :type virtual: bool
-
+        :type virtual: bool
+        :param tag_ids: Id to identify the chip for SDP
+        :type tag_ids: iterable of int
+        :param nearest_ethernet_x: the nearest Ethernet x coord
+        :type nearest_ethernet_x: int or None
+        :param nearest_ethernet_y: the nearest Ethernet y coord
+        :type nearest_ethernet_y: int or None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     processors contains any two processors with the same\
                     processor_id
@@ -56,12 +58,15 @@ class Chip(object):
         self._x = x
         self._y = y
         self._p = OrderedDict()
+        self._n_user_processors = 0
         for processor in sorted(processors, key=lambda i: i.processor_id):
             if processor.processor_id in self._p:
                 raise SpinnMachineAlreadyExistsException(
                     "processor on {}:{}".format(x, y),
                     str(processor.processor_id))
             self._p[processor.processor_id] = processor
+            if not processor.is_monitor:
+                self._n_user_processors += 1
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
@@ -139,6 +144,18 @@ class Chip(object):
         return self._p.itervalues()
 
     @property
+    def n_processors(self):
+        """ The total number of processors
+        """
+        return len(self._p)
+
+    @property
+    def n_user_processors(self):
+        """ The total number of processors that are not monitors
+        """
+        return self._n_user_processors
+
+    @property
     def virtual(self):
         """ boolean which defines if the chip is virtual or not
 
@@ -212,12 +229,43 @@ class Chip(object):
 
     @property
     def tag_ids(self):
-        """ returns the ids supported by this chip
+        """ The tag ids supported by this chip
 
         :return: the set of ids.
         :raise None: this method does not raise any exception
         """
         return self._tag_ids
+
+    def get_first_none_monitor_processor(self):
+        """ Get the first processor in the list which is not a monitor core
+
+        :return: a processor
+        """
+        for processor in self.processors:
+            if not processor.is_monitor:
+                return processor
+
+    def reserve_a_system_processor(self):
+        """ This method should ONLY be called via\
+            Machine.reserve_system_processors
+
+        Sets one of the none monitor processors as a system processor
+
+        Updates n_user_processors
+
+        :return:\
+            The id of the processor reserved, or None if no processor could\
+            be found
+        :rtype: int or None
+        """
+        for processor_id, processor in self._p.iteritems():
+            if not processor.is_monitor:
+                system_processor = processor.clone_as_system_processor()
+                self._p[processor_id] = system_processor
+                self._n_user_processors -= 1
+                return processor_id
+
+        return None
 
     def __str__(self):
         return ("[Chip: x={}, y={}, sdram={}, ip_address={}, router={},"

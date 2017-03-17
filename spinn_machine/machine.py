@@ -2,6 +2,7 @@
 # spinn_machine imports
 from spinn_machine import exceptions
 from spinn_machine.link_data_objects.fpga_link_data import FPGALinkData
+from spinn_machine.core_subsets import CoreSubsets
 from spinn_machine.link_data_objects.spinnaker_link_data \
     import SpinnakerLinkData
 
@@ -26,17 +27,22 @@ class Machine(object):
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
+    BOARD_48_CHIP_GAPS = {
+        (0, 4), (0, 5), (0, 6), (0, 7), (1, 5), (1, 6), (1, 7), (2, 6), (2, 7),
+        (3, 7), (5, 0), (6, 0), (6, 1), (7, 0), (7, 1), (7, 2)
+    }
+
     __slots__ = (
         "_boot_x",
         "_boot_y",
         "_boot_ethernet_address",
         "_chips",
-        "_chips_by_local_ethernet",
         "_ethernet_connected_chips",
         "_fpga_links",
         "_max_chip_x",
         "_max_chip_y",
-        "_spinnaker_links"
+        "_spinnaker_links",
+        "_maximum_user_cores_on_chip"
     )
 
     def __init__(self, chips, boot_x, boot_y):
@@ -44,7 +50,9 @@ class Machine(object):
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`spinn_machine.chip.Chip`
         :param boot_x: The x-coordinate of the chip used to boot the machine
+        :type boot_x: int
         :param boot_y: The y-coordinate of the chip used to boot the machine
+        :type boot_y: int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     any two chips have the same x and y coordinates
         """
@@ -55,11 +63,11 @@ class Machine(object):
         # The maximum chip y coordinate
         self._max_chip_y = 0
 
+        # The maximum number of user cores on any chip
+        self._maximum_user_cores_on_chip = 0
+
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
-
-        # The dictionary of chips via their nearest Ethernet connected chip
-        self._chips_by_local_ethernet = dict()
 
         # The dictionary of spinnaker links by board address and "id" (int)
         self._spinnaker_links = dict()
@@ -103,19 +111,8 @@ class Machine(object):
             if (chip.x == self._boot_x) and (chip.y == self._boot_y):
                 self._boot_ethernet_address = chip.ip_address
 
-        chip_id = (chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-        if chip_id not in self._chips_by_local_ethernet:
-            self._chips_by_local_ethernet[chip_id] = list()
-        self._chips_by_local_ethernet[chip_id].append(chip)
-
-    def get_chips_via_local_ethernet(self, local_ethernet_x, local_ethernet_y):
-        """ Get a list of chips which have the nearest Ethernet chip of x and y
-        :param local_ethernet_x: the Ethernet chip x coord
-        :param local_ethernet_y: the Ethernet chip y coord
-        :return: list of chips
-        """
-        return self._chips_by_local_ethernet.get(
-            (local_ethernet_x, local_ethernet_y), [])
+        if chip.n_user_processors > self._maximum_user_cores_on_chip:
+            self._maximum_user_cores_on_chip = chip.n_user_processors
 
     def add_chips(self, chips):
         """ Add some chips to the machine
@@ -140,6 +137,15 @@ class Machine(object):
         :raise None: does not raise any known exceptions
         """
         return self._chips.itervalues()
+
+    @property
+    def chip_coordinates(self):
+        """ An iterable of chip coordinates in the machine
+
+        :return: An iterable of chip coordinates
+        :rtype: iterable of (int, int)
+        """
+        return self._chips.iterkeys()
 
     def __iter__(self):
         """ Get an iterable of the chip coordinates and chips
@@ -197,8 +203,19 @@ class Machine(object):
         :rtype: bool
         :raise None: does not raise any known exceptions
         """
-        chip_id = (x, y)
-        return chip_id in self._chips
+        return (x, y) in self._chips
+
+    def is_link_at(self, x, y, link):
+        """ Determine if a link exists at the given coordinates
+
+        :param x: The x location of the chip to test the link of
+        :type x: int
+        :param y: The y location of the chip to test the link of
+        :type y: int
+        :param link: The link to test the existence of
+        :type link: int
+        """
+        return (x, y) in self._chips and self._chips[x, y].router.is_link(link)
 
     def __contains__(self, x_y_tuple):
         """ Determine if a chip exists at the given coordinates
@@ -234,10 +251,6 @@ class Machine(object):
 
     @property
     def n_chips(self):
-        """
-
-        :return:
-        """
         return len(self._chips)
 
     @property
@@ -338,7 +351,7 @@ class Machine(object):
                 if not chip.router.is_link(4):
                     self._spinnaker_links[
                         chip.ip_address, 0] = SpinnakerLinkData(
-                            0, 0, 0, 4, chip.ip_address)
+                            0, chip.x, chip.y, 4, chip.ip_address)
 
     def add_fpga_links(self, version_no):
         """ Add FPGA links that are on a given machine depending on the\
@@ -370,137 +383,130 @@ class Machine(object):
                 }
 
                 # handle the first chip
-                chip = ethernet_connected_chip
                 x = ethernet_connected_chip.x
                 y = ethernet_connected_chip.y
                 ip = ethernet_connected_chip.ip_address
 
                 # handle left chips (goes up 4)
-                chips['left'].append(chip)
+                chips['left'].append((x, y))
                 for _ in range(0, 3):
                     y = (y + 1) % (self._max_chip_y + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['left'].append(chip)
+                    chips['left'].append((x, y))
 
                 # handle left north (goes across 4 but add this chip)
-                chips['left_north'].append(chip)
+                chips['left_north'].append((x, y))
                 for _ in range(0, 4):
                     x = (x + 1) % (self._max_chip_x + 1)
                     y = (y + 1) % (self._max_chip_y + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['left_north'].append(chip)
+                    chips['left_north'].append((x, y))
 
                 # handle north (goes left 3 but add this chip)
-                chips['north'].append(chip)
+                chips['north'].append((x, y))
                 for _ in range(0, 3):
                     x = (x + 1) % (self._max_chip_x + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['north'].append(chip)
+                    chips['north'].append((x, y))
 
                 # handle east (goes down 4 but add this chip)
-                chips['right'].append(chip)
+                chips['right'].append((x, y))
                 for _ in range(0, 4):
                     y = (y - 1) % (self._max_chip_y + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['right'].append(chip)
+                    chips['right'].append((x, y))
 
                 # handle east south (goes down across 3 but add this chip)
-                chips['right_south'].append(chip)
+                chips['right_south'].append((x, y))
                 for _ in range(0, 3):
                     x = (x - 1) % (self._max_chip_x + 1)
                     y = (y - 1) % (self._max_chip_y + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['right_south'].append(chip)
+                    chips['right_south'].append((x, y))
 
                 # handle south (goes across 3 but add this chip)
-                chips['south'].append(chip)
+                chips['south'].append((x, y))
                 for _ in range(0, 4):
                     x = (x - 1) % (self._max_chip_x + 1)
-                    chip = self.get_chip_at(x, y)
-                    chips['south'].append(chip)
+                    chips['south'].append((x, y))
 
                 # handle left
                 fpga_id = 1
                 fpga_link = 0
-                for chip in chips['left']:
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 4, ip)
+                for x, y in chips['left']:
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
                     fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 3, ip)
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
                     fpga_link += 1
 
                 # handle left north
                 first = chips['left_north'][0]
                 last = chips['left_north'][-1]
-                for chip in chips['left_north']:
-                    if chip == first:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 2, ip)
+                for x, y in chips['left_north']:
+                    if (x, y) == first:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
                         fpga_link += 1
-                    elif chip == last:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 3, ip)
+                    elif (x, y) == last:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
                         fpga_link += 1
                     else:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 3, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
                         fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 2, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
                         fpga_link += 1
 
                 # handle north
                 fpga_id = 2
                 fpga_link = 0
-                for chip in chips['north']:
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 2, ip)
+                for x, y in chips['north']:
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
                     fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 1, ip)
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
                     fpga_link += 1
 
                 # handle right
                 first = chips['right'][0]
                 last = chips['right'][-1]
-                for chip in chips['right']:
-                    if chip == first:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 0, ip)
+                for x, y in chips['right']:
+                    if (x, y) == first:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
                         fpga_link += 1
-                    elif chip == last:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 1, ip)
+                    elif (x, y) == last:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
                         fpga_link += 1
                     else:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 1, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
                         fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 0, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
                         fpga_link += 1
 
                 # handle right south
                 fpga_id = 0
                 fpga_link = 0
-                for chip in chips['right_south']:
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 0, ip)
+                for x, y in chips['right_south']:
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
                     fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, chip, 5, ip)
+                    self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
                     fpga_link += 1
 
                 # handle south
                 first = chips['south'][0]
                 last = chips['south'][-1]
-                for chip in chips['south']:
-                    if chip == first:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 4, ip)
+                for x, y in chips['south']:
+                    if (x, y) == first:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
                         fpga_link += 1
-                    elif chip == last:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 5, ip)
+                    elif (x, y) == last:
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
                         fpga_link += 1
                     else:
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 5, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
                         fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, chip, 4, ip)
+                        self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
                         fpga_link += 1
 
-    def _add_fpga_link(self, fpga_id, fpga_link, chip, link, board_address):
-        if chip is not None:
-            if not chip.router.is_link(link):
+    def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
+        if self.is_chip_at(x, y):
+            if not self.is_link_at(x, y, link):
                 self._fpga_links[board_address, fpga_id, fpga_link] = \
                     FPGALinkData(
                         fpga_link_id=fpga_link, fpga_id=fpga_id,
-                        connected_chip_x=chip.x, connected_chip_y=chip.y,
+                        connected_chip_x=x, connected_chip_y=y,
                         connected_link=link, board_address=board_address)
 
     def __str__(self):
@@ -560,3 +566,55 @@ class Machine(object):
         :rtype: `py:class:spinn_machine.chip.Chip`
         """
         return self._chips[(self._boot_x, self._boot_y)]
+
+    def get_chips_on_board(self, chip):
+        """ Get the chips that are on the same board as the given chip
+
+        :param chip: The chip to find other chips on the same board as
+        :return: An iterable of (x, y) coordinates of chips on the same board
+        """
+        eth_x = chip.nearest_ethernet_x
+        eth_y = chip.nearest_ethernet_y
+        for chip_x, chip_y in zip(range(0, 8), range(0, 8)):
+            x = eth_x + chip_x
+            y = eth_y + chip_y
+            if (self.is_chip_at(x, y) and
+                    (x, y) not in Machine.BOARD_48_CHIP_GAPS):
+                yield x, y
+
+    def reserve_system_processors(self):
+        """ Sets one of the none monitor system processors as a system\
+            processor on every Chip
+
+        Updates maximum_user_cores_on_chip
+
+        :return:\
+            A CoreSubsets of reserved cores, and a list of (x, y) of chips\
+            where a non-system core was not available
+        :rtype:\
+            (:py:class:`spinn_machine.core_subsets.CoreSubsets`,\
+            list of (int, int))
+        """
+        self._maximum_user_cores_on_chip = 0
+        reserved_cores = CoreSubsets()
+        failed_chips = list()
+        for chip in self._chips.itervalues():
+
+            # Try to get a new system processor
+            core_reserved = chip.reserve_a_system_processor()
+            if core_reserved is None:
+                failed_chips.append((chip.x, chip.y))
+            else:
+                reserved_cores.add_processor(chip.x, chip.y, core_reserved)
+
+            # Update the maximum user cores either way
+            if (chip.n_user_processors > self._maximum_user_cores_on_chip):
+                self._maximum_user_cores_on_chip = chip.n_user_processors
+
+        return reserved_cores, failed_chips
+
+    @property
+    def maximum_user_cores_on_chip(self):
+        """ The maximum number of user cores on any chip
+        """
+        return self._maximum_user_cores_on_chip

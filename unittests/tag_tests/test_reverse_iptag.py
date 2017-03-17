@@ -15,7 +15,8 @@ class TestingReverseIptag(unittest.TestCase):
     def test_create_valid_reverse_iptag(self):
         """
         test which tests if a iptag with valid inputs works
-        :return:
+
+        :rtype: None
         """
         reverse_ip_tag = ReverseIPTag("", 0, 1, 0, 0, 1)
         self.assertIsNotNone(reverse_ip_tag)
@@ -23,7 +24,8 @@ class TestingReverseIptag(unittest.TestCase):
     def test_retrival_of_board_address(self):
         """
         test if the board address retrival works
-        :return:
+
+        :rtype: None
         """
         reverse_ip_tag = ReverseIPTag("", 0, 1, 0, 0, 1)
         self.assertIsNotNone(reverse_ip_tag)
@@ -33,7 +35,8 @@ class TestingReverseIptag(unittest.TestCase):
     def test_retrival_of_tag(self):
         """
         test if the board address retrival works
-        :return:
+
+        :rtype: None
         """
         reverse_ip_tag = ReverseIPTag("", 0, 1, 0, 0, 1)
         self.assertIsNotNone(reverse_ip_tag)
@@ -43,7 +46,8 @@ class TestingReverseIptag(unittest.TestCase):
     def test_retrival_of_port(self):
         """
         test if the board address retrival works
-        :return:
+
+        :rtype: None
         """
         reverse_ip_tag = ReverseIPTag("", 0, 1, 0, 0, 1)
         self.assertIsNotNone(reverse_ip_tag)
@@ -53,7 +57,8 @@ class TestingReverseIptag(unittest.TestCase):
     def test_retrival_of_dest_x(self):
         """
         test if the board address retrival works
-        :return:
+
+        :rtype: None
         """
         reverse_ip_tag = ReverseIPTag("", 0, 1, 0, 0, 1)
         self.assertIsNotNone(reverse_ip_tag)
@@ -63,7 +68,8 @@ class TestingReverseIptag(unittest.TestCase):
     def test_retrival_of_dest_y(self):
         """
         test if the board address retrival works
-        :return:
+
+        :rtype: None
         """
         reverse_ip_tag = ReverseIPTag("", 0, 1, 0, 0, 1)
         self.assertIsNotNone(reverse_ip_tag)
@@ -73,7 +79,8 @@ class TestingReverseIptag(unittest.TestCase):
     def test_retrival_of_dest_p(self):
         """
         test if the board address retrival works
-        :return:
+
+        :rtype: None
         """
         reverse_ip_tag = ReverseIPTag("", 0, 1, 0, 0, 1)
         self.assertIsNotNone(reverse_ip_tag)
@@ -83,7 +90,8 @@ class TestingReverseIptag(unittest.TestCase):
     def test_retrival_of_sdp_port(self):
         """
         test if the board address retrival works
-        :return:
+
+        :rtype: None
         """
         reverse_ip_tag = ReverseIPTag("", 0, 1, 0, 0, 1)
         self.assertIsNotNone(reverse_ip_tag)

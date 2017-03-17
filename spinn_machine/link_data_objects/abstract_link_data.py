@@ -25,7 +25,6 @@ class AbstractLinkData(object):
     def board_address(self):
         """
         property method for board address
-        :return:
         """
         return self._board_address
 
@@ -33,7 +32,6 @@ class AbstractLinkData(object):
     def connected_chip_x(self):
         """
         property method for connected chip x
-        :return:
         """
         return self._connected_chip_x
 
@@ -41,7 +39,6 @@ class AbstractLinkData(object):
     def connected_chip_y(self):
         """
         property method for connected chip y
-        :return:
         """
         return self._connected_chip_y
 
@@ -49,6 +46,5 @@ class AbstractLinkData(object):
     def connected_link(self):
         """
         property for connected link
-        :return:
         """
         return self._connected_link
