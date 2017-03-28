@@ -33,5 +33,8 @@ setup(
     url="https://github.com/SpiNNakerManchester/SpiNNMachine",
     license="GNU GPLv3.0",
     packages=packages,
-    package_data=package_data
+    package_data=package_data,
+    install_requires=['SpiNNUtilities >= 3.0.0, < 4.0.0',
+                      'six']
+
 )
