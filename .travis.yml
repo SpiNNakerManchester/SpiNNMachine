@@ -10,7 +10,6 @@ virtualenv:
 before_script:
   - python ./setup.py install
   - pip install -r requirements-test.txt
-  - pip install -r doc/doc_requirements.txt
 script:
   - py.test .
   # Code quality check
