@@ -7,10 +7,14 @@ matrix:
 virtualenv:
   system_site_packages: true
 
+before_install:
+  # SpiNNakerManchester internal dependencies; development mode
+  - pip install --upgrade git+git://github.com/SpiNNakerManchester/SpiNNUtils.git@$TRAVIS_BRANCH || pip install --upgrade git+git://github.com/SpiNNakerManchester/SpiNNUtils.git@master
+
 before_script:
   - python ./setup.py install
   - pip install -r requirements-test.txt
-  - pip install -r doc/doc_requirements.txt
+
 script:
   - py.test .
   # Code quality check
