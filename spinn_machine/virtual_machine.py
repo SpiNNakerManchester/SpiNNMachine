@@ -5,7 +5,8 @@ from spinn_machine.router import Router
 from spinn_machine.chip import Chip
 from spinn_machine.sdram import SDRAM
 from spinn_machine.link import Link
-from spinn_machine.utilities.ordered_set import OrderedSet
+
+from spinn_utilities.ordered_set import OrderedSet
 
 import logging
 from spinn_machine.spinnaker_triad_geometry import SpiNNakerTriadGeometry
