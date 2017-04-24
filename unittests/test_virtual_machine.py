@@ -302,11 +302,5 @@ class TestVirtualMachine(unittest.TestCase):
     def test_calculate_links(self):
         self.assertEqual(True, False, "Test not implemented yet")
 
-
-
-
-
-
-
 if __name__ == '__main__':
     unittest.main()
