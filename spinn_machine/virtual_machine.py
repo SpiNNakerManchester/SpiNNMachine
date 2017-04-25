@@ -412,20 +412,8 @@ class VirtualMachine(Machine):
         self._add_link(links, 5, x, y, x, y - 1)
         return links
 
-    def _add_link(self, links, link_from, source_x, source_y,
-                  destination_x, destination_y):
-        if self._creatable_link(link_from, source_x, source_y,
-                                destination_x, destination_y):
-            link_to = (link_from + 3) % 6
-            links.append(
-                Link(source_x=source_x, source_y=source_y,
-                     destination_x=destination_x, destination_y=destination_y,
-                     source_link_id=link_from,
-                     multicast_default_from=link_to,
-                     multicast_default_to=link_to))
+    def _get_destination(self, destination_x, destination_y):
 
-    def _creatable_link(self, link_from, source_x, source_y,
-                        destination_x, destination_y):
         if self._with_wrap_arounds:
 
             # Correct for wrap around
@@ -437,6 +425,29 @@ class VirtualMachine(Machine):
                 destination_x = self._original_width - 1
             if destination_y == -1:
                 destination_y = self._original_height - 1
+
+        return destination_x, destination_y
+
+    def _add_link(self, links, link_from, source_x, source_y,
+                  destination_x, destination_y):
+        destination_x, destination_y = self._get_destination(
+            destination_x, destination_y)
+
+        if self._creatable_link(
+                link_from, source_x, source_y, destination_x, destination_y):
+            link_to = (link_from + 3) % 6
+            links.append(
+                Link(source_x=source_x, source_y=source_y,
+                     destination_x=destination_x, destination_y=destination_y,
+                     source_link_id=link_from,
+                     multicast_default_from=link_to,
+                     multicast_default_to=link_to))
+
+    def _creatable_link(self, link_from, source_x, source_y,
+                        destination_x, destination_y):
+
+        destination_x, destination_y = self._get_destination(
+            destination_x, destination_y)
 
         # Check only against chips that can be created
         # Chips directly added will have the links directly added as well

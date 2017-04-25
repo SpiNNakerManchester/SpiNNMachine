@@ -60,6 +60,13 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertTrue(vm.is_link_at(0, 1, 2))
         self.assertTrue(vm.is_link_at(0, 0, 4))
         self.assertTrue(vm.is_link_at(0, 1, 3))
+
+        # Test that the chip south of 0, 0 is 0, 1 (with wrap around)
+        chip = vm.get_chip_at(0, 0)
+        link = chip.router.get_link(5)
+        self.assertEqual(link.destination_x, 0)
+        self.assertEqual(link.destination_y, 1)
+
         count = 0
         for _chip in vm.chips:
             for _link in _chip.router.links:
@@ -281,18 +288,9 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(vm.maximum_user_cores_on_chip,
                          n_chips - 2)
 
-    @unittest.skip("skipping test_initlize_neighbour_links_for_other_boards")
-    def test_initlize_neighbour_links_for_other_boards(self):
-        self.assertEqual(True, False, "Test not implemented yet")
-
-    @unittest.skip("skipping test_initlize_neighbour_links_for_4_chip_board")
-    def test_initlize_neighbour_links_for_4_chip_board(self):
-        self.assertEqual(True, False, "Test not implemented yet")
-
-    @unittest.skip("skipping test_calculate_links")
-    def test_calculate_links(self):
-        self.assertEqual(True, False, "Test not implemented yet")
-
+    def test_boot_chip(self):
+        vm = virtual_machine.VirtualMachine(2, 2)
+        self.assertNotEqual(vm.boot_chip, None)
 
 if __name__ == '__main__':
     unittest.main()
