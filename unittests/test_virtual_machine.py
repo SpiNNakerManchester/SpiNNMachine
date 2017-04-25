@@ -292,5 +292,6 @@ class TestVirtualMachine(unittest.TestCase):
         vm = virtual_machine.VirtualMachine(2, 2)
         self.assertNotEqual(vm.boot_chip, None)
 
+
 if __name__ == '__main__':
     unittest.main()
