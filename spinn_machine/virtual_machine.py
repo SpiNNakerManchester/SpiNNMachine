@@ -240,8 +240,8 @@ class VirtualMachine(Machine):
                 (x, y) not in down_chips
             })
         else:
-            self._configured_chips = OrderedSet((x, y) for x in range(height)
-                                                for y in range(width) if
+            self._configured_chips = OrderedSet((x, y) for x in range(width)
+                                                for y in range(height) if
                                                 (x, y) not in down_chips)
 
         # Assign "ip addresses" to the Ethernet chips

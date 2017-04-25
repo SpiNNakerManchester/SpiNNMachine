@@ -281,6 +281,15 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(vm.maximum_user_cores_on_chip,
                          n_chips - 2)
 
+    def test_ethernet_chips_exist(self):
+        vm = virtual_machine.VirtualMachine(width=48, height=24,
+                                            with_wrap_arounds=True)
+        for eth_chip in vm._ethernet_connected_chips:
+            self.assertTrue(vm.get_chip_at(eth_chip.x, eth_chip.y),
+                            "Eth chip location x={}, y={} not in "
+                            "_configured_chips"
+                            .format(eth_chip.x, eth_chip.y))
+
     @unittest.skip("skipping test_initlize_neighbour_links_for_other_boards")
     def test_initlize_neighbour_links_for_other_boards(self):
         self.assertEqual(True, False, "Test not implemented yet")
