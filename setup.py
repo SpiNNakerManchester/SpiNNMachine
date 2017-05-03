@@ -6,6 +6,10 @@ except ImportError:
 from collections import defaultdict
 import os
 
+__version__ = None
+exec(open("spinn_machine/_version.py").read())
+assert __version__
+
 # Build a list of all project modules, as well as supplementary files
 main_package = "spinn_machine"
 data_extensions = {".aplx", ".xml"}
@@ -28,13 +32,13 @@ for dirname, dirnames, filenames in os.walk(main_package_dir):
 
 setup(
     name="SpiNNMachine",
-    version="1!4.0.0a2",
+    version=__version__,
     description="Representation of a SpiNNaker Machine",
     url="https://github.com/SpiNNakerManchester/SpiNNMachine",
     license="GNU GPLv3.0",
     packages=packages,
     package_data=package_data,
-    install_requires=['SpiNNUtilities >= 1!4.0.0a1, < 1!5.0.0',
+    install_requires=['SpiNNUtilities >= 1!4.0.0a5, < 1!5.0.0',
                       'six']
 
 )
