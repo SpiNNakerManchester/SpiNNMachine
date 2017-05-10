@@ -54,3 +54,8 @@ Use Cases
       is sent in a list of routing entries to set up routing on a chip on the
       machine.
 """
+
+from spinn_machine._version import __version__  # NOQA
+from spinn_machine._version import __version_name__  # NOQA
+from spinn_machine._version import __version_month__  # NOQA
+from spinn_machine._version import __version_year__  # NOQA

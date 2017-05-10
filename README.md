@@ -45,4 +45,6 @@ Documentation
 =============
 [SpiNNMachine python documentation](http://spinnmachine.readthedocs.io)
 
-[Combined python documentation](http://spinnakermanchester.readthedocs.io)
+[Combined PyNN7 python documentation](http://spinnaker7manchester.readthedocs.io)
+
+[Combined PyNN8 python documentation](http://spinnaker8manchester.readthedocs.io)
