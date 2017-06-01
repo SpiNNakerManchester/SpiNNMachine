@@ -29,7 +29,9 @@ class VirtualMachine(Machine):
         "_original_height",
         "_sdram_per_chip",
         "_with_monitors",
-        "_with_wrap_arounds")
+        "_with_wrap_arounds",
+        "_max_chip_x",
+        "_max_chip_y")
 
     _4_chip_down_links = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
@@ -39,7 +41,7 @@ class VirtualMachine(Machine):
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=18, with_monitors=True,
-            sdram_per_chip=None, down_chips=[], down_cores=None,
+            sdram_per_chip=None, down_chips=None, down_cores=None,
             down_links=None):
         """
         :param width: the width of the virtual machine in chips
@@ -61,6 +63,9 @@ class VirtualMachine(Machine):
         """
         Machine.__init__(self, (), 0, 0)
 
+        if down_chips is None:
+            down_chips = []
+
         # Verify the machine
         # Check for not enough info or out of range
         if ((width is not None and width < 0) or
@@ -80,7 +85,7 @@ class VirtualMachine(Machine):
                 "Version must be between 2 and 5 inclusive or None")
 
         # Version 2/3
-        if (version == 2 or version == 3):
+        if version == 2 or version == 3:
             if with_wrap_arounds is not None:
                 raise exceptions.SpinnMachineInvalidParameterException(
                     "version and with_wrap_arounds",
@@ -103,7 +108,7 @@ class VirtualMachine(Machine):
             with_wrap_arounds = True
 
         # Version 4/5
-        if (version == 5 or version == 4):
+        if version == 5 or version == 4:
             if with_wrap_arounds is not None and with_wrap_arounds:
                 raise exceptions.SpinnMachineInvalidParameterException(
                     "version and with_wrap_arounds",
@@ -125,17 +130,17 @@ class VirtualMachine(Machine):
                 height = 8
             with_wrap_arounds = False
 
-        if (version is None and with_wrap_arounds is None):
-            if (width == 2 and height == 2):
+        if version is None and with_wrap_arounds is None:
+            if width == 2 and height == 2:
 
                 # assume the special version 2 or 3 wrap arounds
                 version = 2
                 self._with_wrap_arounds = True
-            elif (width == 8 and height == 8):
+            elif width == 8 and height == 8:
                 self._with_wrap_arounds = False
-            elif (width % 12 == 0 and height % 12 == 0):
+            elif width % 12 == 0 and height % 12 == 0:
                 self._with_wrap_arounds = True
-            elif ((width - 4) % 12 == 0 and (height - 4) % 12 == 0):
+            elif (width - 4) % 12 == 0 and (height - 4) % 12 == 0:
                 self._with_wrap_arounds = False
             else:
                 raise exceptions.SpinnMachineInvalidParameterException(
