@@ -12,7 +12,7 @@ class CoreSubsets(object):
         """
         :param core_subsets: An iterable of cores for each desired chip
         :type core_subsets: iterable of\
-                    :py:class:`spinn_machine.core_subset.CoreSubset`
+                    :py:class:`spinn_machine.CoreSubset`
         :raise spinnman.exceptions.SpinnmanInvalidParameterException: If there\
                     is more than one subset with the same core x and y\
                     coordinates
@@ -26,7 +26,7 @@ class CoreSubsets(object):
         """ Add a core subset to the set
 
         :param core_subset: The core subset to add
-        :type core_subset: :py:class:`spinn_machine.core_subset.CoreSubset`
+        :type core_subset: :py:class:`spinn_machine.CoreSubset`
         :return: Nothing is returned
         :rtype: None
         """
@@ -87,7 +87,7 @@ class CoreSubsets(object):
         """ The one-per-chip subsets
 
         :return: Iterable of core subsets
-        :rtype: iterable of :py:class:`spinn_machine.core_subset.CoreSubset`
+        :rtype: iterable of :py:class:`spinn_machine.CoreSubset`
         """
         return self._core_subsets.itervalues()
 
@@ -99,7 +99,7 @@ class CoreSubsets(object):
         :param y: The y-coordinate of a chip
         :type y: int
         :return: The core subset of a chip, which will be empty if not added
-        :rtype: :py:class:`spinn_machine.core_subset.CoreSubset`
+        :rtype: :py:class:`spinn_machine.CoreSubset`
         """
         if (x, y) not in self._core_subsets:
             return CoreSubset(x, y, [])

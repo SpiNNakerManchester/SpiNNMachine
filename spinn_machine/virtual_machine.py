@@ -265,7 +265,7 @@ class VirtualMachine(Machine):
         """ Add a chip to the machine
 
         :param chip: The chip to add to the machine
-        :type chip: :py:class:`spinn_machine.chip.Chip`
+        :type chip: :py:class:`spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
