@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class Chip(object):

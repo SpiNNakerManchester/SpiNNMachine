@@ -1,4 +1,4 @@
-from spinn_machine.exceptions import SpinnMachineInvalidParameterException
+from .exceptions import SpinnMachineInvalidParameterException
 
 
 class Processor(object):

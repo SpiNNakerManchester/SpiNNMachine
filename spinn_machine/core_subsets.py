@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from spinn_machine.core_subset import CoreSubset
+from .core_subset import CoreSubset
 
 
 class CoreSubsets(object):

@@ -1,10 +1,7 @@
-
 # spinn_machine imports
-from spinn_machine import exceptions
-from spinn_machine.link_data_objects.fpga_link_data import FPGALinkData
-from spinn_machine.core_subsets import CoreSubsets
-from spinn_machine.link_data_objects.spinnaker_link_data \
-    import SpinnakerLinkData
+from .exceptions import SpinnMachineAlreadyExistsException
+from .core_subsets import CoreSubsets
+from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 
 # general imports
 from collections import OrderedDict
@@ -96,7 +93,7 @@ class Machine(object):
         """
         chip_id = (chip.x, chip.y)
         if chip_id in self._chips:
-            raise exceptions.SpinnMachineAlreadyExistsException(
+            raise SpinnMachineAlreadyExistsException(
                 "chip", "{}, {}".format(chip.x, chip.y))
 
         self._chips[chip_id] = chip

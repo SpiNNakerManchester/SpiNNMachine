@@ -1,4 +1,4 @@
-from spinn_machine.link_data_objects.abstract_link_data import AbstractLinkData
+from .abstract_link_data import AbstractLinkData
 
 
 class FPGALinkData(AbstractLinkData):

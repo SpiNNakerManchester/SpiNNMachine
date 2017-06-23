@@ -59,3 +59,19 @@ from spinn_machine._version import __version__  # NOQA
 from spinn_machine._version import __version_name__  # NOQA
 from spinn_machine._version import __version_month__  # NOQA
 from spinn_machine._version import __version_year__  # NOQA
+
+from .chip import Chip
+from .core_subset import CoreSubset
+from .core_subsets import CoreSubsets
+from .link import Link
+from .machine import Machine
+from .multicast_routing_entry import MulticastRoutingEntry
+from .processor import Processor
+from .router import Router
+from .sdram import SDRAM
+from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
+from .virtual_machine import VirtualMachine
+
+__all__ = ["Chip", "CoreSubset", "CoreSubsets", "Link", "Machine",
+           "MulticastRoutingEntry", "Processor", "Router", "SDRAM",
+           "SpiNNakerTriadGeometry", "VirtualMachine"]
