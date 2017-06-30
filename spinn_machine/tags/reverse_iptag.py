@@ -18,7 +18,7 @@ class ReverseIPTag(AbstractTag):
         # send to for this reverse iptag
         "_destination_p",
 
-        # the port number these packets are to be reiceved on for the processor.
+        # the port number these packets are to be received on for the processor
         "_sdp_port"
     ]
 
