@@ -33,3 +33,11 @@ class AbstractTag(object):
         """ The port of the tag
         """
         return self._port
+
+    @port.setter
+    def port(self, port):
+        """ Set the port; will fail if the port is already set
+        """
+        if self._port is not None:
+            raise RuntimeError("Port cannot be set more than once")
+        self._port = port

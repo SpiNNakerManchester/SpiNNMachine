@@ -7,22 +7,10 @@ class MulticastRoutingEntry(object):
     """ Represents an entry in a multicast routing table
     """
 
-    __slots__ = [
-        # the key mask combo (int) used within the routing entry
-        "_routing_key_entry",
-
-        # the mask used within the routing entry
-        "_mask",
-
-        # boolean flag which states if this entry can be removed
-        "_defaultable",
-
-        # the list of processor ids that this entry sends packets to
-        "_processor_ids",
-
-        # the list of link ids that this entry sneds packets to
+    __slots__ = (
+        "_routing_entry_key", "_mask", "_defaultable", "_processor_ids",
         "_link_ids"
-    ]
+    )
 
     def __init__(self, routing_entry_key, mask, processor_ids, link_ids,
                  defaultable):
@@ -43,7 +31,7 @@ class MulticastRoutingEntry(object):
                     * If processor_ids contains the same id more than once
                     * If link_ids contains the same id more than once
         """
-        self._routing_key_entry = routing_entry_key
+        self._routing_entry_key = routing_entry_key
         self._mask = mask
         self._defaultable = defaultable
 
@@ -78,7 +66,7 @@ class MulticastRoutingEntry(object):
         :return: The routing key
         :rtype: int
         """
-        return self._routing_key_entry
+        return self._routing_entry_key
 
     @property
     def mask(self):
@@ -110,6 +98,7 @@ class MulticastRoutingEntry(object):
     @property
     def defaultable(self):
         """if this entry is a defaultable entry
+
         :return: the bool that represents if a entry is defaultable or not
         :rtype: bool
         """
@@ -166,25 +155,35 @@ class MulticastRoutingEntry(object):
     def __eq__(self, other_entry):
         """
         supports comparisons
+
         :param other_entry: other Multicast_routing_entry
-        :return:
         """
         if not isinstance(other_entry, MulticastRoutingEntry):
             return False
-        else:
-            return (self._defaultable == other_entry.defaultable and
-                    self._link_ids == other_entry.link_ids and
-                    self._mask == other_entry.mask and
-                    self._processor_ids == other_entry.processor_ids and
-                    self._routing_key_entry == other_entry.routing_entry_key)
+        return (self._defaultable == other_entry.defaultable and
+                self._link_ids == other_entry.link_ids and
+                self._mask == other_entry.mask and
+                self._processor_ids == other_entry.processor_ids and
+                self._routing_entry_key == other_entry.routing_entry_key)
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __repr__(self):
         return "{}:{}:{}:{}:{}".format(
-            self._routing_key_entry, self._mask, self._defaultable,
+            self._routing_entry_key, self._mask, self._defaultable,
             self._processor_ids, self._link_ids)
 
     def __str__(self):
         return self.__repr__()
+
+    def __getstate__(self):
+        return dict(
+            (slot, getattr(self, slot))
+            for slot in self.__slots__
+            if hasattr(self, slot)
+        )
+
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            setattr(self, slot, value)

@@ -3,16 +3,9 @@ class CoreSubset(object):
     """ Represents a subset of the cores on a chip
     """
 
-    __slots__ = [
-        # The x-coordinate of the chip
-        "_x",
-
-        # The y-coordinate of the chip
-        "_y",
-
-        # An iterable of processor ids on the chip
-        "_processor_ids"
-    ]
+    __slots__ = (
+        "_x", "_y", "_processor_ids"
+    )
 
     def __init__(self, x, y, processor_ids):
         """
@@ -32,8 +25,8 @@ class CoreSubset(object):
     def add_processor(self, processor_id):
         """ Adds a processor id to this subset
 
-        :param processor_ids: A processor id
-        :type processor_ids: int
+        :param processor_id: A processor id
+        :type processor_id: int
         :return: Nothing is returned
         :rtype: None
         """

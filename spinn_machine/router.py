@@ -1,4 +1,4 @@
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine import exceptions
 
 from collections import OrderedDict
 
@@ -29,6 +29,11 @@ class Router(object):
     ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
+
+    __slots__ = (
+        "_clock_speed", "_emergency_routing_enabled", "_links",
+        "_n_available_multicast_entries"
+    )
 
     def __init__(
             self, links, emergency_routing_enabled=False,
@@ -67,7 +72,7 @@ class Router(object):
                     another link already exists with the same source_link_id
         """
         if link.source_link_id in self._links:
-            raise SpinnMachineAlreadyExistsException(
+            raise exceptions.SpinnMachineAlreadyExistsException(
                 "link", str(link.source_link_id))
         self._links[link.source_link_id] = link
 
@@ -158,6 +163,45 @@ class Router(object):
         """
         return self._n_available_multicast_entries
 
+    @staticmethod
+    def convert_routing_table_entry_to_spinnaker_route(routing_table_entry):
+        """ Convert a routing table entry represented in software to a\
+            binary routing table entry usable on the machine
+
+        :param routing_table_entry: The entry to convert
+        :type routing_table_entry:\
+            :py:class:`spinnmachine.multicast_routing_entry.MulticastRoutingEntry`
+        :rtype: int
+        """
+        route_entry = 0
+        for processor_id in routing_table_entry.processor_ids:
+            if processor_id > 26 or processor_id < 0:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "route.processor_ids",
+                    str(routing_table_entry.processor_ids),
+                    "Processor ids must be between 0 and 26")
+            route_entry |= (1 << (6 + processor_id))
+        for link_id in routing_table_entry.link_ids:
+            if link_id > 5 or link_id < 0:
+                raise exceptions.SpinnMachineInvalidParameterException(
+                    "route.link_ids", str(routing_table_entry.link_ids),
+                    "Link ids must be between 0 and 5")
+            route_entry |= (1 << link_id)
+        return route_entry
+
+    def get_neighbouring_chips_coords(self):
+        """ Utility method to convert links into x and y coordinates
+
+        :return: iterable list of destination coordinates in x and y dict
+        :rtype: iterable of dict
+
+        """
+        next_hop_chips_coords = list()
+        for link in self.links:
+            next_hop_chips_coords.append(
+                {'x': link.destination_x, 'y': link.destination_y})
+        return next_hop_chips_coords
+
     def __str__(self):
         return (
             "[Router: clock_speed={} MHz, emergency_routing={},"
@@ -168,17 +212,3 @@ class Router(object):
 
     def __repr__(self):
         return self.__str__()
-
-    def get_neighbouring_chips_coords(self):
-        """utility method to convert links into x and y coords for placers
-
-        :return: iterable list of destination coords in x and y dictonary
-        :rtype: iterable of dict
-        :raise None: this method does not raise any known excpetion
-
-        """
-        next_hop_chips_coords = list()
-        for link in self.links:
-            next_hop_chips_coords.append(
-                {'x': link.destination_x, 'y': link.destination_y})
-        return next_hop_chips_coords
