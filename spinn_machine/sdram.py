@@ -5,11 +5,6 @@ class SDRAM(object):
     """ Represents the properties of the SDRAM of a chip in the machine
     """
 
-    __slots__ = [
-        # the amount of sdram avilable on this chip in bytes (int)
-        "_size"
-    ]
-
     DEFAULT_SDRAM_BYTES = 117 * 1024 * 1024
 
     __slots__ = "_size"
