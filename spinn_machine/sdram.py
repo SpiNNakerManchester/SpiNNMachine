@@ -1,4 +1,4 @@
-import spinn_machine.exceptions as exc
+from .exceptions import SpinnMachineInvalidParameterException
 
 
 class SDRAM(object):
@@ -15,7 +15,7 @@ class SDRAM(object):
         :type size: int
         """
         if size < 0:
-            raise exc.SpinnMachineInvalidParameterException(
+            raise SpinnMachineInvalidParameterException(
                 "size", size, "negative sizes are meaningless")
         self._size = size
 

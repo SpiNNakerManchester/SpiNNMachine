@@ -1,10 +1,7 @@
-
 # spinn_machine imports
-from spinn_machine import exceptions
-from spinn_machine.link_data_objects.fpga_link_data import FPGALinkData
-from spinn_machine.core_subsets import CoreSubsets
-from spinn_machine.link_data_objects.spinnaker_link_data \
-    import SpinnakerLinkData
+from .exceptions import SpinnMachineAlreadyExistsException
+from .core_subsets import CoreSubsets
+from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 
 # general imports
 from collections import OrderedDict
@@ -48,7 +45,7 @@ class Machine(object):
     def __init__(self, chips, boot_x, boot_y):
         """
         :param chips: An iterable of chips in the machine
-        :type chips: iterable of :py:class:`spinn_machine.chip.Chip`
+        :type chips: iterable of :py:class:`spinn_machine.Chip`
         :param boot_x: The x-coordinate of the chip used to boot the machine
         :type boot_x: int
         :param boot_y: The y-coordinate of the chip used to boot the machine
@@ -88,7 +85,7 @@ class Machine(object):
         """ Add a chip to the machine
 
         :param chip: The chip to add to the machine
-        :type chip: :py:class:`spinn_machine.chip.Chip`
+        :type chip: :py:class:`spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
@@ -96,7 +93,7 @@ class Machine(object):
         """
         chip_id = (chip.x, chip.y)
         if chip_id in self._chips:
-            raise exceptions.SpinnMachineAlreadyExistsException(
+            raise SpinnMachineAlreadyExistsException(
                 "chip", "{}, {}".format(chip.x, chip.y))
 
         self._chips[chip_id] = chip
@@ -118,7 +115,7 @@ class Machine(object):
         """ Add some chips to the machine
 
         :param chips: an iterable of chips
-        :type chips: iterable of :py:class:`spinn_machine.chip.Chip`
+        :type chips: iterable of :py:class:`spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
@@ -133,7 +130,7 @@ class Machine(object):
         """ An iterable of chips in the machine
 
         :return: An iterable of chips
-        :rtype: iterable of :py:class:`spinn_machine.chip.Chip`
+        :rtype: iterable of :py:class:`spinn_machine.Chip`
         :raise None: does not raise any known exceptions
         """
         return self._chips.itervalues()
@@ -155,7 +152,7 @@ class Machine(object):
                         * x is the x-coordinate of a chip
                         * y is the y-coordinate of a chip
                     * chip is a chip
-        :rtype: iterable of ((int, int), :py:class:`spinn_machine.chip.Chip`)
+        :rtype: iterable of ((int, int), :py:class:`spinn_machine.Chip`)
         :raise None: does not raise any known exceptions
         """
         return self._chips.iteritems()
@@ -169,7 +166,7 @@ class Machine(object):
         :param y: the y-coordinate of the requested chip
         :type y: int
         :return: the chip at the specified location, or None if no such chip
-        :rtype: :py:class:`spinn_machine.chip.Chip`
+        :rtype: :py:class:`spinn_machine.Chip`
         :raise None: does not raise any known exceptions
         """
         chip_id = (x, y)
@@ -185,7 +182,7 @@ class Machine(object):
                     * y is the y-coordinate of the chip to retrieve
         :type x_y_tuple: (int, int)
         :return: the chip at the specified location, or None if no such chip
-        :rtype: :py:class:`spinn_machine.chip.Chip`
+        :rtype: :py:class:`spinn_machine.Chip`
         :raise None: does not raise any known exceptions
         """
         x, y = x_y_tuple
@@ -258,7 +255,7 @@ class Machine(object):
         """ The chips in the machine that have an Ethernet connection
 
         :return: An iterable of chips
-        :rtype: iterable of :py:class:`spinn_machine.chip.Chip`
+        :rtype: iterable of :py:class:`spinn_machine.Chip`
         """
         return self._ethernet_connected_chips
 
@@ -268,7 +265,7 @@ class Machine(object):
 
         :return: An iterable of spinnaker links
         :rtype: iterable of\
-            :py:class:`spinn_machine.spinnaker_link_data.SpinnakerLinkData`
+            :py:class:`spinn_machine.link_data_objects.SpinnakerLinkData`
         """
         return self._spinnaker_links.iteritems()
 
@@ -283,7 +280,7 @@ class Machine(object):
         :type board_address: str or None
         :return: The spinnaker link data or None if no link
         :rtype:\
-            :py:class:`spinn_machine.link_data_objects.spinnaker_link_data.SpinnakerLinkData`
+            :py:class:`spinn_machine.link_data_objects.SpinnakerLinkData`
         """
         if board_address is None:
             board_address = self._boot_ethernet_address
@@ -308,7 +305,7 @@ class Machine(object):
             the board address that this spinnaker link is associated with
         :type board_address: str
         :rtype:\
-            :py:class:`spinn_machine.link_data_objects.fpga_link_data.FPGALinkData`
+            :py:class:`spinn_machine.link_data_objects.FPGALinkData`
         :return: the given FPGA link object or None if no such link
         """
         if board_address is None:
@@ -563,7 +560,7 @@ class Machine(object):
     def boot_chip(self):
         """ The chip used to boot the machine
 
-        :rtype: `py:class:spinn_machine.chip.Chip`
+        :rtype: `py:class:spinn_machine.Chip`
         """
         return self._chips[(self._boot_x, self._boot_y)]
 
@@ -592,7 +589,7 @@ class Machine(object):
             A CoreSubsets of reserved cores, and a list of (x, y) of chips\
             where a non-system core was not available
         :rtype:\
-            (:py:class:`spinn_machine.core_subsets.CoreSubsets`,\
+            (:py:class:`spinn_machine.CoreSubsets`,\
             list of (int, int))
         """
         self._maximum_user_cores_on_chip = 0
