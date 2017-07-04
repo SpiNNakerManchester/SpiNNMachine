@@ -114,8 +114,8 @@ class CoreSubsets(object):
         """ The total number of processors that are in these core subsets
         """
         counter = 0
-        for (x, y) in self._core_subsets:
-            counter += len(self._core_subsets[x, y])
+        for xy in self._core_subsets:
+            counter += len(self._core_subsets[xy])
         return counter
 
     def __contains__(self, x_y_tuple):
