@@ -13,9 +13,6 @@ class CoreSubsets(object):
         :param core_subsets: An iterable of cores for each desired chip
         :type core_subsets: iterable of\
                     :py:class:`spinn_machine.CoreSubset`
-        :raise spinnman.exceptions.SpinnmanInvalidParameterException: If there\
-                    is more than one subset with the same core x and y\
-                    coordinates
         """
         self._core_subsets = OrderedDict()
         if core_subsets is not None:
@@ -30,12 +27,12 @@ class CoreSubsets(object):
         :return: Nothing is returned
         :rtype: None
         """
-        if (core_subset.x, core_subset.y) not in self._core_subsets:
-            self._core_subsets[(core_subset.x, core_subset.y)] = core_subset
+        xy = (core_subset.x, core_subset.y)
+        if xy not in self._core_subsets:
+            self._core_subsets[xy] = core_subset
         else:
             for processor_id in core_subset.processor_ids:
-                self._core_subsets[(core_subset.x, core_subset.y)]\
-                    .add_processor(processor_id)
+                self._core_subsets[xy].add_processor(processor_id)
 
     def add_processor(self, x, y, processor_id):
         """ Add a processor on a given chip to the set
@@ -49,9 +46,10 @@ class CoreSubsets(object):
         :return: Nothing is returned
         :rtype: None
         """
-        if (x, y) not in self._core_subsets:
+        xy = (x, y)
+        if xy not in self._core_subsets:
             self.add_core_subset(CoreSubset(x, y, []))
-        self._core_subsets[(x, y)].add_processor(processor_id)
+        self._core_subsets[xy].add_processor(processor_id)
 
     def is_chip(self, x, y):
         """ Determine if the chip with coordinates (x, y) is in the subset
@@ -78,9 +76,10 @@ class CoreSubsets(object):
         :return: True if there is a chip with coordinates (x, y) in the\
                     subset, which has a core with the given id in the subset
         """
-        if (x, y) not in self._core_subsets:
+        xy = (x, y)
+        if xy not in self._core_subsets:
             return False
-        return processor_id in self._core_subsets[(x, y)]
+        return processor_id in self._core_subsets[xy]
 
     @property
     def core_subsets(self):
@@ -101,9 +100,10 @@ class CoreSubsets(object):
         :return: The core subset of a chip, which will be empty if not added
         :rtype: :py:class:`spinn_machine.CoreSubset`
         """
-        if (x, y) not in self._core_subsets:
+        xy = (x, y)
+        if xy not in self._core_subsets:
             return CoreSubset(x, y, [])
-        return self._core_subsets[(x, y)]
+        return self._core_subsets[xy]
 
     def __iter__(self):
         """ Iterable of core_subsets
@@ -115,7 +115,7 @@ class CoreSubsets(object):
         """
         counter = 0
         for (x, y) in self._core_subsets:
-            counter += len(self._core_subsets[(x, y)])
+            counter += len(self._core_subsets[x, y])
         return counter
 
     def __contains__(self, x_y_tuple):
