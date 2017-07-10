@@ -1,4 +1,4 @@
-from spinn_machine.tags.abstract_tag import AbstractTag
+from .abstract_tag import AbstractTag
 
 
 class ReverseIPTag(AbstractTag):

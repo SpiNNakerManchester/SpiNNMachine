@@ -1,7 +1,6 @@
 import unittest
-from spinn_machine import processor as proc, link as link, sdram as sdram, \
-    router as router, chip as chip
-import spinn_machine.exceptions as exc
+from spinn_machine import Processor, Link, SDRAM, Router, Chip
+from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
 class TestingChip(unittest.TestCase):
@@ -16,28 +15,27 @@ class TestingChip(unittest.TestCase):
         self._processors = list()
         for i in range(18):
             if i == self._monitor_id:
-                self._processors.append(proc.Processor(i, flops,
-                                                       is_monitor=True))
+                self._processors.append(Processor(i, flops, is_monitor=True))
             else:
-                self._processors.append(proc.Processor(i, flops))
+                self._processors.append(Processor(i, flops))
 
         # create router
         (e, _, n, w, _, s) = range(6)
         links = list()
-        links.append(link.Link(0, 0, 0, 1, 1, n, n))
-        links.append(link.Link(0, 1, 1, 1, 0, s, s))
-        links.append(link.Link(1, 1, 2, 0, 0, e, e))
-        links.append(link.Link(1, 0, 3, 0, 1, w, w))
-        self._router = router.Router(links, False, 100, 1024)
+        links.append(Link(0, 0, 0, 1, 1, n, n))
+        links.append(Link(0, 1, 1, 1, 0, s, s))
+        links.append(Link(1, 1, 2, 0, 0, e, e))
+        links.append(Link(1, 0, 3, 0, 1, w, w))
+        self._router = Router(links, False, 100, 1024)
 
-        self._sdram = sdram.SDRAM(128)
+        self._sdram = SDRAM(128)
         self._ip = "192.162.240.253"
 
     def _create_chip(self, x, y, processors, r, sdram, ip):
         nearest_ethernet_chip = (0, 0)
 
-        return chip.Chip(x, y, processors, r, sdram, nearest_ethernet_chip[0],
-                         nearest_ethernet_chip[1], ip)
+        return Chip(x, y, processors, r, sdram, nearest_ethernet_chip[0],
+                    nearest_ethernet_chip[1], ip)
 
     def test_create_chip(self):
         new_chip = self._create_chip(self._x, self._y, self._processors,
@@ -60,10 +58,10 @@ class TestingChip(unittest.TestCase):
 
         processors = list()
         for i in range(18):
-            processors.append(proc.Processor(i, flops))
-        processors.append(proc.Processor(10, flops + 1))
+            processors.append(Processor(i, flops))
+        processors.append(Processor(10, flops + 1))
 
-        with self.assertRaises(exc.SpinnMachineAlreadyExistsException):
+        with self.assertRaises(SpinnMachineAlreadyExistsException):
             self._create_chip(self._x, self._y, processors, self._router,
                               self._sdram, self._ip)
 

@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class Chip(object):
@@ -35,11 +35,11 @@ class Chip(object):
         :type y: int
         :param processors: an iterable of processor objects
         :type processors: iterable of\
-                    :py:class:`spinn_machine.processor.Processor`
+                    :py:class:`spinn_machine.Processor`
         :param router: a router for the chip
-        :type router: :py:class:`spinn_machine.router.Router`
+        :type router: :py:class:`spinn_machine.Router`
         :param sdram: an SDRAM for the chip
-        :type sdram: :py:class:`spinn_machine.sdram.SDRAM`
+        :type sdram: :py:class:`spinn_machine.SDRAM`
         :param ip_address: the IP address of the chip or None if no Ethernet\
                     attached
         :type ip_address: str
@@ -101,7 +101,7 @@ class Chip(object):
         :type processor_id: int
         :return: the processor with the specified id or None if no such\
                     processor
-        :rtype: :py:class:`spinn_machine.processor.Processor`
+        :rtype: :py:class:`spinn_machine.Processor`
         :raise None: does not raise any known exceptions
         """
         if processor_id in self._p:
@@ -138,7 +138,7 @@ class Chip(object):
         """ An iterable of available processors
 
         :return: iterable of processors
-        :rtype: iterable of :py:class:spinn_machine.processor.Processor`
+        :rtype: iterable of :py:class:spinn_machine.Processor`
         :raise None: does not raise any known exceptions
         """
         return self._p.itervalues()
@@ -169,9 +169,9 @@ class Chip(object):
         """ Get an iterable of processor identifiers and processors
 
         :return: An iterable of (processor_id, processor) where:
-                    * procssor_id is the id of a processor
+                    * processor_id is the id of a processor
                     * processor is the processor with the id
-        :rtype: iterable of (int, :py:class:spinn_machine.processor.Processor`)
+        :rtype: iterable of (int, :py:class:spinn_machine.Processor`)
         :raise None: does not raise any known exceptions
         """
         return self._p.iteritems()
@@ -181,7 +181,7 @@ class Chip(object):
         """ The router object associated with the chip
 
         :return: router associated with the chip
-        :rtype: :py:class:`spinn_machine.router.Router`
+        :rtype: :py:class:`spinn_machine.Router`
         :raise None: does not raise any known exceptions
         """
         return self._router
@@ -191,7 +191,7 @@ class Chip(object):
         """ The sdram associated with the chip
 
         :return: sdram associated with the chip
-        :rtype: :py:class:`spinn_machine.sdram.SDRAM`
+        :rtype: :py:class:`spinn_machine.SDRAM`
         :raise None: does not raise any known exceptions
         """
         return self._sdram

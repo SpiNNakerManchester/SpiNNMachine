@@ -1,15 +1,16 @@
-from spinn_machine import exceptions
-from spinn_machine.machine import Machine
-from spinn_machine.processor import Processor
-from spinn_machine.router import Router
-from spinn_machine.chip import Chip
-from spinn_machine.sdram import SDRAM
-from spinn_machine.link import Link
+from .exceptions import \
+    SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException
+from .machine import Machine
+from .processor import Processor
+from .router import Router
+from .chip import Chip
+from .sdram import SDRAM
+from .link import Link
 
 from spinn_utilities.ordered_set import OrderedSet
 
 import logging
-from spinn_machine.spinnaker_triad_geometry import SpiNNakerTriadGeometry
+from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 
 logger = logging.getLogger(__name__)
 
@@ -70,24 +71,24 @@ class VirtualMachine(Machine):
         # Check for not enough info or out of range
         if ((width is not None and width < 0) or
                 (height is not None and height < 0)):
-            raise exceptions.SpinnMachineInvalidParameterException(
+            raise SpinnMachineInvalidParameterException(
                 "width or height", "{} or {}".format(width, height),
                 "Negative dimensions are not supported")
         if version is None and (width is None or height is None):
-            raise exceptions.SpinnMachineInvalidParameterException(
+            raise SpinnMachineInvalidParameterException(
                 "version, width, height",
                 "{}, {}, {}".format(version, width, height),
                 "Either version must be specified, "
                 "or width and height must both be specified")
         if version is not None and (version < 2 or version > 5):
-            raise exceptions.SpinnMachineInvalidParameterException(
+            raise SpinnMachineInvalidParameterException(
                 "version", str(version),
                 "Version must be between 2 and 5 inclusive or None")
 
         # Version 2/3
         if version == 2 or version == 3:
             if with_wrap_arounds is not None:
-                raise exceptions.SpinnMachineInvalidParameterException(
+                raise SpinnMachineInvalidParameterException(
                     "version and with_wrap_arounds",
                     "{} and {}".format(version, with_wrap_arounds),
                     "A version {} board has complex wrap arounds; set "
@@ -95,7 +96,7 @@ class VirtualMachine(Machine):
                     .format(version))
             if ((width is not None and width != 2) or
                     (height is not None and height != 2)):
-                raise exceptions.SpinnMachineInvalidParameterException(
+                raise SpinnMachineInvalidParameterException(
                     "version, width, height",
                     "{}, {}, {}".format(version, width, height),
                     "A version {} board has a width and height of 2; set "
@@ -110,7 +111,7 @@ class VirtualMachine(Machine):
         # Version 4/5
         if version == 5 or version == 4:
             if with_wrap_arounds is not None and with_wrap_arounds:
-                raise exceptions.SpinnMachineInvalidParameterException(
+                raise SpinnMachineInvalidParameterException(
                     "version and with_wrap_arounds",
                     "{} and True".format(version),
                     "A version {} board does not have wrap arounds; set "
@@ -118,7 +119,7 @@ class VirtualMachine(Machine):
                     .format(version))
             if ((width is not None and width != 8) or
                     (height is not None and height != 8)):
-                raise exceptions.SpinnMachineInvalidParameterException(
+                raise SpinnMachineInvalidParameterException(
                     "version, width, height",
                     "{}, {}, {}".format(version, width, height),
                     "A version {} board has a width and height of 8; set "
@@ -143,7 +144,7 @@ class VirtualMachine(Machine):
             elif (width - 4) % 12 == 0 and (height - 4) % 12 == 0:
                 self._with_wrap_arounds = False
             else:
-                raise exceptions.SpinnMachineInvalidParameterException(
+                raise SpinnMachineInvalidParameterException(
                     "version, width, height, with_wrap_arounds",
                     "{}, {}, {}, {}".format(
                         version, width, height, with_wrap_arounds),
@@ -158,7 +159,7 @@ class VirtualMachine(Machine):
                 not ((width == 8 and height == 8) or
                      (width == 2 and height == 2) or
                      (width % 12 == 0 and height % 12 == 0))):
-            raise exceptions.SpinnMachineInvalidParameterException(
+            raise SpinnMachineInvalidParameterException(
                 "version, width, height, with_wrap_arounds",
                 "{}, {}, {}, {}".format(
                     version, width, height, with_wrap_arounds),
@@ -170,7 +171,7 @@ class VirtualMachine(Machine):
                 not ((width == 8 and height == 8) or
                      (width == 2 and height == 2) or
                      ((width - 4) % 12 == 0 and (height - 4) % 12 == 0))):
-            raise exceptions.SpinnMachineInvalidParameterException(
+            raise SpinnMachineInvalidParameterException(
                 "version, width, height, with_wrap_arounds",
                 "{}, {}, {}, {}".format(
                     version, width, height, with_wrap_arounds),
@@ -264,14 +265,14 @@ class VirtualMachine(Machine):
         """ Add a chip to the machine
 
         :param chip: The chip to add to the machine
-        :type chip: :py:class:`spinn_machine.chip.Chip`
+        :type chip: :py:class:`spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     a chip with the same x and y coordinates already exists
         """
         if self.is_chip_at(chip.x, chip.y):
-            raise exceptions.SpinnMachineAlreadyExistsException(
+            raise SpinnMachineAlreadyExistsException(
                 "chip", "{}, {}".format(chip.x, chip.y))
         Machine.add_chip(self, chip)
         self._extra_chips.add((chip.x, chip.y))
