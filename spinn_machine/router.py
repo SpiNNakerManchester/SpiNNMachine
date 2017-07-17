@@ -1,4 +1,5 @@
-from spinn_machine import exceptions
+from .exceptions import \
+    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException
 
 from collections import OrderedDict
 
@@ -27,7 +28,7 @@ class Router(object):
             n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
         :param links: iterable of links
-        :type links: iterable of :py:class:`spinn_machine.link.Link`
+        :type links: iterable of :py:class:`spinn_machine.Link`
         :param emergency_routing_enabled: Determines if the router emergency\
                     routing is operating
         :type emergency_routing_enabled: bool
@@ -51,14 +52,14 @@ class Router(object):
         """ Add a link to the router of the chip
 
         :param link: The link to be added
-        :type link: :py:class:`spinn_machine.link.Link`
+        :type link: :py:class:`spinn_machine.Link`
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
                     another link already exists with the same source_link_id
         """
         if link.source_link_id in self._links:
-            raise exceptions.SpinnMachineAlreadyExistsException(
+            raise SpinnMachineAlreadyExistsException(
                 "link", str(link.source_link_id))
         self._links[link.source_link_id] = link
 
@@ -86,7 +87,7 @@ class Router(object):
         :param source_link_id: The id of the link to find
         :type source_link_id: int
         :return: The link, or None if no such link
-        :rtype: :py:class:`spinn_machine.link.Link`
+        :rtype: :py:class:`spinn_machine.Link`
         :raise None: No known exceptions are raised
         """
         if source_link_id in self._links:
@@ -103,7 +104,7 @@ class Router(object):
         """ The available links of this router
 
         :return: an iterable of available links
-        :rtype: iterable of :py:class:`spinn_machine.link.Link`
+        :rtype: iterable of :py:class:`spinn_machine.Link`
         :raise None: does not raise any known exceptions
         """
         return self._links.itervalues()
@@ -114,10 +115,18 @@ class Router(object):
         :return: an iterable of tuples of (source_link_id, link) where:
                     * source_link_id is the id of the link
                     * link is a router link
-        :rtype: iterable of (int, :py:class:`spinn_machine.link.Link`)
+        :rtype: iterable of (int, :py:class:`spinn_machine.Link`)
         :raise None: does not raise any known exceptions
         """
         return self._links.iteritems()
+
+    def __len__(self):
+        """ Get the number of links in the router
+
+        :return: The length of the underlying iterable
+        :rtype: int
+        """
+        return len(self._links)
 
     @property
     def emergency_routing_enabled(self):
@@ -156,20 +165,20 @@ class Router(object):
 
         :param routing_table_entry: The entry to convert
         :type routing_table_entry:\
-            :py:class:`spinnmachine.multicast_routing_entry.MulticastRoutingEntry`
+            :py:class:`spinn_machine.MulticastRoutingEntry`
         :rtype: int
         """
         route_entry = 0
         for processor_id in routing_table_entry.processor_ids:
             if processor_id > 26 or processor_id < 0:
-                raise exceptions.SpinnMachineInvalidParameterException(
+                raise SpinnMachineInvalidParameterException(
                     "route.processor_ids",
                     str(routing_table_entry.processor_ids),
                     "Processor ids must be between 0 and 26")
             route_entry |= (1 << (6 + processor_id))
         for link_id in routing_table_entry.link_ids:
             if link_id > 5 or link_id < 0:
-                raise exceptions.SpinnMachineInvalidParameterException(
+                raise SpinnMachineInvalidParameterException(
                     "route.link_ids", str(routing_table_entry.link_ids),
                     "Link ids must be between 0 and 5")
             route_entry |= (1 << link_id)

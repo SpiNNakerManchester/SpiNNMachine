@@ -1,4 +1,4 @@
-from spinn_machine.exceptions import SpinnMachineInvalidParameterException
+from .exceptions import SpinnMachineInvalidParameterException
 
 
 class Processor(object):
@@ -101,7 +101,7 @@ class Processor(object):
 
         :return: A new Processor with the same properties INCLUDING id\
             except now set as a System processor
-        :rtype: Processor
+        :rtype: spinn_machine.Processor
         """
         return Processor(self._processor_id, self._clock_speed,
                          is_monitor=True, dtcm_available=self._dtcm_available)
