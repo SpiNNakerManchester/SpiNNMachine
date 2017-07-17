@@ -176,6 +176,14 @@ class Chip(object):
         """
         return self._p.iteritems()
 
+    def __len__(self):
+        """Get the number of processors associated with this chip.
+
+        :return: The number of items in the underlying iterator.
+        :rtype: int
+        """
+        return len(self._p)
+
     @property
     def router(self):
         """ The router object associated with the chip

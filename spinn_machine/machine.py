@@ -157,6 +157,14 @@ class Machine(object):
         """
         return self._chips.iteritems()
 
+    def __len__(self):
+        """ Get the total number of chips.
+
+        :return: The number of items in the underlying iterable
+        :rtype: int
+        """
+        return len(self._chips)
+
     def get_chip_at(self, x, y):
         """ Get the chip at a specific (x, y) location.\
             Also implemented as __getitem__((x, y))
