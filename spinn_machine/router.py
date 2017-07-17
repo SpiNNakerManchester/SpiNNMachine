@@ -12,6 +12,7 @@ class Router(object):
             * source_link_id is the id of a link
             * link is the link with id source_link_id
     """
+
     ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
