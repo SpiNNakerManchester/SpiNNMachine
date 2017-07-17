@@ -12,6 +12,7 @@ class Router(object):
             * source_link_id is the id of a link
             * link is the link with id source_link_id
     """
+
     ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
@@ -118,6 +119,14 @@ class Router(object):
         :raise None: does not raise any known exceptions
         """
         return self._links.iteritems()
+
+    def __len__(self):
+        """ Get the number of links in the router
+
+        :return: The length of the underlying iterable
+        :rtype: int
+        """
+        return len(self._links)
 
     @property
     def emergency_routing_enabled(self):
