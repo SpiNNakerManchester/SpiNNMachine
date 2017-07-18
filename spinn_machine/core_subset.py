@@ -66,14 +66,10 @@ class CoreSubset(object):
         return "{}:{}:{}".format(self._x, self._y, self._processor_ids)
 
     def __eq__(self, other):
-        if isinstance(other, CoreSubset):
-            if (self.x != other.x or self._y != other.y or
-                    self._processor_ids != other.processor_ids):
-                return False
-            else:
-                return True
-        else:
+        if not isinstance(other, CoreSubset):
             return False
+        return self.x == other.x and self._y == other.y and \
+            self._processor_ids == other.processor_ids
 
     def __ne__(self, other):
         return not self.__eq__(other)
