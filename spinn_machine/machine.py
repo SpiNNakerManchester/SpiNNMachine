@@ -626,11 +626,22 @@ class Machine(object):
 
     @property
     def total_available_user_cores(self):
+        """ provides total number of cores on the machine which are not \
+            monitor cores
+        
+        :return: total
+        :rtype: int
+        """
         return len([
             processor for chip in self.chips for processor in chip.processors
             if not processor.is_monitor])
 
     @property
     def total_cores(self):
+        """ provides total number of cores on the machine, includes monitors
+        
+        :return: total
+        :rtype: int
+        """
         return len([
             processor for chip in self.chips for processor in chip.processors])
