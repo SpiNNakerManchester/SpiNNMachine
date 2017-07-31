@@ -628,7 +628,7 @@ class Machine(object):
     def total_available_user_cores(self):
         """ provides total number of cores on the machine which are not \
             monitor cores
-        
+
         :return: total
         :rtype: int
         """
@@ -639,7 +639,7 @@ class Machine(object):
     @property
     def total_cores(self):
         """ provides total number of cores on the machine, includes monitors
-        
+
         :return: total
         :rtype: int
         """
