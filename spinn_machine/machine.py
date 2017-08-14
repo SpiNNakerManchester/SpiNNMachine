@@ -663,4 +663,3 @@ class Machine(object):
             return False
         else:
             return False
-
