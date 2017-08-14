@@ -645,3 +645,25 @@ class Machine(object):
         """
         return len([
             processor for chip in self.chips for processor in chip.processors])
+
+    def _has_wrap_arounds(self):
+        if self.max_chip_x == 2 and self.max_chip_y == 2:
+            return True
+        elif self.max_chip_x == 8 and self.max_chip_y == 8:
+            return False
+        elif self.max_chip_x % 12 == 0 and self.max_chip_y % 12 == 0:
+            return True
+        elif (self.max_chip_x - 4) % 12 == 0 \
+                and (self.max_chip_y - 4) % 12 == 0:
+            return False
+        else:
+            return False
+
+    @property
+    def has_wrap_arounds(self):
+        """ If the machine has wrap around links
+
+        :return: True if wrap around links exist, false otherwise
+        :rtype: bool
+        """
+        return self._has_wrap_arounds()
