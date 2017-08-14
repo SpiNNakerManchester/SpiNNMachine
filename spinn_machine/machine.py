@@ -653,8 +653,8 @@ class Machine(object):
             return False
         elif self.max_chip_x % 12 == 0 and self.max_chip_y % 12 == 0:
             return True
-        elif (self.max_chip_x - 4) % 12 == 0 \
-                and (self.max_chip_y - 4) % 12 == 0:
+        elif ((self.max_chip_x - 4) % 12 == 0
+                and (self.max_chip_y - 4) % 12 == 0):
             return False
         else:
             return False
