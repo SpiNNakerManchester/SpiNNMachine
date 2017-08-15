@@ -654,4 +654,4 @@ class Machine(object):
         :rtype: bool
         """
         return (self.max_chip_x == 2 and self.max_chip_y == 2) or \
-                (self.max_chip_x % 12 == 0 and self.max_chip_y % 12 == 0)
+            (self.max_chip_x % 12 == 0 and self.max_chip_y % 12 == 0)
