@@ -646,6 +646,7 @@ class Machine(object):
         return len([
             processor for chip in self.chips for processor in chip.processors])
 
+    @property
     def has_wrap_arounds(self):
         """ If the machine has wrap around links
 
@@ -655,5 +656,3 @@ class Machine(object):
         if (self.max_chip_x == 2 and self.max_chip_y == 2) or \
                 (self.max_chip_x % 12 == 0 and self.max_chip_y % 12 == 0):
             return True
-        else:
-            return False
