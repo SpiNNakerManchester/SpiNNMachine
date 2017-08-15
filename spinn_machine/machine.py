@@ -652,14 +652,8 @@ class Machine(object):
         :return: True if wrap around links exist, false otherwise
         :rtype: bool
         """
-        if self.max_chip_x == 2 and self.max_chip_y == 2:
+        if (self.max_chip_x == 2 and self.max_chip_y == 2) or \
+                (self.max_chip_x % 12 == 0 and self.max_chip_y % 12 == 0):
             return True
-        elif self.max_chip_x == 8 and self.max_chip_y == 8:
-            return False
-        elif self.max_chip_x % 12 == 0 and self.max_chip_y % 12 == 0:
-            return True
-        elif ((self.max_chip_x - 4) % 12 == 0
-                and (self.max_chip_y - 4) % 12 == 0):
-            return False
         else:
             return False
