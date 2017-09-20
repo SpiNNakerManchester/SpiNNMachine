@@ -1,2 +1,2 @@
 six
-SpiNNUtilities >= 1!4.0.0a5, < 1!4.1.0
+SpiNNUtilities >= 4.0.0a5, < 4.1.0

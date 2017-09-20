@@ -38,7 +38,7 @@ setup(
     license="GNU GPLv3.0",
     packages=packages,
     package_data=package_data,
-    install_requires=['SpiNNUtilities >= 1!4.0.0a5, < 1!5.0.0',
+    install_requires=['SpiNNUtilities >= 1!4.0.0, < 1!5.0.0',
                       'six']
 
 )
