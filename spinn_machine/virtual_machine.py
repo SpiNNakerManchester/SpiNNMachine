@@ -317,27 +317,27 @@ class VirtualMachine(Machine):
             return self._chips[x, y].router.is_link(link)
         if link == 0:
             return self._creatable_link(
-                link_from=link, source_x=x, source_y=x,
+                link_from=link, source_x=x, source_y=y,
                 destination_x=x + 1, destination_y=y)
         if link == 1:
             return self._creatable_link(
-                link_from=link, source_x=x, source_y=x,
+                link_from=link, source_x=x, source_y=y,
                 destination_x=x + 1, destination_y=y + 1)
         if link == 2:
             return self._creatable_link(
-                link_from=link, source_x=x, source_y=x,
+                link_from=link, source_x=x, source_y=y,
                 destination_x=x, destination_y=y + 1)
         if link == 3:
             return self._creatable_link(
-                link_from=link, source_x=x, source_y=x,
+                link_from=link, source_x=x, source_y=y,
                 destination_x=x - 1, destination_y=y)
         if link == 4:
             return self._creatable_link(
-                link_from=link, source_x=x, source_y=x,
+                link_from=link, source_x=x, source_y=y,
                 destination_x=x - 1, destination_y=y - 1)
         if link == 5:
             return self._creatable_link(
-                link_from=link, source_x=x, source_y=x,
+                link_from=link, source_x=x, source_y=y,
                 destination_x=x, destination_y=y - 1)
         return False  # Illegal link value
 
