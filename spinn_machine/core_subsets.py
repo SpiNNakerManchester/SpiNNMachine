@@ -136,3 +136,13 @@ class CoreSubsets(object):
         """ The core subset for the given x, y tuple
         """
         return self._core_subsets[x_y_tuple]
+
+    def __repr__(self):
+        """ human readable version of the object
+        
+        :return: string reprensetation of the coresubsets
+        """
+        output = ""
+        for xy in self._core_subsets:
+            output += "{}".format(xy)
+        return output
