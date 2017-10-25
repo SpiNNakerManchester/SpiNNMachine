@@ -1,6 +1,8 @@
 from collections import OrderedDict
 from .exceptions import SpinnMachineAlreadyExistsException
 
+from spinn_utilities.ordered_set import OrderedSet
+
 
 class Chip(object):
 
@@ -14,7 +16,7 @@ class Chip(object):
     """
 
     # tag 0 is reserved for stuff like IO STD
-    IPTAG_IDS = set(range(1, 8))
+    IPTAG_IDS = OrderedSet(range(1, 8))
 
     __slots__ = (
         "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
