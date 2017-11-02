@@ -1,3 +1,5 @@
+from spinn_utilities.ordered_set import OrderedSet
+
 
 class CoreSubset(object):
     """ Represents a subset of the cores on a chip
@@ -18,7 +20,7 @@ class CoreSubset(object):
         """
         self._x = x
         self._y = y
-        self._processor_ids = set()
+        self._processor_ids = OrderedSet()
         for processor_id in processor_ids:
             self.add_processor(processor_id)
 

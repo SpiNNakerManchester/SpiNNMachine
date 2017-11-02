@@ -139,7 +139,7 @@ class CoreSubsets(object):
 
     def __repr__(self):
         """ human readable version of the object
-        
+
         :return: string reprensetation of the coresubsets
         """
         output = ""
