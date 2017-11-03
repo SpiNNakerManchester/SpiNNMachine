@@ -515,8 +515,8 @@ class Machine(object):
                         connected_link=link, board_address=board_address)
 
     def __str__(self):
-        return "[Machine: max_x={}, max_y={}, chips={}]".format(
-            self._max_chip_x, self._max_chip_y, self._chips.values())
+        return "[Machine: max_x={}, max_y={}, n_chips={}]".format(
+            self._max_chip_x, self._max_chip_y, self.n_chips)
 
     def __repr__(self):
         return self.__str__()
