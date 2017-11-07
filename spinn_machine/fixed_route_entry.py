@@ -48,3 +48,6 @@ class FixedRouteEntry(object):
         """
         return self._link_ids
 
+
+    def __repr__(self):
+        return "{}:{}".format(self._link_ids, self._processor_ids)
