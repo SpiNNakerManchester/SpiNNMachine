@@ -47,4 +47,3 @@ class FixedRouteEntry(object):
         :rtype: iterable of int
         """
         return self._link_ids
-
