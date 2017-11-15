@@ -346,8 +346,8 @@ class VirtualMachine(Machine):
         return len(self._configured_chips) + len(self._extra_chips)
 
     def __str__(self):
-        return "[VirtualMachine: max_x={}, max_y={}]".format(
-            self._max_chip_x, self._max_chip_y)
+        return "[VirtualMachine: max_x={}, max_y={}, n_chips={}]".format(
+            self._max_chip_x, self._max_chip_y, self.n_chips)
 
     def get_cores_and_link_count(self):
         n_cores = (
