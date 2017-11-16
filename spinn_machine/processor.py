@@ -95,10 +95,6 @@ class Processor(object):
         """ Creates a clone of this processor but changing it to a system\
             processor.
 
-        The current implementation does not distinguish between\
-        monitor processors and reinjector ones but could do so at a later\
-        stage.
-
         :return: A new Processor with the same properties INCLUDING id\
             except now set as a System processor
         :rtype: spinn_machine.Processor
