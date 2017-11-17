@@ -47,3 +47,6 @@ class FixedRouteEntry(object):
         :rtype: iterable of int
         """
         return self._link_ids
+
+    def __repr__(self):
+        return "{}:{}".format(self._link_ids, self._processor_ids)
