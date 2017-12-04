@@ -24,6 +24,7 @@ class Chip(object):
         "_n_user_processors"
     )
 
+    # pylint: disable=too-many-arguments
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
                  nearest_ethernet_y, ip_address=None, virtual=False,
                  tag_ids=IPTAG_IDS):

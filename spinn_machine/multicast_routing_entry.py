@@ -12,6 +12,7 @@ class MulticastRoutingEntry(object):
         "_link_ids"
     )
 
+    # pylint: disable=too-many-arguments
     def __init__(self, routing_entry_key, mask, processor_ids, link_ids,
                  defaultable):
         """

@@ -505,14 +505,14 @@ class Machine(object):
                         self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
                         fpga_link += 1
 
+    # pylint: disable=too-many-arguments
     def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
-        if self.is_chip_at(x, y):
-            if not self.is_link_at(x, y, link):
-                self._fpga_links[board_address, fpga_id, fpga_link] = \
-                    FPGALinkData(
-                        fpga_link_id=fpga_link, fpga_id=fpga_id,
-                        connected_chip_x=x, connected_chip_y=y,
-                        connected_link=link, board_address=board_address)
+        if self.is_chip_at(x, y) and not self.is_link_at(x, y, link):
+            self._fpga_links[board_address, fpga_id, fpga_link] = \
+                FPGALinkData(
+                    fpga_link_id=fpga_link, fpga_id=fpga_id,
+                    connected_chip_x=x, connected_chip_y=y,
+                    connected_link=link, board_address=board_address)
 
     def __str__(self):
         return "[Machine: max_x={}, max_y={}, n_chips={}]".format(
