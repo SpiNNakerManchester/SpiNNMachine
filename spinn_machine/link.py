@@ -13,6 +13,7 @@ class Link(object):
         "_multicast_default_to", "_source_link_id", "_source_x", "_source_y"
     )
 
+    # pylint: disable=too-many-arguments
     def __init__(self, source_x, source_y, source_link_id, destination_x,
                  destination_y, multicast_default_from, multicast_default_to):
         """
