@@ -113,7 +113,7 @@ class CoreSubsets(object):
     def __len__(self):
         """ The total number of processors that are in these core subsets
         """
-        return sum(len(subset) for subset in self._core_subsets)
+        return sum(len(subset) for subset in self._core_subsets.values())
 
     def __contains__(self, x_y_tuple):
         """ True if the given coordinates are in the set
