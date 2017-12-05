@@ -134,7 +134,7 @@ class CoreSubsets(object):
     def __repr__(self):
         """ human readable version of the object
 
-        :return: string reprensetation of the coresubsets
+        :return: string representation of the CoreSubsets
         """
         output = ""
         for xy in self._core_subsets:
