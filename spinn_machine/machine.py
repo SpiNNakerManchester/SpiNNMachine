@@ -580,12 +580,13 @@ class Machine(object):
         """
         eth_x = chip.nearest_ethernet_x
         eth_y = chip.nearest_ethernet_y
-        for chip_x, chip_y in zip(range(0, 8), range(0, 8)):
-            x = eth_x + chip_x
-            y = eth_y + chip_y
-            if (self.is_chip_at(x, y) and
-                    (x, y) not in Machine.BOARD_48_CHIP_GAPS):
-                yield x, y
+        for chip_x in range(0, 8):
+            for chip_y in range(0, 8):
+                x = eth_x + chip_x
+                y = eth_y + chip_y
+                if (self.is_chip_at(x, y) and
+                        (x, y) not in Machine.BOARD_48_CHIP_GAPS):
+                    yield x, y
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
