@@ -259,5 +259,6 @@ class SpinnMachineTestCase(unittest.TestCase):
             self.assertEquals(len(chips), 25)
             self.assertEquals(len(chips_in_machine), 24)
 
+
 if __name__ == '__main__':
     unittest.main()

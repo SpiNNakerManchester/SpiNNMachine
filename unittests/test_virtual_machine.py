@@ -301,14 +301,14 @@ class TestVirtualMachine(unittest.TestCase):
         count2436 = 0
         for eth_chip in vm._ethernet_connected_chips:
             list_of_chips = list(vm.get_chips_on_board(eth_chip))
-            self.assertEqual(len(list_of_chips),48)
-            if (0,0) in list_of_chips:
+            self.assertEqual(len(list_of_chips), 48)
+            if (0, 0) in list_of_chips:
                 count00 += 1
-            if (5,0) in list_of_chips:
+            if (5, 0) in list_of_chips:
                 count50 += 1
-            if (0,4) in list_of_chips:
+            if (0, 4) in list_of_chips:
                 count04 += 1
-            if (24,36) in list_of_chips:
+            if (24, 36) in list_of_chips:
                 count2436 += 1
 
         # (0,0), (5,0), (0,4) are all on this virtual machine
@@ -318,6 +318,7 @@ class TestVirtualMachine(unittest.TestCase):
 
         # (24,36) is not on this virtual machine
         self.assertEqual(count2436, 0)
+
 
 if __name__ == '__main__':
     unittest.main()
