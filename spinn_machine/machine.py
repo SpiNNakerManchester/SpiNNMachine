@@ -590,8 +590,8 @@ class Machine(object):
                     y = eth_y + chip_y
 
                 if (self.is_chip_at(x, y) and
-                    (chip_x, chip_y) not in Machine.BOARD_48_CHIP_GAPS):
-                        yield x, y
+                        (chip_x, chip_y) not in Machine.BOARD_48_CHIP_GAPS):
+                            yield x, y
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
