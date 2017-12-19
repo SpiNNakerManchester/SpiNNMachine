@@ -580,8 +580,12 @@ class Machine(object):
         """
         eth_x = chip.nearest_ethernet_x
         eth_y = chip.nearest_ethernet_y
-        for chip_x in range(0, 8):
-            for chip_y in range(0, 8):
+        if (self._max_chip_x == 1):
+            max_coords = 2
+        else:
+            max_coords = 8
+        for chip_x in range(0, max_coords):
+            for chip_y in range(0, max_coords):
                 if (self.has_wrap_arounds):
                     x = (eth_x + chip_x) % (self._max_chip_x + 1)
                     y = (eth_y + chip_y) % (self._max_chip_y + 1)
