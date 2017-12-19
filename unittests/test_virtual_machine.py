@@ -292,6 +292,33 @@ class TestVirtualMachine(unittest.TestCase):
         vm = VirtualMachine(2, 2)
         self.assertNotEqual(vm.boot_chip, None)
 
+    def test_get_chips_on_boards(self):
+        vm = VirtualMachine(width=24, height=36, with_wrap_arounds=True)
+        # check each chip appears only once on the entire board
+        count00 = 0
+        count50 = 0
+        count04 = 0
+        count2436 = 0
+        for eth_chip in vm._ethernet_connected_chips:
+            list_of_chips = list(vm.get_chips_on_board(eth_chip))
+            self.assertEqual(len(list_of_chips), 48)
+            if (0, 0) in list_of_chips:
+                count00 += 1
+            if (5, 0) in list_of_chips:
+                count50 += 1
+            if (0, 4) in list_of_chips:
+                count04 += 1
+            if (24, 36) in list_of_chips:
+                count2436 += 1
+
+        # (0,0), (5,0), (0,4) are all on this virtual machine
+        self.assertEqual(count00, 1)
+        self.assertEqual(count50, 1)
+        self.assertEqual(count04, 1)
+
+        # (24,36) is not on this virtual machine
+        self.assertEqual(count2436, 0)
+
 
 if __name__ == '__main__':
     unittest.main()

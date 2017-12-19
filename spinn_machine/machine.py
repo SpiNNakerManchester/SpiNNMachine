@@ -580,13 +580,22 @@ class Machine(object):
         """
         eth_x = chip.nearest_ethernet_x
         eth_y = chip.nearest_ethernet_y
-        for chip_x in range(0, 8):
-            for chip_y in range(0, 8):
-                x = eth_x + chip_x
-                y = eth_y + chip_y
+        if (self._max_chip_x == 1):
+            max_coords = 2
+        else:
+            max_coords = 8
+        for chip_x in range(0, max_coords):
+            for chip_y in range(0, max_coords):
+                if (self.has_wrap_arounds):
+                    x = (eth_x + chip_x) % (self._max_chip_x + 1)
+                    y = (eth_y + chip_y) % (self._max_chip_y + 1)
+                else:
+                    x = eth_x + chip_x
+                    y = eth_y + chip_y
+
                 if (self.is_chip_at(x, y) and
-                        (x, y) not in Machine.BOARD_48_CHIP_GAPS):
-                    yield x, y
+                        (chip_x, chip_y) not in Machine.BOARD_48_CHIP_GAPS):
+                            yield x, y
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
@@ -654,5 +663,6 @@ class Machine(object):
         :return: True if wrap around links exist, false otherwise
         :rtype: bool
         """
-        return (self.max_chip_x+1 == 2 and self.max_chip_y+1 == 2) or \
-            (self.max_chip_x+1 % 12 == 0 and self.max_chip_y+1 % 12 == 0)
+        return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
+                ((self.max_chip_x + 1) % 12 == 0 and
+                 (self.max_chip_y + 1) % 12 == 0))
