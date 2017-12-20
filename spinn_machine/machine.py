@@ -19,6 +19,11 @@ class Machine(object):
     # current opinions is that the Ethernet connected chip can handle 10
     # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
+    MAX_CORES_PER_CHIP = 18
+    MAX_CHIPS_PER_48_BOARD = 48
+    MAX_CHIPS_PER_4_CHIP_BOARD = 4
+    BOARD_VERSION_FOR_48_CHIPS = [4, 5]
+    BOARD_VERSION_FOR_4_CHIPS = [2, 3]
 
     # Table of the amount to add to the x and y coordinates to get the
     #  coordinates down the given link (0-5)
@@ -342,7 +347,7 @@ class Machine(object):
 
         :param version_no: which version of board to use
         """
-        if version_no == 3 or version_no == 2:
+        if version_no in self.BOARD_VERSION_FOR_4_CHIPS:
             chip_0_0 = self.get_chip_at(0, 0)
             if not chip_0_0.router.is_link(3):
                 self._spinnaker_links[chip_0_0.ip_address, 0] = \
@@ -351,7 +356,8 @@ class Machine(object):
             if not chip.router.is_link(0):
                 self._spinnaker_links[chip_0_0.ip_address, 1] = \
                     SpinnakerLinkData(1, 1, 0, 0, chip_0_0.ip_address)
-        elif version_no == 4 or version_no == 5 or version_no is None:
+        elif (version_no in self.BOARD_VERSION_FOR_48_CHIPS or
+                version_no is None):
             for chip in self._ethernet_connected_chips:
                 if not chip.router.is_link(4):
                     self._spinnaker_links[
@@ -364,7 +370,8 @@ class Machine(object):
 
         :param version_no: which version of board to use
         """
-        if version_no == 4 or version_no == 5 or version_no is None:
+        if (version_no in self.BOARD_VERSION_FOR_48_CHIPS or
+                version_no is None):
 
             for ethernet_connected_chip in self._ethernet_connected_chips:
 
@@ -580,13 +587,13 @@ class Machine(object):
         """
         eth_x = chip.nearest_ethernet_x
         eth_y = chip.nearest_ethernet_y
-        if (self._max_chip_x == 1):
+        if self._max_chip_x == 1:
             max_coords = 2
         else:
             max_coords = 8
         for chip_x in range(0, max_coords):
             for chip_y in range(0, max_coords):
-                if (self.has_wrap_arounds):
+                if self.has_wrap_arounds:
                     x = (eth_x + chip_x) % (self._max_chip_x + 1)
                     y = (eth_y + chip_y) % (self._max_chip_y + 1)
                 else:
@@ -623,7 +630,7 @@ class Machine(object):
                 reserved_cores.add_processor(chip.x, chip.y, core_reserved)
 
             # Update the maximum user cores either way
-            if (chip.n_user_processors > self._maximum_user_cores_on_chip):
+            if chip.n_user_processors > self._maximum_user_cores_on_chip:
                 self._maximum_user_cores_on_chip = chip.n_user_processors
 
         return reserved_cores, failed_chips

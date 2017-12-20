@@ -42,9 +42,9 @@ class VirtualMachine(Machine):
     # pylint: disable=too-many-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
-            version=None, n_cpus_per_chip=18, with_monitors=True,
-            sdram_per_chip=None, down_chips=None, down_cores=None,
-            down_links=None):
+            version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
+            with_monitors=True, sdram_per_chip=None, down_chips=None,
+            down_cores=None, down_links=None):
         """
         :param width: the width of the virtual machine in chips
         :type width: int
@@ -87,7 +87,7 @@ class VirtualMachine(Machine):
                 "Version must be between 2 and 5 inclusive or None")
 
         # Version 2/3
-        if version == 2 or version == 3:
+        if version in self.BOARD_VERSION_FOR_4_CHIPS:
             if with_wrap_arounds is not None:
                 raise SpinnMachineInvalidParameterException(
                     "version and with_wrap_arounds",
@@ -110,7 +110,7 @@ class VirtualMachine(Machine):
             with_wrap_arounds = True
 
         # Version 4/5
-        if version == 5 or version == 4:
+        if version in self.BOARD_VERSION_FOR_48_CHIPS:
             if with_wrap_arounds is not None and with_wrap_arounds:
                 raise SpinnMachineInvalidParameterException(
                     "version and with_wrap_arounds",
@@ -203,7 +203,7 @@ class VirtualMachine(Machine):
         # Store the down items
         self._down_cores = down_cores if down_cores is not None else set()
         self._down_links = down_links if down_links is not None else set()
-        if version == 2 or version == 3:
+        if version in self.BOARD_VERSION_FOR_4_CHIPS:
             self._down_links.update(VirtualMachine._4_chip_down_links)
         if down_chips is None:
             down_chips = []
