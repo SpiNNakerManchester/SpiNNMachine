@@ -124,14 +124,15 @@ class SpiNNakerTriadGeometry(object):
             key=lambda tupl: tupl[2])
         return (x1, y1)
 
+    # pylint: disable=too-many-arguments
     def get_ethernet_chip_coordinates(
             self, x, y, width, height, root_x=0, root_y=0):
         """ Get the coordinates of a chip's local Ethernet connected chip\
             according to this triad geometry object
 
         .. warning::
-            :py:meth:`.local_eth_coord` will always produce the
-            coordinates of the Ethernet-connected SpiNNaker chip on the same
+            :py:meth:`.local_eth_coord` will always produce the\
+            coordinates of the Ethernet-connected SpiNNaker chip on the same\
             SpiNN-5 board as the supplied chip.  This chip may not actually\
             be working.
 

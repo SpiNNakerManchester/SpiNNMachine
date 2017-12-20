@@ -249,6 +249,16 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEquals(new_machine.maximum_user_cores_on_chip,
                           len(processors) - 2)
 
+    def test_machine_get_chips_on_board(self):
+        chips = self._create_chips()
+        new_machine = Machine(chips, 0, 0)
+        for eth_chip in new_machine._ethernet_connected_chips:
+            chips_in_machine = list(new_machine.get_chips_on_board(eth_chip))
+            # _create_chips made a 5*5 grid of 25 chips,
+            # but (0,4) is not on a standard 48-node board
+            self.assertEquals(len(chips), 25)
+            self.assertEquals(len(chips_in_machine), 24)
+
 
 if __name__ == '__main__':
     unittest.main()

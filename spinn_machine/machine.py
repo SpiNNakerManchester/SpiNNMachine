@@ -505,18 +505,18 @@ class Machine(object):
                         self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
                         fpga_link += 1
 
+    # pylint: disable=too-many-arguments
     def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
-        if self.is_chip_at(x, y):
-            if not self.is_link_at(x, y, link):
-                self._fpga_links[board_address, fpga_id, fpga_link] = \
-                    FPGALinkData(
-                        fpga_link_id=fpga_link, fpga_id=fpga_id,
-                        connected_chip_x=x, connected_chip_y=y,
-                        connected_link=link, board_address=board_address)
+        if self.is_chip_at(x, y) and not self.is_link_at(x, y, link):
+            self._fpga_links[board_address, fpga_id, fpga_link] = \
+                FPGALinkData(
+                    fpga_link_id=fpga_link, fpga_id=fpga_id,
+                    connected_chip_x=x, connected_chip_y=y,
+                    connected_link=link, board_address=board_address)
 
     def __str__(self):
-        return "[Machine: max_x={}, max_y={}, chips={}]".format(
-            self._max_chip_x, self._max_chip_y, self._chips.values())
+        return "[Machine: max_x={}, max_y={}, n_chips={}]".format(
+            self._max_chip_x, self._max_chip_y, self.n_chips)
 
     def __repr__(self):
         return self.__str__()
@@ -580,12 +580,22 @@ class Machine(object):
         """
         eth_x = chip.nearest_ethernet_x
         eth_y = chip.nearest_ethernet_y
-        for chip_x, chip_y in zip(range(0, 8), range(0, 8)):
-            x = eth_x + chip_x
-            y = eth_y + chip_y
-            if (self.is_chip_at(x, y) and
-                    (x, y) not in Machine.BOARD_48_CHIP_GAPS):
-                yield x, y
+        if (self._max_chip_x == 1):
+            max_coords = 2
+        else:
+            max_coords = 8
+        for chip_x in range(0, max_coords):
+            for chip_y in range(0, max_coords):
+                if (self.has_wrap_arounds):
+                    x = (eth_x + chip_x) % (self._max_chip_x + 1)
+                    y = (eth_y + chip_y) % (self._max_chip_y + 1)
+                else:
+                    x = eth_x + chip_x
+                    y = eth_y + chip_y
+
+                if (self.is_chip_at(x, y) and
+                        (chip_x, chip_y) not in Machine.BOARD_48_CHIP_GAPS):
+                            yield x, y
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
@@ -653,5 +663,6 @@ class Machine(object):
         :return: True if wrap around links exist, false otherwise
         :rtype: bool
         """
-        return (self.max_chip_x+1 == 2 and self.max_chip_y+1 == 2) or \
-            (self.max_chip_x+1 % 12 == 0 and self.max_chip_y+1 % 12 == 0)
+        return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
+                ((self.max_chip_x + 1) % 12 == 0 and
+                 (self.max_chip_y + 1) % 12 == 0))

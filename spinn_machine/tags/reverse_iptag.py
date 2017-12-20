@@ -22,6 +22,7 @@ class ReverseIPTag(AbstractTag):
         "_sdp_port"
     ]
 
+    # pylint: disable=too-many-arguments
     def __init__(self, board_address, tag, port, destination_x, destination_y,
                  destination_p, sdp_port=1):
         """

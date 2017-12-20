@@ -6,7 +6,7 @@ class CoreSubsets(object):
     """ Represents a group of CoreSubsets, with a maximum of one per chip
     """
 
-    __slots__ = ("_core_subsets")
+    __slots__ = ("_core_subsets", )
 
     def __init__(self, core_subsets=None):
         """
@@ -113,10 +113,7 @@ class CoreSubsets(object):
     def __len__(self):
         """ The total number of processors that are in these core subsets
         """
-        counter = 0
-        for xy in self._core_subsets:
-            counter += len(self._core_subsets[xy])
-        return counter
+        return sum(len(subset) for subset in self._core_subsets.itervalues())
 
     def __contains__(self, x_y_tuple):
         """ True if the given coordinates are in the set
@@ -126,11 +123,8 @@ class CoreSubsets(object):
             processor_id coordinates
         """
         if len(x_y_tuple) == 2:
-            (x, y) = x_y_tuple
-            return self.is_chip(x, y)
-        else:
-            (x, y, p) = x_y_tuple
-            return self.is_core(x, y, p)
+            return self.is_chip(*x_y_tuple)
+        return self.is_core(*x_y_tuple)
 
     def __get_item__(self, x_y_tuple):
         """ The core subset for the given x, y tuple
@@ -140,9 +134,9 @@ class CoreSubsets(object):
     def __repr__(self):
         """ human readable version of the object
 
-        :return: string reprensetation of the coresubsets
+        :return: string representation of the CoreSubsets
         """
         output = ""
         for xy in self._core_subsets:
-            output += "{}".format(xy)
+            output += str(xy)
         return output

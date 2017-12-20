@@ -39,6 +39,7 @@ class VirtualMachine(Machine):
         (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)
     }
 
+    # pylint: disable=too-many-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=18, with_monitors=True,
@@ -114,7 +115,7 @@ class VirtualMachine(Machine):
                 raise SpinnMachineInvalidParameterException(
                     "version and with_wrap_arounds",
                     "{} and True".format(version),
-                    "A version {} board does not have wrap arounds; set "
+                    "A version {} board does not have wrap-arounds; set "
                     "version to None or with_wrap_arounds to None"
                     .format(version))
             if ((width is not None and width != 8) or
@@ -148,12 +149,11 @@ class VirtualMachine(Machine):
                     "version, width, height, with_wrap_arounds",
                     "{}, {}, {}, {}".format(
                         version, width, height, with_wrap_arounds),
-                    "A generic machine with wrap arounds None"
+                    "A generic machine with wrap-arounds None"
                     " must be either have a width and height "
                     " which are both either 2 or 8 or a width"
                     " and height that are divisible by 12"
-                    " or a width - 4 and height - 4 that are divisible by 12"
-                    .format(version))
+                    " or a width - 4 and height - 4 that are divisible by 12")
 
         if (version is None and (with_wrap_arounds is True) and
                 not ((width == 8 and height == 8) or
@@ -163,9 +163,9 @@ class VirtualMachine(Machine):
                 "version, width, height, with_wrap_arounds",
                 "{}, {}, {}, {}".format(
                     version, width, height, with_wrap_arounds),
-                "A generic machine with wrap arounds must be either have a"
+                "A generic machine with wrap-arounds must be either have a"
                 " width and height which are both either 2 or 8 or a width"
-                " and height that are divisible by 12".format(version))
+                " and height that are divisible by 12")
 
         if (version is None and (with_wrap_arounds is False) and
                 not ((width == 8 and height == 8) or
@@ -175,17 +175,17 @@ class VirtualMachine(Machine):
                 "version, width, height, with_wrap_arounds",
                 "{}, {}, {}, {}".format(
                     version, width, height, with_wrap_arounds),
-                "A generic machine without wrap arounds must be either have a"
+                "A generic machine without wrap-arounds must be either have a"
                 " width and height which are both either 2 or 8 or a width - 4"
-                " and height - 4 that are divisible by 12".format(version))
+                " and height - 4 that are divisible by 12")
 
         if with_wrap_arounds is None:
-            logger.debug("width = {}, height = {} and auto wrap arounds"
-                         .format(width, height))
+            logger.debug("width = %d, height = %d and auto wrap-arounds",
+                         width, height)
         else:
             self._with_wrap_arounds = with_wrap_arounds
-            logger.debug("width = {}, height = {} and wrap arounds {}"
-                         .format(width, height, self._with_wrap_arounds))
+            logger.debug("width = %d, height = %d and wrap-arounds %s",
+                         width, height, self._with_wrap_arounds)
 
         # Set up the maximum chip x and y
         self._max_chip_x = width - 1
@@ -197,10 +197,7 @@ class VirtualMachine(Machine):
         # Store the details
         self._n_cpus_per_chip = n_cpus_per_chip
         self._sdram_per_chip = sdram_per_chip
-        if with_monitors:
-            self._with_monitors = 1
-        else:
-            self._with_monitors = 0
+        self._with_monitors = int(bool(with_monitors))
         self._default_processors = dict()
 
         # Store the down items
@@ -243,19 +240,16 @@ class VirtualMachine(Machine):
                 (x + eth_x, y + eth_y) for x in range(8) for y in range(8)
                 for eth_x, eth_y in ethernet_chips
                 if (x, y) not in Machine.BOARD_48_CHIP_GAPS and
-                (x, y) not in down_chips
-            })
+                (x, y) not in down_chips})
         else:
             self._configured_chips = OrderedSet((x, y) for x in range(width)
                                                 for y in range(height) if
                                                 (x, y) not in down_chips)
 
         # Assign "ip addresses" to the Ethernet chips
-        for i in range(len(ethernet_chips)):
+        for i, (x, y) in enumerate(ethernet_chips):
             (a, b) = divmod(i + 1, 128)
-            ip_address = "127.0.{}.{}".format(a, b)
-            (x, y) = ethernet_chips[i]
-            new_chip = self._create_chip(x, y, ip_address)
+            new_chip = self._create_chip(x, y, "127.0.{}.{}".format(a, b))
             Machine.add_chip(self, new_chip)
 
         self.add_spinnaker_links(version)
@@ -280,7 +274,7 @@ class VirtualMachine(Machine):
     @property
     def chips(self):
         for (x, y) in self.chip_coordinates:
-            if not (x, y) in self._chips:
+            if (x, y) not in self._chips:
                 Machine.add_chip(self, self._create_chip(x, y))
             yield self._chips[(x, y)]
 
@@ -293,7 +287,7 @@ class VirtualMachine(Machine):
 
     def __iter__(self):
         for (x, y) in self.chip_coordinates:
-            if not (x, y) in self._chips:
+            if (x, y) not in self._chips:
                 Machine.add_chip(self, self._create_chip(x, y))
             yield (x, y), self._chips[(x, y)]
 
@@ -344,8 +338,8 @@ class VirtualMachine(Machine):
         return len(self._configured_chips) + len(self._extra_chips)
 
     def __str__(self):
-        return "[VirtualMachine: max_x={}, max_y={}]".format(
-            self._max_chip_x, self._max_chip_y)
+        return "[VirtualMachine: max_x={}, max_y={}, n_chips={}]".format(
+            self._max_chip_x, self._max_chip_y, self.n_chips)
 
     def get_cores_and_link_count(self):
         n_cores = (
@@ -454,9 +448,9 @@ class VirtualMachine(Machine):
 
         # Check only against chips that can be created
         # Chips directly added will have the links directly added as well
-        if not (source_x, source_y) in self._configured_chips:
+        if (source_x, source_y) not in self._configured_chips:
             return False
-        if not (destination_x, destination_y) in self._configured_chips:
+        if (destination_x, destination_y) not in self._configured_chips:
             return False
         return (source_x, source_y, link_from) not in self._down_links
 

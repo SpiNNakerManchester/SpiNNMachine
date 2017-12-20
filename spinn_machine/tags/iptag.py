@@ -16,6 +16,7 @@ class IPTag(AbstractTag):
         "_destination_y"
     ]
 
+    # pylint: disable=too-many-arguments
     def __init__(
             self, board_address, destination_x, destination_y, tag, ip_address,
             port=None, strip_sdp=False, traffic_identifier="DEFAULT"):
@@ -93,6 +94,7 @@ class IPTag(AbstractTag):
     def __eq__(self, other):
         if not isinstance(other, IPTag):
             return False
+        # pylint: disable=protected-access
         return (self._ip_address == other._ip_address and
                 self._strip_sdp == other._strip_sdp and
                 self._board_address == other.board_address and
