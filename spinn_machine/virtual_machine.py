@@ -302,9 +302,7 @@ class VirtualMachine(Machine):
     def is_chip_at(self, x, y):
         if (x, y) in self._configured_chips:
             return True
-        if (x, y) in self._extra_chips:
-            return True
-        return False
+        return (x, y) in self._extra_chips
 
     def is_link_at(self, x, y, link):
         if (x, y) in self._chips:
@@ -445,7 +443,6 @@ class VirtualMachine(Machine):
 
     def _creatable_link(self, link_from, source_x, source_y,
                         destination_x, destination_y):
-
         destination_x, destination_y = self._get_destination(
             destination_x, destination_y)
 
@@ -455,9 +452,7 @@ class VirtualMachine(Machine):
             return False
         if (destination_x, destination_y) not in self._configured_chips:
             return False
-        if (source_x, source_y, link_from) in self._down_links:
-            return False
-        return True
+        return (source_x, source_y, link_from) not in self._down_links
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
