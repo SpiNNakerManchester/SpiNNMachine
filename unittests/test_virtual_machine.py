@@ -94,6 +94,24 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
+        self.assertTrue(vm.is_chip_at(4, 4))
+        self.assertFalse(vm.is_chip_at(0, 4))
+        count = 0
+        for _chip in vm.chips:
+            for _link in _chip.router.links:
+                count += 1
+        self.assertEqual(240, count)
+
+    def test_8_by_8(self):
+        vm = VirtualMachine(
+            width=8, height=8, version=None, with_wrap_arounds=False)
+        self.assertEqual(vm.max_chip_x, 7)
+        self.assertEqual(vm.max_chip_y, 7)
+        self.assertEqual(48, vm.n_chips)
+        self.assertEqual(1, len(vm.ethernet_connected_chips))
+        self.assertTrue(vm.is_chip_at(4, 4))
+        self.assertFalse(vm.is_chip_at(0, 4))
+        self.assertFalse((0, 4) in list(vm.chip_coordinates))
         count = 0
         for _chip in vm.chips:
             for _link in _chip.router.links:
