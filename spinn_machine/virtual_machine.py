@@ -53,8 +53,8 @@ class VirtualMachine(Machine):
         :param with_wrap_arounds: bool defining if wrap around links exist
         :type with_wrap_arounds: bool
         :param version: the version id of a board; if None, a machine is\
-                    created with the correct dimensions, otherwise the machine\
-                    will be a single board of the given version
+            created with the correct dimensions, otherwise the machine will be\
+            a single board of the given version.
         :type version: int
         :param n_cpus_per_chip: The number of CPUs to put on each chip
         :type n_cpus_per_chip: int
@@ -262,8 +262,8 @@ class VirtualMachine(Machine):
         :type chip: :py:class:`spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
-                    a chip with the same x and y coordinates already exists
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+            If a chip with the same x and y coordinates already exists
         """
         if self.is_chip_at(chip.x, chip.y):
             raise SpinnMachineAlreadyExistsException(
@@ -468,14 +468,11 @@ class VirtualMachine(Machine):
         # Go through the remaining cores and get a virtual unused core
         for x, y in self.chip_coordinates:
             if (x, y) not in self._chips:
-                core_added = False
                 for processor_id in range(0, self._with_monitors):
                     if (x, y, processor_id) not in self._down_cores:
                         reserved_cores.add_processor(x, y, processor_id)
-                        core_added = True
                         break
-
-                if not core_added:
+                else:
                     failed_chips.append((x, y))
 
         # Ensure future chips get an extra monitor

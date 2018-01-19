@@ -7,6 +7,9 @@ class SpinnMachineException(Exception):
 class SpinnMachineAlreadyExistsException(SpinnMachineException):
     """ Indicates that something already exists of which there can only be one
     """
+    __slots__ = [
+        "_item",
+        "_value"]
 
     def __init__(self, item, value):
         """
@@ -38,6 +41,10 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
 class SpinnMachineInvalidParameterException(SpinnMachineException):
     """ Indicates that there is a problem with a parameter value
     """
+    __slots__ = [
+        "_parameter",
+        "_problem",
+        "_value"]
 
     def __init__(self, parameter, value, problem):
         """

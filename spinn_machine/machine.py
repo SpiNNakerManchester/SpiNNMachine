@@ -55,8 +55,8 @@ class Machine(object):
         :type boot_x: int
         :param boot_y: The y-coordinate of the chip used to boot the machine
         :type boot_y: int
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
-                    any two chips have the same x and y coordinates
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+            If any two chips have the same x and y coordinates
         """
 
         # The maximum chip x coordinate

@@ -29,16 +29,16 @@ class Router(object):
         """
         :param links: iterable of links
         :type links: iterable of :py:class:`spinn_machine.Link`
-        :param emergency_routing_enabled: Determines if the router emergency\
-                    routing is operating
+        :param emergency_routing_enabled: \
+            Determines if the router emergency routing is operating
         :type emergency_routing_enabled: bool
         :param clock_speed: The router clock speed in cycles per second
         :type clock_speed: int
-        :param n_available_multicast_entries: The number of entries available\
-                    in the routing table
+        :param n_available_multicast_entries: \
+            The number of entries available in the routing table
         :type n_available_multicast_entries: int
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
-                    any two links have the same source_link_id
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+            If any two links have the same source_link_id
         """
         self._links = OrderedDict()
         for link in links:
@@ -55,8 +55,8 @@ class Router(object):
         :type link: :py:class:`spinn_machine.Link`
         :return: Nothing is returned
         :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
-                    another link already exists with the same source_link_id
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+            If another link already exists with the same source_link_id
         """
         if link.source_link_id in self._links:
             raise SpinnMachineAlreadyExistsException(
@@ -113,8 +113,8 @@ class Router(object):
         """ Get an iterable of source link ids and links in the router
 
         :return: an iterable of tuples of (source_link_id, link) where:
-                    * source_link_id is the id of the link
-                    * link is a router link
+            * source_link_id is the id of the link
+            * link is a router link
         :rtype: iterable of (int, :py:class:`spinn_machine.Link`)
         :raise None: does not raise any known exceptions
         """

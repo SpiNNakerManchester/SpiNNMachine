@@ -6,9 +6,7 @@ class IPTag(AbstractTag):
     """
 
     __slots__ = [
-        # The IP address to which SDP packets with the tag will be sent
         "_ip_address",
-
         # Indicates whether the SDP header should be removed
         "_strip_sdp",
         "_traffic_identifier",
@@ -21,31 +19,31 @@ class IPTag(AbstractTag):
             self, board_address, destination_x, destination_y, tag, ip_address,
             port=None, strip_sdp=False, traffic_identifier="DEFAULT"):
         """
-        :param board_address: The ip address of the board on which the tag\
-            is allocated
+        :param board_address: \
+            The ip address of the board on which the tag is allocated
         :type board_address: str or None
-        :param destination_x: The x-coordinate where users of this tag should\
-            send packets to
+        :param destination_x: \
+            The x-coordinate where users of this tag should send packets to
         :type destination_x: int
-        :param destination_y: The y-coordinate where users of this tag should\
-            send packets to
+        :param destination_y: \
+            The y-coordinate where users of this tag should send packets to
         :type destination_y: int
         :param tag: The tag of the SDP packet
         :type tag: int
-        :param ip_address: The IP address to which SDP packets with the tag\
-                    will be sent
+        :param ip_address: \
+            The IP address to which SDP packets with the tag will be sent
         :type ip_address: str
-        :param port: The port to which the SDP packets with the tag will be\
-                    sent
+        :param port: \
+            The port to which the SDP packets with the tag will be sent
         :type port: int or None if not yet assigned
         :param strip_sdp: Indicates whether the SDP header should be removed
         :type strip_sdp: bool
-        :param traffic_identifier: the identifier for traffic transmitted\
-             using this tag
+        :param traffic_identifier: \
+            The identifier for traffic transmitted using this tag
         :type traffic_identifier: str
         :raise None: No known exceptions are raised
         """
-        AbstractTag.__init__(self, board_address, tag, port)
+        super(IPTag, self).__init__(board_address, tag, port)
         self._ip_address = ip_address
         self._strip_sdp = strip_sdp
         self._traffic_identifier = traffic_identifier
@@ -54,7 +52,7 @@ class IPTag(AbstractTag):
 
     @property
     def ip_address(self):
-        """ Return the IP address of the tag
+        """ The IP address to which SDP packets with this tag will be sent.
         """
         return self._ip_address
 

@@ -17,16 +17,16 @@ class Processor(object):
         """
         :param processor_id: id of the processor in the chip
         :type processor_id: int
-        :param clock_speed: The number of cpu cycles per second of the\
-                    processor
+        :param clock_speed: \
+            The number of cpu cycles per second of the processor
         :type clock_speed: int
         :param is_monitor: Determines if the processor is considered the\
-                    monitor processor, and so should not be otherwise allocated
+            monitor processor, and so should not be otherwise allocated
         :type is_monitor: bool
         :param dtcm_available: Data Tightly Coupled Memory available
         :type dtcm_available: int
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
-                    If the clock speed is negative
+            If the clock speed is negative
         """
 
         if clock_speed < 0:
@@ -81,7 +81,7 @@ class Processor(object):
         """ Determines if the processor is the monitor, and therefore not\
             to be allocated
 
-        WARNING: Currently rejection processeors are also marked as monitors
+        WARNING: Currently rejection processors are also marked as monitors
 
         :return: True if the processor is the monitor, False otherwise
         :rtype: bool
