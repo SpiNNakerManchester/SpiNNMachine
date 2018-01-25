@@ -156,15 +156,14 @@ class VirtualMachine(Machine):
                     " or a width - 4 and height - 4 that are divisible by 12")
 
         if (version is None and (with_wrap_arounds is True) and
-                not ((width == 8 and height == 8) or
-                     (width == 2 and height == 2) or
+                not ((width == 2 and height == 2) or
                      (width % 12 == 0 and height % 12 == 0))):
             raise SpinnMachineInvalidParameterException(
                 "version, width, height, with_wrap_arounds",
                 "{}, {}, {}, {}".format(
                     version, width, height, with_wrap_arounds),
                 "A generic machine with wrap-arounds must be either have a"
-                " width and height which are both either 2 or 8 or a width"
+                " width and height which are both 2 or a width"
                 " and height that are divisible by 12")
 
         if (version is None and (with_wrap_arounds is False) and
