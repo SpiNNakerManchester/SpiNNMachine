@@ -577,7 +577,7 @@ class Machine(object):
 
         :rtype: `py:class:spinn_machine.Chip`
         """
-        return self._chips[(self._boot_x, self._boot_y)]
+        return self._chips[self._boot_x, self._boot_y]
 
     def get_chips_on_board(self, chip):
         """ Get the chips that are on the same board as the given chip
@@ -602,7 +602,7 @@ class Machine(object):
 
                 if (self.is_chip_at(x, y) and
                         (chip_x, chip_y) not in Machine.BOARD_48_CHIP_GAPS):
-                            yield x, y
+                    yield x, y
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
