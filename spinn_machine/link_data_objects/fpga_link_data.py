@@ -20,8 +20,12 @@ class FPGALinkData(AbstractLinkData):
 
     @property
     def fpga_link_id(self):
+        """ The ID of the link out of the SpiNNaker FPGA.
+        """
         return self._fpga_link_id
 
     @property
     def fpga_id(self):
+        """ The ID of the SpiNNaker FPGA.
+        """
         return self._fpga_id
