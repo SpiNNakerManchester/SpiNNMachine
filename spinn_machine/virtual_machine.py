@@ -103,7 +103,7 @@ class VirtualMachine(Machine):
                     "a width and height that are divisible by 12 or a width "
                     "- 4 and height - 4 that are divisible by 12")
 
-        if version is None:
+        if version is None and with_wrap_arounds is not None:
             self.__verify_autodetect(version, width, height, with_wrap_arounds)
 
         if with_wrap_arounds is None:

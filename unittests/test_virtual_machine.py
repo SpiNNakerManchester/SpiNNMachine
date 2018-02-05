@@ -12,10 +12,7 @@ class TestVirtualMachine(unittest.TestCase):
         flops = 1000
         processors = list()
         for i in range(18):
-            if i == 0:
-                processors.append(Processor(i, flops, is_monitor=True))
-            else:
-                processors.append(Processor(i, flops))
+            processors.append(Processor(i, flops, is_monitor=(i == 0)))
 
         (e, _, n, w, _, s) = range(6)
         links = list()
@@ -66,10 +63,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(link.destination_x, 0)
         self.assertEqual(link.destination_y, 1)
 
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(24, count)
 
     def test_2_no_wrapparound(self):
@@ -94,11 +88,18 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(240, count)
+
+    def test_version_5_guess(self):
+        vm = VirtualMachine(height=12, width=12, version=None,
+                            with_wrap_arounds=None)
+        self.assertEqual(vm.max_chip_x, 11)
+        self.assertEqual(vm.max_chip_y, 11)
+        self.assertEqual(144, vm.n_chips)
+        self.assertEqual(3, len(vm.ethernet_connected_chips))
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        self.assertEqual(864, count)
 
     def test_version_5_hole(self):
         hole = [(3, 3)]
@@ -109,10 +110,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(1, len(vm.ethernet_connected_chips))
         self.assertFalse(vm.is_link_at(3, 3, 2))
         self.assertFalse(vm.is_link_at(3, 2, 2))
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(228, count)
 
     def test_new_vm_no_monitor(self):
