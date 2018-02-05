@@ -88,10 +88,25 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
+        self.assertTrue(vm.is_chip_at(4, 4))
+        self.assertFalse(vm.is_chip_at(0, 4))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(240, count)
 
-    def test_version_5_guess(self):
+    def test_8_by_8(self):
+        vm = VirtualMachine(
+            width=8, height=8, version=None, with_wrap_arounds=False)
+        self.assertEqual(vm.max_chip_x, 7)
+        self.assertEqual(vm.max_chip_y, 7)
+        self.assertEqual(48, vm.n_chips)
+        self.assertEqual(1, len(vm.ethernet_connected_chips))
+        self.assertTrue(vm.is_chip_at(4, 4))
+        self.assertFalse(vm.is_chip_at(0, 4))
+        self.assertFalse((0, 4) in list(vm.chip_coordinates))
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        self.assertEqual(240, count)
+
+    def test_version_5_guess_12x12(self):
         vm = VirtualMachine(height=12, width=12, version=None,
                             with_wrap_arounds=None)
         self.assertEqual(vm.max_chip_x, 11)
@@ -100,6 +115,16 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(3, len(vm.ethernet_connected_chips))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(864, count)
+
+    def test_version_5_guess_8x8(self):
+        vm = VirtualMachine(height=8, width=8, version=None,
+                            with_wrap_arounds=None)
+        self.assertEqual(vm.max_chip_x, 7)
+        self.assertEqual(vm.max_chip_y, 7)
+        self.assertEqual(48, vm.n_chips)
+        self.assertEqual(1, len(vm.ethernet_connected_chips))
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        self.assertEqual(240, count)
 
     def test_version_5_hole(self):
         hole = [(3, 3)]

@@ -239,16 +239,15 @@ class VirtualMachine(Machine):
 
     def __verify_autodetect(self, version, width, height, wrap_arounds):
         if wrap_arounds and not (
-                (width == 8 and height == 8) or
                 (width == 2 and height == 2) or
                 (width % 12 == 0 and height % 12 == 0)):
             raise SpinnMachineInvalidParameterException(
                 "version, width, height, with_wrap_arounds",
                 "{}, {}, {}, {}".format(
                     version, width, height, wrap_arounds),
-                "A generic machine with wrap-arounds must be either have a"
-                " width and height which are both either 2 or 8 or a width"
-                " and height that are divisible by 12")
+                "A generic machine with wrap-arounds must be either have a "
+                "width and height which are both 2 or a width and height "
+                "that are divisible by 12")
         if not wrap_arounds and not (
                 (width == 8 and height == 8) or
                 (width == 2 and height == 2) or
