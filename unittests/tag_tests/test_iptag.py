@@ -83,6 +83,24 @@ class TestingIptag(unittest.TestCase):
             "tag=3, port=4, ip_address=abc, strip_sdp=True, "
             "traffic_identifier=DEFAULT)")
 
+    def test_in_dict(self):
+        d = dict()
+        iptag_1 = IPTag("", 0, 0, 0, "", 1)
+        d[iptag_1] = 1
+        iptag_2 = IPTag("", 0, 0, 0, "", 1, traffic_identifier="FOO")
+        d[iptag_2] = 10
+        d[IPTag("", 0, 0, 0, "", 1)] += 3
+        assert d[iptag_1] == 4
+        assert d[iptag_2] == 10
+        assert len(d) == 2
+
+    def test_set_port(self):
+        tag = IPTag("examplehost", 0, 0, 0, "")
+        tag.port = 1
+        with self.assertRaises(RuntimeError) as e:
+            tag.port = 2
+        self.assertIn("Port cannot be set more than once", e.exception)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -85,16 +85,15 @@ class IPTag(AbstractTag):
             "IPTag(board_address={}, destination_x={}, destination_y={},"
             " tag={}, port={}, ip_address={}, strip_sdp={},"
             " traffic_identifier={})".format(
-                self._board_address, self._destination_x, self._destination_y,
-                self._tag, self._port, self._ip_address, self._strip_sdp,
-                self._traffic_identifier))
+                self.board_address, self.destination_x, self.destination_y,
+                self.tag, self.port, self.ip_address, self.strip_sdp,
+                self.traffic_identifier))
 
     def __eq__(self, other):
         if not isinstance(other, IPTag):
             return False
-        # pylint: disable=protected-access
-        return (self._ip_address == other._ip_address and
-                self._strip_sdp == other._strip_sdp and
+        return (self._ip_address == other.ip_address and
+                self._strip_sdp == other.strip_sdp and
                 self._board_address == other.board_address and
                 self._port == other.port and
                 self._tag == other.tag and
