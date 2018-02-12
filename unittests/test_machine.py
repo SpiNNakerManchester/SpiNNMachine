@@ -83,7 +83,15 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(new_machine.boot_x, 0)
         self.assertEqual(new_machine.boot_y, 0)
         self.assertEqual(new_machine.boot_chip.ip_address, self._ip)
-        self.assertEqual(new_machine.get_cores_and_link_count(), (450, 3))
+        self.assertEqual(new_machine.n_chips, 25)
+        self.assertEqual(len(new_machine), 25)
+        self.assertEqual(next(x[1].ip_address for x in new_machine), self._ip)
+        self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
+        self.assertEqual(new_machine.cores_and_link_output_string(),
+                         "450 cores and 3 links")
+        self.assertEqual(new_machine.__repr__(),
+                         "[Machine: max_x=4, max_y=4, n_chips=25]")
+        self.assertEqual(list(new_machine.spinnaker_links), [])
 
     def test_create_new_machine_with_invalid_chips(self):
         """
@@ -261,6 +269,11 @@ class SpinnMachineTestCase(unittest.TestCase):
             # but (0,4) is not on a standard 48-node board
             self.assertEquals(len(chips), 25)
             self.assertEquals(len(chips_in_machine), 24)
+        self.assertIsNone(new_machine.get_spinnaker_link_with_id(1))
+        self.assertIsNone(new_machine.get_fpga_link_with_id(1, 0))
+
+    def test_misc(self):
+        self.assertEqual(Machine.get_chip_over_link(0, 0, 4, 24, 24), (23, 23))
 
 
 if __name__ == '__main__':
