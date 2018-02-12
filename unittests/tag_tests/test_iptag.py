@@ -76,6 +76,13 @@ class TestingIptag(unittest.TestCase):
         strip_sdp = iptag.strip_sdp
         self.assertEqual(strip_sdp, False)
 
+    def test_tag_rendering(self):
+        iptag = IPTag("localhost", 1, 2, 3, "abc", 4, True)
+        assert iptag.__repr__() == (
+            "IPTag(board_address=localhost, destination_x=1, destination_y=2, "
+            "tag=3, port=4, ip_address=abc, strip_sdp=True, "
+            "traffic_identifier=DEFAULT)")
+
 
 if __name__ == '__main__':
     unittest.main()

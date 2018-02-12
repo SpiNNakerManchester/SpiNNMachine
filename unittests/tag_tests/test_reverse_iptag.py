@@ -98,6 +98,12 @@ class TestingReverseIptag(unittest.TestCase):
         sdp_port = reverse_ip_tag.sdp_port
         self.assertEqual(sdp_port, 1)
 
+    def test_tag_rendering(self):
+        riptag = ReverseIPTag("somewhere.local", 2, 3, 4, 5, 6)
+        assert riptag.__repr__() == (
+            "ReverseIPTag(board_address=somewhere.local, tag=2, port=3, "
+            "destination_x=4, destination_y=5, destination_p=6, sdp_port=1)")
+
 
 if __name__ == '__main__':
     unittest.main()
