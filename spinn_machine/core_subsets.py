@@ -126,7 +126,7 @@ class CoreSubsets(object):
             return self.is_chip(*x_y_tuple)
         return self.is_core(*x_y_tuple)
 
-    def __get_item__(self, x_y_tuple):
+    def __getitem__(self, x_y_tuple):
         """ The core subset for the given x, y tuple
         """
         return self._core_subsets[x_y_tuple]
