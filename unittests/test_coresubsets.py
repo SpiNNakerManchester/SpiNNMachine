@@ -33,6 +33,7 @@ def test_multiple():
     assert css.__repr__() == "(0, 0)(0, 1)"
     assert css[0, 1] == cs3
 
+
 def test_iter():
     cs1 = CoreSubset(0, 0, [1, 2, 3])
     cs2 = CoreSubset(0, 0, [4, 5, 6])

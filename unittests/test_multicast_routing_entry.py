@@ -1,3 +1,4 @@
+import pickle
 import unittest
 from spinn_machine import MulticastRoutingEntry
 from spinn_machine.exceptions import \
@@ -21,6 +22,13 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(a_multicast.link_ids, set(link_ids))
         self.assertEqual(a_multicast.mask, mask)
         self.assertEqual(a_multicast.processor_ids, set(proc_ids))
+        # While we're here, let's check a few other basic ops
+        self.assertEqual(str(a_multicast),
+                         "1:1:True:set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,"
+                         " 12, 13, 14, 15, 16, 17]):set([0, 1, 2, 3, 4, 5])")
+        self.assertEqual(
+            a_multicast,
+            pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
 
     def test_duplicate_processors_ids(self):
         link_ids = list()
@@ -133,6 +141,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(result_multicast.mask, mask)
         self.assertEqual(result_multicast.processor_ids,
                          set(comparison_proc_ids))
+        self.assertEqual(result_multicast, a_multicast + b_multicast)
+        self.assertEqual(result_multicast, a_multicast | b_multicast)
+        self.assertNotEqual(result_multicast, a_multicast)
+        self.assertNotEqual(result_multicast, b_multicast)
 
     def test_merger_with_invalid_parameter_key(self):
         link_ids = list()
