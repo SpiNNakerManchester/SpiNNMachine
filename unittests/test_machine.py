@@ -31,8 +31,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self._ip = "192.162.240.253"
 
     def _create_processors(self, monitor=3, number=18):
-        """
-        Create a list of processors.
+        """ Create a list of processors.
 
         As some test change the processors this must be called each time.
 
@@ -42,10 +41,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         flops = 1000
         processors = list()
         for i in range(number):
-            if i == monitor:
-                processors.append(Processor(i, flops, is_monitor=True))
-            else:
-                processors.append(Processor(i, flops))
+            processors.append(Processor(i, flops, is_monitor=(i == monitor)))
         return processors
 
     def _create_chip(self, x, y, processors):
@@ -81,6 +77,13 @@ class SpinnMachineTestCase(unittest.TestCase):
             self.assertEqual(c.router, self._router)
             for p in processors:
                 self.assertTrue(p in c.processors)
+
+        self.assertEqual(new_machine.total_cores, 450)
+        self.assertEqual(new_machine.total_available_user_cores, 425)
+        self.assertEqual(new_machine.boot_x, 0)
+        self.assertEqual(new_machine.boot_y, 0)
+        self.assertEqual(new_machine.boot_chip.ip_address, self._ip)
+        self.assertEqual(new_machine.get_cores_and_link_count(), (450, 3))
 
     def test_create_new_machine_with_invalid_chips(self):
         """

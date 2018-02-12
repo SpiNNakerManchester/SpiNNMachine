@@ -80,7 +80,7 @@ class Chip(object):
 
     def is_processor_with_id(self, processor_id):
         """ Determines if a processor with the given id exists in the chip.\
-            Also implemented as __getitem__(processor_id)
+            Also implemented as __contains__(processor_id)
 
         :param processor_id: the processor id to check for
         :type processor_id: int
@@ -92,8 +92,7 @@ class Chip(object):
 
     def get_processor_with_id(self, processor_id):
         """ Return the processor with the specified id or None if the\
-            processor does not exist.\
-            Also implemented as __contains__(processor_id)
+            processor does not exist.
 
         :param processor_id: the id of the processor to return
         :type processor_id: int
@@ -157,25 +156,6 @@ class Chip(object):
         :raise None: this method does not raise any known exceptions
         """
         return self._virtual
-
-    def __iter__(self):
-        """ Get an iterable of processor identifiers and processors
-
-        :return: An iterable of (processor_id, processor) where:
-            * processor_id is the id of a processor
-            * processor is the processor with the id
-        :rtype: iterable of (int, :py:class:spinn_machine.Processor`)
-        :raise None: does not raise any known exceptions
-        """
-        return self._p.iteritems()
-
-    def __len__(self):
-        """Get the number of processors associated with this chip.
-
-        :return: The number of items in the underlying iterator.
-        :rtype: int
-        """
-        return len(self._p)
 
     @property
     def router(self):
@@ -269,13 +249,34 @@ class Chip(object):
 
         return None
 
+    def __iter__(self):
+        """ Get an iterable of processor identifiers and processors
+
+        :return: An iterable of (processor_id, processor) where:
+            * processor_id is the id of a processor
+            * processor is the processor with the id
+        :rtype: iterable of (int, :py:class:spinn_machine.Processor`)
+        :raise None: does not raise any known exceptions
+        """
+        return self._p.iteritems()
+
+    def __len__(self):
+        """Get the number of processors associated with this chip.
+
+        :return: The number of items in the underlying iterator.
+        :rtype: int
+        """
+        return len(self._p)
+
     def __getitem__(self, processor_id):
         if processor_id in self._p:
             return self._p[processor_id]
+        # Note difference from get_processor_with_id(); this is to conform to
+        # standard Python semantics
         raise KeyError(processor_id)
 
     def __contains__(self, processor_id):
-        return self.get_processor_with_id(processor_id) is not None
+        return self.is_processor_with_id(processor_id)
 
     __REPR_TEMPLATE = ("[Chip: x={}, y={}, sdram={}, ip_address={}, "
                        "router={}, processors={}, nearest_ethernet={}:{}]")

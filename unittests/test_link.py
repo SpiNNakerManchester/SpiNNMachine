@@ -1,5 +1,6 @@
 import unittest
 from spinn_machine import Link
+from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
 class TestingLinks(unittest.TestCase):
@@ -14,6 +15,21 @@ class TestingLinks(unittest.TestCase):
         self.assertEqual(links[0].destination_y, 1)
         self.assertEqual(links[0].multicast_default_from, s)
         self.assertEqual(links[0].multicast_default_to, s)
+
+    def test_link_setters(self):
+        lnk = Link(0, 0, 0, 0, 1, None, None)
+        lnk.multicast_default_from = 2
+        with self.assertRaises(SpinnMachineAlreadyExistsException):
+            lnk.multicast_default_from = 3
+        lnk.multicast_default_to = 4
+        with self.assertRaises(SpinnMachineAlreadyExistsException):
+            lnk.multicast_default_to = 5
+
+        lnk = Link(0, 0, 0, 0, 1, 1, 1)
+        with self.assertRaises(SpinnMachineAlreadyExistsException):
+            lnk.multicast_default_from = 3
+        with self.assertRaises(SpinnMachineAlreadyExistsException):
+            lnk.multicast_default_to = 5
 
 
 if __name__ == '__main__':
