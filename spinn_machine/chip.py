@@ -90,11 +90,6 @@ class Chip(object):
         """
         return processor_id in self._p
 
-    def __getitem__(self, processor_id):
-        """ see :py:meth:`is_processor_with_id`
-        """
-        return self.is_processor_with_id(processor_id)
-
     def get_processor_with_id(self, processor_id):
         """ Return the processor with the specified id or None if the\
             processor does not exist.\
@@ -110,11 +105,6 @@ class Chip(object):
         if processor_id in self._p:
             return self._p[processor_id]
         return None
-
-    def __contains__(self, processor_id):
-        """ see :py:meth:`get_processor_with_id`
-        """
-        return self.get_processor_with_id(processor_id)
 
     @property
     def x(self):
@@ -257,12 +247,13 @@ class Chip(object):
                 return processor
 
     def reserve_a_system_processor(self):
-        """ This method should ONLY be called via\
-            Machine.reserve_system_processors
-
-        Sets one of the none monitor processors as a system processor
+        """ Sets one of the none monitor processors as a system processor.
 
         Updates n_user_processors
+
+        .. warning::
+            This method should ONLY be called via\
+            Machine.reserve_system_processors
 
         :return:\
             The id of the processor reserved, or None if no processor could\
@@ -277,6 +268,14 @@ class Chip(object):
                 return processor_id
 
         return None
+
+    def __getitem__(self, processor_id):
+        if processor_id in self._p:
+            return self._p[processor_id]
+        raise KeyError(processor_id)
+
+    def __contains__(self, processor_id):
+        return self.get_processor_with_id(processor_id) is not None
 
     __REPR_TEMPLATE = ("[Chip: x={}, y={}, sdram={}, ip_address={}, "
                        "router={}, processors={}, nearest_ethernet={}:{}]")

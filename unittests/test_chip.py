@@ -50,6 +50,8 @@ class TestingChip(unittest.TestCase):
             # warning the chip will clone a processor if it changes it
             # For example if reserve_a_system_processor() is called
             self.assertTrue(p in new_chip.processors)
+            self.assertTrue(p.processor_id in new_chip)
+            self.assertEquals(new_chip[p.processor_id], p)
         self.assertEquals(new_chip.n_user_processors,
                           len(self._processors) - 1)
 
