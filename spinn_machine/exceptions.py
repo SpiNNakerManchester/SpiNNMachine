@@ -1,7 +1,6 @@
 class SpinnMachineException(Exception):
     """ A generic exception which all other exceptions extend
     """
-    pass
 
 
 class SpinnMachineAlreadyExistsException(SpinnMachineException):
