@@ -12,10 +12,7 @@ class TestVirtualMachine(unittest.TestCase):
         flops = 1000
         processors = list()
         for i in range(18):
-            if i == 0:
-                processors.append(Processor(i, flops, is_monitor=True))
-            else:
-                processors.append(Processor(i, flops))
+            processors.append(Processor(i, flops, is_monitor=(i == 0)))
 
         (e, _, n, w, _, s) = range(6)
         links = list()
@@ -33,6 +30,24 @@ class TestVirtualMachine(unittest.TestCase):
                     nearest_ethernet_chip[0],
                     nearest_ethernet_chip[1], _ip)
 
+    def test_illegal_vms(self):
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            VirtualMachine(width=-1, height=2)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            VirtualMachine(width=2, height=-1)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            VirtualMachine(version=0)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            VirtualMachine(version=3, with_wrap_arounds=True)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            VirtualMachine(version=3, width=12, height=12)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            VirtualMachine(version=5, with_wrap_arounds=True)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            VirtualMachine(version=5, width=12, height=12)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            VirtualMachine(with_wrap_arounds=True, width=15, height=15)
+
     def test_version_2(self):
         vm = VirtualMachine(version=2, with_wrap_arounds=None)
         self.assertEqual(vm.max_chip_x, 1)
@@ -48,6 +63,9 @@ class TestVirtualMachine(unittest.TestCase):
             for _link in _chip.router.links:
                 count += 1
         self.assertEqual(16, count)
+        self.assertEqual(str(vm),
+                         "[VirtualMachine: max_x=1, max_y=1, n_chips=4]")
+        self.assertEqual(vm.get_cores_and_link_count(), (72, 16))
 
     def test_2_with_wrapparound(self):
         vm = VirtualMachine(height=2, width=2, with_wrap_arounds=True)
@@ -66,10 +84,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(link.destination_x, 0)
         self.assertEqual(link.destination_y, 1)
 
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(24, count)
 
     def test_2_no_wrapparound(self):
@@ -96,10 +111,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(1, len(vm.ethernet_connected_chips))
         self.assertTrue(vm.is_chip_at(4, 4))
         self.assertFalse(vm.is_chip_at(0, 4))
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(240, count)
 
     def test_8_by_8(self):
@@ -112,10 +124,27 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertTrue(vm.is_chip_at(4, 4))
         self.assertFalse(vm.is_chip_at(0, 4))
         self.assertFalse((0, 4) in list(vm.chip_coordinates))
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        self.assertEqual(240, count)
+
+    def test_version_5_guess_12x12(self):
+        vm = VirtualMachine(height=12, width=12, version=None,
+                            with_wrap_arounds=None)
+        self.assertEqual(vm.max_chip_x, 11)
+        self.assertEqual(vm.max_chip_y, 11)
+        self.assertEqual(144, vm.n_chips)
+        self.assertEqual(3, len(vm.ethernet_connected_chips))
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        self.assertEqual(864, count)
+
+    def test_version_5_guess_8x8(self):
+        vm = VirtualMachine(height=8, width=8, version=None,
+                            with_wrap_arounds=None)
+        self.assertEqual(vm.max_chip_x, 7)
+        self.assertEqual(vm.max_chip_y, 7)
+        self.assertEqual(48, vm.n_chips)
+        self.assertEqual(1, len(vm.ethernet_connected_chips))
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(240, count)
 
     def test_version_5_hole(self):
@@ -127,10 +156,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(1, len(vm.ethernet_connected_chips))
         self.assertFalse(vm.is_link_at(3, 3, 2))
         self.assertFalse(vm.is_link_at(3, 2, 2))
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(228, count)
 
     def test_new_vm_no_monitor(self):

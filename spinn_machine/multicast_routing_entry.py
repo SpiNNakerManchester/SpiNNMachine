@@ -16,7 +16,6 @@ class MulticastRoutingEntry(object):
     def __init__(self, routing_entry_key, mask, processor_ids, link_ids,
                  defaultable):
         """
-
         :param routing_entry_key: The routing key_combo
         :type routing_entry_key: int
         :param mask: The route key_combo mask
@@ -26,11 +25,11 @@ class MulticastRoutingEntry(object):
         :param link_ids: The destination link ids
         :type link_ids: iterable of int
         :param defaultable: if this entry is defaultable (it receives packets \
-        from its directly opposite route position)
+            from its directly opposite route position)
         :type defaultable: bool
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
-                    * If processor_ids contains the same id more than once
-                    * If link_ids contains the same id more than once
+            * If processor_ids contains the same id more than once
+            * If link_ids contains the same id more than once
         """
         self._routing_entry_key = routing_entry_key
         self._mask = mask
@@ -118,7 +117,7 @@ class MulticastRoutingEntry(object):
         :return: A new multicast routing entry with merged destinations
         :rtype: :py:class:`MulticastRoutingEntry`
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
-                    If the key and mask of the other entry do not match
+            If the key and mask of the other entry do not match
         """
         if other_entry.routing_entry_key != self.routing_entry_key:
             raise SpinnMachineInvalidParameterException(
@@ -154,8 +153,7 @@ class MulticastRoutingEntry(object):
         return self.merge(other_entry)
 
     def __eq__(self, other_entry):
-        """
-        supports comparisons
+        """ support for comparisons
 
         :param other_entry: other Multicast_routing_entry
         """

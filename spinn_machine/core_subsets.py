@@ -12,7 +12,7 @@ class CoreSubsets(object):
         """
         :param core_subsets: An iterable of cores for each desired chip
         :type core_subsets: iterable of\
-                    :py:class:`spinn_machine.CoreSubset`
+            :py:class:`spinn_machine.CoreSubset`
         """
         self._core_subsets = OrderedDict()
         if core_subsets is not None:
@@ -73,8 +73,8 @@ class CoreSubsets(object):
         :type y: int
         :param processor_id: The id of a core
         :type processor_id: int
-        :return: True if there is a chip with coordinates (x, y) in the\
-                    subset, which has a core with the given id in the subset
+        :return: Whether there is a chip with coordinates (x, y) in the\
+            subset, which has a core with the given id in the subset
         """
         xy = (x, y)
         if xy not in self._core_subsets:
@@ -126,13 +126,13 @@ class CoreSubsets(object):
             return self.is_chip(*x_y_tuple)
         return self.is_core(*x_y_tuple)
 
-    def __get_item__(self, x_y_tuple):
+    def __getitem__(self, x_y_tuple):
         """ The core subset for the given x, y tuple
         """
         return self._core_subsets[x_y_tuple]
 
     def __repr__(self):
-        """ human readable version of the object
+        """ Human-readable version of the object
 
         :return: string representation of the CoreSubsets
         """
