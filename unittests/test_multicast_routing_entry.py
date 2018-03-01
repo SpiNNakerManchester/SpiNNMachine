@@ -1,3 +1,4 @@
+import pickle
 import unittest
 from spinn_machine import MulticastRoutingEntry
 from spinn_machine.exceptions import \
@@ -21,6 +22,13 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(a_multicast.link_ids, set(link_ids))
         self.assertEqual(a_multicast.mask, mask)
         self.assertEqual(a_multicast.processor_ids, set(proc_ids))
+        # While we're here, let's check a few other basic ops
+        self.assertEqual(str(a_multicast),
+                         "1:1:True:set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,"
+                         " 12, 13, 14, 15, 16, 17]):set([0, 1, 2, 3, 4, 5])")
+        self.assertEqual(
+            a_multicast,
+            pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
 
     def test_duplicate_processors_ids(self):
         link_ids = list()
@@ -32,8 +40,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         proc_ids.append(0)
         key = 1
         mask = 1
-        with self.assertRaises(SpinnMachineAlreadyExistsException):
+        with self.assertRaises(SpinnMachineAlreadyExistsException) as e:
             MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
+        self.assertEqual(e.exception.item, "processor id")
+        self.assertEqual(e.exception.value, "0")
 
     def test_duplicate_link_ids(self):
         link_ids = list()
@@ -133,6 +143,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(result_multicast.mask, mask)
         self.assertEqual(result_multicast.processor_ids,
                          set(comparison_proc_ids))
+        self.assertEqual(result_multicast, a_multicast + b_multicast)
+        self.assertEqual(result_multicast, a_multicast | b_multicast)
+        self.assertNotEqual(result_multicast, a_multicast)
+        self.assertNotEqual(result_multicast, b_multicast)
 
     def test_merger_with_invalid_parameter_key(self):
         link_ids = list()
@@ -153,8 +167,11 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             key_combo, mask, proc_ids, link_ids, True)
         b_multicast = MulticastRoutingEntry(
             key_combo + 1, mask + 1, proc_ids2, link_ids2, True)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
+        with self.assertRaises(SpinnMachineInvalidParameterException) as e:
             a_multicast.merge(b_multicast)
+        self.assertEqual(e.exception.parameter, "other_entry.key")
+        self.assertEqual(e.exception.value, "0x2")
+        self.assertEqual(e.exception.problem, "The key does not match 0x1")
 
     def test_merger_with_invalid_parameter_mask(self):
         link_ids = list()

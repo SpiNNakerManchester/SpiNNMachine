@@ -8,6 +8,10 @@ class SpiNNakerTriadGeometry(object):
         dimensions of a triad and where the Ethernet chips occur in the\
         triad
     """
+    __slots__ = [
+        "_ethernet_offset",
+        "_triad_height",
+        "_triad_width"]
 
     # Stored singleton
     spinn5_triad_geometry = None

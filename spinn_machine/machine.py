@@ -61,8 +61,8 @@ class Machine(object):
         :type boot_x: int
         :param boot_y: The y-coordinate of the chip used to boot the machine
         :type boot_y: int
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
-                    any two chips have the same x and y coordinates
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+            If any two chips have the same x and y coordinates
         """
 
         # The maximum chip x coordinate
@@ -99,8 +99,8 @@ class Machine(object):
         :type chip: :py:class:`spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
-                    a chip with the same x and y coordinates already exists
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+            If a chip with the same x and y coordinates already exists
         """
         chip_id = (chip.x, chip.y)
         if chip_id in self._chips:
@@ -129,9 +129,9 @@ class Machine(object):
         :type chips: iterable of :py:class:`spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: If\
-                    a chip with the same x and y coordinates as one being\
-                    added already exists
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+            If a chip with the same x and y coordinates as one being added\
+            already exists
         """
         for next_chip in chips:
             self.add_chip(next_chip)
@@ -159,10 +159,10 @@ class Machine(object):
         """ Get an iterable of the chip coordinates and chips
 
         :return: An iterable of tuples of ((x, y), chip) where:
-                    * (x, y) is a tuple where:
-                        * x is the x-coordinate of a chip
-                        * y is the y-coordinate of a chip
-                    * chip is a chip
+            * (x, y) is a tuple where:
+                * x is the x-coordinate of a chip
+                * y is the y-coordinate of a chip
+            * chip is a chip
         :rtype: iterable of ((int, int), :py:class:`spinn_machine.Chip`)
         :raise None: does not raise any known exceptions
         """
@@ -197,8 +197,8 @@ class Machine(object):
         """ Get the chip at a specific (x, y) location
 
         :param x_y_tuple: A tuple of (x, y) where:
-                    * x is the x-coordinate of the chip to retrieve
-                    * y is the y-coordinate of the chip to retrieve
+            * x is the x-coordinate of the chip to retrieve
+            * y is the y-coordinate of the chip to retrieve
         :type x_y_tuple: (int, int)
         :return: the chip at the specified location, or None if no such chip
         :rtype: :py:class:`spinn_machine.Chip`
@@ -237,8 +237,8 @@ class Machine(object):
         """ Determine if a chip exists at the given coordinates
 
         :param x_y_tuple: A tuple of (x, y) where:
-                    * x is the x-coordinate of the chip to retrieve
-                    * y is the y-coordinate of the chip to retrieve
+            * x is the x-coordinate of the chip to retrieve
+            * y is the y-coordinate of the chip to retrieve
         :type x_y_tuple: (int, int)
         :return: True if the chip exists, False otherwise
         :rtype: bool
@@ -583,7 +583,7 @@ class Machine(object):
 
         :rtype: `py:class:spinn_machine.Chip`
         """
-        return self._chips[(self._boot_x, self._boot_y)]
+        return self._chips[self._boot_x, self._boot_y]
 
     def get_chips_on_board(self, chip):
         """ Get the chips that are on the same board as the given chip
@@ -608,7 +608,7 @@ class Machine(object):
 
                 if (self.is_chip_at(x, y) and
                         (chip_x, chip_y) not in Machine.BOARD_48_CHIP_GAPS):
-                            yield x, y
+                    yield x, y
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\

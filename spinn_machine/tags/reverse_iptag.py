@@ -6,19 +6,9 @@ class ReverseIPTag(AbstractTag):
     """
 
     __slots__ = [
-        # x coord of a chip in the SpiNNaker machine that packets should be
-        # sent to for this reverse iptag
         "_destination_x",
-
-        # y coord of a chip in the SpiNNaker machine that packets should be
-        # sent to for this reverse iptag
         "_destination_y",
-
-        # The processor id for the chip at (x,y) that packets should be
-        # send to for this reverse iptag
         "_destination_p",
-
-        # the port number these packets are to be received on for the processor
         "_sdp_port"
     ]
 
@@ -26,8 +16,8 @@ class ReverseIPTag(AbstractTag):
     def __init__(self, board_address, tag, port, destination_x, destination_y,
                  destination_p, sdp_port=1):
         """
-        :param board_address: The ip address of the board on which the tag
-            is allocated
+        :param board_address: \
+            The ip address of the board on which the tag is allocated
         :type board_address: str or None
         :param tag: The tag of the SDP packet
         :type tag: int
@@ -40,11 +30,11 @@ class ReverseIPTag(AbstractTag):
         :param destination_p: The id of the processor to send packets to
         :type destination_p: int
         :param sdp_port: The optional port number to use for SDP packets that\
-                    are formed on the machine (default is 1)
+            are formed on the machine (default is 1)
         :type sdp_port: int
         :raise None: No known exceptions are raised
         """
-        AbstractTag.__init__(self, board_address, tag, port)
+        super(ReverseIPTag, self).__init__(board_address, tag, port)
         self._destination_x = destination_x
         self._destination_y = destination_y
         self._destination_p = destination_p
@@ -52,25 +42,29 @@ class ReverseIPTag(AbstractTag):
 
     @property
     def sdp_port(self):
-        """ The SDP port of the tag
+        """ The SDP port number of the tag that these packets are to be\
+            received on for the processor.
         """
         return self._sdp_port
 
     @property
     def destination_x(self):
-        """ The destination x for a reverse ip tag
+        """ The destination x coordinate of a chip in the SpiNNaker machine\
+            that packets should be sent to for this reverse IP tag.
         """
         return self._destination_x
 
     @property
     def destination_y(self):
-        """ The destination y for a reverse ip tag
+        """ The destination y coordinate of a chip in the SpiNNaker machine\
+            that packets should be sent to for this reverse IP tag.
         """
         return self._destination_y
 
     @property
     def destination_p(self):
-        """ The destination p for a reverse ip tag
+        """ The destination processor id for the chip at (x,y) that packets\
+            should be send to for this reverse IP tag
         """
         return self._destination_p
 
