@@ -29,7 +29,7 @@ class SDRAM(object):
         return self._size
 
     def __str__(self):
-        return "{} MB".format(self._size / (1024 * 1024))
+        return "{} MB".format(self._size // (1024 * 1024))
 
     def __repr__(self):
         return self.__str__()

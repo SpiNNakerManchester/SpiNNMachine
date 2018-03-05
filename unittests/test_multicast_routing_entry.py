@@ -24,8 +24,8 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(a_multicast.processor_ids, set(proc_ids))
         # While we're here, let's check a few other basic ops
         self.assertEqual(str(a_multicast),
-                         "1:1:True:set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,"
-                         " 12, 13, 14, 15, 16, 17]):set([0, 1, 2, 3, 4, 5])")
+                         "1:1:True:{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,"
+                         " 12, 13, 14, 15, 16, 17}:{0, 1, 2, 3, 4, 5}")
         self.assertEqual(
             a_multicast,
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))

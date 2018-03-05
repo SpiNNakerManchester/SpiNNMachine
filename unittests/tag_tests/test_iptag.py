@@ -99,7 +99,7 @@ class TestingIptag(unittest.TestCase):
         tag.port = 1
         with self.assertRaises(RuntimeError) as e:
             tag.port = 2
-        self.assertIn("Port cannot be set more than once", e.exception)
+        self.assertIn("Port cannot be set more than once", str(e.exception))
 
 
 if __name__ == '__main__':

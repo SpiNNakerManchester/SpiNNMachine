@@ -169,9 +169,10 @@ class MulticastRoutingEntry(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return "{}:{}:{}:{}:{}".format(
+        return ("%s:%s:%s:{%s}:{%s}" % (
             self._routing_entry_key, self._mask, self._defaultable,
-            self._processor_ids, self._link_ids)
+            ", ".join(map(str, self._processor_ids)),
+            ", ".join(map(str, self._link_ids))))
 
     def __str__(self):
         return self.__repr__()

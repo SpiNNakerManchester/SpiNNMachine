@@ -1,6 +1,6 @@
 from collections import OrderedDict
+from six import iteritems, itervalues
 from .exceptions import SpinnMachineAlreadyExistsException
-
 from spinn_utilities.ordered_set import OrderedSet
 
 
@@ -133,7 +133,7 @@ class Chip(object):
         :rtype: iterable of :py:class:spinn_machine.Processor`
         :raise None: does not raise any known exceptions
         """
-        return self._p.itervalues()
+        return itervalues(self._p)
 
     @property
     def n_processors(self):
@@ -240,7 +240,7 @@ class Chip(object):
             be found
         :rtype: int or None
         """
-        for processor_id, processor in self._p.iteritems():
+        for processor_id, processor in iteritems(self._p):
             if not processor.is_monitor:
                 system_processor = processor.clone_as_system_processor()
                 self._p[processor_id] = system_processor
@@ -258,7 +258,7 @@ class Chip(object):
         :rtype: iterable of (int, :py:class:spinn_machine.Processor`)
         :raise None: does not raise any known exceptions
         """
-        return self._p.iteritems()
+        return iteritems(self._p)
 
     def __len__(self):
         """Get the number of processors associated with this chip.
@@ -284,7 +284,7 @@ class Chip(object):
     def __str__(self):
         return self.__REPR_TEMPLATE.format(
             self._x, self._y, self.sdram, self.ip_address,
-            self.router, self._p.values(),
+            self.router, list(self._p.values()),
             self._nearest_ethernet_x, self._nearest_ethernet_y)
 
     def __repr__(self):

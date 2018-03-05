@@ -49,4 +49,6 @@ class FixedRouteEntry(object):
         return self._link_ids
 
     def __repr__(self):
-        return "{}:{}".format(self._link_ids, self._processor_ids)
+        return ("{%s}:{%s}" % (
+            ", ".join(map(str, self._link_ids)),
+            ", ".join(map(str, self._processor_ids))))
