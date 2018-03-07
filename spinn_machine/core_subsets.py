@@ -36,9 +36,9 @@ class CoreSubsets(object):
 
     def add_core_subsets(self, core_subsets):
         """ merges a core subsets into this one
-        
-        :param core_subsets: the coresubsets to add
-        :rtype: None 
+
+        :param core_subsets: the core subsets to add
+        :rtype: None
         """
         for core_subset in core_subsets:
             self.add_core_subset(core_subset)
