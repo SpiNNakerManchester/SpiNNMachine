@@ -34,6 +34,15 @@ class CoreSubsets(object):
             for processor_id in core_subset.processor_ids:
                 self._core_subsets[xy].add_processor(processor_id)
 
+    def add_core_subsets(self, core_subsets):
+        """ merges a core subsets into this one
+
+        :param core_subsets: the core subsets to add
+        :rtype: None
+        """
+        for core_subset in core_subsets:
+            self.add_core_subset(core_subset)
+
     def add_processor(self, x, y, processor_id):
         """ Add a processor on a given chip to the set
 
