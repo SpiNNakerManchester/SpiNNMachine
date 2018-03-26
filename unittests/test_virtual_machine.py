@@ -137,6 +137,76 @@ class TestVirtualMachine(unittest.TestCase):
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(864, count)
 
+    def test_version_5_guess_12x16(self):
+        vm = VirtualMachine(height=16, width=12, version=None,
+                            with_wrap_arounds=None)
+        self.assertEqual(vm.max_chip_x, 11)
+        self.assertEqual(vm.max_chip_y, 15)
+        self.assertEqual(144, vm.n_chips)
+        self.assertEqual(3, len(vm.ethernet_connected_chips))
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        self.assertEqual(800, count)
+
+    def test_version_5_guess_16x12(self):
+        vm = VirtualMachine(height=12, width=16, version=None,
+                            with_wrap_arounds=None)
+        self.assertEqual(vm.max_chip_x, 15)
+        self.assertEqual(vm.max_chip_y, 11)
+        self.assertEqual(144, vm.n_chips)
+        self.assertEqual(3, len(vm.ethernet_connected_chips))
+        n_down_links = 0
+        for y in range(4):
+            self.assertFalse(vm.is_link_at(0, y, 3))
+            self.assertFalse(vm.is_link_at(0, y, 4))
+            n_down_links += 2
+        self.assertFalse(vm.is_link_at(0, 3, 2))
+        n_down_links += 1
+        for (x, y) in zip(range(1, 4), range(4, 7)):
+            self.assertFalse(vm.is_link_at(x, y, 2))
+            self.assertFalse(vm.is_link_at(x, y, 3))
+            n_down_links += 2
+        self.assertFalse(vm.is_link_at(4, 7, 3))
+        n_down_links += 1
+        for y in range(8, 12):
+            self.assertFalse(vm.is_link_at(4, y, 3))
+            self.assertFalse(vm.is_link_at(4, y, 4))
+            n_down_links += 2
+        self.assertFalse(vm.is_link_at(11, 11, 1))
+        n_down_links += 1
+        for y in range(3):
+            self.assertFalse(vm.is_link_at(11, y, 0))
+            self.assertFalse(vm.is_link_at(11, y, 1))
+            n_down_links += 2
+        self.assertFalse(vm.is_link_at(11, 3, 0))
+        n_down_links += 1
+        for (x, y) in zip(range(12, 16), range(4, 8)):
+            self.assertFalse(vm.is_link_at(x, y, 0))
+            self.assertFalse(vm.is_link_at(x, y, 5))
+            n_down_links += 2
+        self.assertFalse(vm.is_link_at(15, 7, 1))
+        n_down_links += 1
+        for y in range(8, 11):
+            self.assertFalse(vm.is_link_at(15, y, 0))
+            self.assertFalse(vm.is_link_at(15, y, 1))
+            n_down_links += 2
+        self.assertFalse(vm.is_link_at(15, 11, 0))
+        n_down_links += 1
+        self.assertFalse(vm.is_link_at(0, 0, 5))
+        n_down_links += 1
+        for x in range(1, 4):
+            self.assertFalse(vm.is_link_at(x, 0, 4))
+            self.assertFalse(vm.is_link_at(x, 0, 5))
+            n_down_links += 2
+        self.assertFalse(vm.is_link_at(4, 0, 4))
+        n_down_links += 1
+        for x in range(12, 16):
+            self.assertFalse(vm.is_link_at(x, 11, 1))
+            self.assertFalse(vm.is_link_at(x, 11, 2))
+            n_down_links += 2
+        self.assertEqual(n_down_links, 64)
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        self.assertEqual(800, count)
+
     def test_version_5_guess_8x8(self):
         vm = VirtualMachine(height=8, width=8, version=None,
                             with_wrap_arounds=None)
@@ -234,6 +304,18 @@ class TestVirtualMachine(unittest.TestCase):
         size_x = 12 * 5
         size_y = 12 * 7
         vm = VirtualMachine(size_x, size_y, with_wrap_arounds=True)
+        self.assertEqual(size_x * size_y, vm.n_chips)
+
+    def test_12_n_12_m_4(self):
+        size_x = 12 * 5
+        size_y = 12 * 7
+        vm = VirtualMachine(size_x + 4, size_y, with_y_wrap_arounds=True)
+        self.assertEqual(size_x * size_y, vm.n_chips)
+
+    def test_12_n_plus_4_12_m(self):
+        size_x = 12 * 5
+        size_y = 12 * 7
+        vm = VirtualMachine(size_x, size_y + 4, with_x_wrap_arounds=True)
         self.assertEqual(size_x * size_y, vm.n_chips)
 
     def test_add__chip(self):

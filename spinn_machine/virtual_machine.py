@@ -31,6 +31,8 @@ class VirtualMachine(Machine):
         "_sdram_per_chip",
         "_with_monitors",
         "_with_wrap_arounds",
+        "_with_x_wrap_arounds",
+        "_with_y_wrap_arounds",
         "_max_chip_x",
         "_max_chip_y")
 
@@ -42,6 +44,7 @@ class VirtualMachine(Machine):
     # pylint: disable=too-many-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
+            with_x_wrap_arounds=None, with_y_wrap_arounds=None,
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
             with_monitors=True, sdram_per_chip=None, down_chips=None,
             down_cores=None, down_links=None):
@@ -68,51 +71,96 @@ class VirtualMachine(Machine):
         if down_chips is None:
             down_chips = []
 
+        if with_x_wrap_arounds is None:
+            with_x_wrap_arounds = with_wrap_arounds
+        if with_y_wrap_arounds is None:
+            with_y_wrap_arounds = with_wrap_arounds
+
         # Verify the machine
         # Check for not enough info or out of range
         self.__verify_basic_sanity(version, width, height)
 
         # Version 2/3
         if version in self.BOARD_VERSION_FOR_4_CHIPS:
-            width, height, with_wrap_arounds = self.__verify_4_chip_board(
-                version, width, height, with_wrap_arounds)
+            width, height, with_x_wrap_arounds, with_y_wrap_arounds =\
+                self.__verify_4_chip_board(
+                    version, width, height, with_x_wrap_arounds,
+                    with_y_wrap_arounds)
         # Version 4/5
         elif version in self.BOARD_VERSION_FOR_48_CHIPS:
-            width, height, with_wrap_arounds = self.__verify_48_chip_board(
-                version, width, height, with_wrap_arounds)
+            width, height, with_x_wrap_arounds, with_y_wrap_arounds =\
+                self.__verify_48_chip_board(
+                    version, width, height, with_x_wrap_arounds,
+                    with_y_wrap_arounds)
         # Autodetect
-        elif version is None and with_wrap_arounds is None:
-            if width == 2 and height == 2:
+        elif version is None and (with_x_wrap_arounds is None or
+                                  with_y_wrap_arounds is None):
 
-                # assume the special version 2 or 3 wrap arounds
-                version = 2
-                self._with_wrap_arounds = True
-            elif width == 8 and height == 8:
-                self._with_wrap_arounds = False
-            elif width % 12 == 0 and height % 12 == 0:
-                self._with_wrap_arounds = True
-            elif (width - 4) % 12 == 0 and (height - 4) % 12 == 0:
-                self._with_wrap_arounds = False
-            else:
-                raise SpinnMachineInvalidParameterException(
-                    "version, width, height, with_wrap_arounds",
-                    "{}, {}, {}, {}".format(
-                        version, width, height, with_wrap_arounds),
-                    "A generic machine with wrap-arounds None must either "
-                    "have a width and height which are both either 2 or 8 or "
-                    "a width and height that are divisible by 12 or a width "
-                    "- 4 and height - 4 that are divisible by 12")
+            if with_x_wrap_arounds is None:
+                if width == 2:
 
-        if version is None and with_wrap_arounds is not None:
-            self.__verify_autodetect(version, width, height, with_wrap_arounds)
+                    # assume the special version 2 or 3 wrap arounds
+                    version = 2
+                    self._with_x_wrap_arounds = True
+                elif width == 8:
+                    self._with_x_wrap_arounds = False
+                elif width % 12 == 0:
+                    self._with_x_wrap_arounds = True
+                elif (width - 4) % 12 == 0:
+                    self._with_x_wrap_arounds = False
+                else:
+                    raise SpinnMachineInvalidParameterException(
+                        "version, width, with_x_wrap_arounds",
+                        "{}, {}, {}".format(
+                            version, width, with_x_wrap_arounds),
+                        "A generic machine without x-wrap-arounds set must "
+                        "either have a width of 2 or 8 or "
+                        "a width that is divisible by 12 or a width - 4 that "
+                        "is divisible by 12")
+            if with_y_wrap_arounds is None:
+                if height == 2:
 
-        if with_wrap_arounds is None:
-            logger.debug("width = %d, height = %d and auto wrap-arounds",
-                         width, height)
+                    # assume the special version 2 or 3 wrap arounds
+                    version = 2
+                    self._with_y_wrap_arounds = True
+                elif height == 8:
+                    self._with_y_wrap_arounds = False
+                elif height % 12 == 0:
+                    self._with_y_wrap_arounds = True
+                elif (height - 4) % 12 == 0:
+                    self._with_y_wrap_arounds = False
+                else:
+                    raise SpinnMachineInvalidParameterException(
+                        "version, height, with_wrap_arounds",
+                        "{}, {}, {}".format(
+                            version, height, with_wrap_arounds),
+                        "A generic machine without y-wrap-arounds set must "
+                        "either have a height which is either 2 or 8 or "
+                        "a height that is divisible by 12 or a height - 4 "
+                        "that is divisible by 12")
+
+        if version is None:
+            self.__verify_single_board_width_height(width, height)
+            if with_x_wrap_arounds is not None:
+                self.__verify_autodetect_x(
+                    version, width, with_x_wrap_arounds)
+            if with_y_wrap_arounds is not None:
+                self.__verify_autodetect_y(
+                    version, height, with_y_wrap_arounds)
+
+        if with_x_wrap_arounds is None:
+            logger.debug("width = %d, and auto x-wrap-arounds", width)
         else:
-            self._with_wrap_arounds = with_wrap_arounds
-            logger.debug("width = %d, height = %d and wrap-arounds %s",
-                         width, height, self._with_wrap_arounds)
+            self._with_x_wrap_arounds = with_x_wrap_arounds
+            logger.debug("width = %d and x-wrap-arounds %s",
+                         width, self._with_x_wrap_arounds)
+
+        if with_y_wrap_arounds is None:
+            logger.debug("height = %d and auto y-wrap-arounds", height)
+        else:
+            self._with_y_wrap_arounds = with_y_wrap_arounds
+            logger.debug("height = %d and y-wrap-arounds %s",
+                         height, self._with_y_wrap_arounds)
 
         # Set up the maximum chip x and y
         self._max_chip_x = width - 1
@@ -154,21 +202,20 @@ class VirtualMachine(Machine):
             for x in range(start_x, eth_width, 12)
             if (x, y) not in down_chips]
 
-        # Compute list of chips that are possible based on configuration
-        # If there are no wrap arounds, and the the size is not 2 * 2,
-        # the possible chips depend on the 48 chip board's gaps
-        if height > 2 and not self._with_wrap_arounds:
-
-            # Find all the chips that are on the board
+        # Find all the chips that are on the board
+        if height == 2 or (self._with_x_wrap_arounds and
+                           self._with_y_wrap_arounds):
             self._configured_chips = OrderedSet(
-                (x + eth_x, y + eth_y) for x in range(8) for y in range(8)
-                for eth_x, eth_y in ethernet_chips
-                if (x, y) not in Machine.BOARD_48_CHIP_GAPS and
-                (x, y) not in down_chips)
+                (x, y) for x in range(width) for y in range(height)
+                if (x, y) not in down_chips)
         else:
+            potential_chips = OrderedSet(
+                self._get_destination(x + eth_x, y + eth_y)
+                for eth_x, eth_y in ethernet_chips
+                for x in range(8) for y in range(8)
+                if (x, y) not in Machine.BOARD_48_CHIP_GAPS)
             self._configured_chips = OrderedSet(
-                (x, y) for x in range(width)
-                for y in range(height)
+                (x, y) for (x, y) in potential_chips
                 if (x, y) not in down_chips)
 
         # Assign "ip addresses" to the Ethernet chips
@@ -197,11 +244,14 @@ class VirtualMachine(Machine):
                 "version", str(version),
                 "Version must be between 2 and 5 inclusive or None")
 
-    def __verify_4_chip_board(self, version, width, height, wrap_arounds):
-        if wrap_arounds is not None:
+    def __verify_4_chip_board(
+            self, version, width, height, with_x_wrap_arounds,
+            with_y_wrap_arounds):
+        if with_x_wrap_arounds is not None or with_y_wrap_arounds is not None:
             raise SpinnMachineInvalidParameterException(
-                "version and with_wrap_arounds",
-                "{} and {}".format(version, wrap_arounds),
+                "version and with_x_wrap_arounds and with_y_wrap_arounds",
+                "{} and {} and {}".format(
+                    version, with_x_wrap_arounds, with_y_wrap_arounds),
                 "A version {} board has complex wrap arounds; set version "
                 "to None or with_wrap_arounds to None".format(version))
         if ((width is not None and width != 2) or
@@ -215,15 +265,20 @@ class VirtualMachine(Machine):
             width = 2
         if height is None:
             height = 2
-        return width, height, True
+        return width, height, True, True
 
-    def __verify_48_chip_board(self, version, width, height, wrap_arounds):
-        if wrap_arounds is not None and wrap_arounds:
+    def __verify_48_chip_board(
+            self, version, width, height, with_x_wrap_arounds,
+            with_y_wrap_arounds):
+        if ((with_x_wrap_arounds is not None and with_x_wrap_arounds) or
+                with_y_wrap_arounds is not None and with_y_wrap_arounds):
             raise SpinnMachineInvalidParameterException(
-                "version and with_wrap_arounds",
-                "{} and True".format(version),
+                "version and with_x_wrap_arounds and with_y_wrap_arounds",
+                "{} and {} and {}".format(
+                    version, with_x_wrap_arounds, with_y_wrap_arounds),
                 "A version {} board does not have wrap-arounds; set version "
-                "to None or with_wrap_arounds to None".format(version))
+                "to None or with_x_wrap_arounds and with_y_wrap_arounds to"
+                " None".format(version))
         if ((width is not None and width != 8) or
                 (height is not None and height != 8)):
             raise SpinnMachineInvalidParameterException(
@@ -235,30 +290,52 @@ class VirtualMachine(Machine):
             width = 8
         if height is None:
             height = 8
-        return width, height, False
+        return width, height, False, False
 
-    def __verify_autodetect(self, version, width, height, wrap_arounds):
-        if wrap_arounds and not (
-                (width == 2 and height == 2) or
-                (width % 12 == 0 and height % 12 == 0)):
+    def __verify_autodetect_x(self, version, width, with_x_wrap_arounds):
+        if with_x_wrap_arounds and not (
+                (width == 2) or (width % 12 == 0)):
             raise SpinnMachineInvalidParameterException(
-                "version, width, height, with_wrap_arounds",
-                "{}, {}, {}, {}".format(
-                    version, width, height, wrap_arounds),
-                "A generic machine with wrap-arounds must be either have a "
-                "width and height which are both 2 or a width and height "
-                "that are divisible by 12")
-        if not wrap_arounds and not (
-                (width == 8 and height == 8) or
-                (width == 2 and height == 2) or
-                ((width - 4) % 12 == 0 and (height - 4) % 12 == 0)):
+                "version, width, with_x_wrap_arounds",
+                "{}, {}, {}".format(version, width, with_x_wrap_arounds),
+                "A generic machine with x-wrap-arounds must be either have a "
+                "width which is 2 or a width that is divisible by 12")
+        if not with_x_wrap_arounds and not (
+                (width == 8) or (width == 2) or ((width - 4) % 12 == 0)):
             raise SpinnMachineInvalidParameterException(
-                "version, width, height, with_wrap_arounds",
-                "{}, {}, {}, {}".format(
-                    version, width, height, wrap_arounds),
-                "A generic machine without wrap-arounds must be either have a"
-                " width and height which are both either 2 or 8 or a width - 4"
-                " and height - 4 that are divisible by 12")
+                "version, width, with_x_wrap_arounds",
+                "{}, {}, {}".format(
+                    version, width, with_x_wrap_arounds),
+                "A generic machine without x-wrap-arounds must be either have "
+                "a width which is either 2 or 8 or a width - 4 that is "
+                "divisible by 12")
+
+    def __verify_autodetect_y(self, version, height, with_y_wrap_arounds):
+        if with_y_wrap_arounds and not (
+                (height == 2) or (height % 12 == 0)):
+            raise SpinnMachineInvalidParameterException(
+                "version, height, with_y_wrap_arounds",
+                "{}, {}, {}".format(version, height, with_y_wrap_arounds),
+                "A generic machine with y-wrap-arounds must be either have a "
+                "height which is 2 or a height that are divisible by 12")
+        if not with_y_wrap_arounds and not (
+                (height == 8) or (height == 2) or ((height - 4) % 12 == 0)):
+            raise SpinnMachineInvalidParameterException(
+                "version, height, with_y_wrap_arounds",
+                "{}, {}, {}".format(version, height, with_y_wrap_arounds),
+                "A generic machine without y-wrap-arounds must be either have "
+                "a height which is either 2 or 8 or a height - 4 that is "
+                "divisible by 12")
+
+    def __verify_single_board_width_height(self, width, height):
+        if width == 2 and height != 2 or height == 2 and width != 2:
+            raise SpinnMachineInvalidParameterException(
+                "width, height", "{}, {}".format(width, height),
+                "If width or height is 2, both must be 2")
+        if width == 8 and height != 8 or height == 8 and width != 8:
+            raise SpinnMachineInvalidParameterException(
+                "width, height", "{}, {}".format(width, height),
+                "If width or height is 8, both must be 8")
 
     def add_chip(self, chip):
         """ Add a chip to the machine
@@ -406,17 +483,19 @@ class VirtualMachine(Machine):
 
     def _get_destination(self, destination_x, destination_y):
 
-        if self._with_wrap_arounds:
+        if self._with_x_wrap_arounds:
 
             # Correct for wrap around
-            if destination_x == self._original_width:
-                destination_x = 0
-            if destination_y == self._original_height:
-                destination_y = 0
-            if destination_x == -1:
-                destination_x = self._original_width - 1
-            if destination_y == -1:
-                destination_y = self._original_height - 1
+            if destination_x >= self._original_width:
+                destination_x = destination_x % self._original_width
+            if destination_x < 0:
+                destination_x = self._original_width + destination_x
+
+        if self._with_y_wrap_arounds:
+            if destination_y >= self._original_height:
+                destination_y = destination_y % self._original_height
+            if destination_y < 0:
+                destination_y = self._original_height + destination_y
 
         return destination_x, destination_y
 
