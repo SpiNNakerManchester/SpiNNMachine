@@ -593,11 +593,13 @@ class Machine(object):
             max_coords = 8
         for chip_x in range(0, max_coords):
             for chip_y in range(0, max_coords):
-                if self.has_wrap_arounds:
+                if self.has_x_wrap_arounds:
                     x = (eth_x + chip_x) % (self._max_chip_x + 1)
-                    y = (eth_y + chip_y) % (self._max_chip_y + 1)
                 else:
                     x = eth_x + chip_x
+                if self.has_y_wrap_arounds:
+                    y = (eth_y + chip_y) % (self._max_chip_y + 1)
+                else:
                     y = eth_y + chip_y
 
                 if (self.is_chip_at(x, y) and
@@ -664,12 +666,28 @@ class Machine(object):
             processor for chip in self.chips for processor in chip.processors])
 
     @property
+    def has_x_wrap_arounds(self):
+        """ If the machine has wrap around links in the x direction
+
+        :return: True if wrap around links exist, false otherwise
+        :rtype: bool
+        """
+        return (self.max_chip_x + 1) == 2 or (self.max_chip_x + 1) % 12 == 0
+
+    @property
+    def has_y_wrap_arounds(self):
+        """ If the machine has wrap around links in the y direction
+
+        :return: True if wrap around links exist, false otherwise
+        :rtype: bool
+        """
+        return (self.max_chip_y + 1) == 2 or (self.max_chip_y + 1) % 12 == 0
+
+    @property
     def has_wrap_arounds(self):
         """ If the machine has wrap around links
 
         :return: True if wrap around links exist, false otherwise
         :rtype: bool
         """
-        return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
-                ((self.max_chip_x + 1) % 12 == 0 and
-                 (self.max_chip_y + 1) % 12 == 0))
+        return self.has_x_wrap_arounds or self.has_y_wrap_arounds
