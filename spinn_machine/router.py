@@ -18,6 +18,8 @@ class Router(object):
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
 
+    MAX_LINKS_PER_ROUTER = 6
+
     __slots__ = (
         "_clock_speed", "_emergency_routing_enabled", "_links",
         "_n_available_multicast_entries"

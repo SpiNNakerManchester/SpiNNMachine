@@ -26,6 +26,12 @@ class Machine(object):
     BOARD_VERSION_FOR_48_CHIPS = [4, 5]
     BOARD_VERSION_FOR_4_CHIPS = [2, 3]
 
+    # other useful magic numbers for machines
+    MAX_CHIP_X_ID_ON_ONE_BOARD = 7
+    MAX_CHIP_Y_ID_ON_ONE_BOARD = 7
+    SIZE_X_OF_ONE_BOARD = 8
+    SIZE_Y_OF_ONE_BOARD = 8
+
     # Table of the amount to add to the x and y coordinates to get the
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
