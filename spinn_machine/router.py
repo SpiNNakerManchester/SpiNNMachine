@@ -2,6 +2,7 @@ from .exceptions import \
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException
 
 from collections import OrderedDict
+from six import iteritems, itervalues
 
 
 class Router(object):
@@ -109,7 +110,7 @@ class Router(object):
         :rtype: iterable of :py:class:`spinn_machine.Link`
         :raise None: does not raise any known exceptions
         """
-        return self._links.itervalues()
+        return itervalues(self._links)
 
     def __iter__(self):
         """ Get an iterable of source link ids and links in the router
@@ -120,7 +121,7 @@ class Router(object):
         :rtype: iterable of (int, :py:class:`spinn_machine.Link`)
         :raise None: does not raise any known exceptions
         """
-        return self._links.iteritems()
+        return iteritems(self._links)
 
     def __len__(self):
         """ Get the number of links in the router
@@ -203,9 +204,10 @@ class Router(object):
         return (
             "[Router: clock_speed={} MHz, emergency_routing={}, "
             "available_entries={}, links={}]".format(
-                (self._clock_speed / 1000000),
+                (self._clock_speed // 1000000),
                 self._emergency_routing_enabled,
-                self._n_available_multicast_entries, self._links.values()))
+                self._n_available_multicast_entries,
+                list(self._links.values())))
 
     def __repr__(self):
         return self.__str__()

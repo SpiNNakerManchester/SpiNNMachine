@@ -1,5 +1,7 @@
 language: python
-python: "2.7"
+python:
+  - 2.7
+  - 3.6
 dist: trusty
 cache: pip
 
@@ -14,7 +16,7 @@ install:
   - pip install python-coveralls
 
 script:
-  - py.test . --cov spinn_machine
+  - py.test unittests --cov spinn_machine
   # Code quality check
   - flake8 spinn_machine unittests
   - cd doc/source

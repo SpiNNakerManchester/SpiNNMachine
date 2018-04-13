@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from six import itervalues
 from .core_subset import CoreSubset
 
 
@@ -97,7 +98,7 @@ class CoreSubsets(object):
         :return: Iterable of core subsets
         :rtype: iterable of :py:class:`spinn_machine.CoreSubset`
         """
-        return self._core_subsets.itervalues()
+        return itervalues(self._core_subsets)
 
     def get_core_subset_for_chip(self, x, y):
         """ Get the core subset for a chip
@@ -117,12 +118,12 @@ class CoreSubsets(object):
     def __iter__(self):
         """ Iterable of core_subsets
         """
-        return self._core_subsets.itervalues()
+        return itervalues(self._core_subsets)
 
     def __len__(self):
         """ The total number of processors that are in these core subsets
         """
-        return sum(len(subset) for subset in self._core_subsets.itervalues())
+        return sum(len(subset) for subset in itervalues(self._core_subsets))
 
     def __contains__(self, x_y_tuple):
         """ True if the given coordinates are in the set

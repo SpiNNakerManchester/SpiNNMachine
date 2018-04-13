@@ -6,7 +6,7 @@ from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 class TestingFixedRouteEntries(unittest.TestCase):
     def test_fixed_route_creation(self):
         fre = FixedRouteEntry([1, 2, 3], [2, 3, 4])
-        self.assertEqual(fre.__repr__(), "set([2, 3, 4]):set([1, 2, 3])")
+        self.assertEqual(fre.__repr__(), "{2, 3, 4}:{1, 2, 3}")
         self.assertEqual(frozenset(fre.processor_ids), frozenset([1, 2, 3]))
         self.assertEqual(frozenset(fre.link_ids), frozenset([2, 3, 4]))
 

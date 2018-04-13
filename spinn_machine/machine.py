@@ -5,6 +5,7 @@ from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 
 # general imports
 from collections import OrderedDict
+from six import iteritems, iterkeys, itervalues
 
 
 class Machine(object):
@@ -144,7 +145,7 @@ class Machine(object):
         :rtype: iterable of :py:class:`spinn_machine.Chip`
         :raise None: does not raise any known exceptions
         """
-        return self._chips.itervalues()
+        return itervalues(self._chips)
 
     @property
     def chip_coordinates(self):
@@ -153,7 +154,7 @@ class Machine(object):
         :return: An iterable of chip coordinates
         :rtype: iterable of (int, int)
         """
-        return self._chips.iterkeys()
+        return iterkeys(self._chips)
 
     def __iter__(self):
         """ Get an iterable of the chip coordinates and chips
@@ -166,7 +167,7 @@ class Machine(object):
         :rtype: iterable of ((int, int), :py:class:`spinn_machine.Chip`)
         :raise None: does not raise any known exceptions
         """
-        return self._chips.iteritems()
+        return iteritems(self._chips)
 
     def __len__(self):
         """ Get the total number of chips.
@@ -286,7 +287,7 @@ class Machine(object):
         :rtype: iterable of\
             :py:class:`spinn_machine.link_data_objects.SpinnakerLinkData`
         """
-        return self._spinnaker_links.iteritems()
+        return iteritems(self._spinnaker_links)
 
     def get_spinnaker_link_with_id(
             self, spinnaker_link_id, board_address=None):
@@ -626,7 +627,7 @@ class Machine(object):
         self._maximum_user_cores_on_chip = 0
         reserved_cores = CoreSubsets()
         failed_chips = list()
-        for chip in self._chips.itervalues():
+        for chip in itervalues(self._chips):
 
             # Try to get a new system processor
             core_reserved = chip.reserve_a_system_processor()
