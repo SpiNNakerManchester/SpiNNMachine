@@ -2,7 +2,7 @@ from spinn_utilities.ordered_set import OrderedSet
 
 
 class CoreSubset(object):
-    """ Represents a subset of the cores on a chip
+    """ Represents a subset of the cores on a SpiNNaker chip.
     """
 
     __slots__ = (
@@ -15,8 +15,8 @@ class CoreSubset(object):
         :type x: int
         :param y: The y-coordinate of the chip
         :type y: int
-        :param processor_ids: An iterable of processor ids on the chip
-        :type processor_ids: iterable of int
+        :param processor_ids: An iterable of processor IDs on the chip
+        :type processor_ids: iterable(int)
         """
         self._x = x
         self._y = y
@@ -25,9 +25,9 @@ class CoreSubset(object):
             self.add_processor(processor_id)
 
     def add_processor(self, processor_id):
-        """ Adds a processor id to this subset
+        """ Adds a processor ID to this subset
 
-        :param processor_id: A processor id
+        :param processor_id: A processor ID
         :type processor_id: int
         :return: Nothing is returned
         :rtype: None
@@ -57,10 +57,10 @@ class CoreSubset(object):
 
     @property
     def processor_ids(self):
-        """ The subset of processor ids on the chip
+        """ The subset of processor IDs on the chip
 
-        :return: An iterable of processor ids
-        :rtype: iterable of int
+        :return: An iterable of processor IDs
+        :rtype: iterable(int)
         """
         return iter(self._processor_ids)
 

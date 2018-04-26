@@ -20,7 +20,7 @@ class IPTag(AbstractTag):
             port=None, strip_sdp=False, traffic_identifier="DEFAULT"):
         """
         :param board_address: \
-            The ip address of the board on which the tag is allocated
+            The IP address of the board on which the tag is allocated
         :type board_address: str or None
         :param destination_x: \
             The x-coordinate where users of this tag should send packets to
@@ -34,8 +34,9 @@ class IPTag(AbstractTag):
             The IP address to which SDP packets with the tag will be sent
         :type ip_address: str
         :param port: \
-            The port to which the SDP packets with the tag will be sent
-        :type port: int or None if not yet assigned
+            The port to which the SDP packets with the tag will be sent, or\
+            None if not yet assigned
+        :type port: int or None
         :param strip_sdp: Indicates whether the SDP header should be removed
         :type strip_sdp: bool
         :param traffic_identifier: \

@@ -2,7 +2,7 @@ from .exceptions import SpinnMachineInvalidParameterException
 
 
 class Processor(object):
-    """ A processor object included in a chip
+    """ A processor object included in a SpiNNaker chip
     """
 
     CLOCK_SPEED = 200 * 1000 * 1000
@@ -15,10 +15,10 @@ class Processor(object):
     def __init__(self, processor_id, clock_speed=CLOCK_SPEED, is_monitor=False,
                  dtcm_available=DTCM_AVAILABLE):
         """
-        :param processor_id: id of the processor in the chip
+        :param processor_id: ID of the processor in the chip
         :type processor_id: int
         :param clock_speed: \
-            The number of cpu cycles per second of the processor
+            The number of CPU cycles per second of the processor
         :type clock_speed: int
         :param is_monitor: Determines if the processor is considered the\
             monitor processor, and so should not be otherwise allocated
@@ -41,9 +41,9 @@ class Processor(object):
 
     @property
     def processor_id(self):
-        """ The id of the processor
+        """ The ID of the processor
 
-        :return: id of the processor
+        :return: ID of the processor
         :rtype: int
         """
         return self._processor_id
@@ -60,9 +60,9 @@ class Processor(object):
 
     @property
     def cpu_cycles_available(self):
-        """ The number of cpu cycles available from this processor per ms
+        """ The number of CPU cycles available from this processor per ms
 
-        :return: the number of cpu cycles available on this processor
+        :return: the number of CPU cycles available on this processor
         :rtype: int
         """
         return self._clock_speed / 1000.0
@@ -96,9 +96,9 @@ class Processor(object):
         """ Creates a clone of this processor but changing it to a system\
             processor.
 
-        :return: A new Processor with the same properties INCLUDING id\
+        :return: A new Processor with the same properties INCLUDING the ID\
             except now set as a System processor
-        :rtype: spinn_machine.Processor
+        :rtype: :py:class:`~spinn_machine.Processor`
         """
         return Processor(self._processor_id, self._clock_speed,
                          is_monitor=True, dtcm_available=self._dtcm_available)

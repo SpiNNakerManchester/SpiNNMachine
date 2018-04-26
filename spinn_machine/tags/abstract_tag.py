@@ -1,7 +1,9 @@
 class AbstractTag(object):
+    """ Common properties of SpiNNaker IP tags and reverse IP tags.
+    """
 
     __slots__ = [
-        # the board address associted with this tag
+        # the board address associated with this tag
         "_board_address",
 
         # the tag id associated with this tag
@@ -24,7 +26,7 @@ class AbstractTag(object):
 
     @property
     def tag(self):
-        """ The tag id of the tag
+        """ The tag ID of the tag
         """
         return self._tag
 

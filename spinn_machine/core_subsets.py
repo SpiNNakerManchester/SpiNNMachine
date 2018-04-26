@@ -4,7 +4,8 @@ from .core_subset import CoreSubset
 
 
 class CoreSubsets(object):
-    """ Represents a group of CoreSubsets, with a maximum of one per chip
+    """ Represents a group of CoreSubsets, with a maximum of one per\
+        SpiNNaker chip.
     """
 
     __slots__ = ("_core_subsets", )
@@ -12,8 +13,7 @@ class CoreSubsets(object):
     def __init__(self, core_subsets=None):
         """
         :param core_subsets: An iterable of cores for each desired chip
-        :type core_subsets: iterable of\
-            :py:class:`spinn_machine.CoreSubset`
+        :type core_subsets: iterable(:py:class:`~spinn_machine.CoreSubset`)
         """
         self._core_subsets = OrderedDict()
         if core_subsets is not None:
@@ -25,7 +25,6 @@ class CoreSubsets(object):
 
         :param core_subset: The core subset to add
         :type core_subset: :py:class:`spinn_machine.CoreSubset`
-        :return: Nothing is returned
         :rtype: None
         """
         xy = (core_subset.x, core_subset.y)
@@ -51,9 +50,8 @@ class CoreSubsets(object):
         :type x: int
         :param y: The y-coordinate of the chip
         :type y: int
-        :param processor_id: A processor id
+        :param processor_id: A processor ID
         :type processor_id: int
-        :return: Nothing is returned
         :rtype: None
         """
         xy = (x, y)
@@ -81,7 +79,7 @@ class CoreSubsets(object):
         :type x: int
         :param y: The y-coordinate of a chip
         :type y: int
-        :param processor_id: The id of a core
+        :param processor_id: The ID of a core
         :type processor_id: int
         :return: Whether there is a chip with coordinates (x, y) in the\
             subset, which has a core with the given id in the subset
@@ -96,7 +94,7 @@ class CoreSubsets(object):
         """ The one-per-chip subsets
 
         :return: Iterable of core subsets
-        :rtype: iterable of :py:class:`spinn_machine.CoreSubset`
+        :rtype: iterable(:py:class:`spinn_machine.CoreSubset`)
         """
         return itervalues(self._core_subsets)
 
@@ -108,7 +106,7 @@ class CoreSubsets(object):
         :param y: The y-coordinate of a chip
         :type y: int
         :return: The core subset of a chip, which will be empty if not added
-        :rtype: :py:class:`spinn_machine.CoreSubset`
+        :rtype: :py:class:`~spinn_machine.CoreSubset`
         """
         xy = (x, y)
         if xy not in self._core_subsets:
@@ -131,6 +129,7 @@ class CoreSubsets(object):
         :param x_y_tuple:\
             Either a 2-tuple of x, y coordinates or a 3-tuple or x, y,\
             processor_id coordinates
+        :type x_y_tuple: tuple(int,int) or tuple(int,int,int)
         """
         if len(x_y_tuple) == 2:
             return self.is_chip(*x_y_tuple)

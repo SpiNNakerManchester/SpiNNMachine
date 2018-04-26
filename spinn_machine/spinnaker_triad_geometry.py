@@ -20,7 +20,7 @@ class SpiNNakerTriadGeometry(object):
     def get_spinn5_geometry():
         """ Get the geometry object for a SpiNN-5 arrangement of boards
 
-        :return: a SpiNNakerTriadGeometry object.
+        :return: a :py:class:`SpiNNakerTriadGeometry` object.
         """
 
         # Note the centres are slightly offset so as to force which edges are

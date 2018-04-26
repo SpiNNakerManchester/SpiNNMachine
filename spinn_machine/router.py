@@ -10,8 +10,8 @@ class Router(object):
         The router is iterable over the links, providing (source_link_id,\
         link) where:
 
-            * source_link_id is the id of a link
-            * link is the link with id source_link_id
+            * source_link_id is the ID of a link
+            * link is the link with ID source_link_id
     """
 
     ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
@@ -31,7 +31,7 @@ class Router(object):
             n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
         :param links: iterable of links
-        :type links: iterable of :py:class:`spinn_machine.Link`
+        :type links: iterable(:py:class:`~spinn_machine.Link`)
         :param emergency_routing_enabled: \
             Determines if the router emergency routing is operating
         :type emergency_routing_enabled: bool
@@ -67,12 +67,12 @@ class Router(object):
         self._links[link.source_link_id] = link
 
     def is_link(self, source_link_id):
-        """ Determine if there is a link with id source_link_id.\
-            Also implemented as __contains__(source_link_id)
+        """ Determine if there is a link with ID source_link_id.\
+            Also implemented as `__contains__(source_link_id)`
 
-        :param source_link_id: The id of the link to find
+        :param source_link_id: The ID of the link to find
         :type source_link_id: int
-        :return: True if there is a link with the given id, False otherwise
+        :return: True if there is a link with the given ID, False otherwise
         :rtype: bool
         :raise None: No known exceptions are raised
         """
@@ -84,13 +84,13 @@ class Router(object):
         return self.is_link(source_link_id)
 
     def get_link(self, source_link_id):
-        """ Get the link with the given id, or None if no such link.\
-            Also implemented as __getitem__(source_link_id)
+        """ Get the link with the given ID, or None if no such link.\
+            Also implemented as `__getitem__(source_link_id)`
 
-        :param source_link_id: The id of the link to find
+        :param source_link_id: The ID of the link to find
         :type source_link_id: int
         :return: The link, or None if no such link
-        :rtype: :py:class:`spinn_machine.Link`
+        :rtype: :py:class:`~spinn_machine.Link`
         :raise None: No known exceptions are raised
         """
         if source_link_id in self._links:
@@ -107,18 +107,18 @@ class Router(object):
         """ The available links of this router
 
         :return: an iterable of available links
-        :rtype: iterable of :py:class:`spinn_machine.Link`
+        :rtype: iterable(:py:class:`~spinn_machine.Link`)
         :raise None: does not raise any known exceptions
         """
         return itervalues(self._links)
 
     def __iter__(self):
-        """ Get an iterable of source link ids and links in the router
+        """ Get an iterable of source link IDs and links in the router
 
         :return: an iterable of tuples of (source_link_id, link) where:
-            * source_link_id is the id of the link
+            * source_link_id is the ID of the link
             * link is a router link
-        :rtype: iterable of (int, :py:class:`spinn_machine.Link`)
+        :rtype: iterable(int, :py:class:`~spinn_machine.Link`)
         :raise None: does not raise any known exceptions
         """
         return iteritems(self._links)
@@ -168,7 +168,7 @@ class Router(object):
 
         :param routing_table_entry: The entry to convert
         :type routing_table_entry:\
-            :py:class:`spinn_machine.MulticastRoutingEntry`
+            :py:class:`~spinn_machine.MulticastRoutingEntry`
         :rtype: int
         """
         route_entry = 0
@@ -177,7 +177,7 @@ class Router(object):
                 raise SpinnMachineInvalidParameterException(
                     "route.processor_ids",
                     str(routing_table_entry.processor_ids),
-                    "Processor ids must be between 0 and 26")
+                    "Processor IDs must be between 0 and 26")
             route_entry |= (1 << (6 + processor_id))
         for link_id in routing_table_entry.link_ids:
             if link_id > 5 or link_id < 0:
@@ -191,7 +191,7 @@ class Router(object):
         """ Utility method to convert links into x and y coordinates
 
         :return: iterable list of destination coordinates in x and y dict
-        :rtype: iterable of dict
+        :rtype: iterable(dict(str,int))
 
         """
         next_hop_chips_coords = list()

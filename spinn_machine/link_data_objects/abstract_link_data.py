@@ -1,5 +1,5 @@
 class AbstractLinkData(object):
-    """ Data object for spinnaker links
+    """ Data object for SpiNNaker links
     """
 
     __slots__ = (

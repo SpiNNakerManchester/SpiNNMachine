@@ -5,13 +5,12 @@ from spinn_utilities.ordered_set import OrderedSet
 
 
 class Chip(object):
-
-    """ Represents a chip with a number of cores, an amount of SDRAM shared
-        between the cores, and a router.\
-        The chip is iterable over the processors providing\
+    """ Represents a SpiNNaker chip with a number of cores, an amount of\
+        SDRAM shared between the cores, and a router.\
+        The chip is iterable over the processors, yielding\
         (processor_id, processor) where:
 
-            * processor_id is the id of a processor
+            * processor_id is the ID of a processor
             * processor is the processor with processor_id
     """
 
@@ -29,7 +28,6 @@ class Chip(object):
                  nearest_ethernet_y, ip_address=None, virtual=False,
                  tag_ids=IPTAG_IDS):
         """
-
         :param x: the x-coordinate of the chip's position in the\
             two-dimensional grid of chips
         :type x: int
@@ -37,22 +35,21 @@ class Chip(object):
             two-dimensional grid of chips
         :type y: int
         :param processors: an iterable of processor objects
-        :type processors: iterable of\
-            :py:class:`spinn_machine.Processor`
+        :type processors: iterable(:py:class:`~spinn_machine.Processor`)
         :param router: a router for the chip
-        :type router: :py:class:`spinn_machine.Router`
+        :type router: :py:class:`~spinn_machine.Router`
         :param sdram: an SDRAM for the chip
-        :type sdram: :py:class:`spinn_machine.SDRAM`
+        :type sdram: :py:class:`~spinn_machine.SDRAM`
         :param ip_address: \
             the IP address of the chip or None if no Ethernet attached
         :type ip_address: str
         :param virtual: boolean which defines if this chip is a virtual one
         :type virtual: bool
-        :param tag_ids: Id to identify the chip for SDP
-        :type tag_ids: iterable of int
-        :param nearest_ethernet_x: the nearest Ethernet x coord
+        :param tag_ids: ID to identify the chip for SDP
+        :type tag_ids: iterable(int)
+        :param nearest_ethernet_x: the nearest Ethernet x coordinate
         :type nearest_ethernet_x: int or None
-        :param nearest_ethernet_y: the nearest Ethernet y coord
+        :param nearest_ethernet_y: the nearest Ethernet y coordinate
         :type nearest_ethernet_y: int or None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If processors contains any two processors with the same\
@@ -79,26 +76,26 @@ class Chip(object):
         self._nearest_ethernet_y = nearest_ethernet_y
 
     def is_processor_with_id(self, processor_id):
-        """ Determines if a processor with the given id exists in the chip.\
+        """ Determines if a processor with the given ID exists in the chip.\
             Also implemented as __contains__(processor_id)
 
-        :param processor_id: the processor id to check for
+        :param processor_id: the processor ID to check for
         :type processor_id: int
-        :return: True or False based on the existence of the processor
+        :return: Whether the processor with the given ID exists
         :rtype: bool
         :raise None: does not raise any known exceptions
         """
         return processor_id in self._p
 
     def get_processor_with_id(self, processor_id):
-        """ Return the processor with the specified id or None if the\
+        """ Return the processor with the specified ID or None if the\
             processor does not exist.
 
-        :param processor_id: the id of the processor to return
+        :param processor_id: the ID of the processor to return
         :type processor_id: int
         :return: \
-            the processor with the specified id, or None if no such processor
-        :rtype: :py:class:`spinn_machine.Processor`
+            the processor with the specified ID, or None if no such processor
+        :rtype: :py:class:`~spinn_machine.Processor`
         :raise None: does not raise any known exceptions
         """
         if processor_id in self._p:
@@ -130,7 +127,7 @@ class Chip(object):
         """ An iterable of available processors
 
         :return: iterable of processors
-        :rtype: iterable of :py:class:spinn_machine.Processor`
+        :rtype: iterable(:py:class:`~spinn_machine.Processor`)
         :raise None: does not raise any known exceptions
         """
         return itervalues(self._p)
@@ -162,17 +159,17 @@ class Chip(object):
         """ The router object associated with the chip
 
         :return: router associated with the chip
-        :rtype: :py:class:`spinn_machine.Router`
+        :rtype: :py:class:`~spinn_machine.Router`
         :raise None: does not raise any known exceptions
         """
         return self._router
 
     @property
     def sdram(self):
-        """ The sdram associated with the chip
+        """ The SDRAM associated with the chip
 
-        :return: sdram associated with the chip
-        :rtype: :py:class:`spinn_machine.SDRAM`
+        :return: SDRAM associated with the chip
+        :rtype: :py:class:`~spinn_machine.SDRAM`
         :raise None: does not raise any known exceptions
         """
         return self._sdram
@@ -190,9 +187,9 @@ class Chip(object):
 
     @property
     def nearest_ethernet_x(self):
-        """ the x coord of the nearest Ethernet chip
+        """ the x coordinate of the nearest Ethernet chip
 
-        :return: the x coord of the nearest Ethernet chip
+        :return: the x coordinate of the nearest Ethernet chip
         :rtype: int
         :raise None: does not raise any known exceptions
         """
@@ -200,9 +197,9 @@ class Chip(object):
 
     @property
     def nearest_ethernet_y(self):
-        """ the y coord of the nearest Ethernet chip
+        """ the y coordinate of the nearest Ethernet chip
 
-        :return: the y coord of the nearest Ethernet chip
+        :return: the y coordinate of the nearest Ethernet chip
         :rtype: int
         :raise None: does not raise any known exceptions
         """
@@ -210,9 +207,9 @@ class Chip(object):
 
     @property
     def tag_ids(self):
-        """ The tag ids supported by this chip
+        """ The tag IDs supported by this chip
 
-        :return: the set of ids.
+        :return: the set of IDs.
         :raise None: this method does not raise any exception
         """
         return self._tag_ids
@@ -233,10 +230,10 @@ class Chip(object):
 
         .. warning::
             This method should ONLY be called via\
-            Machine.reserve_system_processors
+            :py:meth:`spinn_machine.Machine.reserve_system_processors`
 
         :return:\
-            The id of the processor reserved, or None if no processor could\
+            The ID of the processor reserved, or None if no processor could\
             be found
         :rtype: int or None
         """
@@ -253,9 +250,9 @@ class Chip(object):
         """ Get an iterable of processor identifiers and processors
 
         :return: An iterable of (processor_id, processor) where:
-            * processor_id is the id of a processor
-            * processor is the processor with the id
-        :rtype: iterable of (int, :py:class:spinn_machine.Processor`)
+            * processor_id is the ID of a processor
+            * processor is the processor with the ID
+        :rtype: iterable(int,:py:class:`~spinn_machine.Processor`)
         :raise None: does not raise any known exceptions
         """
         return iteritems(self._p)
