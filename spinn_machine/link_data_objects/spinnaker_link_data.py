@@ -17,7 +17,7 @@ class SpinnakerLinkData(AbstractLinkData):
 
     @property
     def spinnaker_link_id(self):
-        """ The ID of the spinnaker link.
+        """ The ID of the SpiNNaker link.
         """
         return self._spinnaker_link_id
 

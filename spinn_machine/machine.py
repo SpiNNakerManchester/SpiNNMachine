@@ -9,8 +9,8 @@ from six import iteritems, iterkeys, itervalues
 
 
 class Machine(object):
-    """ A Representation of a Machine with a number of Chips.  Machine is also\
-        iterable, providing ((x, y), chip) where:
+    """ A representation of a SpiNNaker Machine with a number of Chips.\
+        Machine is also iterable, providing ((x, y), chip) where:
 
             * x is the x-coordinate of a chip
             * y is the y-coordinate of a chip
@@ -57,7 +57,7 @@ class Machine(object):
     def __init__(self, chips, boot_x, boot_y):
         """
         :param chips: An iterable of chips in the machine
-        :type chips: iterable of :py:class:`spinn_machine.Chip`
+        :type chips: iterable of :py:class:`~spinn_machine.Chip`
         :param boot_x: The x-coordinate of the chip used to boot the machine
         :type boot_x: int
         :param boot_y: The y-coordinate of the chip used to boot the machine
@@ -97,7 +97,7 @@ class Machine(object):
         """ Add a chip to the machine
 
         :param chip: The chip to add to the machine
-        :type chip: :py:class:`spinn_machine.Chip`
+        :type chip: :py:class:`~spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
@@ -127,7 +127,7 @@ class Machine(object):
         """ Add some chips to the machine
 
         :param chips: an iterable of chips
-        :type chips: iterable of :py:class:`spinn_machine.Chip`
+        :type chips: iterable(:py:class:`~spinn_machine.Chip`)
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
@@ -142,7 +142,7 @@ class Machine(object):
         """ An iterable of chips in the machine
 
         :return: An iterable of chips
-        :rtype: iterable of :py:class:`spinn_machine.Chip`
+        :rtype: iterable(:py:class:`~spinn_machine.Chip`)
         :raise None: does not raise any known exceptions
         """
         return itervalues(self._chips)
@@ -152,7 +152,7 @@ class Machine(object):
         """ An iterable of chip coordinates in the machine
 
         :return: An iterable of chip coordinates
-        :rtype: iterable of (int, int)
+        :rtype: iterable(int,int)
         """
         return iterkeys(self._chips)
 
@@ -164,7 +164,7 @@ class Machine(object):
                 * x is the x-coordinate of a chip
                 * y is the y-coordinate of a chip
             * chip is a chip
-        :rtype: iterable of ((int, int), :py:class:`spinn_machine.Chip`)
+        :rtype: iterable((int, int), :py:class:`~spinn_machine.Chip`)
         :raise None: does not raise any known exceptions
         """
         return iteritems(self._chips)
@@ -186,7 +186,7 @@ class Machine(object):
         :param y: the y-coordinate of the requested chip
         :type y: int
         :return: the chip at the specified location, or None if no such chip
-        :rtype: :py:class:`spinn_machine.Chip`
+        :rtype: :py:class:`~spinn_machine.Chip`
         :raise None: does not raise any known exceptions
         """
         chip_id = (x, y)
@@ -202,7 +202,7 @@ class Machine(object):
             * y is the y-coordinate of the chip to retrieve
         :type x_y_tuple: (int, int)
         :return: the chip at the specified location, or None if no such chip
-        :rtype: :py:class:`spinn_machine.Chip`
+        :rtype: :py:class:`~spinn_machine.Chip`
         :raise None: does not raise any known exceptions
         """
         x, y = x_y_tuple
@@ -240,7 +240,7 @@ class Machine(object):
         :param x_y_tuple: A tuple of (x, y) where:
             * x is the x-coordinate of the chip to retrieve
             * y is the y-coordinate of the chip to retrieve
-        :type x_y_tuple: (int, int)
+        :type x_y_tuple: tuple(int, int)
         :return: True if the chip exists, False otherwise
         :rtype: bool
         :raise None: does not raise any known exceptions
@@ -275,7 +275,7 @@ class Machine(object):
         """ The chips in the machine that have an Ethernet connection
 
         :return: An iterable of chips
-        :rtype: iterable of :py:class:`spinn_machine.Chip`
+        :rtype: iterable of :py:class:`~spinn_machine.Chip`
         """
         return self._ethernet_connected_chips
 
@@ -285,22 +285,22 @@ class Machine(object):
 
         :return: An iterable of spinnaker links
         :rtype: iterable of\
-            :py:class:`spinn_machine.link_data_objects.SpinnakerLinkData`
+            :py:class:`~spinn_machine.link_data_objects.SpinnakerLinkData`
         """
         return iteritems(self._spinnaker_links)
 
     def get_spinnaker_link_with_id(
             self, spinnaker_link_id, board_address=None):
-        """ Get a spinnaker link with a given id
+        """ Get a SpiNNaker link with a given ID
 
-        :param spinnaker_link_id: The id of the link
+        :param spinnaker_link_id: The ID of the link
         :type spinnaker_link_id: int
         :param board_address:\
-            the board address that this spinnaker link is associated with
+            the board address that this SpiNNaker link is associated with
         :type board_address: str or None
-        :return: The spinnaker link data or None if no link
+        :return: The SpiNNaker link data or None if no link
         :rtype:\
-            :py:class:`spinn_machine.link_data_objects.SpinnakerLinkData`
+            :py:class:`~spinn_machine.link_data_objects.SpinnakerLinkData`
         """
         if board_address is None:
             board_address = self._boot_ethernet_address
@@ -312,20 +312,20 @@ class Machine(object):
             link for a given board address.
 
         :param fpga_id:\
-            the id of the FPGA that the data is going through.  Refer to \
+            the ID of the FPGA that the data is going through.  Refer to \
             technical document located here for more detail:
             https://drive.google.com/file/d/0B9312BuJXntlVWowQlJ3RE8wWVE
         :type fpga_link_id: int
         :param fpga_link_id:\
-            the link id of the FPGA. Refer to technical document located here\
+            the link ID of the FPGA. Refer to technical document located here\
             for more detail:
             https://drive.google.com/file/d/0B9312BuJXntlVWowQlJ3RE8wWVE
         :type fpga_id: int
         :param board_address:\
-            the board address that this spinnaker link is associated with
+            the board address that this FPGA link is associated with
         :type board_address: str
         :rtype:\
-            :py:class:`spinn_machine.link_data_objects.FPGALinkData`
+            :py:class:`~spinn_machine.link_data_objects.FPGALinkData`
         :return: the given FPGA link object or None if no such link
         """
         if board_address is None:
@@ -539,6 +539,7 @@ class Machine(object):
         """ Get the number of cores and links from the machine
 
         :return: tuple of (n_cores, n_links)
+        :rtype: tuple(int,int)
         """
         cores = 0
         total_links = dict()
@@ -582,7 +583,7 @@ class Machine(object):
     def boot_chip(self):
         """ The chip used to boot the machine
 
-        :rtype: `py:class:spinn_machine.Chip`
+        :rtype: `~py:class:spinn_machine.Chip`
         """
         return self._chips[self._boot_x, self._boot_y]
 
@@ -591,6 +592,7 @@ class Machine(object):
 
         :param chip: The chip to find other chips on the same board as
         :return: An iterable of (x, y) coordinates of chips on the same board
+        :rtype: iterable(tuple(int,int))
         """
         eth_x = chip.nearest_ethernet_x
         eth_y = chip.nearest_ethernet_y
@@ -621,8 +623,8 @@ class Machine(object):
             A CoreSubsets of reserved cores, and a list of (x, y) of chips\
             where a non-system core was not available
         :rtype:\
-            (:py:class:`spinn_machine.CoreSubsets`,\
-            list of (int, int))
+            tuple(:py:class:`~spinn_machine.CoreSubsets`,\
+            list(int, int))
         """
         self._maximum_user_cores_on_chip = 0
         reserved_cores = CoreSubsets()
@@ -650,7 +652,7 @@ class Machine(object):
 
     @property
     def total_available_user_cores(self):
-        """ provides total number of cores on the machine which are not \
+        """ The total number of cores on the machine which are not \
             monitor cores
 
         :return: total
@@ -662,7 +664,7 @@ class Machine(object):
 
     @property
     def total_cores(self):
-        """ provides total number of cores on the machine, includes monitors
+        """ The total number of cores on the machine, including monitors
 
         :return: total
         :rtype: int

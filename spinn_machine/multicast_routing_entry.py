@@ -4,7 +4,7 @@ from .exceptions import SpinnMachineInvalidParameterException
 
 
 class MulticastRoutingEntry(object):
-    """ Represents an entry in a multicast routing table
+    """ Represents an entry in a SpiNNaker chip's multicast routing table
     """
 
     __slots__ = (
@@ -20,10 +20,10 @@ class MulticastRoutingEntry(object):
         :type routing_entry_key: int
         :param mask: The route key_combo mask
         :type mask: int
-        :param processor_ids: The destination processor ids
-        :type processor_ids: iterable of int
-        :param link_ids: The destination link ids
-        :type link_ids: iterable of int
+        :param processor_ids: The destination processor IDs
+        :type processor_ids: iterable(int)
+        :param link_ids: The destination link IDs
+        :type link_ids: iterable(int)
         :param defaultable: if this entry is defaultable (it receives packets \
             from its directly opposite route position)
         :type defaultable: bool
@@ -79,19 +79,19 @@ class MulticastRoutingEntry(object):
 
     @property
     def processor_ids(self):
-        """ The destination processor ids
+        """ The destination processor IDs
 
-        :return: An iterable of processor ids
-        :rtype: iterable of int
+        :return: An iterable of processor IDs
+        :rtype: iterable(int)
         """
         return self._processor_ids
 
     @property
     def link_ids(self):
-        """ The destination link ids
+        """ The destination link IDs
 
-        :return: An iterable of link ids
-        :rtype: iterable of int
+        :return: An iterable of link IDs
+        :rtype: iterable(int)
         """
         return self._link_ids
 
@@ -107,15 +107,15 @@ class MulticastRoutingEntry(object):
     def merge(self, other_entry):
         """ Merges together two multicast routing entries.  The entry to merge\
             must have the same key and mask.  The merge will join the\
-            processor ids and link ids from both the entries.  This could be\
+            processor IDs and link IDs from both the entries.  This could be\
             used to add a new destination to an existing route in a\
             routing table. It is also possible to use the add (+) operator or\
             the or (|) operator with the same effect.
 
         :param other_entry: The multicast entry to merge with this entry
-        :type other_entry: :py:class:`MulticastRoutingEntry`
+        :type other_entry: :py:class:`~spinn_machine.MulticastRoutingEntry`
         :return: A new multicast routing entry with merged destinations
-        :rtype: :py:class:`MulticastRoutingEntry`
+        :rtype: :py:class:`~spinn_machine.MulticastRoutingEntry`
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
             If the key and mask of the other entry do not match
         """
@@ -153,10 +153,6 @@ class MulticastRoutingEntry(object):
         return self.merge(other_entry)
 
     def __eq__(self, other_entry):
-        """ support for comparisons
-
-        :param other_entry: other Multicast_routing_entry
-        """
         if not isinstance(other_entry, MulticastRoutingEntry):
             return False
         return (self._defaultable == other_entry.defaultable and

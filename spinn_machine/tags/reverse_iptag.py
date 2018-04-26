@@ -2,7 +2,7 @@ from .abstract_tag import AbstractTag
 
 
 class ReverseIPTag(AbstractTag):
-    """ Used to hold data that is contained within an IPTag
+    """ Used to hold data that is contained within a Reverse IPTag
     """
 
     __slots__ = [
@@ -17,7 +17,7 @@ class ReverseIPTag(AbstractTag):
                  destination_p, sdp_port=1):
         """
         :param board_address: \
-            The ip address of the board on which the tag is allocated
+            The IP address of the board on which the tag is allocated
         :type board_address: str or None
         :param tag: The tag of the SDP packet
         :type tag: int
@@ -27,7 +27,7 @@ class ReverseIPTag(AbstractTag):
         :type destination_x: int
         :param destination_y: The y-coordinate of the chip to send packets to
         :type destination_y: int
-        :param destination_p: The id of the processor to send packets to
+        :param destination_p: The ID of the processor to send packets to
         :type destination_p: int
         :param sdp_port: The optional port number to use for SDP packets that\
             are formed on the machine (default is 1)
@@ -63,7 +63,7 @@ class ReverseIPTag(AbstractTag):
 
     @property
     def destination_p(self):
-        """ The destination processor id for the chip at (x,y) that packets\
+        """ The destination processor ID for the chip at (x,y) that packets\
             should be send to for this reverse IP tag
         """
         return self._destination_p

@@ -12,7 +12,6 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
 
     def __init__(self, item, value):
         """
-
         :param item: The item of which there is already one of
         :type item: str
         :param value: The value of the item
@@ -47,7 +46,6 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
 
     def __init__(self, parameter, value, problem):
         """
-
         :param parameter: The name of the parameter that has an invalid value
         :type parameter: str
         :param value: The value of the parameter that is invalid

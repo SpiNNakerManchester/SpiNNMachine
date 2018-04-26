@@ -52,7 +52,7 @@ class VirtualMachine(Machine):
         :type height: int
         :param with_wrap_arounds: bool defining if wrap around links exist
         :type with_wrap_arounds: bool
-        :param version: the version id of a board; if None, a machine is\
+        :param version: the version ID of a board; if None, a machine is\
             created with the correct dimensions, otherwise the machine will be\
             a single board of the given version.
         :type version: int
@@ -264,7 +264,7 @@ class VirtualMachine(Machine):
         """ Add a chip to the machine
 
         :param chip: The chip to add to the machine
-        :type chip: :py:class:`spinn_machine.Chip`
+        :type chip: :py:class:`~spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \

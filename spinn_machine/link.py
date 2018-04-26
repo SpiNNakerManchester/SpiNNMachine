@@ -5,7 +5,7 @@ from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class Link(object):
-    """ Represents a directional link between chips in the machine
+    """ Represents a directional link between SpiNNaker chips in the machine
     """
 
     __slots__ = (
@@ -17,12 +17,11 @@ class Link(object):
     def __init__(self, source_x, source_y, source_link_id, destination_x,
                  destination_y, multicast_default_from, multicast_default_to):
         """
-
         :param source_x: The x-coordinate of the source chip of the link
         :type source_x: int
         :param source_y: The y-coordinate of the source chip of the link
         :type source_y: int
-        :param source_link_id: The id of the link in the source chip
+        :param source_link_id: The ID of the link in the source chip
         :type source_link_id: int
         :param destination_x: \
             The x-coordinate of the destination chip of the link
@@ -74,9 +73,9 @@ class Link(object):
 
     @property
     def source_link_id(self):
-        """ The id of the link on the source chip
+        """ The ID of the link on the source chip
 
-        :return: The link id
+        :return: The link ID
         :rtype: int
         """
         return self._source_link_id
@@ -101,19 +100,19 @@ class Link(object):
 
     @property
     def multicast_default_from(self):
-        """ The id of the link for which this link is the default
+        """ The ID of the link for which this link is the default
 
-        :return: The id of a link, or None if no such link
+        :return: The ID of a link, or None if no such link
         :rtype: int
         """
         return self._multicast_default_from
 
     @multicast_default_from.setter
     def multicast_default_from(self, multicast_default_from):
-        """ Sets the id of the link for which this link is the default,\
+        """ Sets the ID of the link for which this link is the default,\
             if not already set
 
-        :param multicast_default_from: The id of a link
+        :param multicast_default_from: The ID of a link
         :type multicast_default_from: int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If a value has already been set
@@ -125,18 +124,18 @@ class Link(object):
 
     @property
     def multicast_default_to(self):
-        """ The id of the link to which to send default routed multicast
+        """ The ID of the link to which to send default routed multicast
 
-        :return: The id of a link, or None if no such link
+        :return: The ID of a link, or None if no such link
         :rtype: int
         """
         return self._multicast_default_to
 
     @multicast_default_to.setter
     def multicast_default_to(self, multicast_default_to):
-        """ Sets the id of the link to which to send default routed multicast
+        """ Sets the ID of the link to which to send default routed multicast
 
-        :param multicast_default_to: The id of a link
+        :param multicast_default_to: The ID of a link
         :type multicast_default_to: int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If a value has already been set
