@@ -140,19 +140,8 @@ class VirtualMachine(Machine):
 
         # Calculate the Ethernet connections in the machine, assuming 48-node
         # boards
-        eth_width = width
-        eth_height = height
-        if version is None and not with_wrap_arounds:
-            if width > 8 and width % 12 != 0:
-                eth_width = width - 4
-            if height > 8 and height % 12 != 0:
-                eth_height = height - 4
-        ethernet_chips = [
-            (x, y)
-            for start_x, start_y in ((0, 0), (8, 4), (4, 8))
-            for y in range(start_y, eth_height, 12)
-            for x in range(start_x, eth_width, 12)
-            if (x, y) not in down_chips]
+        geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
+        ethernet_chips = geometry.get_potential_ethernet_chips(width, height)
 
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
