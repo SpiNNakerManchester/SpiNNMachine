@@ -682,3 +682,11 @@ class Machine(object):
         return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
                 ((self.max_chip_x + 1) % 12 == 0 and
                  (self.max_chip_y + 1) % 12 == 0))
+
+    def disable_ethernet_connected_chip(self, chip):
+        """ Removes a chip from the set of Ethernet connected chips,
+            ensuring that it isn't used for communications
+
+        :param chip: The chip to remove
+        """
+        self._ethernet_connected_chips.remove(chip)
