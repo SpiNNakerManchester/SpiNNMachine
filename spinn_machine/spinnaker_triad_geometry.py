@@ -11,7 +11,8 @@ class SpiNNakerTriadGeometry(object):
     __slots__ = [
         "_ethernet_offset",
         "_triad_height",
-        "_triad_width"]
+        "_triad_width",
+        "_roots"]
 
     # Stored singleton
     spinn5_triad_geometry = None
@@ -34,9 +35,9 @@ class SpiNNakerTriadGeometry(object):
     def __init__(self, triad_width, triad_height, roots, centre):
         """
 
-        :param triad_width: triad_width of a triad in chips
+        :param triad_width: width of a triad in chips
         :type triad_width: int
-        :param triad_height: triad_height of a triad in chips
+        :param triad_height: height of a triad in chips
         :type triad_height: int
         :param roots: locations of the Ethernet connected chips
         :type roots: list of (int, int)
@@ -47,6 +48,7 @@ class SpiNNakerTriadGeometry(object):
 
         self._triad_width = triad_width
         self._triad_height = triad_height
+        self._roots = roots
 
         # Copy the Ethernet locations to surrounding triads to make the
         # mathematics easier
@@ -183,3 +185,22 @@ class SpiNNakerTriadGeometry(object):
         dx = (x - root_x) % self._triad_width
         dy = (y - root_y) % self._triad_height
         return self._ethernet_offset[dy][dx]
+
+    def get_potential_ethernet_chips(self, width, height):
+        """ Get the coordinates of chips that should be Ethernet chips
+
+        :param width: The width of the machine to find the chips in
+        :param height: The height of the machine to find the chips in
+        """
+        eth_width = (width // self._triad_width) * self._triad_width
+        if eth_width == 0:
+            eth_width = width
+        eth_height = (height // self._triad_height) * self._triad_height
+        if eth_height == 0:
+            eth_height = height
+
+        return [
+            (x, y)
+            for start_x, start_y in self._roots
+            for y in range(start_y, eth_height, self._triad_height)
+            for x in range(start_x, eth_width, self._triad_width)]

@@ -41,6 +41,13 @@ class TestingGeometry(unittest.TestCase):
                     "x at ({},{}): expected ({},{}) but got ({},{})".format(
                         x, y, -px, -py, qx, qy))
 
+    def test_get_potential_ethernet_chips(self):
+        g = SpiNNakerTriadGeometry.get_spinn5_geometry()
+        self.assertEqual(len(g.get_potential_ethernet_chips(2, 2)), 1)
+        self.assertEqual(len(g.get_potential_ethernet_chips(8, 8)), 1)
+        self.assertEqual(len(g.get_potential_ethernet_chips(12, 12)), 3)
+        self.assertEqual(len(g.get_potential_ethernet_chips(16, 16)), 3)
+
 
 if __name__ == '__main__':
     unittest.main()
