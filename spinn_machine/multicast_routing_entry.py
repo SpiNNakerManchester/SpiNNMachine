@@ -1,6 +1,5 @@
-# spimm_machine imports
-from .exceptions import SpinnMachineAlreadyExistsException
-from .exceptions import SpinnMachineInvalidParameterException
+from .exceptions import (
+    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 
 
 class MulticastRoutingEntry(object):

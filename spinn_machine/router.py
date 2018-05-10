@@ -1,8 +1,7 @@
-from .exceptions import \
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException
-
 from collections import OrderedDict
 from six import iteritems, itervalues
+from .exceptions import (
+    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 
 
 class Router(object):

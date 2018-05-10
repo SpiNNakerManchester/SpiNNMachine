@@ -1,7 +1,7 @@
 import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, VirtualMachine
-from spinn_machine.exceptions import \
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException
+from spinn_machine.exceptions import (
+    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 
 
 class TestVirtualMachine(unittest.TestCase):

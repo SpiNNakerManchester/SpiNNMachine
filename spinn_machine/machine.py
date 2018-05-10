@@ -1,11 +1,8 @@
-# spinn_machine imports
+from collections import OrderedDict
+from six import iteritems, iterkeys, itervalues
 from .exceptions import SpinnMachineAlreadyExistsException
 from .core_subsets import CoreSubsets
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
-
-# general imports
-from collections import OrderedDict
-from six import iteritems, iterkeys, itervalues
 
 
 class Machine(object):
