@@ -27,12 +27,10 @@ class CoreSubsets(object):
         :type core_subset: :py:class:`spinn_machine.CoreSubset`
         :rtype: None
         """
-        xy = (core_subset.x, core_subset.y)
-        if xy not in self._core_subsets:
-            self._core_subsets[xy] = core_subset
-        else:
-            for processor_id in core_subset.processor_ids:
-                self._core_subsets[xy].add_processor(processor_id)
+        x = core_subset.x
+        y = core_subset.y
+        for processor_id in core_subset.processor_ids:
+            self.add_processor(x, y, processor_id)
 
     def add_core_subsets(self, core_subsets):
         """ merges a core subsets into this one
@@ -56,8 +54,9 @@ class CoreSubsets(object):
         """
         xy = (x, y)
         if xy not in self._core_subsets:
-            self.add_core_subset(CoreSubset(x, y, []))
-        self._core_subsets[xy].add_processor(processor_id)
+            self._core_subsets[xy] = CoreSubset(x, y, [processor_id])
+        else:
+            self._core_subsets[xy].add_processor(processor_id)
 
     def is_chip(self, x, y):
         """ Determine if the chip with coordinates (x, y) is in the subset
