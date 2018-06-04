@@ -84,3 +84,17 @@ class CoreSubset(object):
         """ The number of processors in this core subset
         """
         return len(self._processor_ids)
+
+    def intersect(self, other):
+        """
+        Returns a new CoreSubset which is an intersect of this and the other
+        :param other: A second CoreSubset with possibly overlapping cores
+        :type other: CoreSubset
+        :return: A new CoreSubset with any overlap
+        :rtype CoreSubset
+        """
+        result = CoreSubset(self._x, self._y, [])
+        for processor_id in self._processor_ids:
+            if processor_id in other._processor_ids:
+                result.add_processor(processor_id)
+        return result
