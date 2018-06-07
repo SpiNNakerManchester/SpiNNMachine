@@ -148,3 +148,20 @@ class CoreSubsets(object):
         for xy in self._core_subsets:
             output += str(xy)
         return output
+
+    def intersect(self, other):
+        """
+        Returns a new CoreSubsets which is an intersect of this and the other
+        :param other: A second CoreSubsets with possibly overlapping cores
+        :type other: CoreSubsets
+        :return: A new CoreSubsets with any overlap
+        :rtype CoreSubsets
+        """
+        result = CoreSubsets()
+        for xy in self._core_subsets:
+            if xy in other._core_subsets:
+                subset = self._core_subsets[xy].intersect(
+                    other._core_subsets[xy])
+                if subset:
+                    result._core_subsets[xy] = subset
+        return result
