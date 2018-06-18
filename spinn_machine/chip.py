@@ -146,7 +146,7 @@ class Chip(object):
 
     @property
     def virtual(self):
-        """ boolean which defines if the chip is virtual or not
+        """ Boolean which defines if the chip is virtual or not
 
         :return: if the chip is virtual
         :rtype: boolean
@@ -187,7 +187,7 @@ class Chip(object):
 
     @property
     def nearest_ethernet_x(self):
-        """ the x coordinate of the nearest Ethernet chip
+        """ The x coordinate of the nearest Ethernet chip
 
         :return: the x coordinate of the nearest Ethernet chip
         :rtype: int
@@ -197,7 +197,7 @@ class Chip(object):
 
     @property
     def nearest_ethernet_y(self):
-        """ the y coordinate of the nearest Ethernet chip
+        """ The y coordinate of the nearest Ethernet chip
 
         :return: the y coordinate of the nearest Ethernet chip
         :rtype: int

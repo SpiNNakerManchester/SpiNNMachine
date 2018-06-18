@@ -97,7 +97,7 @@ class MulticastRoutingEntry(object):
 
     @property
     def defaultable(self):
-        """if this entry is a defaultable entry
+        """ Whether this entry is a defaultable entry
 
         :return: the bool that represents if a entry is defaultable or not
         :rtype: bool
@@ -109,8 +109,8 @@ class MulticastRoutingEntry(object):
             must have the same key and mask.  The merge will join the\
             processor IDs and link IDs from both the entries.  This could be\
             used to add a new destination to an existing route in a\
-            routing table. It is also possible to use the add (+) operator or\
-            the or (|) operator with the same effect.
+            routing table. It is also possible to use the add (`+`) operator\
+            or the or (`|`) operator with the same effect.
 
         :param other_entry: The multicast entry to merge with this entry
         :type other_entry: :py:class:`~spinn_machine.MulticastRoutingEntry`
@@ -141,13 +141,13 @@ class MulticastRoutingEntry(object):
         return new_entry
 
     def __add__(self, other_entry):
-        """ Allows overloading of + to merge two entries together.\
+        """ Allows overloading of `+` to merge two entries together.\
             See :py:meth:`merge`
         """
         return self.merge(other_entry)
 
     def __or__(self, other_entry):
-        """ Allows overloading of | to merge two entries together.\
+        """ Allows overloading of `|` to merge two entries together.\
             See :py:meth:`merge`
         """
         return self.merge(other_entry)
