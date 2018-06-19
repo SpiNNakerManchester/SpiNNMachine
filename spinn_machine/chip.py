@@ -258,7 +258,7 @@ class Chip(object):
         return iteritems(self._p)
 
     def __len__(self):
-        """Get the number of processors associated with this chip.
+        """ The number of processors associated with this chip.
 
         :return: The number of items in the underlying iterator.
         :rtype: int

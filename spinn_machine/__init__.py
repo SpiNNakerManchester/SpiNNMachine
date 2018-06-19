@@ -1,4 +1,4 @@
-"""A python abstraction of a SpiNNaker Machine.  The main functionality is\
+""" An abstraction of a SpiNNaker Machine.  The main functionality is\
 provided by :py:class:`spinn_machine.Machine`.
 
 Functional Requirements
