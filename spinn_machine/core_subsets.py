@@ -72,7 +72,7 @@ class CoreSubsets(object):
 
     def is_core(self, x, y, processor_id):
         """ Determine if there is a chip with coordinates (x, y) in the\
-            subset, which has a core with the given id in the subset
+            subset, which has a core with the given ID in the subset
 
         :param x: The x-coordinate of a chip
         :type x: int
@@ -81,7 +81,7 @@ class CoreSubsets(object):
         :param processor_id: The ID of a core
         :type processor_id: int
         :return: Whether there is a chip with coordinates (x, y) in the\
-            subset, which has a core with the given id in the subset
+            subset, which has a core with the given ID in the subset
         """
         xy = (x, y)
         if xy not in self._core_subsets:

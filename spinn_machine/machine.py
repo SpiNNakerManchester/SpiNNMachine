@@ -78,10 +78,10 @@ class Machine(object):
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
 
-        # The dictionary of spinnaker links by board address and "id" (int)
+        # The dictionary of spinnaker links by board address and "ID" (int)
         self._spinnaker_links = dict()
 
-        # The dictionary of FPGA links by board address, FPGA and link id
+        # The dictionary of FPGA links by board address, FPGA and link ID
         self._fpga_links = dict()
 
         # Store the boot chip information
@@ -339,7 +339,7 @@ class Machine(object):
 
         :param x: The x coordinate of the chip to start from
         :param y: The y coordinate of the chip to start from
-        :param link: The id of the link to traverse, between 0 and 5
+        :param link: The ID of the link to traverse, between 0 and 5
         :param width: The width of the machine being considered
         :param height: The height of the machine being considered
         """

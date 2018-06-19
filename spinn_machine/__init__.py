@@ -25,7 +25,7 @@ Functional Requirements
     * Add a link to a router of a given chip to represent a connection to an\
       external device.
 
-        * A link with the given id must not already exist in the chip
+        * A link with the given ID must not already exist in the chip
 
     * Create a representation of a multicast routing entry to be shared\
       between modules that deal with routing entries.
