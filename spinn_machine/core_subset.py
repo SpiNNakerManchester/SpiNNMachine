@@ -90,9 +90,9 @@ class CoreSubset(object):
             other.
 
         :param other: A second CoreSubset with possibly overlapping cores
-        :type other: CoreSubset
+        :type other: :py:class:`spinn_machine.CoreSubset`
         :return: A new CoreSubset with any overlap
-        :rtype CoreSubset
+        :rtype: :py:class:`spinn_machine.CoreSubset`
         """
         result = CoreSubset(self._x, self._y, [])
         for processor_id in self._processor_ids:

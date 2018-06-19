@@ -154,9 +154,9 @@ class CoreSubsets(object):
             other.
 
         :param other: A second CoreSubsets with possibly overlapping cores
-        :type other: CoreSubsets
+        :type other: :py:class:`spinn_machine.CoreSubsets`
         :return: A new CoreSubsets with any overlap
-        :rtype CoreSubsets
+        :rtype: :py:class:`spinn_machine.CoreSubsets`
         """
         result = CoreSubsets()
         for xy in self._core_subsets:
