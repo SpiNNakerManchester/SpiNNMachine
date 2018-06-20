@@ -160,7 +160,7 @@ class VirtualMachine(Machine):
                 for y in range(height)
                 if (x, y) not in down_chips)
 
-        # Assign "ip addresses" to the Ethernet chips
+        # Assign "IP addresses" to the Ethernet chips
         for i, (x, y) in enumerate(ethernet_chips):
             (a, b) = divmod(i + 1, 128)
             new_chip = self._create_chip(x, y, "127.0.{}.{}".format(a, b))

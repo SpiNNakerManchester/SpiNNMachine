@@ -78,7 +78,7 @@ class Machine(object):
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
 
-        # The dictionary of spinnaker links by board address and "ID" (int)
+        # The dictionary of SpiNNaker links by board address and "ID" (int)
         self._spinnaker_links = dict()
 
         # The dictionary of FPGA links by board address, FPGA and link ID
@@ -281,9 +281,9 @@ class Machine(object):
 
     @property
     def spinnaker_links(self):
-        """ The set of spinnaker links in the machine
+        """ The set of SpiNNaker links in the machine
 
-        :return: An iterable of spinnaker links
+        :return: An iterable of SpiNNaker links
         :rtype: iterable of\
             :py:class:`~spinn_machine.link_data_objects.SpinnakerLinkData`
         """
