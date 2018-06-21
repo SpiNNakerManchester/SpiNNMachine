@@ -2,7 +2,7 @@ from .abstract_tag import AbstractTag
 
 
 class ReverseIPTag(AbstractTag):
-    """ Used to hold data that is contained within a Reverse IPTag
+    """ Used to hold data that is contained within a Reverse IP tag
     """
 
     __slots__ = [

@@ -8,13 +8,11 @@ from spinn_machine.tags import IPTag
 
 
 class TestingIptag(unittest.TestCase):
-    """
-    TestingIptag
+    """ Tests of IPTag
     """
 
     def test_create_valid_iptag(self):
-        """
-        test which tests if a iptag with valid inputs works
+        """ test if an IP tag with valid inputs works
 
         :rtype: None
         """
@@ -22,8 +20,7 @@ class TestingIptag(unittest.TestCase):
         self.assertIsNotNone(iptag)
 
     def test_retrival_of_board_address(self):
-        """
-        test if the board address retrieval works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -33,8 +30,7 @@ class TestingIptag(unittest.TestCase):
         self.assertEqual("", board_address)
 
     def test_retrival_of_ip_address(self):
-        """
-        test if the board address retrieval works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -44,8 +40,7 @@ class TestingIptag(unittest.TestCase):
         self.assertEqual("", ip_address)
 
     def test_retrival_of_tag(self):
-        """
-        test if the board address retrieval works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -55,8 +50,7 @@ class TestingIptag(unittest.TestCase):
         self.assertEqual(tag, 0)
 
     def test_retrival_of_port(self):
-        """
-        test if the board address retrieval works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -66,8 +60,7 @@ class TestingIptag(unittest.TestCase):
         self.assertEqual(port, 1)
 
     def test_retrival_of_strip_sdp(self):
-        """
-        test if the board address retrieval works
+        """ test if the board address retrieval works
 
         :rtype: None
         """

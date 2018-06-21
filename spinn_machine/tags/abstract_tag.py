@@ -6,7 +6,7 @@ class AbstractTag(object):
         # the board address associated with this tag
         "_board_address",
 
-        # the tag id associated with this tag
+        # the tag ID associated with this tag
         "_tag",
 
         # the port number associated with this tag

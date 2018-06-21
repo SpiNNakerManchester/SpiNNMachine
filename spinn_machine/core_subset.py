@@ -15,7 +15,7 @@ class CoreSubset(object):
         :type x: int
         :param y: The y-coordinate of the chip
         :type y: int
-        :param processor_ids: An iterable of processor IDs on the chip
+        :param processor_ids: The processor IDs on the chip
         :type processor_ids: iterable(int)
         """
         self._x = x
@@ -86,12 +86,13 @@ class CoreSubset(object):
         return len(self._processor_ids)
 
     def intersect(self, other):
-        """
-        Returns a new CoreSubset which is an intersect of this and the other
+        """ Returns a new CoreSubset which is an intersect of this and the\
+            other.
+
         :param other: A second CoreSubset with possibly overlapping cores
-        :type other: CoreSubset
+        :type other: :py:class:`spinn_machine.CoreSubset`
         :return: A new CoreSubset with any overlap
-        :rtype CoreSubset
+        :rtype: :py:class:`spinn_machine.CoreSubset`
         """
         result = CoreSubset(self._x, self._y, [])
         for processor_id in self._processor_ids:

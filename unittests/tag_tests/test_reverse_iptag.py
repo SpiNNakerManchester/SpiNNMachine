@@ -1,5 +1,5 @@
 """
-Testingreverseiptag
+TestingReverseIptag
 """
 from __future__ import absolute_import
 # general imports
@@ -8,13 +8,11 @@ from spinn_machine.tags import ReverseIPTag
 
 
 class TestingReverseIptag(unittest.TestCase):
-    """
-    TestingIptag
+    """ Tests of ReverseIPTag
     """
 
     def test_create_valid_reverse_iptag(self):
-        """
-        test which tests if a iptag with valid inputs works
+        """ test if a reverse IP tag with valid inputs works
 
         :rtype: None
         """
@@ -22,8 +20,7 @@ class TestingReverseIptag(unittest.TestCase):
         self.assertIsNotNone(reverse_ip_tag)
 
     def test_retrival_of_board_address(self):
-        """
-        test if the board address retrival works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -33,8 +30,7 @@ class TestingReverseIptag(unittest.TestCase):
         self.assertEqual("", board_address)
 
     def test_retrival_of_tag(self):
-        """
-        test if the board address retrival works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -44,8 +40,7 @@ class TestingReverseIptag(unittest.TestCase):
         self.assertEqual(0, tag)
 
     def test_retrival_of_port(self):
-        """
-        test if the board address retrival works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -55,8 +50,7 @@ class TestingReverseIptag(unittest.TestCase):
         self.assertEqual(port, 1)
 
     def test_retrival_of_dest_x(self):
-        """
-        test if the board address retrival works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -66,8 +60,7 @@ class TestingReverseIptag(unittest.TestCase):
         self.assertEqual(destination_x, 0)
 
     def test_retrival_of_dest_y(self):
-        """
-        test if the board address retrival works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -77,8 +70,7 @@ class TestingReverseIptag(unittest.TestCase):
         self.assertEqual(destination_y, 0)
 
     def test_retrival_of_dest_p(self):
-        """
-        test if the board address retrival works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
@@ -88,8 +80,7 @@ class TestingReverseIptag(unittest.TestCase):
         self.assertEqual(destination_p, 1)
 
     def test_retrival_of_sdp_port(self):
-        """
-        test if the board address retrival works
+        """ test if the board address retrieval works
 
         :rtype: None
         """
