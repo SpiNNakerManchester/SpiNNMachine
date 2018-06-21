@@ -22,7 +22,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(a_multicast.link_ids, set(link_ids))
         self.assertEqual(a_multicast.mask, mask)
         self.assertEqual(a_multicast.processor_ids, set(proc_ids))
-        # While we're here, let's check a few other basic ops
+        # While we're here, let's check a few other basic operations
         self.assertEqual(str(a_multicast),
                          "1:1:True:{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,"
                          " 12, 13, 14, 15, 16, 17}:{0, 1, 2, 3, 4, 5}")
@@ -42,7 +42,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         mask = 1
         with self.assertRaises(SpinnMachineAlreadyExistsException) as e:
             MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
-        self.assertEqual(e.exception.item, "processor id")
+        self.assertEqual(e.exception.item, "processor ID")
         self.assertEqual(e.exception.value, "0")
 
     def test_duplicate_link_ids(self):

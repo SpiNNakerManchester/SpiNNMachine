@@ -13,11 +13,11 @@ class TestingFixedRouteEntries(unittest.TestCase):
     def test_fixed_route_errors(self):
         with self.assertRaises(SpinnMachineAlreadyExistsException) as e:
             FixedRouteEntry([1, 2, 2], [2, 3, 4])
-        self.assertEqual(e.exception.item, "processor id")
+        self.assertEqual(e.exception.item, "processor ID")
         self.assertEqual(e.exception.value, "2")
         with self.assertRaises(SpinnMachineAlreadyExistsException) as e:
             FixedRouteEntry([1, 2, 3], [2, 3, 2])
-        self.assertEqual(e.exception.item, "link id")
+        self.assertEqual(e.exception.item, "link ID")
         self.assertEqual(e.exception.value, "2")
 
 
