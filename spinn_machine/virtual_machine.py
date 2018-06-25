@@ -334,10 +334,10 @@ class VirtualMachine(Machine):
     def _create_processors_general(self, num_monitors):
         processors = list()
         for processor_id in range(0, num_monitors):
-            processor = Processor(processor_id, is_monitor=True)
+            processor = Processor.factory(processor_id, is_monitor=True)
             processors.append(processor)
         for processor_id in range(num_monitors, self._n_cpus_per_chip):
-            processor = Processor(processor_id, is_monitor=False)
+            processor = Processor.factory(processor_id, is_monitor=False)
             processors.append(processor)
         return processors
 
@@ -345,11 +345,11 @@ class VirtualMachine(Machine):
         processors = list()
         for processor_id in range(0, self._with_monitors):
             if (x, y, processor_id) not in self._down_cores:
-                processor = Processor(processor_id, is_monitor=True)
+                processor = Processor.factory(processor_id, is_monitor=True)
                 processors.append(processor)
         for processor_id in range(self._with_monitors, self._n_cpus_per_chip):
             if (x, y, processor_id) not in self._down_cores:
-                processor = Processor(processor_id, is_monitor=False)
+                processor = Processor.factory(processor_id, is_monitor=False)
                 processors.append(processor)
         return processors
 
