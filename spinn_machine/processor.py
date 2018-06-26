@@ -68,7 +68,7 @@ class Processor(object):
         :return: the number of CPU cycles available on this processor
         :rtype: int
         """
-        return self._clock_speed / 1000.0
+        return self._clock_speed // 1000.0
 
     @property
     def clock_speed(self):
