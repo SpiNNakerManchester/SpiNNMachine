@@ -411,7 +411,6 @@ class Machine(object):
                 for _ in range(0, 3):
                     y = (y + 1) % (self._max_chip_y + 1)
                     chips['left'].append((x, y))
-
                 # handle left north (goes across 4 but add this chip)
                 chips['left_north'].append((x, y))
                 for _ in range(0, 4):
@@ -545,7 +544,7 @@ class Machine(object):
         total_links = dict()
         for chip_key in self._chips:
             chip = self._chips[chip_key]
-            cores += len(list(chip.processors))
+            cores += chip.n_processors
             for link in chip.router.links:
                 key1 = (link.source_x, link.source_y, link.source_link_id)
                 key2 = (link.destination_x, link.destination_y,
