@@ -401,10 +401,10 @@ class Machine(object):
                 x = ethernet_connected_chip.x
                 y = ethernet_connected_chip.y
                 ip = ethernet_connected_chip.ip_address
-                fpga_id = 1
-                fpga_link = 0
 
                 # handle left chips (goes up 4)
+                fpga_id = 1
+                fpga_link = 0
                 for _ in range(0, 3):
                     y = (y + 1) % (self._max_chip_y + 1)
                     self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
@@ -505,7 +505,7 @@ class Machine(object):
         total_links = dict()
         for chip_key in self._chips:
             chip = self._chips[chip_key]
-            cores += len(list(chip.processors))
+            cores += chip.n_processors
             for link in chip.router.links:
                 key1 = (link.source_x, link.source_y, link.source_link_id)
                 key2 = (link.destination_x, link.destination_y,
