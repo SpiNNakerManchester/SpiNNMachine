@@ -43,11 +43,13 @@ class TestingGeometry(unittest.TestCase):
 
     def test_get_potential_ethernet_chips(self):
         g = SpiNNakerTriadGeometry.get_spinn5_geometry()
-        self.assertEqual(len(g.get_potential_ethernet_chips(2, 2)), 1)
-        self.assertEqual(len(g.get_potential_ethernet_chips(8, 8)), 1)
-        self.assertEqual(len(g.get_potential_ethernet_chips(12, 12)), 3)
-        self.assertEqual(len(g.get_potential_ethernet_chips(16, 16)), 3)
-
+        self.assertEqual(1, len(g.get_potential_ethernet_chips(2, 2)))
+        self.assertEqual(1, len(g.get_potential_ethernet_chips(8, 8)))
+        self.assertEqual(3, len(g.get_potential_ethernet_chips(12, 12)))
+        self.assertEqual(3, len(g.get_potential_ethernet_chips(16, 16)))
+        self.assertEqual(6, len(g.get_potential_ethernet_chips(20, 20)))
+        self.assertEqual(12, len(g.get_potential_ethernet_chips(24, 24)))
+        self.assertIn((0, 12),g.get_potential_ethernet_chips(20,20))
 
 if __name__ == '__main__':
     unittest.main()
