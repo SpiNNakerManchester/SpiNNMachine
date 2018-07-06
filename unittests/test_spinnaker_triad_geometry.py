@@ -49,7 +49,8 @@ class TestingGeometry(unittest.TestCase):
         self.assertEqual(3, len(g.get_potential_ethernet_chips(16, 16)))
         self.assertEqual(6, len(g.get_potential_ethernet_chips(20, 20)))
         self.assertEqual(12, len(g.get_potential_ethernet_chips(24, 24)))
-        self.assertIn((0, 12),g.get_potential_ethernet_chips(20,20))
+        self.assertIn((0, 12), g.get_potential_ethernet_chips(20, 20))
+
 
 if __name__ == '__main__':
     unittest.main()

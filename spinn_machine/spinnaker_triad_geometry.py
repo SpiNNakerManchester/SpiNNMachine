@@ -195,8 +195,8 @@ class SpiNNakerTriadGeometry(object):
         :param width: The width of the machine to find the chips in
         :param height: The height of the machine to find the chips in
         """
-        if (width % self._triad_width ==  0) and (height % \
-                self._triad_height == 0):
+        if (width % self._triad_width == 0) and\
+                (height % self._triad_height == 0):
             eth_width = width
             eth_height = height
         else:
@@ -204,7 +204,7 @@ class SpiNNakerTriadGeometry(object):
             eth_height = height - Machine.SIZE_Y_OF_ONE_BOARD + 1
             # special case for single boards like the 2,2
             if (eth_width <= 0 or eth_height <= 0):
-                return [(0,0)]
+                return [(0, 0)]
         return [
             (x, y)
             for start_x, start_y in self._roots
