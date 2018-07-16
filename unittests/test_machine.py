@@ -275,6 +275,32 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_misc(self):
         self.assertEqual(Machine.get_chip_over_link(0, 0, 4, 24, 24), (23, 23))
 
+    def test_unreachable_incoming_chips(self):
+        chips = self._create_chips()
+        machine = Machine(chips, 0, 0)
+
+        # Delete links incoming to 3, 3
+        down_links = [
+            (2, 2, 1), (2, 3, 0), (3, 4, 5), (4, 4, 4), (4, 3, 3), (3, 2, 2)]
+        for (x, y, link) in down_links:
+            if machine.is_link_at(x, y, link):
+                del machine._chips[x, y].router._links[link]
+
+        machine.remove_unreachable_chips()
+        self.assertFalse(machine.is_chip_at(3, 3))
+
+    def test_unreachable_outgoing_chips(self):
+        chips = self._create_chips()
+        machine = Machine(chips, 0, 0)
+
+        # Delete links outgoing from 3, 3
+        for link in range(6):
+            if machine.is_link_at(3, 3, link):
+                del machine._chips[3, 3].router._links[link]
+
+        machine.remove_unreachable_chips()
+        self.assertFalse(machine.is_chip_at(3, 3))
+
 
 if __name__ == '__main__':
     unittest.main()
