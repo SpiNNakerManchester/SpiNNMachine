@@ -657,9 +657,7 @@ class Machine(object):
         :return: total
         :rtype: int
         """
-        return len([
-            processor for chip in self.chips for processor in chip.processors
-            if not processor.is_monitor])
+        return sum([chip._n_user_processors for chip in self.chips])
 
     @property
     def total_cores(self):
