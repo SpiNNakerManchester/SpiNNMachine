@@ -44,8 +44,8 @@ class VirtualMachine(Machine):
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
-            with_monitors=True, sdram_per_chip=None, down_chips=None,
-            down_cores=None, down_links=None,
+            with_monitors=True, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
+            down_chips=None, down_cores=None, down_links=None,
             router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
         :param width: the width of the virtual machine in chips
@@ -169,7 +169,7 @@ class VirtualMachine(Machine):
         # Assign "IP addresses" to the Ethernet chips
         for i, (x, y) in enumerate(ethernet_chips):
             (a, b) = divmod(i + 1, 128)
-            new_chip = self._create_chip(x, y, "127.0.{}.{}".format(a, b), )
+            new_chip = self._create_chip(x, y, "127.0.{}.{}".format(a, b))
             super(VirtualMachine, self).add_chip(new_chip)
 
         self.add_spinnaker_links(version)
