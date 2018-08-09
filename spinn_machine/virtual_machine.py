@@ -150,10 +150,9 @@ class VirtualMachine(Machine):
 
             # Find all the chips that are on the board
             self._configured_chips = OrderedSet(
-                (x + eth_x, y + eth_y) for x in range(8) for y in range(8)
+                (x + eth_x, y + eth_y) for (x, y) in Machine.BOARD_48_CHIPS
                 for eth_x, eth_y in ethernet_chips
-                if (x, y) not in Machine.BOARD_48_CHIP_GAPS and
-                (x, y) not in down_chips)
+                if (x + eth_x, y + eth_y) not in down_chips)
         else:
             self._configured_chips = OrderedSet(
                 (x, y) for x in range(width)
