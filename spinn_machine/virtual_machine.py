@@ -159,6 +159,11 @@ class VirtualMachine(Machine):
                 for y in range(height)
                 if (x, y) not in down_chips)
 
+        for chip in self._unreachable_outgoing_chips:
+            self._configured_chips.remove(chip)
+        for chip in self._unreachable_incoming_chips:
+            self._configured_chips.remove(chip)
+
         # Assign "IP addresses" to the Ethernet chips
         for i, (x, y) in enumerate(ethernet_chips):
             (a, b) = divmod(i + 1, 128)
