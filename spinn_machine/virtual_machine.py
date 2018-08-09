@@ -31,6 +31,7 @@ class VirtualMachine(Machine):
         "_original_width",
         "_original_height",
         "_sdram_per_chip",
+        "_weird_processor",
         "_with_monitors",
         "_with_wrap_arounds",
         "_max_chip_x",
@@ -124,10 +125,17 @@ class VirtualMachine(Machine):
         self._original_height = height
 
         # Store the details
-        self._n_cpus_per_chip = n_cpus_per_chip
-        self._sdram_per_chip = sdram_per_chip
-        self._with_monitors = int(bool(with_monitors))
         self._default_processors = dict()
+        self._sdram_per_chip = sdram_per_chip
+        if with_monitors:
+            self._with_monitors = 1
+            self._weird_processor = False
+        else:
+            self._with_monitors = 0
+            self._weird_processor = True
+        self._n_cpus_per_chip = n_cpus_per_chip
+        if n_cpus_per_chip != Machine.MAX_CORES_PER_CHIP:
+            self._weird_processor = True
 
         # Store the down items
         self._down_cores = defaultdict(set)
@@ -168,11 +176,19 @@ class VirtualMachine(Machine):
         for chip in self._unreachable_incoming_chips:
             self._configured_chips.remove(chip)
 
-        # Assign "IP addresses" to the Ethernet chips
-        for i, (x, y) in enumerate(ethernet_chips):
-            (a, b) = divmod(i + 1, 128)
-            new_chip = self._create_chip(x, y, "127.0.{}.{}".format(a, b))
+        for (x, y) in self._configured_chips:
+            if self._configured_chips[(x, y)] == (x, y):
+                # (a, b) = divmod(i + 1, 128)
+                new_chip = self._create_chip(x, y, "127.0.{}.{}".format(x, y))
+            else:
+                new_chip = self._create_chip(x, y)
             super(VirtualMachine, self).add_chip(new_chip)
+
+        # Assign "IP addresses" to the Ethernet chips
+        #for i, (x, y) in enumerate(ethernet_chips):
+        #    (a, b) = divmod(i + 1, 128)
+        #    new_chip = self._create_chip(x, y, "127.0.{}.{}".format(a, b))
+        #    super(VirtualMachine, self).add_chip(new_chip)
 
         self.add_spinnaker_links(version)
         self.add_fpga_links(version)
@@ -368,13 +384,10 @@ class VirtualMachine(Machine):
         return processors
 
     def _create_chip(self, x, y, ip_address=None):
-        if (x, y) in self._down_cores:
+        if self._weird_processor or (x, y) in self._down_cores:
             processors = self._create_processors_specific(x, y)
         else:
-            if self._with_monitors not in self._default_processors:
-                self._default_processors[self._with_monitors] = \
-                    self._create_processors_general(self._with_monitors)
-            processors = self._default_processors[self._with_monitors]
+            processors = None
         chip_links = self._calculate_links(x, y)
         chip_router = Router(chip_links, False)
         if self._sdram_per_chip is None:
@@ -473,6 +486,7 @@ class VirtualMachine(Machine):
 
         # Ensure future chips get an extra monitor
         self._with_monitors += 1
+        self._weird_processor = self._with_monitors != 1
 
         return reserved_cores, failed_chips
 

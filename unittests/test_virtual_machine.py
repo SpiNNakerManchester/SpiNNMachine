@@ -371,6 +371,8 @@ class TestVirtualMachine(unittest.TestCase):
         # (24,36) is not on this virtual machine
         self.assertEqual(count2436, 0)
 
+    def test_big(self):
+        vm = VirtualMachine(width=240, height=240, with_wrap_arounds=True)
 
 if __name__ == '__main__':
     unittest.main()

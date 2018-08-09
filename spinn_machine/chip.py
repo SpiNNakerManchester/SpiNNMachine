@@ -1,6 +1,8 @@
 from collections import OrderedDict
 from six import iteritems, itervalues
 from .exceptions import SpinnMachineAlreadyExistsException
+from .machine import Machine
+from .processor import Processor
 from spinn_utilities.ordered_set import OrderedSet
 
 
@@ -22,6 +24,16 @@ class Chip(object):
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
         "_n_user_processors"
     )
+
+    @staticmethod
+    def default_processors():
+        processors = dict()
+        processors[0] = Processor.factory(0, True)
+        for i in range(1, Machine.MAX_CORES_PER_CHIP):
+            processors[i] = Processor.factory(i)
+        return processors
+
+    DEFAULT_PROCESSORS = default_processors.__func__()
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
@@ -57,16 +69,20 @@ class Chip(object):
         """
         self._x = x
         self._y = y
-        self._p = OrderedDict()
-        self._n_user_processors = 0
-        for processor in sorted(processors, key=lambda i: i.processor_id):
-            if processor.processor_id in self._p:
-                raise SpinnMachineAlreadyExistsException(
-                    "processor on {}:{}".format(x, y),
-                    str(processor.processor_id))
-            self._p[processor.processor_id] = processor
-            if not processor.is_monitor:
-                self._n_user_processors += 1
+        if processors == None:
+            self._p = Chip.DEFAULT_PROCESSORS
+            self._n_user_processors = Machine.MAX_CORES_PER_CHIP - 1
+        else:
+            self._p = OrderedDict()
+            self._n_user_processors = 0
+            for processor in sorted(processors, key=lambda i: i.processor_id):
+                if processor.processor_id in self._p:
+                    raise SpinnMachineAlreadyExistsException(
+                        "processor on {}:{}".format(x, y),
+                        str(processor.processor_id))
+                self._p[processor.processor_id] = processor
+                if not processor.is_monitor:
+                    self._n_user_processors += 1
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
@@ -237,6 +253,9 @@ class Chip(object):
             be found
         :rtype: int or None
         """
+        # As the may be reusing same object clone it now
+        if self._p is Chip.DEFAULT_PROCESSORS:
+            self._p = self._p.copy()
         for processor_id, processor in iteritems(self._p):
             if not processor.is_monitor:
                 system_processor = processor.clone_as_system_processor()
