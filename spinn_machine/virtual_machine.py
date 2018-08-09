@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from .exceptions import \
     SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException
 from .machine import Machine
@@ -146,19 +148,18 @@ class VirtualMachine(Machine):
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
-        if height > 2 and not self._with_wrap_arounds:
-
-            # Find all the chips that are on the board
-            self._configured_chips = OrderedSet(
-                (x + eth_x, y + eth_y) for (x, y) in Machine.BOARD_48_CHIPS
-                for eth_x, eth_y in ethernet_chips
-                if (x + eth_x, y + eth_y) not in down_chips)
+        self._configured_chips = dict()
+        if height > 2:
+            for (eth_x, eth_y) in ethernet_chips:
+                for (x, y) in Machine.BOARD_48_CHIPS:
+                    (new_x, new_y) = self.normalize(x + eth_x, y + eth_y)
+                    if (new_x, new_y) not in down_chips:
+                        self._configured_chips[(new_x, new_y)] = (eth_x, eth_y)
         else:
-            self._configured_chips = OrderedSet(
-                (x, y) for x in range(width)
-                for y in range(height)
-                if (x, y) not in down_chips)
-
+            for x in range(2):
+                for y in range(2):
+                    if (x, y) not in down_chips:
+                        self._configured_chips[(x, y)] = (0, 0)
         for chip in self._unreachable_outgoing_chips:
             self._configured_chips.remove(chip)
         for chip in self._unreachable_incoming_chips:
@@ -335,6 +336,12 @@ class VirtualMachine(Machine):
         n_links = self.n_chips * 6 - len(self._down_links)
         return n_cores, n_links
 
+    def normalize(self, x, y):
+        if self._with_wrap_arounds:
+            return ((x + self._original_width) % self._original_width,
+                    (y + self._original_height) % self._original_height)
+        return (x, y)
+
     def _create_processors_general(self, num_monitors):
         processors = list()
         for processor_id in range(0, num_monitors):
@@ -377,10 +384,7 @@ class VirtualMachine(Machine):
         else:
             sdram = SDRAM(self._sdram_per_chip)
 
-        geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
-        eth_x, eth_y = geometry.get_ethernet_chip_coordinates(
-            x, y, self._max_chip_x + 1, self._max_chip_y + 1,
-            self._boot_x, self._boot_y)
+        (eth_x, eth_y) = self._configured_chips[(x, y)]
 
         return Chip(
             x, y, processors, chip_router, sdram, eth_x, eth_y, ip_address)
