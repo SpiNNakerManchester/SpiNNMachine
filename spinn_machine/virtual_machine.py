@@ -153,12 +153,17 @@ class VirtualMachine(Machine):
                 (x + eth_x, y + eth_y) for x in range(8) for y in range(8)
                 for eth_x, eth_y in ethernet_chips
                 if (x, y) not in Machine.BOARD_48_CHIP_GAPS and
-                (x, y) not in down_chips)
+                (x + eth_x, y + eth_y) not in down_chips)
         else:
             self._configured_chips = OrderedSet(
                 (x, y) for x in range(width)
                 for y in range(height)
                 if (x, y) not in down_chips)
+
+        for chip in self._unreachable_outgoing_chips:
+            self._configured_chips.remove(chip)
+        for chip in self._unreachable_incoming_chips:
+            self._configured_chips.remove(chip)
 
         # Assign "IP addresses" to the Ethernet chips
         for i, (x, y) in enumerate(ethernet_chips):
