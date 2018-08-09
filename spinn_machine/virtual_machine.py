@@ -397,6 +397,7 @@ class VirtualMachine(Machine):
         self._add_link(links, 5, x, y, x, y - 1)
         return links
 
+
     def _get_destination(self, destination_x, destination_y):
 
         if self._with_wrap_arounds:
@@ -415,18 +416,22 @@ class VirtualMachine(Machine):
 
     def _add_link(self, links, link_from, source_x, source_y,
                   destination_x, destination_y):
+        if (source_x, source_y, link_from) in self._down_links:
+            return  # Down chips say do not add
+
         destination_x, destination_y = self._get_destination(
             destination_x, destination_y)
+        if (destination_x, destination_y) not in self._configured_chips:
+            return  # No destination to connect to
 
-        if self._creatable_link(
-                link_from, source_x, source_y, destination_x, destination_y):
-            link_to = (link_from + 3) % 6
-            links.append(
-                Link(source_x=source_x, source_y=source_y,
-                     destination_x=destination_x, destination_y=destination_y,
-                     source_link_id=link_from,
+        link_to = (link_from + 3) % 6
+        links.append(
+            Link(source_x=source_x, source_y=source_y,
+                 destination_x=destination_x, destination_y=destination_y,
+                 source_link_id=link_from,
                      multicast_default_from=link_to,
                      multicast_default_to=link_to))
+
 
     def _creatable_link(self, link_from, source_x, source_y,
                         destination_x, destination_y):
@@ -440,6 +445,7 @@ class VirtualMachine(Machine):
         if (destination_x, destination_y) not in self._configured_chips:
             return False
         return (source_x, source_y, link_from) not in self._down_links
+
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
