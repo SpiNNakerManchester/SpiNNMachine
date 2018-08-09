@@ -159,6 +159,14 @@ class TestVirtualMachine(unittest.TestCase):
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(228, count)
 
+    def test_reserve_monitor(self):
+        vm = VirtualMachine(height=8, width=8)
+        count = sum(chip.n_user_processors for chip in vm.chips)
+        self.assertEqual(48 * 17, count)
+        vm.reserve_system_processors()
+        count = sum(chip.n_user_processors for chip in vm.chips)
+        self.assertEqual(48 * 16, count)
+
     def test_new_vm_no_monitor(self):
         n_cpus = 11
         vm = VirtualMachine(2, 2, n_cpus_per_chip=n_cpus, with_monitors=False)

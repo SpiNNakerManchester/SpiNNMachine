@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import defaultdict, OrderedDict
 
 from .exceptions import \
     SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException
@@ -130,7 +130,10 @@ class VirtualMachine(Machine):
         self._default_processors = dict()
 
         # Store the down items
-        self._down_cores = down_cores if down_cores is not None else set()
+        self._down_cores = defaultdict(set)
+        if down_cores is not None:
+            for (x, y, p) in down_cores:
+                self._down_cores[(x, y)].add(p)
         self._down_links = down_links if down_links is not None else set()
         if version in self.BOARD_VERSION_FOR_4_CHIPS:
             self._down_links.update(VirtualMachine._4_chip_down_links)
@@ -330,9 +333,8 @@ class VirtualMachine(Machine):
             self._max_chip_x, self._max_chip_y, self.n_chips)
 
     def get_cores_and_link_count(self):
-        n_cores = (
-            (self.n_chips * self._n_cpus_per_chip) - len(self._down_cores)
-        )
+        n_down = sum(len(dc) for dc in self._down_cores.values())
+        n_cores = (self.n_chips * self._n_cpus_per_chip) - n_down
         n_links = self.n_chips * 6 - len(self._down_links)
         return n_cores, n_links
 
@@ -354,23 +356,19 @@ class VirtualMachine(Machine):
 
     def _create_processors_specific(self, x, y):
         processors = list()
+        down = self._down_cores[(x, y)]
         for processor_id in range(0, self._with_monitors):
-            if (x, y, processor_id) not in self._down_cores:
+            if (x, y, processor_id) not in down:
                 processor = Processor.factory(processor_id, is_monitor=True)
                 processors.append(processor)
         for processor_id in range(self._with_monitors, self._n_cpus_per_chip):
-            if (x, y, processor_id) not in self._down_cores:
+            if (x, y, processor_id) not in down:
                 processor = Processor.factory(processor_id, is_monitor=False)
                 processors.append(processor)
         return processors
 
     def _create_chip(self, x, y, ip_address=None):
-        down = False
-        for processor_id in range(self._n_cpus_per_chip):
-            if (x, y, processor_id) in self._down_cores:
-                down = True
-                break
-        if down:
+        if (x, y) in self._down_cores:
             processors = self._create_processors_specific(x, y)
         else:
             if self._with_monitors not in self._default_processors:
