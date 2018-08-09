@@ -26,7 +26,6 @@ class VirtualMachine(Machine):
         "_default_processors",
         "_down_cores",
         "_down_links",
-        "_extra_chips",
         "_n_cpus_per_chip",
         "_original_width",
         "_original_height",
@@ -147,9 +146,6 @@ class VirtualMachine(Machine):
             self._down_links.update(VirtualMachine._4_chip_down_links)
         if down_chips is None:
             down_chips = []
-
-        # add storage for any chips added later
-        self._extra_chips = OrderedSet()
 
         # Calculate the Ethernet connections in the machine, assuming 48-node
         # boards
@@ -273,35 +269,12 @@ class VirtualMachine(Machine):
                 " width and height which are both either 2 or 8 or a width - 4"
                 " and height - 4 that are divisible by 12")
 
-    def add_chip(self, chip):
-        """ Add a chip to the machine
-
-        :param chip: The chip to add to the machine
-        :type chip: :py:class:`~spinn_machine.Chip`
-        :return: Nothing is returned
-        :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
-            If a chip with the same x and y coordinates already exists
-        """
-        if self.is_chip_at(chip.x, chip.y):
-            raise SpinnMachineAlreadyExistsException(
-                "chip", "{}, {}".format(chip.x, chip.y))
-        super(VirtualMachine, self).add_chip(chip)
-        self._extra_chips.add((chip.x, chip.y))
-
     @property
     def chips(self):
         for (x, y) in self.chip_coordinates:
             if (x, y) not in self._chips:
                 super(VirtualMachine, self).add_chip(self._create_chip(x, y))
             yield self._chips[(x, y)]
-
-    @property
-    def chip_coordinates(self):
-        for (x, y) in self._configured_chips:
-            yield (x, y)
-        for (x, y) in self._extra_chips:
-            yield (x, y)
 
     def __iter__(self):
         for (x, y) in self.chip_coordinates:
@@ -316,11 +289,6 @@ class VirtualMachine(Machine):
             super(VirtualMachine, self).add_chip(self._create_chip(x, y))
         chip_id = (x, y)
         return self._chips[chip_id]
-
-    def is_chip_at(self, x, y):
-        if (x, y) in self._configured_chips:
-            return True
-        return (x, y) in self._extra_chips
 
     ALLOWED_LINK_DELTAS = {
         0: (+1, 0),
@@ -339,10 +307,6 @@ class VirtualMachine(Machine):
         return self._creatable_link(
             link_from=link, source_x=x, source_y=y,
             destination_x=x + dx, destination_y=y + dy)
-
-    @property
-    def n_chips(self):
-        return len(self._configured_chips) + len(self._extra_chips)
 
     def __str__(self):
         return "[VirtualMachine: max_x={}, max_y={}, n_chips={}]".format(
