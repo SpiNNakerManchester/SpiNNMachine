@@ -53,11 +53,37 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(vm.max_chip_x, 1)
         self.assertEqual(vm.max_chip_y, 1)
         self.assertEqual(4, vm.n_chips)
+        self.assertTrue(vm.is_chip_at(0, 0))
+        self.assertTrue(vm.is_chip_at(0, 1))
+        self.assertTrue(vm.is_chip_at(1, 0))
+        self.assertTrue(vm.is_chip_at(1, 1))
         self.assertEqual(1, len(vm.ethernet_connected_chips))
-        self.assertTrue(vm.is_link_at(0, 0, 5))
-        self.assertTrue(vm.is_link_at(0, 1, 2))
+        self.assertTrue(vm.is_link_at(0, 0, 0))
+        self.assertTrue(vm.is_link_at(0, 0, 1))
+        self.assertTrue(vm.is_link_at(0, 0, 2))
+        self.assertFalse(vm.is_link_at(0, 0, 3))
         self.assertFalse(vm.is_link_at(0, 0, 4))
+        self.assertTrue(vm.is_link_at(0, 0, 5))
+        self.assertTrue(vm.is_link_at(0, 1, 0))
+        self.assertTrue(vm.is_link_at(0, 1, 1))
+        self.assertTrue(vm.is_link_at(0, 1, 2))
         self.assertFalse(vm.is_link_at(0, 1, 3))
+        self.assertFalse(vm.is_link_at(0, 1, 4))
+        self.assertTrue(vm.is_link_at(0, 1, 5))
+
+        self.assertFalse(vm.is_link_at(1, 0, 0))
+        self.assertFalse(vm.is_link_at(1, 0, 1))
+        self.assertTrue(vm.is_link_at(1, 0, 2))
+        self.assertTrue(vm.is_link_at(1, 0, 3))
+        self.assertTrue(vm.is_link_at(1, 0, 4))
+        self.assertTrue(vm.is_link_at(1, 0, 5))
+        self.assertFalse(vm.is_link_at(1, 1, 0))
+        self.assertFalse(vm.is_link_at(1, 1, 1))
+        self.assertTrue(vm.is_link_at(1, 1, 2))
+        self.assertTrue(vm.is_link_at(1, 1, 3))
+        self.assertTrue(vm.is_link_at(1, 1, 4))
+        self.assertTrue(vm.is_link_at(1, 1, 5))
+
         count = 0
         for _chip in vm.chips:
             for _link in _chip.router.links:
@@ -65,7 +91,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(16, count)
         self.assertEqual(str(vm),
                          "[VirtualMachine: max_x=1, max_y=1, n_chips=4]")
-        self.assertEqual(vm.get_cores_and_link_count(), (72, 16))
+        self.assertEqual(vm.get_cores_and_link_count(), (72, 8))
 
     def test_2_with_wrapparound(self):
         vm = VirtualMachine(height=2, width=2, with_wrap_arounds=True)

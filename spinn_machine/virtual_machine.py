@@ -22,19 +22,15 @@ class VirtualMachine(Machine):
     """
 
     __slots__ = (
-        "_configured_chips",
-        "_default_processors",
         "_down_cores",
         "_down_links",
+        "_height",
         "_n_cpus_per_chip",
-        "_original_width",
-        "_original_height",
         "_sdram_per_chip",
         "_weird_processor",
+        "_width",
         "_with_monitors",
-        "_with_wrap_arounds",
-        "_max_chip_x",
-        "_max_chip_y")
+        "_with_wrap_arounds")
 
     _4_chip_down_links = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
@@ -119,12 +115,12 @@ class VirtualMachine(Machine):
         # Set up the maximum chip x and y
         self._max_chip_x = width - 1
         self._max_chip_y = height - 1
+
         # Set the maximum board that will be filled in lazy unless set as down
-        self._original_width = width
-        self._original_height = height
+        self._width = width
+        self._height = height
 
         # Store the details
-        self._default_processors = dict()
         self._sdram_per_chip = sdram_per_chip
         if with_monitors:
             self._with_monitors = 1
@@ -155,36 +151,32 @@ class VirtualMachine(Machine):
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
-        self._configured_chips = dict()
+        configured_chips = dict()
         if height > 2:
             for (eth_x, eth_y) in ethernet_chips:
                 for (x, y) in Machine.BOARD_48_CHIPS:
                     (new_x, new_y) = self.normalize(x + eth_x, y + eth_y)
                     if (new_x, new_y) not in down_chips:
-                        self._configured_chips[(new_x, new_y)] = (eth_x, eth_y)
+                        configured_chips[(new_x, new_y)] = (eth_x, eth_y)
         else:
             for x in range(2):
                 for y in range(2):
                     if (x, y) not in down_chips:
-                        self._configured_chips[(x, y)] = (0, 0)
+                        configured_chips[(x, y)] = (0, 0)
         for chip in self._unreachable_outgoing_chips:
-            self._configured_chips.remove(chip)
+            configured_chips.remove(chip)
         for chip in self._unreachable_incoming_chips:
-            self._configured_chips.remove(chip)
+            configured_chips.remove(chip)
 
-        for (x, y) in self._configured_chips:
-            if self._configured_chips[(x, y)] == (x, y):
+        for (x, y) in configured_chips:
+            if configured_chips[(x, y)] == (x, y):
                 # (a, b) = divmod(i + 1, 128)
-                new_chip = self._create_chip(x, y, "127.0.{}.{}".format(x, y))
+                new_chip = self._create_chip(
+                    x, y, configured_chips, "127.0.{}.{}".format(x, y))
             else:
-                new_chip = self._create_chip(x, y)
+                (eth_x, eth_y) = configured_chips[(x, y)]
+                new_chip = self._create_chip(x, y, configured_chips)
             super(VirtualMachine, self).add_chip(new_chip)
-
-        # Assign "IP addresses" to the Ethernet chips
-        #for i, (x, y) in enumerate(ethernet_chips):
-        #    (a, b) = divmod(i + 1, 128)
-        #    new_chip = self._create_chip(x, y, "127.0.{}.{}".format(a, b))
-        #    super(VirtualMachine, self).add_chip(new_chip)
 
         self.add_spinnaker_links(version)
         self.add_fpga_links(version)
@@ -269,27 +261,6 @@ class VirtualMachine(Machine):
                 " width and height which are both either 2 or 8 or a width - 4"
                 " and height - 4 that are divisible by 12")
 
-    @property
-    def chips(self):
-        for (x, y) in self.chip_coordinates:
-            if (x, y) not in self._chips:
-                super(VirtualMachine, self).add_chip(self._create_chip(x, y))
-            yield self._chips[(x, y)]
-
-    def __iter__(self):
-        for (x, y) in self.chip_coordinates:
-            if (x, y) not in self._chips:
-                super(VirtualMachine, self).add_chip(self._create_chip(x, y))
-            yield (x, y), self._chips[(x, y)]
-
-    def get_chip_at(self, x, y):
-        if not self.is_chip_at(x, y):
-            return None
-        if (x, y) not in self._chips:
-            super(VirtualMachine, self).add_chip(self._create_chip(x, y))
-        chip_id = (x, y)
-        return self._chips[chip_id]
-
     ALLOWED_LINK_DELTAS = {
         0: (+1, 0),
         1: (+1, +1),
@@ -298,30 +269,14 @@ class VirtualMachine(Machine):
         4: (-1, -1),
         5: (0, -1)}
 
-    def is_link_at(self, x, y, link):
-        if (x, y) in self._chips:
-            return self._chips[x, y].router.is_link(link)
-        if link not in self.ALLOWED_LINK_DELTAS:
-            return False  # Illegal link value
-        dx, dy = self.ALLOWED_LINK_DELTAS[link]
-        return self._creatable_link(
-            link_from=link, source_x=x, source_y=y,
-            destination_x=x + dx, destination_y=y + dy)
-
     def __str__(self):
         return "[VirtualMachine: max_x={}, max_y={}, n_chips={}]".format(
             self._max_chip_x, self._max_chip_y, self.n_chips)
 
-    def get_cores_and_link_count(self):
-        n_down = sum(len(dc) for dc in self._down_cores.values())
-        n_cores = (self.n_chips * self._n_cpus_per_chip) - n_down
-        n_links = self.n_chips * 6 - len(self._down_links)
-        return n_cores, n_links
-
     def normalize(self, x, y):
         if self._with_wrap_arounds:
-            return ((x + self._original_width) % self._original_width,
-                    (y + self._original_height) % self._original_height)
+            return ((x + self._width) % self._width,
+                    (y + self._height) % self._height)
         return (x, y)
 
     def _create_processors_general(self, num_monitors):
@@ -347,60 +302,43 @@ class VirtualMachine(Machine):
                 processors.append(processor)
         return processors
 
-    def _create_chip(self, x, y, ip_address=None):
+    def _create_chip(self, x, y, configured_chips, ip_address=None):
         if self._weird_processor or (x, y) in self._down_cores:
             processors = self._create_processors_specific(x, y)
         else:
             processors = None
-        chip_links = self._calculate_links(x, y)
+        chip_links = self._calculate_links(x, y, configured_chips)
         chip_router = Router(chip_links, False)
         if self._sdram_per_chip is None:
             sdram = SDRAM()
         else:
             sdram = SDRAM(self._sdram_per_chip)
 
-        (eth_x, eth_y) = self._configured_chips[(x, y)]
+        (eth_x, eth_y) = configured_chips[(x, y)]
 
         return Chip(
             x, y, processors, chip_router, sdram, eth_x, eth_y, ip_address)
 
-    def _calculate_links(self, x, y):
+    def _calculate_links(self, x, y, configured_chips):
         """ Calculate the links needed for a machine structure
         """
         links = list()
-        self._add_link(links, 0, x, y, x + 1, y)
-        self._add_link(links, 1, x, y, x + 1, y + 1)
-        self._add_link(links, 2, x, y, x, y + 1)
-        self._add_link(links, 3, x, y, x - 1, y)
-        self._add_link(links, 4, x, y, x - 1, y - 1)
-        self._add_link(links, 5, x, y, x, y - 1)
+        self._add_link(links, 0, x, y, x + 1, y, configured_chips)
+        self._add_link(links, 1, x, y, x + 1, y + 1, configured_chips)
+        self._add_link(links, 2, x, y, x, y + 1, configured_chips)
+        self._add_link(links, 3, x, y, x - 1, y, configured_chips)
+        self._add_link(links, 4, x, y, x - 1, y - 1, configured_chips)
+        self._add_link(links, 5, x, y, x, y - 1, configured_chips)
         return links
 
-
-    def _get_destination(self, destination_x, destination_y):
-
-        if self._with_wrap_arounds:
-
-            # Correct for wrap around
-            if destination_x == self._original_width:
-                destination_x = 0
-            if destination_y == self._original_height:
-                destination_y = 0
-            if destination_x == -1:
-                destination_x = self._original_width - 1
-            if destination_y == -1:
-                destination_y = self._original_height - 1
-
-        return destination_x, destination_y
-
     def _add_link(self, links, link_from, source_x, source_y,
-                  destination_x, destination_y):
+                  destination_x, destination_y, configured_chips):
         if (source_x, source_y, link_from) in self._down_links:
             return  # Down chips say do not add
 
-        destination_x, destination_y = self._get_destination(
+        destination_x, destination_y = self.normalize(
             destination_x, destination_y)
-        if (destination_x, destination_y) not in self._configured_chips:
+        if (destination_x, destination_y) not in configured_chips:
             return  # No destination to connect to
 
         link_to = (link_from + 3) % 6
@@ -410,21 +348,6 @@ class VirtualMachine(Machine):
                  source_link_id=link_from,
                      multicast_default_from=link_to,
                      multicast_default_to=link_to))
-
-
-    def _creatable_link(self, link_from, source_x, source_y,
-                        destination_x, destination_y):
-        destination_x, destination_y = self._get_destination(
-            destination_x, destination_y)
-
-        # Check only against chips that can be created
-        # Chips directly added will have the links directly added as well
-        if (source_x, source_y) not in self._configured_chips:
-            return False
-        if (destination_x, destination_y) not in self._configured_chips:
-            return False
-        return (source_x, source_y, link_from) not in self._down_links
-
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
@@ -453,8 +376,3 @@ class VirtualMachine(Machine):
         self._weird_processor = self._with_monitors != 1
 
         return reserved_cores, failed_chips
-
-    @property
-    def maximum_user_cores_on_chip(self):
-        return max(self._maximum_user_cores_on_chip,
-                   self._n_cpus_per_chip - self._with_monitors)
