@@ -69,7 +69,7 @@ class Chip(object):
         """
         self._x = x
         self._y = y
-        if processors == None:
+        if processors is None:
             self._p = Chip.DEFAULT_PROCESSORS
             self._n_user_processors = Machine.MAX_CORES_PER_CHIP - 1
         else:

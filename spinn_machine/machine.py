@@ -597,21 +597,23 @@ class Machine(object):
         :return: An iterable of (x, y) coordinates of chips on the same board
         :rtype: iterable(tuple(int,int))
         """
-        eth_x = chip.nearest_ethernet_x
-        eth_y = chip.nearest_ethernet_y
         if self._max_chip_x == 1:
-            max_coords = 2
+            for x in range(0, 2):
+                for y in range(0, 2):
+                    if (self.is_chip_at(x, y)):
+                        yield x, y
         else:
-            max_coords = 8
-        for (chip_x, chip_y) in self.BOARD_48_CHIPS:
-                if self.has_wrap_arounds:
-                    x = (eth_x + chip_x) % (self._max_chip_x + 1)
-                    y = (eth_y + chip_y) % (self._max_chip_y + 1)
-                else:
-                    x = eth_x + chip_x
-                    y = eth_y + chip_y
-                if (self.is_chip_at(x, y)):
-                    yield x, y
+            eth_x = chip.nearest_ethernet_x
+            eth_y = chip.nearest_ethernet_y
+            for (chip_x, chip_y) in self.BOARD_48_CHIPS:
+                    if self.has_wrap_arounds:
+                        x = (eth_x + chip_x) % (self._max_chip_x + 1)
+                        y = (eth_y + chip_y) % (self._max_chip_y + 1)
+                    else:
+                        x = eth_x + chip_x
+                        y = eth_y + chip_y
+                    if (self.is_chip_at(x, y)):
+                        yield x, y
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\

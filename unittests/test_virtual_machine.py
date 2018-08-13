@@ -92,6 +92,10 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(str(vm),
                          "[VirtualMachine: max_x=1, max_y=1, n_chips=4]")
         self.assertEqual(vm.get_cores_and_link_count(), (72, 8))
+        count = 0
+        for _chip in vm.get_chips_on_board(vm.get_chip_at(1, 1)):
+            count += 1
+        self.assertEqual(4, count)
 
     def test_2_with_wrapparound(self):
         vm = VirtualMachine(height=2, width=2, with_wrap_arounds=True)
@@ -162,6 +166,10 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(3, len(vm.ethernet_connected_chips))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(864, count)
+        count = 0
+        for _chip in vm.get_chips_on_board(vm.get_chip_at(1, 1)):
+            count += 1
+        self.assertEqual(48, count)
 
     def test_version_5_guess_8x8(self):
         vm = VirtualMachine(height=8, width=8, version=None,
@@ -398,7 +406,8 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(count2436, 0)
 
     def test_big(self):
-        vm = VirtualMachine(width=240, height=240, with_wrap_arounds=True)
+        VirtualMachine(width=240, height=240, with_wrap_arounds=True)
+
 
 if __name__ == '__main__':
     unittest.main()

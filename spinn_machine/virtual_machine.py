@@ -1,17 +1,13 @@
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
+import logging
 
-from .exceptions import \
-    SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException
+from .chip import Chip
+from .exceptions import SpinnMachineInvalidParameterException
+from .link import Link
 from .machine import Machine
 from .processor import Processor
 from .router import Router
-from .chip import Chip
 from .sdram import SDRAM
-from .link import Link
-
-from spinn_utilities.ordered_set import OrderedSet
-
-import logging
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 
 logger = logging.getLogger(__name__)
@@ -346,8 +342,8 @@ class VirtualMachine(Machine):
             Link(source_x=source_x, source_y=source_y,
                  destination_x=destination_x, destination_y=destination_y,
                  source_link_id=link_from,
-                     multicast_default_from=link_to,
-                     multicast_default_to=link_to))
+                 multicast_default_from=link_to,
+                 multicast_default_to=link_to))
 
     def reserve_system_processors(self):
         """ Sets one of the none monitor system processors as a system\
