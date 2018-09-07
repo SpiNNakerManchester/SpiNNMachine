@@ -679,3 +679,46 @@ class Machine(object):
         return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
                 ((self.max_chip_x + 1) % 12 == 0 and
                  (self.max_chip_y + 1) % 12 == 0))
+
+    def remove_unreachable_chips(self):
+        """ Remove chips that can't be reached or that can't reach other chips\
+            due to missing links
+        """
+        for (x, y) in self._unreachable_incoming_chips:
+            if (x, y) in self._chips:
+                del self._chips[x, y]
+        for (x, y) in self._unreachable_outgoing_chips:
+            if (x, y) in self._chips:
+                del self._chips[x, y]
+
+    @property
+    def _unreachable_outgoing_chips(self):
+        removable_coords = list()
+        for (x, y) in self.chip_coordinates:
+            # If no links out of the chip work, remove it
+            is_link = False
+            for link in range(6):
+                if self.is_link_at(x, y, link):
+                    is_link = True
+                    break
+            if not is_link:
+                removable_coords.append((x, y))
+        return removable_coords
+
+    @property
+    def _unreachable_incoming_chips(self):
+        removable_coords = list()
+        for (x, y) in self.chip_coordinates:
+            # Go through all the chips that surround this one
+            moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
+            is_link = False
+            for link, (x_move, y_move) in enumerate(moves):
+                opposite = (link + 3) % 6
+                next_x = x + x_move
+                next_y = y + y_move
+                if self.is_link_at(next_x, next_y, opposite):
+                    is_link = True
+                    break
+            if not is_link:
+                removable_coords.append((x, y))
+        return removable_coords
