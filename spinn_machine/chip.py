@@ -26,7 +26,7 @@ class Chip(object):
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
                  nearest_ethernet_y, ip_address=None, virtual=False,
-                 tag_ids=IPTAG_IDS):
+                 tag_ids=None):
         """
         :param x: the x-coordinate of the chip's position in the\
             two-dimensional grid of chips
@@ -45,7 +45,9 @@ class Chip(object):
         :type ip_address: str
         :param virtual: boolean which defines if this chip is a virtual one
         :type virtual: bool
-        :param tag_ids: ID to identify the chip for SDP
+        :param tag_ids: IDs to identify the chip for SDP can be empty to
+            define no tags or None to allocate tag automatically
+            based on if there is an ip_address
         :type tag_ids: iterable(int)
         :param nearest_ethernet_x: the nearest Ethernet x coordinate
         :type nearest_ethernet_x: int or None
@@ -71,7 +73,13 @@ class Chip(object):
         self._sdram = sdram
         self._ip_address = ip_address
         self._virtual = virtual
-        self._tag_ids = tag_ids
+        if tag_ids is not None:
+            self._tag_ids = tag_ids
+        else:
+            if self._ip_address is None:
+                self._tag_ids = []
+            else:
+                self._tag_ids = self.IPTAG_IDS
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
 
