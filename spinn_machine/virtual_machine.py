@@ -31,6 +31,7 @@ class VirtualMachine(Machine):
         "_sdram_per_chip",
         "_with_monitors",
         "_with_wrap_arounds",
+        "_n_router_entries_per_router",
         "_max_chip_x",
         "_max_chip_y")
 
@@ -43,8 +44,9 @@ class VirtualMachine(Machine):
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
-            with_monitors=True, sdram_per_chip=None, down_chips=None,
-            down_cores=None, down_links=None):
+            with_monitors=True, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
+            down_chips=None, down_cores=None, down_links=None,
+            router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
         :param width: the width of the virtual machine in chips
         :type width: int
@@ -62,8 +64,12 @@ class VirtualMachine(Machine):
         :type with_monitors: bool
         :param sdram_per_chip: The amount of SDRAM to give to each chip
         :type sdram_per_chip: int or None
+        :param router_entries_per_chip: the number of entries to each router
+        :type router_entries_per_chip: int
         """
         super(VirtualMachine, self).__init__((), 0, 0)
+
+        self._n_router_entries_per_router = router_entries_per_chip
 
         if down_chips is None:
             down_chips = []
@@ -372,7 +378,8 @@ class VirtualMachine(Machine):
                     self._create_processors_general(self._with_monitors)
             processors = self._default_processors[self._with_monitors]
         chip_links = self._calculate_links(x, y)
-        chip_router = Router(chip_links, False)
+        chip_router = Router(
+            chip_links, False, self._n_router_entries_per_router)
         if self._sdram_per_chip is None:
             sdram = SDRAM()
         else:
