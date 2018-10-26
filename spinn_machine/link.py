@@ -1,5 +1,5 @@
 """
-a Link in a spinnaker machine
+a Link in a SpiNNaker machine
 """
 from .exceptions import SpinnMachineAlreadyExistsException
 

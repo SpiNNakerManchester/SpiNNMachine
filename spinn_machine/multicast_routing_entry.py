@@ -28,8 +28,8 @@ class MulticastRoutingEntry(object):
             from its directly opposite route position)
         :type defaultable: bool
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
-            * If processor_ids contains the same id more than once
-            * If link_ids contains the same id more than once
+            * If processor_ids contains the same ID more than once
+            * If link_ids contains the same ID more than once
         """
         self._routing_entry_key = routing_entry_key
         self._mask = mask
@@ -43,20 +43,20 @@ class MulticastRoutingEntry(object):
                 " is determined to be an error in the tool chain. Please "
                 "correct this and try again.")
 
-        # Add processor ids, checking that there is only one of each
+        # Add processor IDs, checking that there is only one of each
         self._processor_ids = set()
         for processor_id in processor_ids:
             if processor_id in self._processor_ids:
                 raise SpinnMachineAlreadyExistsException(
-                    "processor id", str(processor_id))
+                    "processor ID", str(processor_id))
             self._processor_ids.add(processor_id)
 
-        # Add link ids, checking that there is only one of each
+        # Add link IDs, checking that there is only one of each
         self._link_ids = set()
         for link_id in link_ids:
             if link_id in self._link_ids:
                 raise SpinnMachineAlreadyExistsException(
-                    "link id", str(link_id))
+                    "link ID", str(link_id))
             self._link_ids.add(link_id)
 
     @property
@@ -97,7 +97,7 @@ class MulticastRoutingEntry(object):
 
     @property
     def defaultable(self):
-        """if this entry is a defaultable entry
+        """ Whether this entry is a defaultable entry
 
         :return: the bool that represents if a entry is defaultable or not
         :rtype: bool
@@ -109,8 +109,8 @@ class MulticastRoutingEntry(object):
             must have the same key and mask.  The merge will join the\
             processor IDs and link IDs from both the entries.  This could be\
             used to add a new destination to an existing route in a\
-            routing table. It is also possible to use the add (+) operator or\
-            the or (|) operator with the same effect.
+            routing table. It is also possible to use the add (`+`) operator\
+            or the or (`|`) operator with the same effect.
 
         :param other_entry: The multicast entry to merge with this entry
         :type other_entry: :py:class:`~spinn_machine.MulticastRoutingEntry`
@@ -141,13 +141,13 @@ class MulticastRoutingEntry(object):
         return new_entry
 
     def __add__(self, other_entry):
-        """ Allows overloading of + to merge two entries together.\
+        """ Allows overloading of `+` to merge two entries together.\
             See :py:meth:`merge`
         """
         return self.merge(other_entry)
 
     def __or__(self, other_entry):
-        """ Allows overloading of | to merge two entries together.\
+        """ Allows overloading of `|` to merge two entries together.\
             See :py:meth:`merge`
         """
         return self.merge(other_entry)

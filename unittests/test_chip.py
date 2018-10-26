@@ -138,8 +138,7 @@ class TestingChip(unittest.TestCase):
         self.assertEquals(count, 1)
 
     def test_get_first_none_monitor_processor(self):
-        """
-        test the get_first_none_monitor_processor
+        """ test the get_first_none_monitor_processor
 
         NOTE: Not sure if method being tested is required.
         """

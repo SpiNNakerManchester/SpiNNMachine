@@ -48,3 +48,24 @@ def test_iter():
         assert 3 in cs
 
     assert len(css.get_core_subset_for_chip(1, 0)) == 0
+
+
+def test_interest():
+    cs11 = CoreSubset(0, 0, [1, 2, 3])
+    cs12 = CoreSubset(0, 1, [1, 2, 3])
+    cs13 = CoreSubset(1, 1, [1])
+    cs14 = CoreSubset(2, 2, [1])
+    css1 = CoreSubsets([cs11, cs12, cs13, cs14])
+    cs21 = CoreSubset(0, 0, [2, 3, 5])
+    cs22 = CoreSubset(1, 0, [1, 2, 3])
+    cs23 = CoreSubset(1, 1, [9, 7, 1, 5])
+    cs24 = CoreSubset(2, 2, [2])
+    css2 = CoreSubsets([cs21, cs22, cs23, cs24])
+    css3 = css1.intersect(css2)
+    assert (0, 0, 2) in css3
+    assert (0, 0, 3) in css3
+    assert (1, 1, 1) in css3
+    assert (8 == len(css1))
+    assert (11 == len(css2))
+    assert (3 == len(css3))
+    assert css3.__repr__() == "(0, 0)(1, 1)"

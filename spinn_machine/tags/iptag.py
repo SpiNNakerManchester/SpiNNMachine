@@ -2,7 +2,7 @@ from .abstract_tag import AbstractTag
 
 
 class IPTag(AbstractTag):
-    """ Used to hold data that is contained within an IPTag
+    """ Used to hold data that is contained within an IP tag
     """
 
     __slots__ = [
