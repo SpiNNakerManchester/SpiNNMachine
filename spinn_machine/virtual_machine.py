@@ -22,6 +22,7 @@ class VirtualMachine(Machine):
         "_down_links",
         "_height",
         "_n_cpus_per_chip",
+        "_n_router_entries_per_router",
         "_sdram_per_chip",
         "_weird_processor",
         "_width",
@@ -37,8 +38,9 @@ class VirtualMachine(Machine):
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
-            with_monitors=True, sdram_per_chip=None, down_chips=None,
-            down_cores=None, down_links=None):
+            with_monitors=True, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
+            down_chips=None, down_cores=None, down_links=None,
+            router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
         :param width: the width of the virtual machine in chips
         :type width: int
@@ -56,8 +58,12 @@ class VirtualMachine(Machine):
         :type with_monitors: bool
         :param sdram_per_chip: The amount of SDRAM to give to each chip
         :type sdram_per_chip: int or None
+        :param router_entries_per_chip: the number of entries to each router
+        :type router_entries_per_chip: int
         """
         super(VirtualMachine, self).__init__((), 0, 0)
+
+        self._n_router_entries_per_router = router_entries_per_chip
 
         if down_chips is None:
             down_chips = []
@@ -166,11 +172,9 @@ class VirtualMachine(Machine):
 
         for (x, y) in configured_chips:
             if configured_chips[(x, y)] == (x, y):
-                # (a, b) = divmod(i + 1, 128)
                 new_chip = self._create_chip(
                     x, y, configured_chips, "127.0.{}.{}".format(x, y))
             else:
-                (eth_x, eth_y) = configured_chips[(x, y)]
                 new_chip = self._create_chip(x, y, configured_chips)
             super(VirtualMachine, self).add_chip(new_chip)
 
@@ -304,7 +308,9 @@ class VirtualMachine(Machine):
         else:
             processors = None
         chip_links = self._calculate_links(x, y, configured_chips)
-        chip_router = Router(chip_links, False)
+        chip_router = Router(
+            chip_links,
+            n_available_multicast_entries=self._n_router_entries_per_router)
         if self._sdram_per_chip is None:
             sdram = SDRAM()
         else:
