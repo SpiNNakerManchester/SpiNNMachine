@@ -182,7 +182,7 @@ class Router(object):
             if link_id > 5 or link_id < 0:
                 raise SpinnMachineInvalidParameterException(
                     "route.link_ids", str(routing_table_entry.link_ids),
-                    "Link ids must be between 0 and 5")
+                    "Link IDs must be between 0 and 5")
             route_entry |= (1 << link_id)
         return route_entry
 

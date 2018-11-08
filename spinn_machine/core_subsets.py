@@ -12,7 +12,7 @@ class CoreSubsets(object):
 
     def __init__(self, core_subsets=None):
         """
-        :param core_subsets: An iterable of cores for each desired chip
+        :param core_subsets: The cores for each desired chip
         :type core_subsets: iterable(:py:class:`~spinn_machine.CoreSubset`)
         """
         self._core_subsets = OrderedDict()
@@ -27,15 +27,13 @@ class CoreSubsets(object):
         :type core_subset: :py:class:`spinn_machine.CoreSubset`
         :rtype: None
         """
-        xy = (core_subset.x, core_subset.y)
-        if xy not in self._core_subsets:
-            self._core_subsets[xy] = core_subset
-        else:
-            for processor_id in core_subset.processor_ids:
-                self._core_subsets[xy].add_processor(processor_id)
+        x = core_subset.x
+        y = core_subset.y
+        for processor_id in core_subset.processor_ids:
+            self.add_processor(x, y, processor_id)
 
     def add_core_subsets(self, core_subsets):
-        """ merges a core subsets into this one
+        """ Merges a core subsets into this one.
 
         :param core_subsets: the core subsets to add
         :rtype: None
@@ -44,7 +42,7 @@ class CoreSubsets(object):
             self.add_core_subset(core_subset)
 
     def add_processor(self, x, y, processor_id):
-        """ Add a processor on a given chip to the set
+        """ Add a processor on a given chip to the set.
 
         :param x: The x-coordinate of the chip
         :type x: int
@@ -56,8 +54,9 @@ class CoreSubsets(object):
         """
         xy = (x, y)
         if xy not in self._core_subsets:
-            self.add_core_subset(CoreSubset(x, y, []))
-        self._core_subsets[xy].add_processor(processor_id)
+            self._core_subsets[xy] = CoreSubset(x, y, [processor_id])
+        else:
+            self._core_subsets[xy].add_processor(processor_id)
 
     def is_chip(self, x, y):
         """ Determine if the chip with coordinates (x, y) is in the subset
@@ -73,7 +72,7 @@ class CoreSubsets(object):
 
     def is_core(self, x, y, processor_id):
         """ Determine if there is a chip with coordinates (x, y) in the\
-            subset, which has a core with the given id in the subset
+            subset, which has a core with the given ID in the subset
 
         :param x: The x-coordinate of a chip
         :type x: int
@@ -82,7 +81,7 @@ class CoreSubsets(object):
         :param processor_id: The ID of a core
         :type processor_id: int
         :return: Whether there is a chip with coordinates (x, y) in the\
-            subset, which has a core with the given id in the subset
+            subset, which has a core with the given ID in the subset
         """
         xy = (x, y)
         if xy not in self._core_subsets:
@@ -91,7 +90,7 @@ class CoreSubsets(object):
 
     @property
     def core_subsets(self):
-        """ The one-per-chip subsets
+        """ The one-per-chip subsets.
 
         :return: Iterable of core subsets
         :rtype: iterable(:py:class:`spinn_machine.CoreSubset`)
@@ -99,7 +98,7 @@ class CoreSubsets(object):
         return itervalues(self._core_subsets)
 
     def get_core_subset_for_chip(self, x, y):
-        """ Get the core subset for a chip
+        """ Get the core subset for a chip.
 
         :param x: The x-coordinate of a chip
         :type x: int
@@ -141,7 +140,7 @@ class CoreSubsets(object):
         return self._core_subsets[x_y_tuple]
 
     def __repr__(self):
-        """ Human-readable version of the object
+        """ Human-readable version of the object.
 
         :return: string representation of the CoreSubsets
         """
@@ -149,3 +148,21 @@ class CoreSubsets(object):
         for xy in self._core_subsets:
             output += str(xy)
         return output
+
+    def intersect(self, other):
+        """ Returns a new CoreSubsets which is an intersect of this and the\
+            other.
+
+        :param other: A second CoreSubsets with possibly overlapping cores
+        :type other: :py:class:`spinn_machine.CoreSubsets`
+        :return: A new CoreSubsets with any overlap
+        :rtype: :py:class:`spinn_machine.CoreSubsets`
+        """
+        result = CoreSubsets()
+        for xy in self._core_subsets:
+            if xy in other._core_subsets:
+                subset = self._core_subsets[xy].intersect(
+                    other._core_subsets[xy])
+                if subset:
+                    result._core_subsets[xy] = subset
+        return result

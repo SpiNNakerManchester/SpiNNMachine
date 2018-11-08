@@ -75,10 +75,10 @@ class Machine(object):
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
 
-        # The dictionary of spinnaker links by board address and "id" (int)
+        # The dictionary of SpiNNaker links by board address and "ID" (int)
         self._spinnaker_links = dict()
 
-        # The dictionary of FPGA links by board address, FPGA and link id
+        # The dictionary of FPGA links by board address, FPGA and link ID
         self._fpga_links = dict()
 
         # Store the boot chip information
@@ -278,9 +278,9 @@ class Machine(object):
 
     @property
     def spinnaker_links(self):
-        """ The set of spinnaker links in the machine
+        """ The set of SpiNNaker links in the machine
 
-        :return: An iterable of spinnaker links
+        :return: An iterable of SpiNNaker links
         :rtype: iterable of\
             :py:class:`~spinn_machine.link_data_objects.SpinnakerLinkData`
         """
@@ -336,7 +336,7 @@ class Machine(object):
 
         :param x: The x coordinate of the chip to start from
         :param y: The y coordinate of the chip to start from
-        :param link: The id of the link to traverse, between 0 and 5
+        :param link: The ID of the link to traverse, between 0 and 5
         :param width: The width of the machine being considered
         :param height: The height of the machine being considered
         """
@@ -408,7 +408,6 @@ class Machine(object):
                 for _ in range(0, 3):
                     y = (y + 1) % (self._max_chip_y + 1)
                     chips['left'].append((x, y))
-
                 # handle left north (goes across 4 but add this chip)
                 chips['left_north'].append((x, y))
                 for _ in range(0, 4):
@@ -542,7 +541,7 @@ class Machine(object):
         total_links = dict()
         for chip_key in self._chips:
             chip = self._chips[chip_key]
-            cores += len(list(chip.processors))
+            cores += chip.n_processors
             for link in chip.router.links:
                 key1 = (link.source_x, link.source_y, link.source_link_id)
                 key2 = (link.destination_x, link.destination_y,
@@ -655,9 +654,7 @@ class Machine(object):
         :return: total
         :rtype: int
         """
-        return len([
-            processor for chip in self.chips for processor in chip.processors
-            if not processor.is_monitor])
+        return sum([chip._n_user_processors for chip in self.chips])
 
     @property
     def total_cores(self):
@@ -679,3 +676,46 @@ class Machine(object):
         return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
                 ((self.max_chip_x + 1) % 12 == 0 and
                  (self.max_chip_y + 1) % 12 == 0))
+
+    def remove_unreachable_chips(self):
+        """ Remove chips that can't be reached or that can't reach other chips\
+            due to missing links
+        """
+        for (x, y) in self._unreachable_incoming_chips:
+            if (x, y) in self._chips:
+                del self._chips[x, y]
+        for (x, y) in self._unreachable_outgoing_chips:
+            if (x, y) in self._chips:
+                del self._chips[x, y]
+
+    @property
+    def _unreachable_outgoing_chips(self):
+        removable_coords = list()
+        for (x, y) in self.chip_coordinates:
+            # If no links out of the chip work, remove it
+            is_link = False
+            for link in range(6):
+                if self.is_link_at(x, y, link):
+                    is_link = True
+                    break
+            if not is_link:
+                removable_coords.append((x, y))
+        return removable_coords
+
+    @property
+    def _unreachable_incoming_chips(self):
+        removable_coords = list()
+        for (x, y) in self.chip_coordinates:
+            # Go through all the chips that surround this one
+            moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
+            is_link = False
+            for link, (x_move, y_move) in enumerate(moves):
+                opposite = (link + 3) % 6
+                next_x = x + x_move
+                next_y = y + y_move
+                if self.is_link_at(next_x, next_y, opposite):
+                    is_link = True
+                    break
+            if not is_link:
+                removable_coords.append((x, y))
+        return removable_coords

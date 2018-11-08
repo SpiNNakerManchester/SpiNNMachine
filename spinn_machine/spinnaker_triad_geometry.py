@@ -147,11 +147,11 @@ class SpiNNakerTriadGeometry(object):
         :param y: y-coordinate of the chip to find the nearest Ethernet of
         :type y: int
         :param width:\
-            width of the spinnaker machine (must be a multiple of the triad\
+            width of the SpiNNaker machine (must be a multiple of the triad\
             width of this geometry)
         :type width: int
         :param height:\
-            height of the spinnaker machine (must be a multiple of the triad\
+            height of the SpiNNaker machine (must be a multiple of the triad\
             height of this geometry)
         :type height: int
         :param root_x: x-coordinate of the boot chip (default 0, 0)

@@ -1,5 +1,8 @@
 from .exceptions import SpinnMachineInvalidParameterException
 
+non_monitor = dict()
+monitor = dict()
+
 
 class Processor(object):
     """ A processor object included in a SpiNNaker chip
@@ -65,7 +68,7 @@ class Processor(object):
         :return: the number of CPU cycles available on this processor
         :rtype: int
         """
-        return self._clock_speed / 1000.0
+        return self._clock_speed // 1000
 
     @property
     def clock_speed(self):
@@ -110,3 +113,16 @@ class Processor(object):
 
     def __repr__(self):
         return self.__str__()
+
+    @staticmethod
+    def factory(processor_id, is_monitor=False):
+        if is_monitor:
+            if processor_id not in monitor:
+                monitor[processor_id] = Processor(
+                    processor_id, is_monitor=is_monitor)
+            return monitor[processor_id]
+        else:
+            if processor_id not in non_monitor:
+                non_monitor[processor_id] = Processor(
+                    processor_id, is_monitor=is_monitor)
+            return non_monitor[processor_id]

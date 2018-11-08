@@ -7,28 +7,28 @@ class FixedRouteEntry(object):
 
     __slots__ = (
 
-        # the processors ids for this route
+        # the processors IDs for this route
         "_processor_ids",
 
-        # the link ids for this route
+        # the link IDs for this route
         "_link_ids"
     )
 
     def __init__(self, processor_ids, link_ids):
-        # Add processor ids, checking that there is only one of each
+        # Add processor IDs, checking that there is only one of each
         self._processor_ids = set()
         for processor_id in processor_ids:
             if processor_id in self._processor_ids:
                 raise SpinnMachineAlreadyExistsException(
-                    "processor id", str(processor_id))
+                    "processor ID", str(processor_id))
             self._processor_ids.add(processor_id)
 
-        # Add link ids, checking that there is only one of each
+        # Add link IDs, checking that there is only one of each
         self._link_ids = set()
         for link_id in link_ids:
             if link_id in self._link_ids:
                 raise SpinnMachineAlreadyExistsException(
-                    "link id", str(link_id))
+                    "link ID", str(link_id))
             self._link_ids.add(link_id)
 
     @property
