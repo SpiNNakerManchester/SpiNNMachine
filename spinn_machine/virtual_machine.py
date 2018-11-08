@@ -1,15 +1,13 @@
-from .exceptions import \
-    SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException
+import logging
+from spinn_utilities.ordered_set import OrderedSet
+from .exceptions import (
+    SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException)
 from .machine import Machine
 from .processor import Processor
 from .router import Router
 from .chip import Chip
 from .sdram import SDRAM
 from .link import Link
-
-from spinn_utilities.ordered_set import OrderedSet
-
-import logging
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 
 logger = logging.getLogger(__name__)

@@ -1,5 +1,4 @@
-from spinn_machine.core_subsets import CoreSubsets
-from spinn_machine.core_subset import CoreSubset
+from spinn_machine import CoreSubsets, CoreSubset
 
 
 def test_coresubsets():

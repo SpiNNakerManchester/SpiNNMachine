@@ -1,4 +1,3 @@
-# spinn_machine imports
 from .exceptions import SpinnMachineAlreadyExistsException
 
 

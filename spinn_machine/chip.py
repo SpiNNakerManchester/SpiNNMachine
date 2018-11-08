@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from six import iteritems, itervalues
-from .exceptions import SpinnMachineAlreadyExistsException
 from spinn_utilities.ordered_set import OrderedSet
+from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class Chip(object):

@@ -2,7 +2,6 @@
 TestingReverseIptag
 """
 from __future__ import absolute_import
-# general imports
 import unittest
 from spinn_machine.tags import ReverseIPTag
 
