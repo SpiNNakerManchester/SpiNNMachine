@@ -4,6 +4,7 @@ from .exceptions import SpinnMachineAlreadyExistsException
 from .machine import Machine
 from .processor import Processor
 from spinn_utilities.ordered_set import OrderedSet
+from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class Chip(object):

@@ -1,13 +1,9 @@
 """
 test for testing the python representation of a spinnaker machine
 """
-
-# spinnmachine imports
+import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, Machine
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-
-# general imports
-import unittest
 
 
 class SpinnMachineTestCase(unittest.TestCase):

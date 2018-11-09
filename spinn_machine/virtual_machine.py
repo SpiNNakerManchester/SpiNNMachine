@@ -4,10 +4,15 @@ import logging
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
 from .link import Link
+import logging
+from spinn_utilities.ordered_set import OrderedSet
+from .exceptions import (
+    SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException)
 from .machine import Machine
 from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
+from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 
 logger = logging.getLogger(__name__)
