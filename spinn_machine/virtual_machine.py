@@ -3,11 +3,6 @@ import logging
 
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
-from .link import Link
-import logging
-from spinn_utilities.ordered_set import OrderedSet
-from .exceptions import (
-    SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException)
 from .machine import Machine
 from .processor import Processor
 from .router import Router
@@ -39,7 +34,7 @@ class VirtualMachine(Machine):
         (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)
     }
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-maa  ny-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
