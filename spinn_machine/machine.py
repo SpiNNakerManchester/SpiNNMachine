@@ -609,37 +609,6 @@ class Machine(object):
                         (chip_x, chip_y) not in Machine.BOARD_48_CHIP_GAPS):
                     yield x, y
 
-    def reserve_system_processors(self):
-        """ Sets one of the none monitor system processors as a system\
-            processor on every Chip
-
-        Updates maximum_user_cores_on_chip
-
-        :return:\
-            A CoreSubsets of reserved cores, and a list of (x, y) of chips\
-            where a non-system core was not available
-        :rtype:\
-            tuple(:py:class:`~spinn_machine.CoreSubsets`,\
-            list(int, int))
-        """
-        self._maximum_user_cores_on_chip = 0
-        reserved_cores = CoreSubsets()
-        failed_chips = list()
-        for chip in itervalues(self._chips):
-
-            # Try to get a new system processor
-            core_reserved = chip.reserve_a_system_processor()
-            if core_reserved is None:
-                failed_chips.append((chip.x, chip.y))
-            else:
-                reserved_cores.add_processor(chip.x, chip.y, core_reserved)
-
-            # Update the maximum user cores either way
-            if chip.n_user_processors > self._maximum_user_cores_on_chip:
-                self._maximum_user_cores_on_chip = chip.n_user_processors
-
-        return reserved_cores, failed_chips
-
     @property
     def maximum_user_cores_on_chip(self):
         """ The maximum number of user cores on any chip

@@ -447,33 +447,6 @@ class VirtualMachine(Machine):
             return False
         return (source_x, source_y, link_from) not in self._down_links
 
-    def reserve_system_processors(self):
-        """ Sets one of the none monitor system processors as a system\
-            processor on every Chip
-
-        Updates maximum_user_cores_on_chip
-
-        :rtype None
-        """
-        # Handle existing chips
-        reserved_cores, failed_chips = \
-            super(VirtualMachine, self).reserve_system_processors()
-
-        # Go through the remaining cores and get a virtual unused core
-        for x, y in self.chip_coordinates:
-            if (x, y) not in self._chips:
-                for processor_id in range(0, self._with_monitors):
-                    if (x, y, processor_id) not in self._down_cores:
-                        reserved_cores.add_processor(x, y, processor_id)
-                        break
-                else:
-                    failed_chips.append((x, y))
-
-        # Ensure future chips get an extra monitor
-        self._with_monitors += 1
-
-        return reserved_cores, failed_chips
-
     @property
     def maximum_user_cores_on_chip(self):
         return max(self._maximum_user_cores_on_chip,
