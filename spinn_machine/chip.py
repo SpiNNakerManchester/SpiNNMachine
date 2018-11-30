@@ -231,29 +231,6 @@ class Chip(object):
             if not processor.is_monitor:
                 return processor
 
-    def reserve_a_system_processor(self):
-        """ Sets one of the none monitor processors as a system processor.
-
-        Updates n_user_processors
-
-        .. warning::
-            This method should ONLY be called via\
-            :py:meth:`spinn_machine.Machine.reserve_system_processors`
-
-        :return:\
-            The ID of the processor reserved, or None if no processor could\
-            be found
-        :rtype: int or None
-        """
-        for processor_id, processor in iteritems(self._p):
-            if not processor.is_monitor:
-                system_processor = processor.clone_as_system_processor()
-                self._p[processor_id] = system_processor
-                self._n_user_processors -= 1
-                return processor_id
-
-        return None
-
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors
 
