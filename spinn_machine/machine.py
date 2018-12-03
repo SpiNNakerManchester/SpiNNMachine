@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from six import iteritems, iterkeys, itervalues
 from .exceptions import SpinnMachineAlreadyExistsException
-from .core_subsets import CoreSubsets
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 
 
@@ -611,37 +610,6 @@ class Machine(object):
                         y = eth_y + chip_y
                     if (self.is_chip_at(x, y)):
                         yield x, y
-
-    def reserve_system_processors(self):
-        """ Sets one of the none monitor system processors as a system\
-            processor on every Chip
-
-        Updates maximum_user_cores_on_chip
-
-        :return:\
-            A CoreSubsets of reserved cores, and a list of (x, y) of chips\
-            where a non-system core was not available
-        :rtype:\
-            tuple(:py:class:`~spinn_machine.CoreSubsets`,\
-            list(int, int))
-        """
-        self._maximum_user_cores_on_chip = 0
-        reserved_cores = CoreSubsets()
-        failed_chips = list()
-        for chip in itervalues(self._chips):
-
-            # Try to get a new system processor
-            core_reserved = chip.reserve_a_system_processor()
-            if core_reserved is None:
-                failed_chips.append((chip.x, chip.y))
-            else:
-                reserved_cores.add_processor(chip.x, chip.y, core_reserved)
-
-            # Update the maximum user cores either way
-            if chip.n_user_processors > self._maximum_user_cores_on_chip:
-                self._maximum_user_cores_on_chip = chip.n_user_processors
-
-        return reserved_cores, failed_chips
 
     @property
     def maximum_user_cores_on_chip(self):

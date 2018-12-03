@@ -358,14 +358,6 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
         self.assertEqual(count, 4)
 
-    def test_reserve_system_processors_different(self):
-        n_chips = 18
-        vm = VirtualMachine(2, 2, n_cpus_per_chip=n_chips, with_monitors=True)
-        self.assertEqual(vm.maximum_user_cores_on_chip, n_chips - 1)
-
-        vm.reserve_system_processors()
-        self.assertEqual(vm.maximum_user_cores_on_chip, n_chips - 2)
-
     def test_ethernet_chips_exist(self):
         vm = VirtualMachine(width=48, height=24, with_wrap_arounds=True)
         for eth_chip in vm._ethernet_connected_chips:
