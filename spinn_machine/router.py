@@ -19,6 +19,8 @@ class Router(object):
 
     MAX_LINKS_PER_ROUTER = 6
 
+    MAX_CORES_PER_ROUTER = 18
+
     __slots__ = (
         "_clock_speed", "_emergency_routing_enabled", "_links",
         "_n_available_multicast_entries"
@@ -172,19 +174,38 @@ class Router(object):
         """
         route_entry = 0
         for processor_id in routing_table_entry.processor_ids:
-            if processor_id > 26 or processor_id < 0:
+            if processor_id >= Router.MAX_CORES_PER_ROUTER or processor_id < 0:
                 raise SpinnMachineInvalidParameterException(
                     "route.processor_ids",
                     str(routing_table_entry.processor_ids),
-                    "Processor IDs must be between 0 and 26")
-            route_entry |= (1 << (6 + processor_id))
+                    "Processor IDs must be between 0 and " +
+                    str(Router.MAX_CORES_PER_ROUTER - 1))
+            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
         for link_id in routing_table_entry.link_ids:
-            if link_id > 5 or link_id < 0:
+            if link_id >= Router.MAX_LINKS_PER_ROUTER or link_id < 0:
                 raise SpinnMachineInvalidParameterException(
                     "route.link_ids", str(routing_table_entry.link_ids),
-                    "Link IDs must be between 0 and 5")
+                    "Link IDs must be between 0 and " +
+                    str(Router.MAX_LINKS_PER_ROUTER - 1))
             route_entry |= (1 << link_id)
         return route_entry
+
+    @staticmethod
+    def convert_spinnaker_route_to_routing_ids(route):
+        """ Convert a binary routing table entry usable on the machine to \
+            lists of route IDs usable in a routing table entry represented in \
+            software.
+
+        :param route: The routing table entry
+        :type route: int
+        :return: The list of processor IDs, and the list of link IDs.
+        :rtype: tuple(list(int), list(int))
+        """
+        processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+                         if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
+        link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
+                    if route & 1 << li]
+        return processor_ids, link_ids
 
     def get_neighbouring_chips_coords(self):
         """ Utility method to convert links into x and y coordinates
