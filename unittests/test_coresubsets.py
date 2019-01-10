@@ -68,3 +68,14 @@ def test_interest():
     assert (11 == len(css2))
     assert (3 == len(css3))
     assert css3.__repr__() == "(0, 0)(1, 1)"
+
+
+def test_values():
+    cs1 = CoreSubset(0, 0, [1, 2, 3])
+    cs2 = CoreSubset(0, 0, [4, 5, 6])
+    cs3 = CoreSubset(0, 1, [1, 2, 3])
+    cs4 = CoreSubset(0, 0, [1, 2, 3])
+    cs5 = CoreSubset(0, 0, [1, 2, 3, 4])
+    css = CoreSubsets([cs1, cs2, cs3, cs4, cs5])
+
+    assert len(css.values()) == 2
