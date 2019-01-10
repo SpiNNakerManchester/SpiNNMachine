@@ -169,4 +169,3 @@ class CoreSubsets(object):
 
     def values(self):
         return self._core_subsets.values()
-
