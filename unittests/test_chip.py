@@ -1,7 +1,7 @@
 import unittest
+from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Processor, Link, SDRAM, Router, Chip
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-from spinn_utilities.ordered_set import OrderedSet
 
 
 class TestingChip(unittest.TestCase):
@@ -112,30 +112,6 @@ class TestingChip(unittest.TestCase):
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             self._create_chip(self._x, self._y, processors, self._router,
                               self._sdram, self._ip)
-
-    def test_reserve_a_system_processor(self):
-        new_chip = self._create_chip(self._x, self._y, self._processors,
-                                     self._router, self._sdram, self._ip)
-        self.assertEquals(new_chip.n_user_processors,
-                          len(self._processors) - 1)
-
-        monitor = new_chip.get_processor_with_id(self._monitor_id)
-        self.assertTrue(monitor.is_monitor)
-
-        for processor in new_chip.processors:
-            self.assertFalse(processor.is_monitor and
-                             processor.processor_id != self._monitor_id)
-
-        new_chip.reserve_a_system_processor()
-        self.assertEquals(new_chip.n_user_processors,
-                          len(self._processors) - 2)
-
-        count = 0
-        for processor in new_chip.processors:
-            if (processor.is_monitor and
-                    (processor.processor_id != self._monitor_id)):
-                count += 1
-        self.assertEquals(count, 1)
 
     def test_get_first_none_monitor_processor(self):
         """ test the get_first_none_monitor_processor

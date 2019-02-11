@@ -1,11 +1,7 @@
-# spinn_machine imports
-from .exceptions import SpinnMachineAlreadyExistsException
-from .core_subsets import CoreSubsets
-from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
-
-# general imports
 from collections import OrderedDict
 from six import iteritems, iterkeys, itervalues
+from .exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 
 
 class Machine(object):
@@ -573,37 +569,6 @@ class Machine(object):
                         (chip_x, chip_y) not in Machine.BOARD_48_CHIP_GAPS):
                     yield x, y
 
-    def reserve_system_processors(self):
-        """ Sets one of the none monitor system processors as a system\
-            processor on every Chip
-
-        Updates maximum_user_cores_on_chip
-
-        :return:\
-            A CoreSubsets of reserved cores, and a list of (x, y) of chips\
-            where a non-system core was not available
-        :rtype:\
-            tuple(:py:class:`~spinn_machine.CoreSubsets`,\
-            list(int, int))
-        """
-        self._maximum_user_cores_on_chip = 0
-        reserved_cores = CoreSubsets()
-        failed_chips = list()
-        for chip in itervalues(self._chips):
-
-            # Try to get a new system processor
-            core_reserved = chip.reserve_a_system_processor()
-            if core_reserved is None:
-                failed_chips.append((chip.x, chip.y))
-            else:
-                reserved_cores.add_processor(chip.x, chip.y, core_reserved)
-
-            # Update the maximum user cores either way
-            if chip.n_user_processors > self._maximum_user_cores_on_chip:
-                self._maximum_user_cores_on_chip = chip.n_user_processors
-
-        return reserved_cores, failed_chips
-
     @property
     def maximum_user_cores_on_chip(self):
         """ The maximum number of user cores on any chip
@@ -618,9 +583,7 @@ class Machine(object):
         :return: total
         :rtype: int
         """
-        return len([
-            processor for chip in self.chips for processor in chip.processors
-            if not processor.is_monitor])
+        return sum([chip._n_user_processors for chip in self.chips])
 
     @property
     def total_cores(self):
@@ -642,3 +605,46 @@ class Machine(object):
         return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
                 ((self.max_chip_x + 1) % 12 == 0 and
                  (self.max_chip_y + 1) % 12 == 0))
+
+    def remove_unreachable_chips(self):
+        """ Remove chips that can't be reached or that can't reach other chips\
+            due to missing links
+        """
+        for (x, y) in self._unreachable_incoming_chips:
+            if (x, y) in self._chips:
+                del self._chips[x, y]
+        for (x, y) in self._unreachable_outgoing_chips:
+            if (x, y) in self._chips:
+                del self._chips[x, y]
+
+    @property
+    def _unreachable_outgoing_chips(self):
+        removable_coords = list()
+        for (x, y) in self.chip_coordinates:
+            # If no links out of the chip work, remove it
+            is_link = False
+            for link in range(6):
+                if self.is_link_at(x, y, link):
+                    is_link = True
+                    break
+            if not is_link:
+                removable_coords.append((x, y))
+        return removable_coords
+
+    @property
+    def _unreachable_incoming_chips(self):
+        removable_coords = list()
+        for (x, y) in self.chip_coordinates:
+            # Go through all the chips that surround this one
+            moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
+            is_link = False
+            for link, (x_move, y_move) in enumerate(moves):
+                opposite = (link + 3) % 6
+                next_x = x + x_move
+                next_y = y + y_move
+                if self.is_link_at(next_x, next_y, opposite):
+                    is_link = True
+                    break
+            if not is_link:
+                removable_coords.append((x, y))
+        return removable_coords

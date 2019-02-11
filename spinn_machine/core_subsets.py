@@ -166,3 +166,6 @@ class CoreSubsets(object):
                 if subset:
                     result._core_subsets[xy] = subset
         return result
+
+    def values(self):
+        return self._core_subsets.values()

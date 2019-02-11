@@ -1,13 +1,9 @@
 """
 test for testing the python representation of a spinnaker machine
 """
-
-# spinnmachine imports
+import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, Machine
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
-
-# general imports
-import unittest
 
 
 class SpinnMachineTestCase(unittest.TestCase):
@@ -232,34 +228,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         new_machine = Machine(chips, 0, 0)
         self.assertFalse(new_machine.is_chip_at(10, 0))
 
-    def test_reserve_system_processors(self):
-        processors = self._create_processors()
-        chips = self._create_chips(processors)
-        new_machine = Machine(chips, 0, 0)
-        self.assertEquals(new_machine.maximum_user_cores_on_chip,
-                          len(processors) - 1)
-
-        new_machine.reserve_system_processors()
-        self.assertEquals(new_machine.maximum_user_cores_on_chip,
-                          len(processors) - 2)
-
-    def test_reserve_system_processors_different(self):
-        chips = list()
-        for x in range(2):
-            for y in range(2):
-                processors = self._create_processors(
-                    monitor=1 + x + y, number=5 + x + y)
-                chips.append(self._create_chip(x, y, processors))
-        # processors coming out will be biggest list
-
-        new_machine = Machine(chips, 0, 0)
-        self.assertEquals(new_machine.maximum_user_cores_on_chip,
-                          len(processors) - 1)
-
-        new_machine.reserve_system_processors()
-        self.assertEquals(new_machine.maximum_user_cores_on_chip,
-                          len(processors) - 2)
-
     def test_machine_get_chips_on_board(self):
         chips = self._create_chips()
         new_machine = Machine(chips, 0, 0)
@@ -274,6 +242,32 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_misc(self):
         self.assertEqual(Machine.get_chip_over_link(0, 0, 4, 24, 24), (23, 23))
+
+    def test_unreachable_incoming_chips(self):
+        chips = self._create_chips()
+        machine = Machine(chips, 0, 0)
+
+        # Delete links incoming to 3, 3
+        down_links = [
+            (2, 2, 1), (2, 3, 0), (3, 4, 5), (4, 4, 4), (4, 3, 3), (3, 2, 2)]
+        for (x, y, link) in down_links:
+            if machine.is_link_at(x, y, link):
+                del machine._chips[x, y].router._links[link]
+
+        machine.remove_unreachable_chips()
+        self.assertFalse(machine.is_chip_at(3, 3))
+
+    def test_unreachable_outgoing_chips(self):
+        chips = self._create_chips()
+        machine = Machine(chips, 0, 0)
+
+        # Delete links outgoing from 3, 3
+        for link in range(6):
+            if machine.is_link_at(3, 3, link):
+                del machine._chips[3, 3].router._links[link]
+
+        machine.remove_unreachable_chips()
+        self.assertFalse(machine.is_chip_at(3, 3))
 
 
 if __name__ == '__main__':
