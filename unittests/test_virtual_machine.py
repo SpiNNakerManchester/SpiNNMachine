@@ -355,6 +355,68 @@ class TestVirtualMachine(unittest.TestCase):
         # (24,36) is not on this virtual machine
         self.assertEqual(count2436, 0)
 
+    @staticmethod
+    def _assert_fpga_link(link, x, y, link_id):
+        assert(link.connected_chip_x == x)
+        assert(link.connected_chip_y == y)
+        assert(link.connected_link == link_id)
+
+    def test_fpga_links(self):
+        machine = VirtualMachine(version=5)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 0), 7, 3, 0)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 1), 7, 3, 5)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 2), 6, 2, 0)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 3), 6, 2, 5)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 4), 5, 1, 0)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 5), 5, 1, 5)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 6), 4, 0, 0)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 7), 4, 0, 5)
+
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 8), 4, 0, 4)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 9), 3, 0, 5)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 10), 3, 0, 4)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 11), 2, 0, 5)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 12), 2, 0, 4)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 13), 1, 0, 5)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 14), 1, 0, 4)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(0, 15), 0, 0, 5)
+
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 0), 0, 0, 4)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 1), 0, 0, 3)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 2), 0, 1, 4)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 3), 0, 1, 3)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 4), 0, 2, 4)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 5), 0, 2, 3)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 6), 0, 3, 4)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 7), 0, 3, 3)
+
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 8), 0, 3, 2)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 9), 1, 4, 3)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 10), 1, 4, 2)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 11), 2, 5, 3)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 12), 2, 5, 2)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 13), 3, 6, 3)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 14), 3, 6, 2)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(1, 15), 4, 7, 3)
+
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 0), 4, 7, 2)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 1), 4, 7, 1)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 2), 5, 7, 2)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 3), 5, 7, 1)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 4), 6, 7, 2)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 5), 6, 7, 1)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 6), 7, 7, 2)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 7), 7, 7, 1)
+
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 8), 7, 7, 0)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 9), 7, 6, 1)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 10), 7, 6, 0)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 11), 7, 5, 1)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 12), 7, 5, 0)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 13), 7, 4, 1)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 14), 7, 4, 0)
+        self._assert_fpga_link(machine.get_fpga_link_with_id(2, 15), 7, 3, 1)
+
 
 if __name__ == '__main__':
     unittest.main()

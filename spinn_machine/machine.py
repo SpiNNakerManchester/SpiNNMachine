@@ -394,95 +394,54 @@ class Machine(object):
                 #
 
                 # handle the first chip
-                x = ethernet_connected_chip.x
-                y = ethernet_connected_chip.y
+                ex = ethernet_connected_chip.x
+                ey = ethernet_connected_chip.y
                 ip = ethernet_connected_chip.ip_address
 
-                # handle left chips (goes up 4)
-                fpga_id = 1
-                fpga_link = 0
-                for _ in range(0, 3):
-                    y = (y + 1) % (self._max_chip_y + 1)
-                    self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
-                    fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
-                    fpga_link += 1
+                # List of x, y, l1, l2, dx, dy where:
+                #     x = start x
+                #     y = start y
+                #     l1 = first link
+                #     l2 = second link
+                #     dx = change in x to next
+                #     dy = change in y to next
+                chip_links = [(7, 3, 0, 5, -1, -1),  # Bottom Right
+                              (4, 0, 4, 5, -1, 0),   # Bottom
+                              (0, 0, 4, 3, 0, 1),    # Left
+                              (0, 3, 2, 3, 1, 1),    # Top Left
+                              (4, 7, 2, 1, 1, 0),    # Top
+                              (7, 7, 0, 1, 0, -1)]   # Right
 
-                # handle top left (goes up and right 4, add this chip)
-                for n in range(0, 4):
-                    x = (x + 1) % (self._max_chip_x + 1)
-                    y = (y + 1) % (self._max_chip_y + 1)
-                    if n == 0:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
-                        fpga_link += 1
-                    elif n == 3:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
-                        fpga_link += 1
-                    else:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 3, ip)
-                        fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
-                        fpga_link += 1
-
-                # handle top (goes right 3, add this chip)
-                fpga_id = 2
-                fpga_link = 0
-                for _ in range(0, 3):
-                    x = (x + 1) % (self._max_chip_x + 1)
-                    self._add_fpga_link(fpga_id, fpga_link, x, y, 2, ip)
-                    fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
-                    fpga_link += 1
-
-                # handle right (goes down 4, add this chip)
-                for n in range(0, 4):
-                    y = (y - 1) % (self._max_chip_y + 1)
-                    if n == 0:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
-                        fpga_link += 1
-                    elif n == 3:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
-                        fpga_link += 1
-                    else:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 1, ip)
-                        fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
-                        fpga_link += 1
-
-                # handle bottom right (goes down and left 3, add this chip)
-                fpga_id = 0
-                fpga_link = 0
-                for _ in range(0, 3):
-                    x = (x - 1) % (self._max_chip_x + 1)
-                    y = (y - 1) % (self._max_chip_y + 1)
-                    self._add_fpga_link(fpga_id, fpga_link, x, y, 0, ip)
-                    fpga_link += 1
-                    self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
-                    fpga_link += 1
-
-                # handle bottom (goes left 3, add this chip)
-                for n in range(0, 4):
-                    x = (x - 1) % (self._max_chip_x + 1)
-                    if n == 0:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
-                        fpga_link += 1
-                    elif n == 3:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
-                        fpga_link += 1
-                    else:
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 5, ip)
-                        fpga_link += 1
-                        self._add_fpga_link(fpga_id, fpga_link, x, y, 4, ip)
-                        fpga_link += 1
+                f = 0
+                lk = 0
+                for i, (x, y, l1, l2, dx, dy) in enumerate(chip_links):
+                    for _ in range(4):
+                        self._add_fpga_link(f, lk, x + ex, y + ey, l1, ip)
+                        f, lk = self._next_fpga_link(f, lk)
+                        if i % 2 == 1:
+                            x += dx
+                            y += dy
+                        self._add_fpga_link(f, lk, x + ex, y + ey, l2, ip)
+                        f, lk = self._next_fpga_link(f, lk)
+                        if i % 2 == 0:
+                            x += dx
+                            y += dy
 
     # pylint: disable=too-many-arguments
     def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
+        assert((board_address, fpga_id, fpga_link) not in self._fpga_links)
         if self.is_chip_at(x, y) and not self.is_link_at(x, y, link):
             self._fpga_links[board_address, fpga_id, fpga_link] = \
                 FPGALinkData(
                     fpga_link_id=fpga_link, fpga_id=fpga_id,
                     connected_chip_x=x, connected_chip_y=y,
                     connected_link=link, board_address=board_address)
+
+    @staticmethod
+    def _next_fpga_link(fpga_id, fpga_link):
+        if fpga_link == 15:
+            return fpga_id + 1, 0
+        return fpga_id, fpga_link + 1
 
     def __str__(self):
         return "[Machine: max_x={}, max_y={}, n_chips={}]".format(
