@@ -279,16 +279,6 @@ class VirtualMachine(Machine):
                     (y + self._height) % self._height)
         return (x, y)
 
-    def _create_processors_general(self, num_monitors):
-        processors = list()
-        for processor_id in range(0, num_monitors):
-            processor = Processor.factory(processor_id, is_monitor=True)
-            processors.append(processor)
-        for processor_id in range(num_monitors, self._n_cpus_per_chip):
-            processor = Processor.factory(processor_id, is_monitor=False)
-            processors.append(processor)
-        return processors
-
     def _create_processors_specific(self, x, y):
         processors = list()
         down = self._down_cores[(x, y)]
@@ -350,31 +340,3 @@ class VirtualMachine(Machine):
                  source_link_id=link_from,
                  multicast_default_from=link_to,
                  multicast_default_to=link_to))
-
-    def reserve_system_processors(self):
-        """ Sets one of the none monitor system processors as a system\
-            processor on every Chip
-
-        Updates maximum_user_cores_on_chip
-
-        :rtype None
-        """
-        # Handle existing chips
-        reserved_cores, failed_chips = \
-            super(VirtualMachine, self).reserve_system_processors()
-
-        # Go through the remaining cores and get a virtual unused core
-        for x, y in self.chip_coordinates:
-            if (x, y) not in self._chips:
-                for processor_id in range(0, self._with_monitors):
-                    if (x, y, processor_id) not in self._down_cores:
-                        reserved_cores.add_processor(x, y, processor_id)
-                        break
-                else:
-                    failed_chips.append((x, y))
-
-        # Ensure future chips get an extra monitor
-        self._with_monitors += 1
-        self._weird_processor = self._with_monitors != 1
-
-        return reserved_cores, failed_chips
