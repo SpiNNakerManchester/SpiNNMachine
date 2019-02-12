@@ -416,12 +416,16 @@ class Machine(object):
                 lk = 0
                 for i, (x, y, l1, l2, dx, dy) in enumerate(chip_links):
                     for _ in range(4):
-                        self._add_fpga_link(f, lk, x + ex, y + ey, l1, ip)
+                        fx = (x + ex) % (self._max_chip_x + 1)
+                        fy = (y + ey) % (self._max_chip_y + 1)
+                        self._add_fpga_link(f, lk, fx, fy, l1, ip)
                         f, lk = self._next_fpga_link(f, lk)
                         if i % 2 == 1:
                             x += dx
                             y += dy
-                        self._add_fpga_link(f, lk, x + ex, y + ey, l2, ip)
+                        fx = (x + ex) % (self._max_chip_x + 1)
+                        fy = (y + ey) % (self._max_chip_y + 1)
+                        self._add_fpga_link(f, lk, fx, fy, l2, ip)
                         f, lk = self._next_fpga_link(f, lk)
                         if i % 2 == 0:
                             x += dx
@@ -429,7 +433,6 @@ class Machine(object):
 
     # pylint: disable=too-many-arguments
     def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
-        assert((board_address, fpga_id, fpga_link) not in self._fpga_links)
         if self.is_chip_at(x, y) and not self.is_link_at(x, y, link):
             self._fpga_links[board_address, fpga_id, fpga_link] = \
                 FPGALinkData(
