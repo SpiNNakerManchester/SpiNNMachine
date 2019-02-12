@@ -389,6 +389,97 @@ class TestVirtualMachine(unittest.TestCase):
         # (24,36) is not on this virtual machine
         self.assertEqual(count2436, 0)
 
+    @staticmethod
+    def _assert_fpga_link(machine, fpga, fpga_link, x, y, link_id, ip=None):
+        link = machine.get_fpga_link_with_id(fpga, fpga_link, ip)
+        assert(link.connected_chip_x == x)
+        assert(link.connected_chip_y == y)
+        assert(link.connected_link == link_id)
+
+    def test_fpga_links_single_board(self):
+        machine = VirtualMachine(version=5)
+        self._assert_fpga_link(machine, 0, 0, 7, 3, 0)
+        self._assert_fpga_link(machine, 0, 1, 7, 3, 5)
+        self._assert_fpga_link(machine, 0, 2, 6, 2, 0)
+        self._assert_fpga_link(machine, 0, 3, 6, 2, 5)
+        self._assert_fpga_link(machine, 0, 4, 5, 1, 0)
+        self._assert_fpga_link(machine, 0, 5, 5, 1, 5)
+        self._assert_fpga_link(machine, 0, 6, 4, 0, 0)
+        self._assert_fpga_link(machine, 0, 7, 4, 0, 5)
+
+        self._assert_fpga_link(machine, 0, 8, 4, 0, 4)
+        self._assert_fpga_link(machine, 0, 9, 3, 0, 5)
+        self._assert_fpga_link(machine, 0, 10, 3, 0, 4)
+        self._assert_fpga_link(machine, 0, 11, 2, 0, 5)
+        self._assert_fpga_link(machine, 0, 12, 2, 0, 4)
+        self._assert_fpga_link(machine, 0, 13, 1, 0, 5)
+        self._assert_fpga_link(machine, 0, 14, 1, 0, 4)
+        self._assert_fpga_link(machine, 0, 15, 0, 0, 5)
+
+        self._assert_fpga_link(machine, 1, 0, 0, 0, 4)
+        self._assert_fpga_link(machine, 1, 1, 0, 0, 3)
+        self._assert_fpga_link(machine, 1, 2, 0, 1, 4)
+        self._assert_fpga_link(machine, 1, 3, 0, 1, 3)
+        self._assert_fpga_link(machine, 1, 4, 0, 2, 4)
+        self._assert_fpga_link(machine, 1, 5, 0, 2, 3)
+        self._assert_fpga_link(machine, 1, 6, 0, 3, 4)
+        self._assert_fpga_link(machine, 1, 7, 0, 3, 3)
+
+        self._assert_fpga_link(machine, 1, 8, 0, 3, 2)
+        self._assert_fpga_link(machine, 1, 9, 1, 4, 3)
+        self._assert_fpga_link(machine, 1, 10, 1, 4, 2)
+        self._assert_fpga_link(machine, 1, 11, 2, 5, 3)
+        self._assert_fpga_link(machine, 1, 12, 2, 5, 2)
+        self._assert_fpga_link(machine, 1, 13, 3, 6, 3)
+        self._assert_fpga_link(machine, 1, 14, 3, 6, 2)
+        self._assert_fpga_link(machine, 1, 15, 4, 7, 3)
+
+        self._assert_fpga_link(machine, 2, 0, 4, 7, 2)
+        self._assert_fpga_link(machine, 2, 1, 4, 7, 1)
+        self._assert_fpga_link(machine, 2, 2, 5, 7, 2)
+        self._assert_fpga_link(machine, 2, 3, 5, 7, 1)
+        self._assert_fpga_link(machine, 2, 4, 6, 7, 2)
+        self._assert_fpga_link(machine, 2, 5, 6, 7, 1)
+        self._assert_fpga_link(machine, 2, 6, 7, 7, 2)
+        self._assert_fpga_link(machine, 2, 7, 7, 7, 1)
+
+        self._assert_fpga_link(machine, 2, 8, 7, 7, 0)
+        self._assert_fpga_link(machine, 2, 9, 7, 6, 1)
+        self._assert_fpga_link(machine, 2, 10, 7, 6, 0)
+        self._assert_fpga_link(machine, 2, 11, 7, 5, 1)
+        self._assert_fpga_link(machine, 2, 12, 7, 5, 0)
+        self._assert_fpga_link(machine, 2, 13, 7, 4, 1)
+        self._assert_fpga_link(machine, 2, 14, 7, 4, 0)
+        self._assert_fpga_link(machine, 2, 15, 7, 3, 1)
+
+    def test_fpga_links_3_board(self):
+        # A List of links, one for each side of each board in a 3-board toroid
+        fpga_links = [("127.0.0.1", 0, 5, 5, 1, 5),
+                      ("127.0.0.1", 0, 12, 2, 0, 4),
+                      ("127.0.0.1", 1, 3, 0, 1, 3),
+                      ("127.0.0.1", 1, 12, 2, 5, 2),
+                      ("127.0.0.1", 2, 5, 6, 7, 1),
+                      ("127.0.0.1", 2, 12, 7, 5, 0),
+                      ("127.0.0.2", 0, 2, 10, 10, 0),
+                      ("127.0.0.2", 0, 11, 6, 8, 5),
+                      ("127.0.0.2", 1, 3, 4, 9, 3),
+                      ("127.0.0.2", 1, 14, 7, 2, 2),
+                      ("127.0.0.2", 2, 5, 10, 3, 1),
+                      ("127.0.0.2", 2, 12, 11, 1, 0),
+                      ("127.0.0.3", 0, 5, 1, 5, 5),
+                      ("127.0.0.3", 0, 10, 11, 4, 4),
+                      ("127.0.0.3", 1, 1, 8, 4, 3),
+                      ("127.0.0.3", 1, 12, 10, 9, 2),
+                      ("127.0.0.3", 2, 7, 3, 11, 1),
+                      ("127.0.0.3", 2, 12, 3, 9, 0)]
+
+        down_links = [(x, y, link) for _, _, _, x, y, link in fpga_links]
+
+        machine = VirtualMachine(
+            width=12, height=12, with_wrap_arounds=True, down_links=down_links)
+        for ip, fpga, fpga_link, x, y, link in fpga_links:
+            self._assert_fpga_link(machine, fpga, fpga_link, x, y, link, ip)
+
     def test_big(self):
         VirtualMachine(width=240, height=240, with_wrap_arounds=True)
 
