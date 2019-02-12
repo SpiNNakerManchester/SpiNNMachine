@@ -525,14 +525,14 @@ class Machine(object):
             eth_x = chip.nearest_ethernet_x
             eth_y = chip.nearest_ethernet_y
             for (chip_x, chip_y) in self.BOARD_48_CHIPS:
-                    if self.has_wrap_arounds:
-                        x = (eth_x + chip_x) % (self._max_chip_x + 1)
-                        y = (eth_y + chip_y) % (self._max_chip_y + 1)
-                    else:
-                        x = eth_x + chip_x
-                        y = eth_y + chip_y
-                    if (self.is_chip_at(x, y)):
-                        yield x, y
+                if self.has_wrap_arounds:
+                    x = (eth_x + chip_x) % (self._max_chip_x + 1)
+                    y = (eth_y + chip_y) % (self._max_chip_y + 1)
+                else:
+                    x = eth_x + chip_x
+                    y = eth_y + chip_y
+                if (self.is_chip_at(x, y)):
+                    yield x, y
 
     @property
     def maximum_user_cores_on_chip(self):
