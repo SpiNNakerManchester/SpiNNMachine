@@ -1,4 +1,7 @@
-from collections import OrderedDict
+try:
+    from collections.abc import OrderedDict
+except ImportError:
+    from collections import OrderedDict
 from six import iteritems, iterkeys, itervalues
 from .exceptions import SpinnMachineAlreadyExistsException
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData

@@ -1,4 +1,7 @@
-from collections import OrderedDict
+try:
+    from collections.abc import OrderedDict
+except ImportError:
+    from collections import OrderedDict
 from six import iteritems, itervalues
 from spinn_utilities.ordered_set import OrderedSet
 from .exceptions import SpinnMachineAlreadyExistsException
