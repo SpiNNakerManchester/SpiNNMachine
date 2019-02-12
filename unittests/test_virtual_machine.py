@@ -53,11 +53,37 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(vm.max_chip_x, 1)
         self.assertEqual(vm.max_chip_y, 1)
         self.assertEqual(4, vm.n_chips)
+        self.assertTrue(vm.is_chip_at(0, 0))
+        self.assertTrue(vm.is_chip_at(0, 1))
+        self.assertTrue(vm.is_chip_at(1, 0))
+        self.assertTrue(vm.is_chip_at(1, 1))
         self.assertEqual(1, len(vm.ethernet_connected_chips))
-        self.assertTrue(vm.is_link_at(0, 0, 5))
-        self.assertTrue(vm.is_link_at(0, 1, 2))
+        self.assertTrue(vm.is_link_at(0, 0, 0))
+        self.assertTrue(vm.is_link_at(0, 0, 1))
+        self.assertTrue(vm.is_link_at(0, 0, 2))
+        self.assertFalse(vm.is_link_at(0, 0, 3))
         self.assertFalse(vm.is_link_at(0, 0, 4))
+        self.assertTrue(vm.is_link_at(0, 0, 5))
+        self.assertTrue(vm.is_link_at(0, 1, 0))
+        self.assertTrue(vm.is_link_at(0, 1, 1))
+        self.assertTrue(vm.is_link_at(0, 1, 2))
         self.assertFalse(vm.is_link_at(0, 1, 3))
+        self.assertFalse(vm.is_link_at(0, 1, 4))
+        self.assertTrue(vm.is_link_at(0, 1, 5))
+
+        self.assertFalse(vm.is_link_at(1, 0, 0))
+        self.assertFalse(vm.is_link_at(1, 0, 1))
+        self.assertTrue(vm.is_link_at(1, 0, 2))
+        self.assertTrue(vm.is_link_at(1, 0, 3))
+        self.assertTrue(vm.is_link_at(1, 0, 4))
+        self.assertTrue(vm.is_link_at(1, 0, 5))
+        self.assertFalse(vm.is_link_at(1, 1, 0))
+        self.assertFalse(vm.is_link_at(1, 1, 1))
+        self.assertTrue(vm.is_link_at(1, 1, 2))
+        self.assertTrue(vm.is_link_at(1, 1, 3))
+        self.assertTrue(vm.is_link_at(1, 1, 4))
+        self.assertTrue(vm.is_link_at(1, 1, 5))
+
         count = 0
         for _chip in vm.chips:
             for _link in _chip.router.links:
@@ -65,7 +91,11 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(16, count)
         self.assertEqual(str(vm),
                          "[VirtualMachine: max_x=1, max_y=1, n_chips=4]")
-        self.assertEqual(vm.get_cores_and_link_count(), (72, 16))
+        self.assertEqual(vm.get_cores_and_link_count(), (72, 8))
+        count = 0
+        for _chip in vm.get_chips_on_board(vm.get_chip_at(1, 1)):
+            count += 1
+        self.assertEqual(4, count)
 
     def test_2_with_wrapparound(self):
         vm = VirtualMachine(height=2, width=2, with_wrap_arounds=True)
@@ -136,6 +166,10 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(3, len(vm.ethernet_connected_chips))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(864, count)
+        count = 0
+        for _chip in vm.get_chips_on_board(vm.get_chip_at(1, 1)):
+            count += 1
+        self.assertEqual(48, count)
 
     def test_version_5_guess_8x8(self):
         vm = VirtualMachine(height=8, width=8, version=None,
@@ -420,24 +454,24 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_fpga_links_3_board(self):
         # A List of links, one for each side of each board in a 3-board toroid
-        fpga_links = [("127.0.0.1", 0, 5, 5, 1, 5),
-                      ("127.0.0.1", 0, 12, 2, 0, 4),
-                      ("127.0.0.1", 1, 3, 0, 1, 3),
-                      ("127.0.0.1", 1, 12, 2, 5, 2),
-                      ("127.0.0.1", 2, 5, 6, 7, 1),
-                      ("127.0.0.1", 2, 12, 7, 5, 0),
-                      ("127.0.0.2", 0, 2, 10, 10, 0),
-                      ("127.0.0.2", 0, 11, 6, 8, 5),
-                      ("127.0.0.2", 1, 3, 4, 9, 3),
-                      ("127.0.0.2", 1, 14, 7, 2, 2),
-                      ("127.0.0.2", 2, 5, 10, 3, 1),
-                      ("127.0.0.2", 2, 12, 11, 1, 0),
-                      ("127.0.0.3", 0, 5, 1, 5, 5),
-                      ("127.0.0.3", 0, 10, 11, 4, 4),
-                      ("127.0.0.3", 1, 1, 8, 4, 3),
-                      ("127.0.0.3", 1, 12, 10, 9, 2),
-                      ("127.0.0.3", 2, 7, 3, 11, 1),
-                      ("127.0.0.3", 2, 12, 3, 9, 0)]
+        fpga_links = [("127.0.0.0", 0, 5, 5, 1, 5),
+                      ("127.0.0.0", 0, 12, 2, 0, 4),
+                      ("127.0.0.0", 1, 3, 0, 1, 3),
+                      ("127.0.0.0", 1, 12, 2, 5, 2),
+                      ("127.0.0.0", 2, 5, 6, 7, 1),
+                      ("127.0.0.0", 2, 12, 7, 5, 0),
+                      ("127.0.4.8", 0, 2, 10, 10, 0),
+                      ("127.0.4.8", 0, 11, 6, 8, 5),
+                      ("127.0.4.8", 1, 3, 4, 9, 3),
+                      ("127.0.4.8", 1, 14, 7, 2, 2),
+                      ("127.0.4.8", 2, 5, 10, 3, 1),
+                      ("127.0.4.8", 2, 12, 11, 1, 0),
+                      ("127.0.8.4", 0, 5, 1, 5, 5),
+                      ("127.0.8.4", 0, 10, 11, 4, 4),
+                      ("127.0.8.4", 1, 1, 8, 4, 3),
+                      ("127.0.8.4", 1, 12, 10, 9, 2),
+                      ("127.0.8.4", 2, 7, 3, 11, 1),
+                      ("127.0.8.4", 2, 12, 3, 9, 0)]
 
         down_links = [(x, y, link) for _, _, _, x, y, link in fpga_links]
 
@@ -445,6 +479,9 @@ class TestVirtualMachine(unittest.TestCase):
             width=12, height=12, with_wrap_arounds=True, down_links=down_links)
         for ip, fpga, fpga_link, x, y, link in fpga_links:
             self._assert_fpga_link(machine, fpga, fpga_link, x, y, link, ip)
+
+    def test_big(self):
+        VirtualMachine(width=240, height=240, with_wrap_arounds=True)
 
 
 if __name__ == '__main__':
