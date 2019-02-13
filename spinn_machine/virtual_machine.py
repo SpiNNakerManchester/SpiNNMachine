@@ -1,11 +1,11 @@
+from collections import defaultdict
 import logging
-from spinn_utilities.ordered_set import OrderedSet
-from .exceptions import (
-    SpinnMachineInvalidParameterException, SpinnMachineAlreadyExistsException)
+
+from .chip import Chip
+from .exceptions import SpinnMachineInvalidParameterException
 from .machine import Machine
 from .processor import Processor
 from .router import Router
-from .chip import Chip
 from .sdram import SDRAM
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
@@ -18,27 +18,23 @@ class VirtualMachine(Machine):
     """
 
     __slots__ = (
-        "_configured_chips",
-        "_default_processors",
         "_down_cores",
         "_down_links",
-        "_extra_chips",
+        "_height",
         "_n_cpus_per_chip",
-        "_original_width",
-        "_original_height",
-        "_sdram_per_chip",
-        "_with_monitors",
-        "_with_wrap_arounds",
         "_n_router_entries_per_router",
-        "_max_chip_x",
-        "_max_chip_y")
+        "_sdram_per_chip",
+        "_weird_processor",
+        "_width",
+        "_with_monitors",
+        "_with_wrap_arounds")
 
     _4_chip_down_links = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
         (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)
     }
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-maa  ny-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
@@ -121,26 +117,33 @@ class VirtualMachine(Machine):
         # Set up the maximum chip x and y
         self._max_chip_x = width - 1
         self._max_chip_y = height - 1
+
         # Set the maximum board that will be filled in lazy unless set as down
-        self._original_width = width
-        self._original_height = height
+        self._width = width
+        self._height = height
 
         # Store the details
-        self._n_cpus_per_chip = n_cpus_per_chip
         self._sdram_per_chip = sdram_per_chip
-        self._with_monitors = int(bool(with_monitors))
-        self._default_processors = dict()
+        if with_monitors:
+            self._with_monitors = 1
+            self._weird_processor = False
+        else:
+            self._with_monitors = 0
+            self._weird_processor = True
+        self._n_cpus_per_chip = n_cpus_per_chip
+        if n_cpus_per_chip != Machine.MAX_CORES_PER_CHIP:
+            self._weird_processor = True
 
         # Store the down items
-        self._down_cores = down_cores if down_cores is not None else set()
+        self._down_cores = defaultdict(set)
+        if down_cores is not None:
+            for (x, y, p) in down_cores:
+                self._down_cores[(x, y)].add(p)
         self._down_links = down_links if down_links is not None else set()
         if version in self.BOARD_VERSION_FOR_4_CHIPS:
             self._down_links.update(VirtualMachine._4_chip_down_links)
         if down_chips is None:
             down_chips = []
-
-        # add storage for any chips added later
-        self._extra_chips = OrderedSet()
 
         # Calculate the Ethernet connections in the machine, assuming 48-node
         # boards
@@ -150,29 +153,29 @@ class VirtualMachine(Machine):
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
-        if height > 2 and not self._with_wrap_arounds:
-
-            # Find all the chips that are on the board
-            self._configured_chips = OrderedSet(
-                (x + eth_x, y + eth_y) for x in range(8) for y in range(8)
-                for eth_x, eth_y in ethernet_chips
-                if (x, y) not in Machine.BOARD_48_CHIP_GAPS and
-                (x + eth_x, y + eth_y) not in down_chips)
+        configured_chips = dict()
+        if height > 2:
+            for (eth_x, eth_y) in ethernet_chips:
+                for (x, y) in Machine.BOARD_48_CHIPS:
+                    (new_x, new_y) = self.normalize(x + eth_x, y + eth_y)
+                    if (new_x, new_y) not in down_chips:
+                        configured_chips[(new_x, new_y)] = (eth_x, eth_y)
         else:
-            self._configured_chips = OrderedSet(
-                (x, y) for x in range(width)
-                for y in range(height)
-                if (x, y) not in down_chips)
-
+            for x in range(2):
+                for y in range(2):
+                    if (x, y) not in down_chips:
+                        configured_chips[(x, y)] = (0, 0)
         for chip in self._unreachable_outgoing_chips:
-            self._configured_chips.remove(chip)
+            configured_chips.remove(chip)
         for chip in self._unreachable_incoming_chips:
-            self._configured_chips.remove(chip)
+            configured_chips.remove(chip)
 
-        # Assign "IP addresses" to the Ethernet chips
-        for i, (x, y) in enumerate(ethernet_chips):
-            (a, b) = divmod(i + 1, 128)
-            new_chip = self._create_chip(x, y, "127.0.{}.{}".format(a, b))
+        for (x, y) in configured_chips:
+            if configured_chips[(x, y)] == (x, y):
+                new_chip = self._create_chip(
+                    x, y, configured_chips, "127.0.{}.{}".format(x, y))
+            else:
+                new_chip = self._create_chip(x, y, configured_chips)
             super(VirtualMachine, self).add_chip(new_chip)
 
         self.add_spinnaker_links(version)
@@ -258,55 +261,6 @@ class VirtualMachine(Machine):
                 " width and height which are both either 2 or 8 or a width - 4"
                 " and height - 4 that are divisible by 12")
 
-    def add_chip(self, chip):
-        """ Add a chip to the machine
-
-        :param chip: The chip to add to the machine
-        :type chip: :py:class:`~spinn_machine.Chip`
-        :return: Nothing is returned
-        :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
-            If a chip with the same x and y coordinates already exists
-        """
-        if self.is_chip_at(chip.x, chip.y):
-            raise SpinnMachineAlreadyExistsException(
-                "chip", "{}, {}".format(chip.x, chip.y))
-        super(VirtualMachine, self).add_chip(chip)
-        self._extra_chips.add((chip.x, chip.y))
-
-    @property
-    def chips(self):
-        for (x, y) in self.chip_coordinates:
-            if (x, y) not in self._chips:
-                super(VirtualMachine, self).add_chip(self._create_chip(x, y))
-            yield self._chips[(x, y)]
-
-    @property
-    def chip_coordinates(self):
-        for (x, y) in self._configured_chips:
-            yield (x, y)
-        for (x, y) in self._extra_chips:
-            yield (x, y)
-
-    def __iter__(self):
-        for (x, y) in self.chip_coordinates:
-            if (x, y) not in self._chips:
-                super(VirtualMachine, self).add_chip(self._create_chip(x, y))
-            yield (x, y), self._chips[(x, y)]
-
-    def get_chip_at(self, x, y):
-        if not self.is_chip_at(x, y):
-            return None
-        if (x, y) not in self._chips:
-            super(VirtualMachine, self).add_chip(self._create_chip(x, y))
-        chip_id = (x, y)
-        return self._chips[chip_id]
-
-    def is_chip_at(self, x, y):
-        if (x, y) in self._configured_chips:
-            return True
-        return (x, y) in self._extra_chips
-
     ALLOWED_LINK_DELTAS = {
         0: (+1, 0),
         1: (+1, +1),
@@ -315,139 +269,74 @@ class VirtualMachine(Machine):
         4: (-1, -1),
         5: (0, -1)}
 
-    def is_link_at(self, x, y, link):
-        if (x, y) in self._chips:
-            return self._chips[x, y].router.is_link(link)
-        if link not in self.ALLOWED_LINK_DELTAS:
-            return False  # Illegal link value
-        dx, dy = self.ALLOWED_LINK_DELTAS[link]
-        return self._creatable_link(
-            link_from=link, source_x=x, source_y=y,
-            destination_x=x + dx, destination_y=y + dy)
-
-    @property
-    def n_chips(self):
-        return len(self._configured_chips) + len(self._extra_chips)
-
     def __str__(self):
         return "[VirtualMachine: max_x={}, max_y={}, n_chips={}]".format(
             self._max_chip_x, self._max_chip_y, self.n_chips)
 
-    def get_cores_and_link_count(self):
-        n_cores = (
-            (self.n_chips * self._n_cpus_per_chip) - len(self._down_cores)
-        )
-        n_links = self.n_chips * 6 - len(self._down_links)
-        return n_cores, n_links
-
-    def _create_processors_general(self, num_monitors):
-        processors = list()
-        for processor_id in range(0, num_monitors):
-            processor = Processor.factory(processor_id, is_monitor=True)
-            processors.append(processor)
-        for processor_id in range(num_monitors, self._n_cpus_per_chip):
-            processor = Processor.factory(processor_id, is_monitor=False)
-            processors.append(processor)
-        return processors
+    def normalize(self, x, y):
+        if self._with_wrap_arounds:
+            return ((x + self._width) % self._width,
+                    (y + self._height) % self._height)
+        return (x, y)
 
     def _create_processors_specific(self, x, y):
         processors = list()
+        down = self._down_cores[(x, y)]
         for processor_id in range(0, self._with_monitors):
-            if (x, y, processor_id) not in self._down_cores:
+            if (x, y, processor_id) not in down:
                 processor = Processor.factory(processor_id, is_monitor=True)
                 processors.append(processor)
         for processor_id in range(self._with_monitors, self._n_cpus_per_chip):
-            if (x, y, processor_id) not in self._down_cores:
+            if (x, y, processor_id) not in down:
                 processor = Processor.factory(processor_id, is_monitor=False)
                 processors.append(processor)
         return processors
 
-    def _create_chip(self, x, y, ip_address=None):
-        down = False
-        for processor_id in range(self._n_cpus_per_chip):
-            if (x, y, processor_id) in self._down_cores:
-                down = True
-                break
-        if down:
+    def _create_chip(self, x, y, configured_chips, ip_address=None):
+        if self._weird_processor or (x, y) in self._down_cores:
             processors = self._create_processors_specific(x, y)
         else:
-            if self._with_monitors not in self._default_processors:
-                self._default_processors[self._with_monitors] = \
-                    self._create_processors_general(self._with_monitors)
-            processors = self._default_processors[self._with_monitors]
-        chip_links = self._calculate_links(x, y)
+            processors = None
+        chip_links = self._calculate_links(x, y, configured_chips)
         chip_router = Router(
-            chip_links, False, self._n_router_entries_per_router)
+            chip_links,
+            n_available_multicast_entries=self._n_router_entries_per_router)
         if self._sdram_per_chip is None:
             sdram = SDRAM()
         else:
             sdram = SDRAM(self._sdram_per_chip)
 
-        geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
-        eth_x, eth_y = geometry.get_ethernet_chip_coordinates(
-            x, y, self._max_chip_x + 1, self._max_chip_y + 1,
-            self._boot_x, self._boot_y)
+        (eth_x, eth_y) = configured_chips[(x, y)]
 
         return Chip(
             x, y, processors, chip_router, sdram, eth_x, eth_y, ip_address)
 
-    def _calculate_links(self, x, y):
+    def _calculate_links(self, x, y, configured_chips):
         """ Calculate the links needed for a machine structure
         """
         links = list()
-        self._add_link(links, 0, x, y, x + 1, y)
-        self._add_link(links, 1, x, y, x + 1, y + 1)
-        self._add_link(links, 2, x, y, x, y + 1)
-        self._add_link(links, 3, x, y, x - 1, y)
-        self._add_link(links, 4, x, y, x - 1, y - 1)
-        self._add_link(links, 5, x, y, x, y - 1)
+        self._add_link(links, 0, x, y, x + 1, y, configured_chips)
+        self._add_link(links, 1, x, y, x + 1, y + 1, configured_chips)
+        self._add_link(links, 2, x, y, x, y + 1, configured_chips)
+        self._add_link(links, 3, x, y, x - 1, y, configured_chips)
+        self._add_link(links, 4, x, y, x - 1, y - 1, configured_chips)
+        self._add_link(links, 5, x, y, x, y - 1, configured_chips)
         return links
 
-    def _get_destination(self, destination_x, destination_y):
-
-        if self._with_wrap_arounds:
-
-            # Correct for wrap around
-            if destination_x == self._original_width:
-                destination_x = 0
-            if destination_y == self._original_height:
-                destination_y = 0
-            if destination_x == -1:
-                destination_x = self._original_width - 1
-            if destination_y == -1:
-                destination_y = self._original_height - 1
-
-        return destination_x, destination_y
-
     def _add_link(self, links, link_from, source_x, source_y,
-                  destination_x, destination_y):
-        destination_x, destination_y = self._get_destination(
+                  destination_x, destination_y, configured_chips):
+        if (source_x, source_y, link_from) in self._down_links:
+            return  # Down chips say do not add
+
+        destination_x, destination_y = self.normalize(
             destination_x, destination_y)
+        if (destination_x, destination_y) not in configured_chips:
+            return  # No destination to connect to
 
-        if self._creatable_link(
-                link_from, source_x, source_y, destination_x, destination_y):
-            link_to = (link_from + 3) % 6
-            links.append(
-                Link(source_x=source_x, source_y=source_y,
-                     destination_x=destination_x, destination_y=destination_y,
-                     source_link_id=link_from,
-                     multicast_default_from=link_to,
-                     multicast_default_to=link_to))
-
-    def _creatable_link(self, link_from, source_x, source_y,
-                        destination_x, destination_y):
-        destination_x, destination_y = self._get_destination(
-            destination_x, destination_y)
-
-        # Check only against chips that can be created
-        # Chips directly added will have the links directly added as well
-        if (source_x, source_y) not in self._configured_chips:
-            return False
-        if (destination_x, destination_y) not in self._configured_chips:
-            return False
-        return (source_x, source_y, link_from) not in self._down_links
-
-    @property
-    def maximum_user_cores_on_chip(self):
-        return max(self._maximum_user_cores_on_chip,
-                   self._n_cpus_per_chip - self._with_monitors)
+        link_to = (link_from + 3) % 6
+        links.append(
+            Link(source_x=source_x, source_y=source_y,
+                 destination_x=destination_x, destination_y=destination_y,
+                 source_link_id=link_from,
+                 multicast_default_from=link_to,
+                 multicast_default_to=link_to))
