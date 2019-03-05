@@ -51,7 +51,8 @@ class Machine(object):
         "_max_chip_x",
         "_max_chip_y",
         "_spinnaker_links",
-        "_maximum_user_cores_on_chip"
+        "_maximum_user_cores_on_chip",
+        "_virtual_chips"
     )
 
     def __init__(self, chips, boot_x, boot_y):
@@ -93,6 +94,8 @@ class Machine(object):
         self._chips = OrderedDict()
         self.add_chips(chips)
 
+        self._virtual_chips = list()
+
     def add_chip(self, chip):
         """ Add a chip to the machine
 
@@ -122,6 +125,10 @@ class Machine(object):
 
         if chip.n_user_processors > self._maximum_user_cores_on_chip:
             self._maximum_user_cores_on_chip = chip.n_user_processors
+
+    def add_virtual_chip(self, chip):
+        self._virtual_chips.append(chip)
+        self.add_chip(chip)
 
     def add_chips(self, chips):
         """ Add some chips to the machine
@@ -613,3 +620,7 @@ class Machine(object):
             if not is_link:
                 removable_coords.append((x, y))
         return removable_coords
+
+    @property
+    def virtual_chips(self):
+        return itervalues(self._virtual_chips)
