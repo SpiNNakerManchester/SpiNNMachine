@@ -87,6 +87,7 @@ class Chip(object):
                     self._n_user_processors += 1
         self._router = router
         self._sdram = sdram
+        self._ip_address = ip_address
         if tag_ids is not None:
             self._tag_ids = tag_ids
         else:
