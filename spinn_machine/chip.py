@@ -90,11 +90,10 @@ class Chip(object):
         self._ip_address = ip_address
         if tag_ids is not None:
             self._tag_ids = tag_ids
+        elif self._ip_address is None:
+            self._tag_ids = []
         else:
-            if self._ip_address is None:
-                self._tag_ids = []
-            else:
-                self._tag_ids = self.IPTAG_IDS
+            self._tag_ids = self.IPTAG_IDS
         self._virtual = virtual
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
