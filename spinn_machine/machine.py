@@ -1,4 +1,7 @@
-from collections import OrderedDict
+try:
+    from collections.abc import OrderedDict
+except ImportError:
+    from collections import OrderedDict
 from six import iteritems, iterkeys, itervalues
 from .exceptions import SpinnMachineAlreadyExistsException
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
@@ -32,14 +35,14 @@ class Machine(object):
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
-    BOARD_48_CHIPS = {
+    BOARD_48_CHIPS = [
         (0, 0), (0, 1), (0, 2), (0, 3), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4),
         (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2),
         (3, 3), (3, 4), (3, 5), (3, 6), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4),
         (4, 5), (4, 6), (4, 7), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6),
         (5, 7), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 7), (7, 3), (7, 4),
         (7, 5), (7, 6), (7, 7)
-    }
+    ]
 
     __slots__ = (
         "_boot_x",
