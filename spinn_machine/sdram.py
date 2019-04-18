@@ -17,6 +17,7 @@ class SDRAM(object):
         if size < 0:
             raise SpinnMachineInvalidParameterException(
                 "size", size, "negative sizes are meaningless")
+        SDRAM.DEFAULT_SDRAM_BYTES = size
         self._size = size
 
     @property
