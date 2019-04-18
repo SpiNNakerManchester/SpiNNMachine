@@ -6,6 +6,7 @@ class SDRAM(object):
     """
 
     DEFAULT_SDRAM_BYTES = 117 * 1024 * 1024
+    max_sdram_found = 0
 
     __slots__ = ("_size", )
 
@@ -17,7 +18,7 @@ class SDRAM(object):
         if size < 0:
             raise SpinnMachineInvalidParameterException(
                 "size", size, "negative sizes are meaningless")
-        SDRAM.DEFAULT_SDRAM_BYTES = size
+        SDRAM.max_sdram_found = max(SDRAM.max_sdram_found, size)
         self._size = size
 
     @property
