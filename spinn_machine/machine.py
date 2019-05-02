@@ -358,6 +358,27 @@ class Machine(object):
         link_y = (y + add_y + height) % height
         return link_x, link_y
 
+    def get_chip_at_link(self, x, y, link):
+        """ Get the x and y coordinates of the actual chip over the given link
+
+        If the link is down including if the Chip linked to is down return null
+        :param x: The x coordinate of the chip to start from
+        :param y: The y coordinate of the chip to start from
+        :param link: The ID of the link to traverse, between 0 and 5
+        """
+        if self.is_link_at(x, y, link):
+            add_x, add_y = Machine.LINK_ADD_TABLE[link]
+            if self.has_wrap_arounds:
+                width = self.max_chip_x + 1
+                height = self.max_chip_y + 1
+                link_x = (x + add_x + width) % width
+                link_y = (y + add_y + height) % height
+            else:
+                link_x = x + add_x
+                link_y = y + add_y
+            return link_x, link_y
+        return None
+
     def add_spinnaker_links(self, version_no):
         """ Add SpiNNaker links that are on a given machine depending on the\
             version of the board.
