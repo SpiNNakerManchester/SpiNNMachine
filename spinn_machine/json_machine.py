@@ -28,6 +28,7 @@ _Desc = namedtuple("_Desc", [
     "tags"])
 
 JAVA_MAX_INT = 2147483647
+OPPOSITE_LINK_OFFSET = 3
 
 
 class JsonMachine(Machine):
@@ -116,8 +117,8 @@ class JsonMachine(Machine):
                     destination_x, destination_y = Machine.get_chip_over_link(
                         source_x, source_y, source_link_id, width, height)
                     opposite_link_id = (
-                        (source_link_id + Router.MAX_LINKS_PER_ROUTER // 2)
-                        % Router.MAX_LINKS_PER_ROUTER)
+                        (source_link_id + OPPOSITE_LINK_OFFSET) %
+                        Router.MAX_LINKS_PER_ROUTER)
                     links.append(Link(
                         source_x, source_y, source_link_id, destination_x,
                         destination_y, opposite_link_id, opposite_link_id))
@@ -170,9 +171,8 @@ class JsonMachine(Machine):
             for link in chip.router.links:
                 virtual_links_dict[chip].append(link)
                 # Find and save inverse link as well
-                inverse_id = (
-                    (link.source_link_id + Router.MAX_LINKS_PER_ROUTER // 2)
-                    % Router.MAX_LINKS_PER_ROUTER)
+                inverse_id = ((link.source_link_id + OPPOSITE_LINK_OFFSET) %
+                              Router.MAX_LINKS_PER_ROUTER)
                 destination = machine.get_chip_at(
                     link.destination_x, link.destination_y)
                 inverse_link = destination.router.get_link(inverse_id)
