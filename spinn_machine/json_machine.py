@@ -56,14 +56,16 @@ class JsonMachine(Machine):
         width = j_machine["width"]
         height = j_machine["height"]
         s_monitors = j_machine["standardResources"]["monitors"]
-        s_routerEntries = j_machine["standardResources"]["routerEntries"]
-        s_routerClockSpeed = j_machine["standardResources"]["routerClockSpeed"]
+        s_router_entries = j_machine["standardResources"]["routerEntries"]
+        s_router_clock_speed = \
+            j_machine["standardResources"]["routerClockSpeed"]
         s_sdram = SDRAM(j_machine["standardResources"]["sdram"])
         s_tag_ids = j_machine["standardResources"]["tags"]
 
         e_monitors = j_machine["ethernetResources"]["monitors"]
-        e_routerEntries = j_machine["ethernetResources"]["routerEntries"]
-        e_routerClockSpeed = j_machine["ethernetResources"]["routerClockSpeed"]
+        e_router_entries = j_machine["ethernetResources"]["routerEntries"]
+        e_router_clock_speed = \
+            j_machine["ethernetResources"]["routerClockSpeed"]
         e_sdram = SDRAM(j_machine["ethernetResources"]["sdram"])
         e_tag_ids = j_machine["ethernetResources"]["tags"]
 
@@ -76,15 +78,15 @@ class JsonMachine(Machine):
             # get the details
             if "ipAddress" in details:
                 ip_address = details["ipAddress"]
-                clock_speed = e_routerClockSpeed
-                routerEntries = e_routerEntries
+                clock_speed = e_router_clock_speed
+                router_entries = e_router_entries
                 sdram = e_sdram
                 tag_ids = e_tag_ids
                 monitors = e_monitors
             else:
                 ip_address = None
-                clock_speed = s_routerClockSpeed
-                routerEntries = s_routerEntries
+                clock_speed = s_router_clock_speed
+                router_entries = s_router_entries
                 sdram = s_sdram
                 tag_ids = s_tag_ids
                 monitors = s_monitors
@@ -95,7 +97,7 @@ class JsonMachine(Machine):
                 if "routerClockSpeed" in exceptions:
                     clock_speed = exceptions["routerClockSpeed"]
                 if "routerEntries" in exceptions:
-                    routerEntries = exceptions["routerEntries"]
+                    router_entries = exceptions["routerEntries"]
                 if "sdram" in exceptions:
                     sdram = SDRAM(exceptions["sdram"])
                 if "tags" in exceptions:
@@ -113,11 +115,13 @@ class JsonMachine(Machine):
                 if source_link_id not in dead_links:
                     destination_x, destination_y = Machine.get_chip_over_link(
                         source_x, source_y, source_link_id, width, height)
-                    opposite_link_id = (source_link_id + 3) % 6
+                    opposite_link_id = (
+                        (source_link_id + Router.MAX_LINKS_PER_ROUTER // 2)
+                        % Router.MAX_LINKS_PER_ROUTER)
                     links.append(Link(
                         source_x, source_y, source_link_id, destination_x,
                         destination_y, opposite_link_id, opposite_link_id))
-            router = Router(links, False, clock_speed, routerEntries)
+            router = Router(links, False, clock_speed, router_entries)
 
             # Create and add a chip with this router
             chip = Chip(
@@ -129,7 +133,8 @@ class JsonMachine(Machine):
         self.add_spinnaker_links(version_no=None)
         self.add_fpga_links(version_no=None)
 
-    def _get_processors(self, cores, monitors, processors_by_cores):
+    @staticmethod
+    def _get_processors(cores, monitors, processors_by_cores):
         if not (cores, monitors) in processors_by_cores:
             processors = []
             for i in range(0, monitors):
@@ -218,9 +223,9 @@ class JsonMachine(Machine):
             if (chip.n_processors - chip.n_user_processors) != eth.monitors:
                 exceptions["monitors"] = \
                     chip.n_processors - chip.n_user_processors
-            if (router_entries != eth.router_entries):
+            if router_entries != eth.router_entries:
                 exceptions["routerEntries"] = router_entries
-            if (chip.router.clock_speed != eth.router_clock_speed):
+            if chip.router.clock_speed != eth.router_clock_speed:
                 exceptions["routerClockSpeed"] = \
                     chip.router.n_available_multicast_entries
             if chip.sdram.size != eth.sdram:
@@ -234,9 +239,9 @@ class JsonMachine(Machine):
             if (chip.n_processors - chip.n_user_processors) != std.monitors:
                 exceptions["monitors"] = \
                     chip.n_processors - chip.n_user_processors
-            if (router_entries != std.router_entries):
+            if router_entries != std.router_entries:
                 exceptions["routerEntries"] = router_entries
-            if (chip.router.clock_speed != std.router_clock_speed):
+            if chip.router.clock_speed != std.router_clock_speed:
                 exceptions["routerClockSpeed"] = \
                     chip.router.clock_speed
             if chip.sdram.size != std.sdram:
@@ -260,6 +265,7 @@ class JsonMachine(Machine):
         """
 
         # Find the std values for one non-ethernet chip to use as standard
+        std = None
         for chip in machine.chips:
             if chip.ip_address is None:
                 std = _Desc(
@@ -287,30 +293,30 @@ class JsonMachine(Machine):
             tags=chip.tag_ids)
 
         # Save the standard data to be used as defaults to none ethernet chips
-        standardResources = OrderedDict()
-        standardResources["monitors"] = std.monitors
-        standardResources["routerEntries"] = std.router_entries
-        standardResources["routerClockSpeed"] = std.router_clock_speed
-        standardResources["sdram"] = std.sdram
-        standardResources["virtual"] = std.virtual
-        standardResources["tags"] = list(std.tags)
+        standard_resources = OrderedDict()
+        standard_resources["monitors"] = std.monitors
+        standard_resources["routerEntries"] = std.router_entries
+        standard_resources["routerClockSpeed"] = std.router_clock_speed
+        standard_resources["sdram"] = std.sdram
+        standard_resources["virtual"] = std.virtual
+        standard_resources["tags"] = list(std.tags)
 
         # Save the standard data to be used as defaults to none ethernet chips
-        ethernetResources = OrderedDict()
-        ethernetResources["monitors"] = eth.monitors
-        ethernetResources["routerEntries"] = eth.router_entries
-        ethernetResources["routerClockSpeed"] = eth.router_clock_speed
-        ethernetResources["sdram"] = eth.sdram
-        ethernetResources["virtual"] = eth.virtual
-        ethernetResources["tags"] = list(eth.tags)
+        ethernet_resources = OrderedDict()
+        ethernet_resources["monitors"] = eth.monitors
+        ethernet_resources["routerEntries"] = eth.router_entries
+        ethernet_resources["routerClockSpeed"] = eth.router_clock_speed
+        ethernet_resources["sdram"] = eth.sdram
+        ethernet_resources["virtual"] = eth.virtual
+        ethernet_resources["tags"] = list(eth.tags)
 
         # write basic stuff
         json_obj = OrderedDict()
         json_obj["height"] = machine.max_chip_y + 1
         json_obj["width"] = machine.max_chip_x + 1
         json_obj["root"] = list((machine.boot_x, machine.boot_y))
-        json_obj["standardResources"] = standardResources
-        json_obj["ethernetResources"] = ethernetResources
+        json_obj["standardResources"] = standard_resources
+        json_obj["ethernetResources"] = ethernet_resources
         json_obj["chips"] = []
 
         virtual_links_dict = JsonMachine._find_virtual_links(machine)
