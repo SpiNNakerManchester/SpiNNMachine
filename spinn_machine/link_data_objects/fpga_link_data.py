@@ -40,6 +40,11 @@ class FPGALinkData(AbstractLinkData):
                 self.connected_link == other.connected_link and
                 self.board_address == other.board_address)
 
+    def __ne__(self, other):
+        if not isinstance(other, FPGALinkData):
+            return True
+        return not other.__eq__()
+
     def __hash__(self):
         return hash((self._fpga_id, self._fpga_link_id,
                      self.connected_chip_x, self.connected_chip_y,
