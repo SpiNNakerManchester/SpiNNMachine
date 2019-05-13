@@ -17,8 +17,8 @@ class MulticastRoutingEntry(object):
     )
 
     # pylint: disable=too-many-arguments
-    def __init__(self, routing_entry_key, mask, processor_ids=None, link_ids=None,
-                 defaultable=False, spinnaker_route=None):
+    def __init__(self, routing_entry_key, mask, processor_ids=None,
+                 link_ids=None, defaultable=False, spinnaker_route=None):
         """
         :param routing_entry_key: The routing key_combo
         :type routing_entry_key: int
@@ -39,13 +39,13 @@ class MulticastRoutingEntry(object):
         self._mask = mask
         self._defaultable = defaultable
 
-        #if (routing_entry_key & mask) != routing_entry_key:
-        #    raise SpinnMachineInvalidParameterException(
-        #        "key_mask_combo and mask",
-        #        "{} and {}".format(routing_entry_key, mask),
-        #        "The key combo is changed when masked with the mask. This"
-        #        " is determined to be an error in the tool chain. Please "
-        #        "correct this and try again.")
+        if (routing_entry_key & mask) != routing_entry_key:
+            raise SpinnMachineInvalidParameterException(
+                "key_mask_combo and mask",
+                "{} and {}".format(routing_entry_key, mask),
+                "The key combo is changed when masked with the mask. This"
+                " is determined to be an error in the tool chain. Please "
+                "correct this and try again.")
 
         # Add processor IDs, checking that there is only one of each
         if spinnaker_route is None:
@@ -251,7 +251,8 @@ class MulticastRoutingEntry(object):
         :rtype: tuple(list(int), list(int))
         """
         processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
-                         if self._spinnaker_route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
+                         if self._spinnaker_route & 1 <<
+                         (Router.MAX_LINKS_PER_ROUTER + pi)]
         link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
                     if self._spinnaker_route & 1 << li]
         return processor_ids, link_ids
