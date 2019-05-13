@@ -78,15 +78,6 @@ class MulticastRoutingEntry(object):
         return self._routing_entry_key
 
     @property
-    def key(self):
-        """ The routing key
-
-        :return: The routing key
-        :rtype: int
-        """
-        return self._routing_entry_key
-
-    @property
     def mask(self):
         """ The routing mask
 
@@ -128,10 +119,6 @@ class MulticastRoutingEntry(object):
 
     @property
     def spinnaker_route(self):
-        return self._spinnaker_route
-
-    @property
-    def route(self):
         return self._spinnaker_route
 
     def merge(self, other_entry):
@@ -197,8 +184,8 @@ class MulticastRoutingEntry(object):
     def __repr__(self):
         return "{}:{}:{}:{{{}}}:{{{}}}".format(
             self._routing_entry_key, self._mask, self._defaultable,
-            ", ".join(map(str, self._processor_ids)),
-            ", ".join(map(str, self._link_ids)))
+            ", ".join(map(str, self.processor_ids)),
+            ", ".join(map(str, self.link_ids)))
 
     def __str__(self):
         return self.__repr__()
