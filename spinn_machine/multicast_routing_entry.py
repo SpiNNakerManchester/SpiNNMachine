@@ -39,41 +39,46 @@ class MulticastRoutingEntry(object):
         self._mask = mask
         self._defaultable = defaultable
 
-        if (routing_entry_key & mask) != routing_entry_key:
-            raise SpinnMachineInvalidParameterException(
-                "key_mask_combo and mask",
-                "{} and {}".format(routing_entry_key, mask),
-                "The key combo is changed when masked with the mask. This"
-                " is determined to be an error in the tool chain. Please "
-                "correct this and try again.")
+        #if (routing_entry_key & mask) != routing_entry_key:
+        #    raise SpinnMachineInvalidParameterException(
+        #        "key_mask_combo and mask",
+        #        "{} and {}".format(routing_entry_key, mask),
+        #        "The key combo is changed when masked with the mask. This"
+        #        " is determined to be an error in the tool chain. Please "
+        #        "correct this and try again.")
 
         # Add processor IDs, checking that there is only one of each
-        if processor_ids is None:
-            self._processor_ids = None
-        else:
+        if spinnaker_route is None:
             self._processor_ids = set()
             for processor_id in processor_ids:
                 if processor_id in self._processor_ids:
                     raise SpinnMachineAlreadyExistsException(
                         "processor ID", str(processor_id))
                 self._processor_ids.add(processor_id)
-        if link_ids is None:
-            self._link_ids = None
-        else:
-            # Add link IDs, checking that there is only one of each
+                # Add link IDs, checking that there is only one of each
             self._link_ids = set()
             for link_id in link_ids:
                 if link_id in self._link_ids:
                     raise SpinnMachineAlreadyExistsException(
                         "link ID", str(link_id))
                 self._link_ids.add(link_id)
-        if spinnaker_route is None:
             self._spinnaker_route = self._calc_spinnaker_route()
         else:
             self._spinnaker_route = spinnaker_route
+            self._processor_ids = None
+            self._link_ids = None
 
     @property
     def routing_entry_key(self):
+        """ The routing key
+
+        :return: The routing key
+        :rtype: int
+        """
+        return self._routing_entry_key
+
+    @property
+    def key(self):
         """ The routing key
 
         :return: The routing key
@@ -123,6 +128,10 @@ class MulticastRoutingEntry(object):
 
     @property
     def spinnaker_route(self):
+        return self._spinnaker_route
+
+    @property
+    def route(self):
         return self._spinnaker_route
 
     def merge(self, other_entry):
@@ -205,6 +214,22 @@ class MulticastRoutingEntry(object):
         for slot, value in state.items():
             setattr(self, slot, value)
 
+    def get_generality(self):
+        """Count the number of Xs in the key-mask pair.
+
+        For example, there are 32 Xs in ``0x00000000/0x00000000``::
+
+            >>> _get_generality(0x0, 0x0)
+            32
+
+        And no Xs in ``0xffffffff/0xffffffff``::
+
+            >>> _get_generality(0xffffffff, 0xffffffff)
+            0
+        """
+        xs = (~self._routing_entry_key) & (~self._mask)
+        return sum(1 for i in range(32) if xs & (1 << i))
+
     def _calc_spinnaker_route(self):
         """ Convert a routing table entry represented in software to a\
             binary routing table entry usable on the machine
@@ -241,6 +266,8 @@ class MulticastRoutingEntry(object):
 
     @staticmethod
     def from_json(json_obj):
-        return MulticastRoutingEntry(
+        entry = MulticastRoutingEntry(
             json_obj["key"], json_obj["mask"], defaultable=False,
             spinnaker_route=json_obj["route"])
+        entry._calc_routing_ids()
+        return entry
