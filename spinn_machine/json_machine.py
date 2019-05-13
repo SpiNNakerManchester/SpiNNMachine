@@ -1,3 +1,7 @@
+try:
+    from collections.abc import defaultdict, namedtuple, OrderedDict
+except ImportError:
+    from collections import defaultdict, namedtuple, OrderedDict
 import logging
 
 from .chip import Chip
@@ -6,7 +10,6 @@ from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .link import Link
-from collections import defaultdict, namedtuple, OrderedDict
 import json
 
 
