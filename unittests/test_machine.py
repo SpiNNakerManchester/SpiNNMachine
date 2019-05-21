@@ -147,7 +147,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         processors = self._create_processors()
         chips = self._create_chips(processors)
-        new_machine = machine_from_chips(chips)
+        new_machine = machine_from_chips(5, 5, chips)
 
         extra_chips = list()
         extra_chips.append(self._create_chip(5, 0, processors))

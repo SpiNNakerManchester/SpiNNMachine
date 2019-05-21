@@ -8,17 +8,17 @@ def machine_from_size(width, height, chips=None, boot_x=0, boot_y=0):
     if chips is None:
         chips = []
     if width == 2 and height == 2:
-        return FullWrapMachine(chips, boot_x, boot_y)
+        return FullWrapMachine(width, height, chips, boot_x, boot_y)
     if width % 12 == 0:
         if height % 12:
-            return FullWrapMachine(chips, boot_x, boot_y)
+            return FullWrapMachine(width, height, chips, boot_x, boot_y)
         else:
-            return HorizontalWrapMachine(chips, boot_x, boot_y)
+            return HorizontalWrapMachine(width, height, chips, boot_x, boot_y)
     else:
         if height % 12:
-            return VerticalWrapMachine(chips, boot_x, boot_y)
+            return VerticalWrapMachine(width, height, chips, boot_x, boot_y)
         else:
-            return NoWrapMachine(chips, boot_x, boot_y)
+            return NoWrapMachine(width, height, chips, boot_x, boot_y)
 
 
 def machine_from_chips(chips, boot_x=0, boot_y=0):

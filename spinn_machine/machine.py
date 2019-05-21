@@ -3,10 +3,14 @@ try:
 except ImportError:
     from collections import OrderedDict
 from six import iteritems, iterkeys, itervalues
-from .exceptions import SpinnMachineAlreadyExistsException
+from .exceptions import (SpinnMachineAlreadyExistsException,
+                         SpinnMachineInvalidParameterException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
+#from spinn_utilities.abstract_base import (
+#    AbstractBase, abstractproperty, abstractmethod)
 
 
+#@add_metaclass(AbstractBase)
 class Machine(object):
     """ A representation of a SpiNNaker Machine with a number of Chips.\
         Machine is also iterable, providing ((x, y), chip) where:
@@ -51,14 +55,16 @@ class Machine(object):
         "_chips",
         "_ethernet_connected_chips",
         "_fpga_links",
+        "_height",
         "_max_chip_x",
         "_max_chip_y",
         "_spinnaker_links",
         "_maximum_user_cores_on_chip",
-        "_virtual_chips"
+        "_virtual_chips",
+        "_width"
     )
 
-    def __init__(self, chips, boot_x, boot_y):
+    def __init__(self, width, height, chips, boot_x, boot_y):
         """
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
@@ -69,6 +75,9 @@ class Machine(object):
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
+
+        self._width = width
+        self._height = height
 
         # The maximum chip x coordinate
         self._max_chip_x = 0
@@ -99,6 +108,10 @@ class Machine(object):
 
         self._virtual_chips = list()
 
+    #@abstractmethod
+    #def x_y_by_ethernet(self, ethernet_x, ethernet_y):
+    #    pass
+
     def add_chip(self, chip):
         """ Add a chip to the machine
 
@@ -114,6 +127,13 @@ class Machine(object):
             raise SpinnMachineAlreadyExistsException(
                 "chip", "{}, {}".format(chip.x, chip.y))
 
+        if not chip.virtual:
+            if chip.x >= self._width:
+                raise SpinnMachineInvalidParameterException("chip", chip,
+                    "x to high for machine with width {}".format(self._width))
+            if chip.y >= self._height:
+                raise SpinnMachineInvalidParameterException("chip", chip,
+                    "y to high for machine with height {}".format(self._height))
         self._chips[chip_id] = chip
 
         if chip.x > self._max_chip_x:
@@ -275,6 +295,25 @@ class Machine(object):
         :rtype: int
         """
         return self._max_chip_y
+
+    @property
+    def width(self):
+        """ The width to the machine ignoring virtual chips
+
+        :return: The width to the machine ignoring virtual chips
+        :rtype: int
+        """
+        return self._width
+
+    @property
+    def height(self):
+        """ The height to the machine ignoring virtual chips
+
+        :return: The height to the machine ignoring virtual chips
+        :rtype: int
+        """
+        return self._height
+
 
     @property
     def n_chips(self):
