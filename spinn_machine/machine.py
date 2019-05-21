@@ -2,15 +2,15 @@ try:
     from collections.abc import OrderedDict
 except ImportError:
     from collections import OrderedDict
-from six import iteritems, iterkeys, itervalues
+from six import iteritems, iterkeys, itervalues, add_metaclass
 from .exceptions import (SpinnMachineAlreadyExistsException,
                          SpinnMachineInvalidParameterException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
-#from spinn_utilities.abstract_base import (
-#    AbstractBase, abstractproperty, abstractmethod)
+from spinn_utilities.abstract_base import (
+    AbstractBase, abstractproperty, abstractmethod)
 
 
-#@add_metaclass(AbstractBase)
+@add_metaclass(AbstractBase)
 class Machine(object):
     """ A representation of a SpiNNaker Machine with a number of Chips.\
         Machine is also iterable, providing ((x, y), chip) where:
@@ -108,9 +108,28 @@ class Machine(object):
 
         self._virtual_chips = list()
 
-    #@abstractmethod
-    #def x_y_by_ethernet(self, ethernet_x, ethernet_y):
-    #    pass
+    @abstractmethod
+    def x_y_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yields the protential x,y locations of all the chips on the board #
+        with this ethernet. Including the Ethernet chip itself.
+
+        Wraparounds are handled as appropriate.
+
+        Note: This method does not check if the chip actually exists as is
+        intended to be called to create the chips.
+
+        Warning: GIGO! This methods assumes that ethernet_x and ethernet_y are
+        the local 0,0 of an existing board,
+        within the width and height of the machine.
+
+        :param ethernet_x: The x coordinate of a (local 0,0) existing ethernet
+        chip
+        :param ethernet_y: The x coordinate of a (local 0,0) existing ethernet
+        chip
+        :return: Yeilds the (x, Y) coordinated of all the protential chips on
+         this board.
+        """
 
     def add_chip(self, chip):
         """ Add a chip to the machine
