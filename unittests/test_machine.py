@@ -3,6 +3,7 @@ test for testing the python representation of a spinnaker machine
 """
 import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, Machine
+from spinn_machine.machine_factory import machine_from_chips
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
@@ -62,7 +63,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         chips = self._create_chips(processors)
 
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
 
         self.assertEqual(new_machine.max_chip_x, 4)
         self.assertEqual(new_machine.max_chip_y, 4)
@@ -101,7 +102,7 @@ class SpinnMachineTestCase(unittest.TestCase):
             self._nearest_ethernet_chip[0],
             self._nearest_ethernet_chip[1], self._ip))
         with self.assertRaises(SpinnMachineAlreadyExistsException):
-            Machine(chips, 0, 0)
+            machine_from_chips(chips)
 
     def test_machine_add_chip(self):
         """
@@ -110,7 +111,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         :rtype: None
         """
         processors = self._create_processors()
-        new_machine = Machine(self._create_chips(processors), 0, 0)
+        new_machine = machine_from_chips(self._create_chips(processors))
         processor = list()
         processor.append(Processor(100, 100, False))
         extra_chip = self._create_chip(5, 0, processor)
@@ -134,7 +135,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         :rtype: None
         """
         chips = self._create_chips()
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             new_machine.add_chip(chips[3])
 
@@ -146,7 +147,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         processors = self._create_processors()
         chips = self._create_chips(processors)
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
 
         extra_chips = list()
         extra_chips.append(self._create_chip(5, 0, processors))
@@ -173,7 +174,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         :rtype: None
         """
         chips = self._create_chips()
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
 
         processors = self._create_processors()
         extra_chips = list()
@@ -190,7 +191,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         :rtype: None
         """
         chips = self._create_chips()
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
         self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
 
     def test_machine_get_chip_at_invalid_location(self):
@@ -202,7 +203,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         chips = self._create_chips()
 
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
         self.assertEqual(None, new_machine.get_chip_at(10, 0))
 
     def test_machine_is_chip_at_true(self):
@@ -214,7 +215,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         chips = self._create_chips()
 
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
         self.assertTrue(new_machine.is_chip_at(3, 0))
 
     def test_machine_is_chip_at_false(self):
@@ -225,12 +226,12 @@ class SpinnMachineTestCase(unittest.TestCase):
         :rtype: None
         """
         chips = self._create_chips()
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
         self.assertFalse(new_machine.is_chip_at(10, 0))
 
     def test_machine_get_chips_on_board(self):
         chips = self._create_chips()
-        new_machine = Machine(chips, 0, 0)
+        new_machine = machine_from_chips(chips)
         for eth_chip in new_machine._ethernet_connected_chips:
             chips_in_machine = list(new_machine.get_chips_on_board(eth_chip))
             # _create_chips made a 5*5 grid of 25 chips,
@@ -245,7 +246,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_unreachable_incoming_chips(self):
         chips = self._create_chips()
-        machine = Machine(chips, 0, 0)
+        machine = machine_from_chips(chips)
 
         # Delete links incoming to 3, 3
         down_links = [
@@ -259,7 +260,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_unreachable_outgoing_chips(self):
         chips = self._create_chips()
-        machine = Machine(chips, 0, 0)
+        machine = machine_from_chips(chips)
 
         # Delete links outgoing from 3, 3
         for link in range(6):
