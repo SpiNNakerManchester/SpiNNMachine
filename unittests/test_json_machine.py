@@ -1,6 +1,7 @@
 from tempfile import mktemp
 import unittest
-from spinn_machine import (SDRAM, JsonMachine, VirtualMachine)
+from spinn_machine import (SDRAM, VirtualMachine)
+from spinn_machine.json_machine import (machine_from_json, to_json_path)
 
 
 class TestJsonMachine(unittest.TestCase):
@@ -9,8 +10,8 @@ class TestJsonMachine(unittest.TestCase):
         hole = [(3, 3)]
         vm = VirtualMachine(version=5, down_chips=hole).machine
         jpath = mktemp("json")
-        JsonMachine.to_json_path(vm, jpath)
-        jm = JsonMachine(jpath)
+        to_json_path(vm, jpath)
+        jm = machine_from_json(jpath)
         vstr = str(vm).replace("VirtualMachine", "Machine")
         jstr = str(jm).replace("JsonMachine", "Machine")
         self.assertEquals(vstr, jstr)
@@ -31,8 +32,8 @@ class TestJsonMachine(unittest.TestCase):
         chip03._virtual = True
         jpath = mktemp("json")
         jpath = "temp.json"
-        JsonMachine.to_json_path(vm, jpath)
-        jm = JsonMachine(jpath)
+        to_json_path(vm, jpath)
+        jm = machine_from_json(jpath)
         vstr = str(vm).replace("VirtualMachine", "Machine")
         jstr = str(jm).replace("JsonMachine", "Machine")
         self.assertEqual(vstr, jstr)
