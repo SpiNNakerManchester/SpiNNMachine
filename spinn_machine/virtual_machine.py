@@ -9,11 +9,12 @@ from .router import Router
 from .sdram import SDRAM
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
+from .machine_factory import machine_from_size
 
 logger = logging.getLogger(__name__)
 
 
-class VirtualMachine(Machine):
+class VirtualMachine(object):
     """ A Virtual SpiNNaker machine
     """
 
@@ -23,11 +24,13 @@ class VirtualMachine(Machine):
         "_height",
         "_n_cpus_per_chip",
         "_n_router_entries_per_router",
+        "_machine",
         "_sdram_per_chip",
         "_weird_processor",
         "_width",
         "_with_monitors",
-        "_with_wrap_arounds")
+        "_with_wrap_arounds",
+        )
 
     _4_chip_down_links = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
@@ -61,7 +64,6 @@ class VirtualMachine(Machine):
         :param router_entries_per_chip: the number of entries to each router
         :type router_entries_per_chip: int
         """
-        super(VirtualMachine, self).__init__((), 0, 0)
 
         self._n_router_entries_per_router = router_entries_per_chip
 
@@ -73,11 +75,11 @@ class VirtualMachine(Machine):
         self.__verify_basic_sanity(version, width, height)
 
         # Version 2/3
-        if version in self.BOARD_VERSION_FOR_4_CHIPS:
+        if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
             width, height, with_wrap_arounds = self.__verify_4_chip_board(
                 version, width, height, with_wrap_arounds)
         # Version 4/5
-        elif version in self.BOARD_VERSION_FOR_48_CHIPS:
+        elif version in Machine.BOARD_VERSION_FOR_48_CHIPS:
             width, height, with_wrap_arounds = self.__verify_48_chip_board(
                 version, width, height, with_wrap_arounds)
         # Autodetect
@@ -114,10 +116,7 @@ class VirtualMachine(Machine):
             logger.debug("width = %d, height = %d and wrap-arounds %s",
                          width, height, self._with_wrap_arounds)
 
-        # Set up the maximum chip x and y
-        self._max_chip_x = width - 1
-        self._max_chip_y = height - 1
-
+        self._machine = machine_from_size(width, height)
         # Set the maximum board that will be filled in lazy unless set as down
         self._width = width
         self._height = height
@@ -140,7 +139,7 @@ class VirtualMachine(Machine):
             for (x, y, p) in down_cores:
                 self._down_cores[(x, y)].add(p)
         self._down_links = down_links if down_links is not None else set()
-        if version in self.BOARD_VERSION_FOR_4_CHIPS:
+        if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
             self._down_links.update(VirtualMachine._4_chip_down_links)
         if down_chips is None:
             down_chips = []
@@ -165,10 +164,12 @@ class VirtualMachine(Machine):
                 for y in range(2):
                     if (x, y) not in down_chips:
                         configured_chips[(x, y)] = (0, 0)
-        for chip in self._unreachable_outgoing_chips:
-            configured_chips.remove(chip)
-        for chip in self._unreachable_incoming_chips:
-            configured_chips.remove(chip)
+
+        # TODO This needs to change as it previous checked against empty
+        # for chip in self._unreachable_outgoing_chips:
+        #    configured_chips.remove(chip)
+        # for chip in self._unreachable_incoming_chips:
+        #    configured_chips.remove(chip)
 
         for (x, y) in configured_chips:
             if configured_chips[(x, y)] == (x, y):
@@ -176,10 +177,14 @@ class VirtualMachine(Machine):
                     x, y, configured_chips, "127.0.{}.{}".format(x, y))
             else:
                 new_chip = self._create_chip(x, y, configured_chips)
-            super(VirtualMachine, self).add_chip(new_chip)
+            self._machine.add_chip(new_chip)
 
-        self.add_spinnaker_links(version)
-        self.add_fpga_links(version)
+        self._machine.add_spinnaker_links(version)
+        self._machine.add_fpga_links(version)
+
+    @property
+    def machine(self):
+        return self._machine
 
     def __verify_basic_sanity(self, version, width, height):
         if ((width is not None and width < 0) or
@@ -268,10 +273,6 @@ class VirtualMachine(Machine):
         3: (-1, 0),
         4: (-1, -1),
         5: (0, -1)}
-
-    def __str__(self):
-        return "[VirtualMachine: max_x={}, max_y={}, n_chips={}]".format(
-            self._max_chip_x, self._max_chip_y, self.n_chips)
 
     def normalize(self, x, y):
         if self._with_wrap_arounds:

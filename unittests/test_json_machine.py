@@ -7,7 +7,7 @@ class TestJsonMachine(unittest.TestCase):
 
     def test_json_version_5_hole(self):
         hole = [(3, 3)]
-        vm = VirtualMachine(version=5, down_chips=hole)
+        vm = VirtualMachine(version=5, down_chips=hole).machine
         jpath = mktemp("json")
         JsonMachine.to_json_path(vm, jpath)
         jm = JsonMachine(jpath)
@@ -18,7 +18,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_exceptions(self):
-        vm = VirtualMachine(version=5)
+        vm = VirtualMachine(version=5).machine
         chip22 = vm.get_chip_at(2, 2)
         router22 = chip22.router
         router22._clock_speed = router22._clock_speed - 10
