@@ -277,6 +277,7 @@ class TestVirtualMachine(unittest.TestCase):
         vm = VirtualMachine(2, 2).machine
 
         _chip = self._create_chip(2, 2)
+        _chip._virtual = True
         vm.add_chip(_chip)
         self.assertEqual(vm.max_chip_x, 2)
         self.assertEqual(vm.max_chip_y, 2)
@@ -301,6 +302,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(3, vm.n_chips)
 
         _chip = self._create_chip(2, 2)
+        _chip._virtual = True
         vm.add_chip(_chip)
         self.assertEqual(vm.max_chip_x, 2)
         self.assertEqual(vm.max_chip_y, 2)

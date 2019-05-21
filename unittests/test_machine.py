@@ -3,7 +3,8 @@ test for testing the python representation of a spinnaker machine
 """
 import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, Machine
-from spinn_machine.machine_factory import machine_from_chips
+from spinn_machine.machine_factory import (
+    machine_from_chips, machine_from_size)
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
@@ -111,7 +112,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         :rtype: None
         """
         processors = self._create_processors()
-        new_machine = machine_from_chips(self._create_chips(processors))
+        new_machine = machine_from_size(6, 5, self._create_chips(processors))
         processor = list()
         processor.append(Processor(100, 100, False))
         extra_chip = self._create_chip(5, 0, processor)
@@ -147,7 +148,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         processors = self._create_processors()
         chips = self._create_chips(processors)
-        new_machine = machine_from_chips(5, 5, chips)
+        new_machine = machine_from_size(6, 5, chips)
 
         extra_chips = list()
         extra_chips.append(self._create_chip(5, 0, processors))
@@ -174,7 +175,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         :rtype: None
         """
         chips = self._create_chips()
-        new_machine = machine_from_chips(chips)
+        new_machine = machine_from_size(7, 5, chips)
 
         processors = self._create_processors()
         extra_chips = list()

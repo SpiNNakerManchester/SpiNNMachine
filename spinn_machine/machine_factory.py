@@ -29,4 +29,4 @@ def machine_from_chips(chips, boot_x=0, boot_y=0):
             max_x = chip.x
         if chip.y > max_y:
             max_y = chip.y
-    return machine_from_size(max_x + 1, max_y, chips, boot_x, boot_y)
+    return machine_from_size(max_x + 1, max_y + 1, chips, boot_x, boot_y)
