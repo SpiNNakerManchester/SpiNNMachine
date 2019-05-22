@@ -243,7 +243,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertIsNone(new_machine.get_fpga_link_with_id(1, 0))
 
     def test_misc(self):
-        self.assertEqual(Machine.get_chip_over_link(0, 0, 4, 24, 24), (23, 23))
+        machine = machine_from_size(24, 24)
+        self.assertEqual(machine.x_y_over_link(0, 0, 4), (23, 23))
 
     def test_unreachable_incoming_chips(self):
         chips = self._create_chips()

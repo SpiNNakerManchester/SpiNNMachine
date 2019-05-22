@@ -239,10 +239,9 @@ class VirtualMachine(object):
         configured_chips = dict()
         if height > 2:
             for (eth_x, eth_y) in ethernet_chips:
-                for (x, y) in Machine.BOARD_48_CHIPS:
-                    (new_x, new_y) = self.normalize(x + eth_x, y + eth_y)
-                    if (new_x, new_y) not in down_chips:
-                        configured_chips[(new_x, new_y)] = (eth_x, eth_y)
+                for x_y in self._machine.x_y_by_ethernet(eth_x, eth_y):
+                    if x_y not in down_chips:
+                        configured_chips[x_y] = (eth_x, eth_y)
         else:
             for x in range(2):
                 for y in range(2):

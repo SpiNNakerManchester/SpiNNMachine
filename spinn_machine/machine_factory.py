@@ -10,12 +10,12 @@ def machine_from_size(width, height, chips=None, boot_x=0, boot_y=0):
     if width == 2 and height == 2:
         return FullWrapMachine(width, height, chips, boot_x, boot_y)
     if width % 12 == 0:
-        if height % 12:
+        if height % 12 == 0:
             return FullWrapMachine(width, height, chips, boot_x, boot_y)
         else:
             return HorizontalWrapMachine(width, height, chips, boot_x, boot_y)
     else:
-        if height % 12:
+        if height % 12 == 0:
             return VerticalWrapMachine(width, height, chips, boot_x, boot_y)
         else:
             return NoWrapMachine(width, height, chips, boot_x, boot_y)

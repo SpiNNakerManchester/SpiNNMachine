@@ -107,8 +107,8 @@ def machine_from_json(j_machine):
         links = []
         for source_link_id in range(6):
             if source_link_id not in dead_links:
-                destination_x, destination_y = Machine.get_chip_over_link(
-                    source_x, source_y, source_link_id, width, height)
+                destination_x, destination_y = machine.x_y_over_link(
+                    source_x, source_y, source_link_id)
                 opposite_link_id = (
                     (source_link_id + OPPOSITE_LINK_OFFSET) %
                     Router.MAX_LINKS_PER_ROUTER)

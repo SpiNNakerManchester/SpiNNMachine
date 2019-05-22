@@ -123,12 +123,40 @@ class Machine(object):
         the local 0,0 of an existing board,
         within the width and height of the machine.
 
-        :param ethernet_x: The x coordinate of a (local 0,0) existing ethernet
+        :param ethernet_x: The x coordinate of a (local 0,0) legal ethernet
         chip
-        :param ethernet_y: The x coordinate of a (local 0,0) existing ethernet
+        :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
         chip
         :return: Yeilds the (x, Y) coordinated of all the protential chips on
          this board.
+        """
+
+    @abstractmethod
+    def x_y_over_link(self, x, y, link):
+        """
+        Get the protential x,y location of the chip reached over this link.
+
+        Wraparounds are handled as appropriate.
+
+        Note: This method does not check if either chip source or destination
+        actually exists as is intended to be called to create the links.
+
+        It is the callers responsibility to check the validity of this call
+        before making it or the validty of the result.
+
+        Warning: GIGO! This methods assumes that x and y are within the
+        width and height of the machine, and that the link goes to another
+        chip on the machine.
+
+        On machine without full wraparound it is possible that this method
+        generates x_Y values that fall outside of the legal values including
+        negatives values, x = width or y = height.
+
+        :param x: The x coordinate of a chip that will exist on the machine
+        :param y: The x coordinate of a chip that will exist on the machine
+        :param link: The link to another chip that could exist on the machine
+        :return: x and y coordinates of the chip over that link if it is valid
+        or some fictional x y if not.
         """
 
     def add_chip(self, chip):
@@ -401,22 +429,7 @@ class Machine(object):
         return self._fpga_links.get(
             (board_address, fpga_id, fpga_link_id), None)
 
-    @staticmethod
-    def get_chip_over_link(x, y, link, width, height):
-        """ Get the x and y coordinates of the chip over the given link
-
-        :param x: The x coordinate of the chip to start from
-        :param y: The y coordinate of the chip to start from
-        :param link: The ID of the link to traverse, between 0 and 5
-        :param width: The width of the machine being considered
-        :param height: The height of the machine being considered
-        """
-        add_x, add_y = Machine.LINK_ADD_TABLE[link]
-        link_x = (x + add_x + width) % width
-        link_y = (y + add_y + height) % height
-        return link_x, link_y
-
-    def add_spinnaker_links(self, version_no):
+   def add_spinnaker_links(self, version_no):
         """ Add SpiNNaker links that are on a given machine depending on the\
             version of the board.
 
