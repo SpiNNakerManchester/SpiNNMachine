@@ -305,7 +305,8 @@ def to_json(machine):
     json_obj = OrderedDict()
     json_obj["height"] = machine.max_chip_y + 1
     json_obj["width"] = machine.max_chip_x + 1
-    json_obj["root"] = list((machine.boot_x, machine.boot_y))
+    # Could be removed but need to check all use case
+    json_obj["root"] = [0, 0]
     json_obj["standardResources"] = standard_resources
     json_obj["ethernetResources"] = ethernet_resources
     json_obj["chips"] = []

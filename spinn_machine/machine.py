@@ -49,8 +49,6 @@ class Machine(object):
     ]
 
     __slots__ = (
-        "_boot_x",
-        "_boot_y",
         "_boot_ethernet_address",
         "_chips",
         "_ethernet_connected_chips",
@@ -64,14 +62,16 @@ class Machine(object):
         "_width"
     )
 
-    def __init__(self, width, height, chips, boot_x, boot_y):
+    def __init__(self, width, height, chips=None):
+        """
+
+        :param width:
+        :param height:
+        :param chips:
+        """
         """
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
-        :param boot_x: The x-coordinate of the chip used to boot the machine
-        :type boot_x: int
-        :param boot_y: The y-coordinate of the chip used to boot the machine
-        :type boot_y: int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
@@ -98,13 +98,12 @@ class Machine(object):
         self._fpga_links = dict()
 
         # Store the boot chip information
-        self._boot_x = boot_x
-        self._boot_y = boot_y
         self._boot_ethernet_address = None
 
         # The dictionary of chips
         self._chips = OrderedDict()
-        self.add_chips(chips)
+        if chips is not None:
+            self.add_chips(chips)
 
         self._virtual_chips = list()
 
@@ -190,7 +189,7 @@ class Machine(object):
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
-            if (chip.x == self._boot_x) and (chip.y == self._boot_y):
+            if (chip.x == 0) and (chip.y == 0):
                 self._boot_ethernet_address = chip.ip_address
 
         if chip.n_user_processors > self._maximum_user_cores_on_chip:
@@ -429,7 +428,7 @@ class Machine(object):
         return self._fpga_links.get(
             (board_address, fpga_id, fpga_link_id), None)
 
-   def add_spinnaker_links(self, version_no):
+    def add_spinnaker_links(self, version_no):
         """ Add SpiNNaker links that are on a given machine depending on the\
             version of the board.
 
@@ -567,28 +566,12 @@ class Machine(object):
         return "{} cores and {} links".format(cores, links)
 
     @property
-    def boot_x(self):
-        """ The x-coordinate of the chip used to boot the machine
-
-        :rtype: int
-        """
-        return self._boot_x
-
-    @property
-    def boot_y(self):
-        """ The y-coordinate of the chip used to boot the machine
-
-        :rtype: int
-        """
-        return self._boot_y
-
-    @property
     def boot_chip(self):
         """ The chip used to boot the machine
 
         :rtype: `~py:class:spinn_machine.Chip`
         """
-        return self._chips[self._boot_x, self._boot_y]
+        return self._chips[0, 0]
 
     def get_chips_on_board(self, chip):
         """ Get the chips that are on the same board as the given chip

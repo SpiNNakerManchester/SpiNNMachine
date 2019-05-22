@@ -1,6 +1,6 @@
 from tempfile import mktemp
 import unittest
-from spinn_machine import (SDRAM, VirtualMachine)
+from spinn_machine import (SDRAM, virtual_machine)
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
 
 
@@ -8,7 +8,7 @@ class TestJsonMachine(unittest.TestCase):
 
     def test_json_version_5_hole(self):
         hole = [(3, 3)]
-        vm = VirtualMachine(version=5, down_chips=hole).machine
+        vm = virtual_machine(version=5, down_chips=hole)
         jpath = mktemp("json")
         to_json_path(vm, jpath)
         jm = machine_from_json(jpath)
@@ -19,7 +19,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_exceptions(self):
-        vm = VirtualMachine(version=5).machine
+        vm = virtual_machine(version=5)
         chip22 = vm.get_chip_at(2, 2)
         router22 = chip22.router
         router22._clock_speed = router22._clock_speed - 10

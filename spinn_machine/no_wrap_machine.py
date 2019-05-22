@@ -3,8 +3,8 @@ from spinn_utilities.overrides import overrides
 
 
 class NoWrapMachine(Machine):
-    def __init__(self, width, height, chips, boot_x, boot_y):
-        super(NoWrapMachine, self).__init__(width, height, chips, boot_x, boot_y)
+    def __init__(self, width, height, chips):
+        super(NoWrapMachine, self).__init__(width, height, chips)
 
     @overrides(Machine.x_y_by_ethernet)
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):

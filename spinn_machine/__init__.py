@@ -71,11 +71,11 @@ from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
-from .virtual_machine import VirtualMachine
+from .virtual_machine import virtual_machine
 from .fixed_route_entry import FixedRouteEntry
 
 
 __all__ = ["Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
            "Link", "Machine", "MulticastRoutingEntry",
            "Processor", "Router", "SDRAM", "SpiNNakerTriadGeometry",
-           "VirtualMachine"]
+           "virtual_machine"]

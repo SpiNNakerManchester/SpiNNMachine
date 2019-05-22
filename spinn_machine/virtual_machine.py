@@ -3,7 +3,9 @@ import logging
 
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
+from .full_wrap_machine import FullWrapMachine
 from .machine import Machine
+from .no_wrap_machine import NoWrapMachine
 from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
@@ -50,7 +52,7 @@ def _verify_4_chip_board(version, width, height, wrap_arounds):
         width = 2
     if height is None:
         height = 2
-    return width, height, True
+    return width, height
 
 
 def _verify_48_chip_board(version, width, height, wrap_arounds):
@@ -71,49 +73,77 @@ def _verify_48_chip_board(version, width, height, wrap_arounds):
         width = 8
     if height is None:
         height = 8
-    return width, height, False
+    return width, height
 
-
-def _verify_autodetect(version, width, height, wrap_arounds):
-    if wrap_arounds and not (
-            (width == 2 and height == 2) or
-            (width % 12 == 0 and height % 12 == 0)):
+def _verify_width_height(width, height):
+    if (width == height == 2):
+        return
+    if (width == height == 8):
+        return
+    if (width % 12 != 0) and (width - 4) % 12 != 0:
         raise SpinnMachineInvalidParameterException(
-            "version, width, height, with_wrap_arounds",
-            "{}, {}, {}, {}".format(
-                version, width, height, wrap_arounds),
-            "A generic machine with wrap-arounds must be either have a "
-            "width and height which are both 2 or a width and height "
-            "that are divisible by 12")
-    if not wrap_arounds and not (
-            (width == 8 and height == 8) or
-            (width == 2 and height == 2) or
-            ((width - 4) % 12 == 0 and (height - 4) % 12 == 0)):
+            "width", width,
+            "A virtual machine must have a width that is divisible by 12 or "
+            "width - 4 that is divisible by 12")
+    if (height % 12 != 0) and (height - 4) % 12 != 0:
         raise SpinnMachineInvalidParameterException(
-            "version, width, height, with_wrap_arounds",
-            "{}, {}, {}, {}".format(
-                version, width, height, wrap_arounds),
-            "A generic machine without wrap-arounds must be either have a"
-            " width and height which are both either 2 or 8 or a width - 4"
-            " and height - 4 that are divisible by 12")
+            "height", height,
+            "A virtual machine must have a height that is divisible by 12 or "
+            "height - 4 that is divisible by 12")
+
+def virtual_machine(
+        width=None, height=None, with_wrap_arounds=False, version=None,
+        n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP, with_monitors=True,
+        sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES, down_chips=None,
+        down_cores=None, down_links=None,
+        router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES):
+    """
+    :param width: the width of the virtual machine in chips
+    :type width: int
+    :param height: the height of the virtual machine in chips
+    :type height: int
+    :param with_wrap_arounds: bool defining if wrap around links exist
+        If set a board with the requested wrap around is created
+        regardless of the board size.
+
+        In None the wrap around will be auto detected by machine_factory
+
+        Note: Use either with_wrap_arounds or version but not both
+    :type with_wrap_arounds: bool
+    :param version: the version ID of a board; if None, a machine is\
+        created with the correct dimensions, otherwise the machine will be\
+        a single board of the given version.
+    :type version: int
+    :param n_cpus_per_chip: The number of CPUs to put on each chip
+    :type n_cpus_per_chip: int
+    :param with_monitors: True if CPU 0 should be marked as a monitor
+    :type with_monitors: bool
+    :param sdram_per_chip: The amount of SDRAM to give to each chip
+    :type sdram_per_chip: int or None
+    :param router_entries_per_chip: the number of entries to each router
+    :type router_entries_per_chip: int
+    """
+
+    factory = _VirtualMachine(
+        width, height, with_wrap_arounds, version, n_cpus_per_chip,
+        with_monitors, sdram_per_chip, down_chips, down_cores, down_links,
+        router_entries_per_chip)
+    return factory.machine
 
 
-class VirtualMachine(object):
-    """ A Virtual SpiNNaker machine
+class _VirtualMachine(object):
+    """ A Virtual SpiNNaker machine factory
     """
 
     __slots__ = (
         "_down_cores",
         "_down_links",
-        "_height",
         "_n_cpus_per_chip",
         "_n_router_entries_per_router",
         "_machine",
         "_sdram_per_chip",
         "_weird_processor",
-        "_width",
-        "_with_monitors",
-        "_with_wrap_arounds"
+        "_with_monitors"
         )
 
     _4_chip_down_links = {
@@ -128,26 +158,6 @@ class VirtualMachine(object):
             with_monitors=True, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
             down_chips=None, down_cores=None, down_links=None,
             router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES):
-        """
-        :param width: the width of the virtual machine in chips
-        :type width: int
-        :param height: the height of the virtual machine in chips
-        :type height: int
-        :param with_wrap_arounds: bool defining if wrap around links exist
-        :type with_wrap_arounds: bool
-        :param version: the version ID of a board; if None, a machine is\
-            created with the correct dimensions, otherwise the machine will be\
-            a single board of the given version.
-        :type version: int
-        :param n_cpus_per_chip: The number of CPUs to put on each chip
-        :type n_cpus_per_chip: int
-        :param with_monitors: True if CPU 0 should be marked as a monitor
-        :type with_monitors: bool
-        :param sdram_per_chip: The amount of SDRAM to give to each chip
-        :type sdram_per_chip: int or None
-        :param router_entries_per_chip: the number of entries to each router
-        :type router_entries_per_chip: int
-        """
 
         self._n_router_entries_per_router = router_entries_per_chip
 
@@ -160,50 +170,28 @@ class VirtualMachine(object):
 
         # Version 2/3
         if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
-            width, height, with_wrap_arounds = _verify_4_chip_board(
+            width, height = _verify_4_chip_board(
                 version, width, height, with_wrap_arounds)
+            self._machine = machine_from_size(width, height)
         # Version 4/5
         elif version in Machine.BOARD_VERSION_FOR_48_CHIPS:
-            width, height, with_wrap_arounds = _verify_48_chip_board(
+            width, height = _verify_48_chip_board(
                 version, width, height, with_wrap_arounds)
+            self._machine = machine_from_size(width, height)
         # Autodetect
-        elif version is None and with_wrap_arounds is None:
-            if width == 2 and height == 2:
-
-                # assume the special version 2 or 3 wrap arounds
-                version = 2
-                self._with_wrap_arounds = True
-            elif width == 8 and height == 8:
-                self._with_wrap_arounds = False
-            elif width % 12 == 0 and height % 12 == 0:
-                self._with_wrap_arounds = True
-            elif (width - 4) % 12 == 0 and (height - 4) % 12 == 0:
-                self._with_wrap_arounds = False
+        elif version is None:
+            _verify_width_height(width, height)
+            if with_wrap_arounds is None:
+                self._machine = machine_from_size(width, height)
+            elif with_wrap_arounds:
+                self._machine = FullWrapMachine(width, height, None)
             else:
-                raise SpinnMachineInvalidParameterException(
-                    "version, width, height, with_wrap_arounds",
-                    "{}, {}, {}, {}".format(
-                        version, width, height, with_wrap_arounds),
-                    "A generic machine with wrap-arounds None must either "
-                    "have a width and height which are both either 2 or 8 or "
-                    "a width and height that are divisible by 12 or a width "
-                    "- 4 and height - 4 that are divisible by 12")
-
-        if version is None and with_wrap_arounds is not None:
-            _verify_autodetect(version, width, height, with_wrap_arounds)
-
-        if with_wrap_arounds is None:
-            logger.debug("width = %d, height = %d and auto wrap-arounds",
-                         width, height)
+                self._machine = NoWrapMachine(width, height, None)
         else:
-            self._with_wrap_arounds = with_wrap_arounds
-            logger.debug("width = %d, height = %d and wrap-arounds %s",
-                         width, height, self._with_wrap_arounds)
-
-        self._machine = machine_from_size(width, height)
-        # Set the maximum board that will be filled in lazy unless set as down
-        self._width = width
-        self._height = height
+            raise SpinnMachineInvalidParameterException(
+                "version",
+                version,
+                "The only supported version numbers are 2, 3, 4, 5")
 
         # Store the details
         self._sdram_per_chip = sdram_per_chip
@@ -224,7 +212,7 @@ class VirtualMachine(object):
                 self._down_cores[(x, y)].add(p)
         self._down_links = down_links if down_links is not None else set()
         if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
-            self._down_links.update(VirtualMachine._4_chip_down_links)
+            self._down_links.update(_VirtualMachine._4_chip_down_links)
         if down_chips is None:
             down_chips = []
 
@@ -269,21 +257,6 @@ class VirtualMachine(object):
     def machine(self):
         return self._machine
 
-
-    ALLOWED_LINK_DELTAS = {
-        0: (+1, 0),
-        1: (+1, +1),
-        2: (0, +1),
-        3: (-1, 0),
-        4: (-1, -1),
-        5: (0, -1)}
-
-    def normalize(self, x, y):
-        if self._with_wrap_arounds:
-            return ((x + self._width) % self._width,
-                    (y + self._height) % self._height)
-        return (x, y)
-
     def _create_processors_specific(self, x, y):
         processors = list()
         down = self._down_cores[(x, y)]
@@ -320,28 +293,16 @@ class VirtualMachine(object):
         """ Calculate the links needed for a machine structure
         """
         links = list()
-        self._add_link(links, 0, x, y, x + 1, y, configured_chips)
-        self._add_link(links, 1, x, y, x + 1, y + 1, configured_chips)
-        self._add_link(links, 2, x, y, x, y + 1, configured_chips)
-        self._add_link(links, 3, x, y, x - 1, y, configured_chips)
-        self._add_link(links, 4, x, y, x - 1, y - 1, configured_chips)
-        self._add_link(links, 5, x, y, x, y - 1, configured_chips)
+        for link_id in range(6):
+            if (x, y, link_id) not in self._down_links:
+                link_x_y = self._machine.x_y_over_link(x, y, link_id)
+                if link_x_y in configured_chips:
+                    link_to = (link_id + 3) % 6
+                    links.append(
+                        Link(source_x=x, source_y=y,
+                             destination_x=link_x_y[0],
+                             destination_y=link_x_y[1],
+                             source_link_id=link_id,
+                             multicast_default_from=link_to,
+                             multicast_default_to=link_to))
         return links
-
-    def _add_link(self, links, link_from, source_x, source_y,
-                  destination_x, destination_y, configured_chips):
-        if (source_x, source_y, link_from) in self._down_links:
-            return  # Down chips say do not add
-
-        destination_x, destination_y = self.normalize(
-            destination_x, destination_y)
-        if (destination_x, destination_y) not in configured_chips:
-            return  # No destination to connect to
-
-        link_to = (link_from + 3) % 6
-        links.append(
-            Link(source_x=source_x, source_y=source_y,
-                 destination_x=destination_x, destination_y=destination_y,
-                 source_link_id=link_from,
-                 multicast_default_from=link_to,
-                 multicast_default_to=link_to))

@@ -78,8 +78,6 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         self.assertEqual(new_machine.total_cores, 450)
         self.assertEqual(new_machine.total_available_user_cores, 425)
-        self.assertEqual(new_machine.boot_x, 0)
-        self.assertEqual(new_machine.boot_y, 0)
         self.assertEqual(new_machine.boot_chip.ip_address, self._ip)
         self.assertEqual(new_machine.n_chips, 25)
         self.assertEqual(len(new_machine), 25)
@@ -242,9 +240,29 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertIsNone(new_machine.get_spinnaker_link_with_id(1))
         self.assertIsNone(new_machine.get_fpga_link_with_id(1, 0))
 
-    def test_misc(self):
+    def test_x_y_over_link(self):
+        """
+        Test the x_y with each wrap around.
+
+        Notice that the function only does the math not validate the values.
+        :return:
+        """
+        # full wrap around
         machine = machine_from_size(24, 24)
         self.assertEqual(machine.x_y_over_link(0, 0, 4), (23, 23))
+        self.assertEqual(machine.x_y_over_link(23, 23, 1), (0, 0))
+        # no wrap around'
+        machine = machine_from_size(16, 16)
+        self.assertEqual(machine.x_y_over_link(0, 0, 4), (-1, -1))
+        self.assertEqual(machine.x_y_over_link(15, 15, 1), (16, 16))
+        # Horizontal wrap arounds
+        machine = machine_from_size(24, 16)
+        self.assertEqual(machine.x_y_over_link(0, 0, 4), (23, -1))
+        self.assertEqual(machine.x_y_over_link(23, 15, 1), (0, 16))
+        # Vertical wrap arounds
+        machine = machine_from_size(16, 24)
+        self.assertEqual(machine.x_y_over_link(0, 0, 4), (-1, 23))
+        self.assertEqual(machine.x_y_over_link(15, 23, 1), (16, 0))
 
     def test_unreachable_incoming_chips(self):
         chips = self._create_chips()

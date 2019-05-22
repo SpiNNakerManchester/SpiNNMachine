@@ -3,8 +3,8 @@ from .machine import Machine
 
 
 class VerticalWrapMachine(Machine):
-    def __init__(self, width, height, chips, boot_x, boot_y):
-        super(VerticalWrapMachine, self).__init__(width, height, chips, boot_x, boot_y)
+    def __init__(self, width, height, chips):
+        super(VerticalWrapMachine, self).__init__(width, height, chips)
 
     @overrides(Machine.x_y_by_ethernet)
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):

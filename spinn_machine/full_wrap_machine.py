@@ -3,8 +3,12 @@ from .machine import Machine
 
 
 class FullWrapMachine(Machine):
-    def __init__(self, width, height, chips, boot_x, boot_y):
-        super(FullWrapMachine, self).__init__(width, height, chips, boot_x, boot_y)
+    """
+    Provides an extension of Machine which supports full wrap arounds
+    """
+
+    def __init__(self, width, height, chips):
+        super(FullWrapMachine, self).__init__(width, height, chips)
 
     @overrides(Machine.x_y_by_ethernet)
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):
