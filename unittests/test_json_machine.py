@@ -12,8 +12,8 @@ class TestJsonMachine(unittest.TestCase):
         jpath = mktemp("json")
         to_json_path(vm, jpath)
         jm = machine_from_json(jpath)
-        vstr = str(vm).replace("VirtualMachine", "Machine")
-        jstr = str(jm).replace("JsonMachine", "Machine")
+        vstr = str(vm).replace("Virtual", "")
+        jstr = str(jm).replace("Json", "")
         self.assertEquals(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
@@ -34,8 +34,8 @@ class TestJsonMachine(unittest.TestCase):
         jpath = "temp.json"
         to_json_path(vm, jpath)
         jm = machine_from_json(jpath)
-        vstr = str(vm).replace("VirtualMachine", "Machine")
-        jstr = str(jm).replace("JsonMachine", "Machine")
+        vstr = str(vm).replace("Virtual", "")
+        jstr = str(jm).replace("Json", "")
         self.assertEqual(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
             print(vchip)

@@ -53,25 +53,38 @@ class Machine(object):
         "_chips",
         "_ethernet_connected_chips",
         "_fpga_links",
+        # Declared height of the machine excluding virtual chips
+        # This can not be changed
         "_height",
+        # Max x value of any chip including virtual chips
+        # This could change as new chips are added
         "_max_chip_x",
+        # Max y value of any chip including virtual chips
+        # This could change as new chips are added
         "_max_chip_y",
+        # Extra inforamtion about how this mnachine was created
+        # to be used in the str method
+        "_origin",
         "_spinnaker_links",
         "_maximum_user_cores_on_chip",
         "_virtual_chips",
+        # Declared width of the machine excluding virtual chips
+        # This can not be changed
         "_width"
     )
 
-    def __init__(self, width, height, chips=None):
+    def __init__(self, width, height, chips=None, origin=None):
         """
+        Creates an abstarct machine that must be superclassed by wrap type.
 
-        :param width:
-        :param height:
-        :param chips:
-        """
-        """
+        Use machine_fatcory methods to dettermine the correct machine class
+
+        :param width: The width of the machine excluding any vertical chips
+        :param height: The height of the machine excluding any vertical chips
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
+        :param origin: Extra inforamation about how this mnachine was created
+        to be used in the str method. Example "Virtual" or "Json"
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
@@ -106,6 +119,11 @@ class Machine(object):
             self.add_chips(chips)
 
         self._virtual_chips = list()
+
+        if origin is None:
+            self._origin = ""
+        else:
+            self._origin = origin
 
     @abstractmethod
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):
@@ -158,6 +176,13 @@ class Machine(object):
         or some fictional x y if not.
         """
 
+    @abstractproperty
+    def wrap(self):
+        """
+        String to represent the type of wrap.
+        :return: Short String for type of wrap
+        """
+
     def add_chip(self, chip):
         """ Add a chip to the machine
 
@@ -175,11 +200,14 @@ class Machine(object):
 
         if not chip.virtual:
             if chip.x >= self._width:
-                raise SpinnMachineInvalidParameterException("chip", chip,
+                raise SpinnMachineInvalidParameterException(
+                    "chip", chip,
                     "x to high for machine with width {}".format(self._width))
             if chip.y >= self._height:
-                raise SpinnMachineInvalidParameterException("chip", chip,
-                    "y to high for machine with height {}".format(self._height))
+                raise SpinnMachineInvalidParameterException(
+                    "chip", chip,
+                    "y to high for machine with height {}".format(
+                        self._height))
         self._chips[chip_id] = chip
 
         if chip.x > self._max_chip_x:
@@ -360,7 +388,6 @@ class Machine(object):
         """
         return self._height
 
-
     @property
     def n_chips(self):
         return len(self._chips)
@@ -531,8 +558,9 @@ class Machine(object):
         return fpga_id, fpga_link + 1
 
     def __str__(self):
-        return "[Machine: max_x={}, max_y={}, n_chips={}]".format(
-            self._max_chip_x, self._max_chip_y, self.n_chips)
+        return "[{}{}Machine: max_x={}, max_y={}, n_chips={}]".format(
+            self._origin, self.wrap, self._max_chip_x, self._max_chip_y,
+            self.n_chips)
 
     def __repr__(self):
         return self.__str__()

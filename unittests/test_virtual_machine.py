@@ -160,7 +160,7 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_version_5_guess_12x12(self):
         vm = virtual_machine(height=12, width=12, version=None,
-                            with_wrap_arounds=None)
+                             with_wrap_arounds=None)
         self.assertEqual(vm.max_chip_x, 11)
         self.assertEqual(vm.max_chip_y, 11)
         self.assertEqual(144, vm.n_chips)

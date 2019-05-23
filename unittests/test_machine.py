@@ -2,7 +2,7 @@
 test for testing the python representation of a spinnaker machine
 """
 import unittest
-from spinn_machine import Processor, Link, SDRAM, Router, Chip, Machine
+from spinn_machine import Processor, Link, SDRAM, Router, Chip
 from spinn_machine.machine_factory import (
     machine_from_chips, machine_from_size)
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
@@ -86,7 +86,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(new_machine.cores_and_link_output_string(),
                          "450 cores and 3 links")
         self.assertEqual(new_machine.__repr__(),
-                         "[Machine: max_x=4, max_y=4, n_chips=25]")
+                         "[NoWrapMachine: max_x=4, max_y=4, n_chips=25]")
         self.assertEqual(list(new_machine.spinnaker_links), [])
 
     def test_create_new_machine_with_invalid_chips(self):

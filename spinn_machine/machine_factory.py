@@ -4,7 +4,7 @@ from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
 from spinn_machine.full_wrap_machine import FullWrapMachine
 
 
-def machine_from_size(width, height, chips=None):
+def machine_from_size(width, height, chips=None, origin=None):
     """
     Create a machine with the assumed wrap arround based on the sizes.
 
@@ -17,22 +17,24 @@ def machine_from_size(width, height, chips=None):
     :param width: The width of the machine excluding any vertical chips
     :param height: The height of the machine excluding any vertical chips
     :param chips: Any chips to be add.
+    :param origin: Extra inforamation about how this mnachine was created
+        to be used in the str method. Example "Virtual" or "Json"
     :return: A sub class of Machine
     """
     if chips is None:
         chips = []
     if width == 2 and height == 2:
-        return FullWrapMachine(width, height, chips)
+        return FullWrapMachine(width, height, chips, origin)
     if width % 12 == 0:
         if height % 12 == 0:
-            return FullWrapMachine(width, height, chips)
+            return FullWrapMachine(width, height, chips, origin)
         else:
-            return HorizontalWrapMachine(width, height, chips)
+            return HorizontalWrapMachine(width, height, chips, origin)
     else:
         if height % 12 == 0:
-            return VerticalWrapMachine(width, height, chips)
+            return VerticalWrapMachine(width, height, chips, origin)
         else:
-            return NoWrapMachine(width, height, chips)
+            return NoWrapMachine(width, height, chips, origin)
 
 
 def machine_from_chips(chips):

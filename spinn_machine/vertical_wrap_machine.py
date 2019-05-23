@@ -3,8 +3,20 @@ from .machine import Machine
 
 
 class VerticalWrapMachine(Machine):
-    def __init__(self, width, height, chips):
-        super(VerticalWrapMachine, self).__init__(width, height, chips)
+    def __init__(self, width, height, chips=None, origin=None):
+        """
+        Creates a vertically wrapped machine
+
+        :param width: The width of the machine excluding any vertical chips
+        :param height: The height of the machine excluding any vertical chips
+        :param chips: An iterable of chips in the machine
+        :type chips: iterable of :py:class:`~spinn_machine.Chip`
+        :param origin: Extra information about how this mnachine was created
+        to be used in the str method. Example "Virtual" or "Json"
+        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+            If any two chips have the same x and y coordinates
+        """
+        super(VerticalWrapMachine, self).__init__(width, height, chips, origin)
 
     @overrides(Machine.x_y_by_ethernet)
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):
@@ -19,3 +31,8 @@ class VerticalWrapMachine(Machine):
         link_x = x + add_x
         link_y = (y + add_y + self.height) % self.height
         return link_x, link_y
+
+    @property
+    @overrides(Machine.wrap)
+    def wrap(self):
+        return "VerWrap"

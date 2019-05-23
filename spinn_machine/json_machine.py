@@ -1,7 +1,6 @@
 import logging
 
 from .chip import Chip
-from .machine import Machine
 from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
@@ -48,7 +47,7 @@ def machine_from_json(j_machine):
     width = j_machine["width"]
     height = j_machine["height"]
 
-    machine = machine_from_size(width, height)
+    machine = machine_from_size(width, height, origin="Json")
     s_monitors = j_machine["standardResources"]["monitors"]
     s_router_entries = j_machine["standardResources"]["routerEntries"]
     s_router_clock_speed = \

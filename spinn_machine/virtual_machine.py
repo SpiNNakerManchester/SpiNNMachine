@@ -75,6 +75,7 @@ def _verify_48_chip_board(version, width, height, wrap_arounds):
         height = 8
     return width, height
 
+
 def _verify_width_height(width, height):
     if (width == height == 2):
         return
@@ -90,6 +91,7 @@ def _verify_width_height(width, height):
             "height", height,
             "A virtual machine must have a height that is divisible by 12 or "
             "height - 4 that is divisible by 12")
+
 
 def virtual_machine(
         width=None, height=None, with_wrap_arounds=False, version=None,
@@ -151,6 +153,8 @@ class _VirtualMachine(object):
         (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)
     }
 
+    ORIGIN = "Virtual"
+
     # pylint: disable=too-maa  ny-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
@@ -172,21 +176,24 @@ class _VirtualMachine(object):
         if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
             width, height = _verify_4_chip_board(
                 version, width, height, with_wrap_arounds)
-            self._machine = machine_from_size(width, height)
+            self._machine = machine_from_size(width, height, origin=self.ORIGIN)
         # Version 4/5
         elif version in Machine.BOARD_VERSION_FOR_48_CHIPS:
             width, height = _verify_48_chip_board(
                 version, width, height, with_wrap_arounds)
-            self._machine = machine_from_size(width, height)
+            self._machine = machine_from_size(width, height, origin=self.ORIGIN)
         # Autodetect
         elif version is None:
             _verify_width_height(width, height)
             if with_wrap_arounds is None:
-                self._machine = machine_from_size(width, height)
+                self._machine = machine_from_size(
+                    width, height, origin=self.ORIGIN)
             elif with_wrap_arounds:
-                self._machine = FullWrapMachine(width, height, None)
+                self._machine = FullWrapMachine(
+                    width, height, origin=self.ORIGIN)
             else:
-                self._machine = NoWrapMachine(width, height, None)
+                self._machine = NoWrapMachine(
+                    width, height, origin=self.ORIGIN)
         else:
             raise SpinnMachineInvalidParameterException(
                 "version",
