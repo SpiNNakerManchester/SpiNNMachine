@@ -50,6 +50,8 @@ class Machine(object):
 
     __slots__ = (
         "_boot_ethernet_address",
+        # List of the possible chips (x,y) on each board of the machine
+        "_board_chips",
         "_chips",
         "_ethernet_connected_chips",
         "_fpga_links",
@@ -88,14 +90,23 @@ class Machine(object):
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
+        self.validate_size( width, height)
 
         self._width = width
         self._height = height
 
-        # The maximum chip x coordinate
+        if width >= 8:
+            self._board_chips = self.BOARD_48_CHIPS
+        else:
+            self._board_chips = []
+            for x in range(width):
+                for y in range(height):
+                    self._board_chips.append((x,y))
+
+        # The current maximum chip x coordinate
         self._max_chip_x = 0
 
-        # The maximum chip y coordinate
+        # The current maximum chip y coordinate
         self._max_chip_y = 0
 
         # The maximum number of user cores on any chip
@@ -124,6 +135,18 @@ class Machine(object):
             self._origin = ""
         else:
             self._origin = origin
+
+    @abstractmethod
+    def multiple_48_chip_boards(self):
+        """
+        Checks that the width and height coorespond to the expected size for a
+        multipy board machine made up of more than one 48 chip board.
+
+        The assumption is that any size machine can be supported but that none
+
+        +++++
+        return: True if this machine can have multiple 48 chip boards
+        """
 
     @abstractmethod
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):

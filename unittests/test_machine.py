@@ -230,7 +230,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_machine_get_chips_on_board(self):
         chips = self._create_chips()
-        new_machine = machine_from_chips(chips)
+        new_machine = machine_from_size(8, 8, chips)
         for eth_chip in new_machine._ethernet_connected_chips:
             chips_in_machine = list(new_machine.get_chips_on_board(eth_chip))
             # _create_chips made a 5*5 grid of 25 chips,

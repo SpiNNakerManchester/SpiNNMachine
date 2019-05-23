@@ -20,12 +20,12 @@ class NoWrapMachine(Machine):
 
     @overrides(Machine.x_y_by_ethernet)
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in Machine.BOARD_48_CHIPS:
+        for (x, y) in self._board_chips:
             yield (x + ethernet_x, y + ethernet_y)
 
     @overrides(Machine.get_chips_by_ethernet)
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in Machine.BOARD_48_CHIPS:
+        for (x, y) in self._board_chips:
             local_xy = (x + ethernet_x, y + ethernet_y)
             if (local_xy) in self._chips:
                 yield local_xy

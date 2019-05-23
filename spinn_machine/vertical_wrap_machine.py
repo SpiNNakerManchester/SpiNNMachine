@@ -20,14 +20,14 @@ class VerticalWrapMachine(Machine):
 
     @overrides(Machine.x_y_by_ethernet)
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in Machine.BOARD_48_CHIPS:
+        for (x, y) in self._board_chips:
             local_x = (x + ethernet_x)
             local_y = (y + ethernet_y) % self._height
             yield (local_x, local_y)
 
     @overrides(Machine.get_chips_by_ethernet)
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in Machine.BOARD_48_CHIPS:
+        for (x, y) in self._board_chips:
             local_xy = (
                            (x + ethernet_x),
                            (y + ethernet_y) % self._height)
