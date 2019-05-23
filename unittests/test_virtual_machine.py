@@ -488,6 +488,49 @@ class TestVirtualMachine(unittest.TestCase):
     def test_big(self):
         virtual_machine(width=240, height=240, with_wrap_arounds=True)
 
+    def test_chips_by_ethernet(self):
+        machine = virtual_machine(2, 2)
+        ethernet = machine.get_chip_at(0,0)
+        chips = set(machine.get_chips_on_board(ethernet))
+        self.assertEquals(len(chips), 4)
+        chips = set(machine.get_chips_by_ethernet(0, 0))
+        self.assertEquals(len(chips), 4)
+
+        machine = virtual_machine(12, 12)
+        ethernet = machine.get_chip_at(0,0)
+        chips = set(machine.get_chips_on_board(ethernet))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(0, 0))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(4, 8))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(8, 4))
+        self.assertEquals(len(chips), 48)
+        # no wrap around
+        machine = virtual_machine(16, 12)
+        chips = set(machine.get_chips_by_ethernet(0, 0))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(4, 8))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(8, 4))
+        self.assertEquals(len(chips), 48)
+        # Horizontal wrap arounds
+        machine = virtual_machine(12, 16)
+        chips = set(machine.get_chips_by_ethernet(0, 0))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(4, 8))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(8, 4))
+        self.assertEquals(len(chips), 48)
+        # Vertical wrap arounds
+        machine = virtual_machine(16, 16)
+        chips = set(machine.get_chips_by_ethernet(0, 0))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(4, 8))
+        self.assertEquals(len(chips), 48)
+        chips = set(machine.get_chips_by_ethernet(8, 4))
+        self.assertEquals(len(chips), 48)
+
 
 if __name__ == '__main__':
     unittest.main()

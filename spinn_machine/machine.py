@@ -149,6 +149,23 @@ class Machine(object):
         """
 
     @abstractmethod
+    def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yields the actual chips on the board with this ethernet.
+        Including the Ethernet chip itself.
+
+        Wraparounds are handled as appropriate.
+
+        This method does check if the chip actually exists.
+
+        :param ethernet_x: The x coordinate of a (local 0,0) legal ethernet
+        chip
+        :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
+        chip
+        :return: Yeilds the chips on (x, Y) chips on this board.
+        """
+
+    @abstractmethod
     def x_y_over_link(self, x, y, link):
         """
         Get the protential x,y location of the chip reached over this link.
@@ -608,23 +625,10 @@ class Machine(object):
         :return: An iterable of (x, y) coordinates of chips on the same board
         :rtype: iterable(tuple(int,int))
         """
-        if self._max_chip_x == 1:
-            for x in range(0, 2):
-                for y in range(0, 2):
-                    if (self.is_chip_at(x, y)):
-                        yield x, y
-        else:
-            eth_x = chip.nearest_ethernet_x
-            eth_y = chip.nearest_ethernet_y
-            for (chip_x, chip_y) in self.BOARD_48_CHIPS:
-                if self.has_wrap_arounds:
-                    x = (eth_x + chip_x) % (self._max_chip_x + 1)
-                    y = (eth_y + chip_y) % (self._max_chip_y + 1)
-                else:
-                    x = eth_x + chip_x
-                    y = eth_y + chip_y
-                if (self.is_chip_at(x, y)):
-                    yield x, y
+        eth_x = chip.nearest_ethernet_x
+        eth_y = chip.nearest_ethernet_y
+        return self.get_chips_by_ethernet(
+            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
 
     @property
     def maximum_user_cores_on_chip(self):
@@ -651,17 +655,6 @@ class Machine(object):
         """
         return len([
             processor for chip in self.chips for processor in chip.processors])
-
-    @property
-    def has_wrap_arounds(self):
-        """ If the machine has wrap around links
-
-        :return: True if wrap around links exist, false otherwise
-        :rtype: bool
-        """
-        return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
-                ((self.max_chip_x + 1) % 12 == 0 and
-                 (self.max_chip_y + 1) % 12 == 0))
 
     def remove_unreachable_chips(self):
         """ Remove chips that can't be reached or that can't reach other chips\

@@ -302,8 +302,8 @@ def to_json(machine):
 
     # write basic stuff
     json_obj = OrderedDict()
-    json_obj["height"] = machine.max_chip_y + 1
-    json_obj["width"] = machine.max_chip_x + 1
+    json_obj["height"] = machine.height
+    json_obj["width"] = machine.width
     # Could be removed but need to check all use case
     json_obj["root"] = [0, 0]
     json_obj["standardResources"] = standard_resources

@@ -94,7 +94,7 @@ def _verify_width_height(width, height):
 
 
 def virtual_machine(
-        width=None, height=None, with_wrap_arounds=False, version=None,
+        width=None, height=None, with_wrap_arounds=None, version=None,
         n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP, with_monitors=True,
         sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES, down_chips=None,
         down_cores=None, down_links=None,
