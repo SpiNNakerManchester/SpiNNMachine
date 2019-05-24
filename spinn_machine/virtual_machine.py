@@ -234,16 +234,10 @@ class _VirtualMachine(object):
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
         configured_chips = dict()
-        #if height > 2:
         for (eth_x, eth_y) in ethernet_chips:
             for x_y in self._machine.x_y_by_ethernet(eth_x, eth_y):
                 if x_y not in down_chips:
                     configured_chips[x_y] = (eth_x, eth_y)
-        #else:
-        #    for x in range(2):
-        #        for y in range(2):
-        #            if (x, y) not in down_chips:
-        #                configured_chips[(x, y)] = (0, 0)
 
         # TODO This needs to change as it previous checked against empty
         # for chip in self._unreachable_outgoing_chips:
