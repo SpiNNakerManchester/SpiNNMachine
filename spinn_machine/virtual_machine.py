@@ -176,12 +176,14 @@ class _VirtualMachine(object):
         if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
             width, height = _verify_4_chip_board(
                 version, width, height, with_wrap_arounds)
-            self._machine = machine_from_size(width, height, origin=self.ORIGIN)
+            self._machine = machine_from_size(
+                width, height, origin=self.ORIGIN)
         # Version 4/5
         elif version in Machine.BOARD_VERSION_FOR_48_CHIPS:
             width, height = _verify_48_chip_board(
                 version, width, height, with_wrap_arounds)
-            self._machine = machine_from_size(width, height, origin=self.ORIGIN)
+            self._machine = machine_from_size(
+                width, height, origin=self.ORIGIN)
         # Autodetect
         elif version is None:
             _verify_width_height(width, height)

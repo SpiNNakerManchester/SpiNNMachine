@@ -90,18 +90,17 @@ class Machine(object):
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
-        self.validate_size( width, height)
-
         self._width = width
         self._height = height
 
-        if width >= 8:
+        if (self._width == self._height == 8) or \
+                self.multiple_48_chip_boards():
             self._board_chips = self.BOARD_48_CHIPS
         else:
             self._board_chips = []
             for x in range(width):
                 for y in range(height):
-                    self._board_chips.append((x,y))
+                    self._board_chips.append((x, y))
 
         # The current maximum chip x coordinate
         self._max_chip_x = 0
@@ -256,6 +255,12 @@ class Machine(object):
             self._max_chip_y = chip.y
 
         if chip.ip_address is not None:
+            if len(self._ethernet_connected_chips) == 1:
+                if not self.multiple_48_chip_boards():
+                    raise NotImplementedError(
+                        "A {} machine of size {}, {} can not handle machines "
+                        "with multiple ethernet chips".format(
+                            self.wrap, self._width, self._height))
             self._ethernet_connected_chips.append(chip)
             if (chip.x == 0) and (chip.y == 0):
                 self._boot_ethernet_address = chip.ip_address
@@ -648,8 +653,6 @@ class Machine(object):
         :return: An iterable of (x, y) coordinates of chips on the same board
         :rtype: iterable(tuple(int,int))
         """
-        eth_x = chip.nearest_ethernet_x
-        eth_y = chip.nearest_ethernet_y
         return self.get_chips_by_ethernet(
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
 

@@ -43,9 +43,13 @@ class SpinnMachineTestCase(unittest.TestCase):
         return processors
 
     def _create_chip(self, x, y, processors):
+        if x == y == 0:
+            return Chip(x, y, processors, self._router, self._sdram,
+                        self._nearest_ethernet_chip[0],
+                        self._nearest_ethernet_chip[1], self._ip)
         return Chip(x, y, processors, self._router, self._sdram,
                     self._nearest_ethernet_chip[0],
-                    self._nearest_ethernet_chip[1], self._ip)
+                    self._nearest_ethernet_chip[1], None)
 
     def _create_chips(self, processors=None, monitor=3):
         if not processors:
@@ -70,7 +74,10 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
-            self.assertEqual(c.ip_address, self._ip)
+            if (c.x == c.y == 0):
+                self.assertEqual(c.ip_address, self._ip)
+            else:
+                self.assertIsNone(c.ip_address)
             self.assertEqual(c.sdram, self._sdram)
             self.assertEqual(c.router, self._router)
             for p in processors:
@@ -119,7 +126,10 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
-            self.assertEqual(c.ip_address, self._ip)
+            if (c.x == c.y == 0):
+                self.assertEqual(c.ip_address, self._ip)
+            else:
+                self.assertIsNone(c.ip_address)
             self.assertEqual(c.sdram, self._sdram)
             self.assertEqual(c.router, self._router)
             if c is extra_chip:
@@ -159,7 +169,10 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
-            self.assertEqual(c.ip_address, self._ip)
+            if (c.x == c.y == 0):
+                self.assertEqual(c.ip_address, self._ip)
+            else:
+                self.assertIsNone(c.ip_address)
             self.assertEqual(c.sdram, self._sdram)
             self.assertEqual(c.router, self._router)
             for p in processors:

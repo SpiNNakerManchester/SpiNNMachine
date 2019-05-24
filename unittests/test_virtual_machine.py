@@ -26,9 +26,14 @@ class TestVirtualMachine(unittest.TestCase):
         nearest_ethernet_chip = (0, 0)
         _ip = "192.162.240.253"
 
-        return Chip(x, y, processors, _router, _sdram,
-                    nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], _ip)
+        if (x == y == 0):
+            return Chip(x, y, processors, _router, _sdram,
+                        nearest_ethernet_chip[0],
+                        nearest_ethernet_chip[1], _ip)
+        else:
+            return Chip(x, y, processors, _router, _sdram,
+                        nearest_ethernet_chip[0],
+                        nearest_ethernet_chip[1], None)
 
     def test_illegal_vms(self):
         with self.assertRaises(SpinnMachineInvalidParameterException):
@@ -490,14 +495,14 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_chips_by_ethernet(self):
         machine = virtual_machine(2, 2)
-        ethernet = machine.get_chip_at(0,0)
+        ethernet = machine.get_chip_at(0, 0)
         chips = set(machine.get_chips_on_board(ethernet))
         self.assertEquals(len(chips), 4)
         chips = set(machine.get_chips_by_ethernet(0, 0))
         self.assertEquals(len(chips), 4)
 
         machine = virtual_machine(12, 12)
-        ethernet = machine.get_chip_at(0,0)
+        ethernet = machine.get_chip_at(0, 0)
         chips = set(machine.get_chips_on_board(ethernet))
         self.assertEquals(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(0, 0))

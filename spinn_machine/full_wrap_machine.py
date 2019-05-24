@@ -22,6 +22,10 @@ class FullWrapMachine(Machine):
         """
         super(FullWrapMachine, self).__init__(width, height, chips, origin)
 
+    @overrides(Machine.multiple_48_chip_boards)
+    def multiple_48_chip_boards(self):
+        return self._width % 12 == 0 and self._height % 12 == 0
+
     @overrides(Machine.x_y_by_ethernet)
     def x_y_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._board_chips:
