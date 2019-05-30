@@ -4,8 +4,7 @@ except ImportError:
     from collections import OrderedDict
 from six import iteritems, iterkeys, itervalues, add_metaclass
 from .exceptions import (SpinnMachineAlreadyExistsException,
-                         SpinnMachineException,
-                         SpinnMachineInvalidParameterException)
+                         SpinnMachineException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 from spinn_utilities.abstract_base import (
     AbstractBase, abstractproperty, abstractmethod)
@@ -275,9 +274,8 @@ class Machine(object):
                     raise SpinnMachineException(
                         "{} has an y large than heigth {}".format(
                             chip, self._width))
-            # Ethernet Chip checks
             if chip.ip_address:
-            # None Ethernet chip checks
+                # Ethernet Chip checks
                 if chip.x % 4 != 0:
                     raise SpinnMachineException(
                         "Ethernet {} has a x which is not divisible by 4"
@@ -287,15 +285,16 @@ class Machine(object):
                         "Ethernet {} has a x y pair that do not add up to 12"
                         "".format(chip))
             elif not chip.virtual:
+                # None Ethernet chip checks
                 if not self.is_chip_at(
                         chip.nearest_ethernet_x, chip.nearest_ethernet_y):
                     raise SpinnMachineException(
                         "{} has an invalid ethernet chip".format(chip))
-                    local_xy = self.get_local_xy(chip)
-                    if not local_xy in self._board_chips:
-                        raise SpinnMachineException(
-                            "{} has an unexpected local xy of {}".format(
-                                chip, local_xy))
+                local_xy = self.get_local_xy(chip)
+                if local_xy not in self._board_chips:
+                    raise SpinnMachineException(
+                        "{} has an unexpected local xy of {}".format(
+                            chip, local_xy))
 
     @abstractproperty
     def wrap(self):

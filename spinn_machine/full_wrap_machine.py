@@ -51,10 +51,10 @@ class FullWrapMachine(Machine):
 
     @overrides(Machine.get_local_xy)
     def get_local_xy(self, chip):
-        local_x = (chip.x - chip.nearest_ethernet_x + self._width) \
-                  % self._width
-        local_y = (chip.y - chip.nearest_ethernet_y + self._height) \
-                  % self._height
+        local_x = ((chip.x - chip.nearest_ethernet_x + self._width)
+                   % self._width)
+        local_y = ((chip.y - chip.nearest_ethernet_y + self._height)
+                   % self._height)
         return local_x, local_y
 
     @property
