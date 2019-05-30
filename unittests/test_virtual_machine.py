@@ -505,48 +505,107 @@ class TestVirtualMachine(unittest.TestCase):
         vm = virtual_machine(width=240, height=240, with_wrap_arounds=True)
         vm.validate()
 
-    def test_chips_by_ethernet(self):
+    def test_size_2_2(self):
         machine = virtual_machine(2, 2)
+        machine.validate()
         ethernet = machine.get_chip_at(0, 0)
         chips = set(machine.get_chips_on_board(ethernet))
-        self.assertEquals(len(chips), 4)
+        self.assertEqual(len(chips), 4)
         chips = set(machine.get_chips_by_ethernet(0, 0))
-        self.assertEquals(len(chips), 4)
+        self.assertEqual(len(chips), 4)
+        global_xys = set()
+        for chip in machine.chips:
+            local_x, local_y = machine.get_local_xy(chip)
+            global_x, global_y = machine.get_global_xy(
+                local_x, local_y,
+                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+            self.assertEqual(global_x, chip.x)
+            self.assertEqual(global_y, chip.y)
+            global_xys.add((global_x, global_y))
+        self.assertEqual(len(global_xys), 4)
 
+    def test_fullwrap(self):
         machine = virtual_machine(12, 12)
+        machine.validate()
         ethernet = machine.get_chip_at(0, 0)
         chips = set(machine.get_chips_on_board(ethernet))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(0, 0))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(4, 8))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(8, 4))
-        self.assertEquals(len(chips), 48)
-        # no wrap around
+        self.assertEqual(len(chips), 48)
+        global_xys = set()
+        for chip in machine.chips:
+            local_x, local_y = machine.get_local_xy(chip)
+            global_x, global_y = machine.get_global_xy(
+                local_x, local_y,
+                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+            self.assertEqual(global_x, chip.x)
+            self.assertEqual(global_y, chip.y)
+            global_xys.add((global_x, global_y))
+        self.assertEqual(len(global_xys), 48 * 3)
+
+    def test_vertical_wrap(self):
         machine = virtual_machine(16, 12)
+        machine.validate()
         chips = set(machine.get_chips_by_ethernet(0, 0))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(4, 8))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(8, 4))
-        self.assertEquals(len(chips), 48)
-        # Horizontal wrap arounds
+        self.assertEqual(len(chips), 48)
+        global_xys = set()
+        for chip in machine.chips:
+            local_x, local_y = machine.get_local_xy(chip)
+            global_x, global_y = machine.get_global_xy(
+                local_x, local_y,
+                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+            self.assertEqual(global_x, chip.x)
+            self.assertEqual(global_y, chip.y)
+            global_xys.add((global_x, global_y))
+        self.assertEqual(len(global_xys), 48 * 3)
+
+    def test_horizontal_wrap(self):
         machine = virtual_machine(12, 16)
+        machine.validate()
         chips = set(machine.get_chips_by_ethernet(0, 0))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(4, 8))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(8, 4))
-        self.assertEquals(len(chips), 48)
-        # Vertical wrap arounds
+        self.assertEqual(len(chips), 48)
+        global_xys = set()
+        for chip in machine.chips:
+            local_x, local_y = machine.get_local_xy(chip)
+            global_x, global_y = machine.get_global_xy(
+                local_x, local_y,
+                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+            self.assertEqual(global_x, chip.x)
+            self.assertEqual(global_y, chip.y)
+            global_xys.add((global_x, global_y))
+        self.assertEqual(len(global_xys), 48 * 3)
+
+    def test_no_wrap(self):
         machine = virtual_machine(16, 16)
+        machine.validate()
         chips = set(machine.get_chips_by_ethernet(0, 0))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(4, 8))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
         chips = set(machine.get_chips_by_ethernet(8, 4))
-        self.assertEquals(len(chips), 48)
+        self.assertEqual(len(chips), 48)
+        global_xys = set()
+        for chip in machine.chips:
+            local_x, local_y = machine.get_local_xy(chip)
+            global_x, global_y = machine.get_global_xy(
+                local_x, local_y,
+                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+            self.assertEqual(global_x, chip.x)
+            self.assertEqual(global_y, chip.y)
+            global_xys.add((global_x, global_y))
+        self.assertEqual(len(global_xys), 48 * 3)
 
 
 if __name__ == '__main__':
