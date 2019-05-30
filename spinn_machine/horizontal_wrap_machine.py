@@ -53,6 +53,12 @@ class HorizontalWrapMachine(Machine):
         local_y = chip.y - chip.nearest_ethernet_y
         return local_x, local_y
 
+    @overrides(Machine.get_global_xy)
+    def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
+        global_x = (local_x + ethernet_x) % self._width
+        global_y = local_y + ethernet_y
+        return global_x, global_y
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):

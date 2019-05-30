@@ -223,8 +223,33 @@ class Machine(object):
 
         This method does take wrap arounds into consideration.
 
-        :param chip. A Chip in the machone
+        This method assumes that chip is on the machine or is a copy of a
+        chip on the machine
+
+        :param chip. A Chip in the machine
         :return: Local (x, y) coordinates.
+        """
+
+    @abstractmethod
+    def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
+        """
+        Converts the local x and y cooridinates into global x,y coordinates,
+        under the assumption that they are on the board with local 0,0 at
+        ethernet_x, ethernet_y
+
+        This method does take wrap arounds into consideration.
+
+        GIGO: This method does not check if input parameters make sense,
+        nor does it check if there is a chip at the resulting global xy
+
+        :param chip. A Chip in the machine
+        :return: Local (x, y) coordinates.
+
+        :param local_x: A valid local x coorindate for a chip
+        :param local_y: A valid local y coorindate for a chip
+        :param ethernet_x: The global ethernet x for the board the chip is on
+        :param ethernet_y: The global ethernet y for the board the chip is on
+        :return: global (x,y) cooridinates of the chip
         """
 
     def validate(self):

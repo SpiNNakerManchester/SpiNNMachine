@@ -57,6 +57,12 @@ class FullWrapMachine(Machine):
                    % self._height)
         return local_x, local_y
 
+    @overrides(Machine.get_global_xy)
+    def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
+        global_x = (local_x + ethernet_x) % self._width
+        global_y = (local_y + ethernet_y) % self._height
+        return global_x, global_y
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):
