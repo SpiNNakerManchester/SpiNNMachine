@@ -235,7 +235,7 @@ class _VirtualMachine(object):
         # the possible chips depend on the 48 chip board's gaps
         configured_chips = dict()
         for (eth_x, eth_y) in ethernet_chips:
-            for x_y in self._machine.x_y_by_ethernet(eth_x, eth_y):
+            for x_y in self._machine.get_xys_by_ethernet(eth_x, eth_y):
                 if x_y not in down_chips:
                     configured_chips[x_y] = (eth_x, eth_y)
 
@@ -298,7 +298,7 @@ class _VirtualMachine(object):
         links = list()
         for link_id in range(6):
             if (x, y, link_id) not in self._down_links:
-                link_x_y = self._machine.x_y_over_link(x, y, link_id)
+                link_x_y = self._machine.xy_over_link(x, y, link_id)
                 if link_x_y in configured_chips:
                     link_to = (link_id + 3) % 6
                     links.append(

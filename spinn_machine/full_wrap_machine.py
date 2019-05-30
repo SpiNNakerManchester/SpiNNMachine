@@ -26,8 +26,8 @@ class FullWrapMachine(Machine):
     def multiple_48_chip_boards(self):
         return self._width % 12 == 0 and self._height % 12 == 0
 
-    @overrides(Machine.x_y_by_ethernet)
-    def x_y_by_ethernet(self, ethernet_x, ethernet_y):
+    @overrides(Machine.get_xys_by_ethernet)
+    def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._board_chips:
             local_x = (x + ethernet_x) % self._width
             local_y = (y + ethernet_y) % self._height
@@ -42,12 +42,20 @@ class FullWrapMachine(Machine):
             if (local_xy) in self._chips:
                 yield local_xy
 
-    @overrides(Machine.x_y_over_link)
-    def x_y_over_link(self, x, y, link):
+    @overrides(Machine.xy_over_link)
+    def xy_over_link(self, x, y, link):
         add_x, add_y = Machine.LINK_ADD_TABLE[link]
         link_x = (x + add_x + self._width) % self._width
         link_y = (y + add_y + self.height) % self.height
         return link_x, link_y
+
+    @overrides(Machine.get_local_xy)
+    def get_local_xy(self, chip):
+        local_x = (chip.x - chip.nearest_ethernet_x + self._width) \
+                  % self._width
+        local_y = (chip.y - chip.nearest_ethernet_y + self._height) \
+                  % self._height
+        return local_x, local_y
 
     @property
     @overrides(Machine.wrap)

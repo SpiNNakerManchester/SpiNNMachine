@@ -4,6 +4,7 @@ except ImportError:
     from collections import OrderedDict
 from six import iteritems, iterkeys, itervalues, add_metaclass
 from .exceptions import (SpinnMachineAlreadyExistsException,
+                         SpinnMachineException,
                          SpinnMachineInvalidParameterException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 from spinn_utilities.abstract_base import (
@@ -148,7 +149,7 @@ class Machine(object):
         """
 
     @abstractmethod
-    def x_y_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
         Yields the protential x,y locations of all the chips on the board #
         with this ethernet. Including the Ethernet chip itself.
@@ -188,7 +189,7 @@ class Machine(object):
         """
 
     @abstractmethod
-    def x_y_over_link(self, x, y, link):
+    def xy_over_link(self, x, y, link):
         """
         Get the protential x,y location of the chip reached over this link.
 
@@ -215,6 +216,87 @@ class Machine(object):
         or some fictional x y if not.
         """
 
+    @abstractmethod
+    def get_local_xy(self, chip):
+        """
+        Converts the x and y cooridinates into the local cooridnates on the
+        board as if the ethernet was at position 0,0
+
+        This method does take wrap arounds into consideration.
+
+        :param chip. A Chip in the machone
+        :return: Local (x, y) coordinates.
+        """
+
+    def validate(self):
+        """
+        Validates the machine and raises an exception in unexpected conditions.
+
+        Assumes that at the time this is called all chips are on the board.
+
+        This allows the checks to be avoided when creating a virtual machine
+        (Except of course in testing)
+
+        An Error is raised if there is a chip with a x outside of the
+        range 0 to width -1 (except for virtual ones)
+        An Error is raised if there is a chip with a y outside of the
+        range 0 to height -1 (except for virtual ones)
+        An Error is raise if there is no chip at the declared ethernet x and y
+        An Error is raised if an ethernet chip is not at a local 0,0
+        An Error is raised if there is no ethernet chip is at 0,0
+        An Error is raised if this is a unexpected multiple board situation
+
+        """
+        if self._boot_ethernet_address is None:
+            raise SpinnMachineException(
+                "no ethernet chip at 0, 0 found")
+        if len(self._ethernet_connected_chips) > 1:
+            if not self.multiple_48_chip_boards():
+                raise SpinnMachineException(
+                    "A {} machine of size {}, {} can not handle multiple "
+                    "ethernet chips".format(
+                        self.wrap, self._width, self._height))
+        # The fact that self._boot_ethernet_address is set means there is an
+        # ethernet chip and it is at 0,0 so no need to check that
+
+        for chip in self.chips:
+            if chip.x < 0:
+                raise SpinnMachineException(
+                    "{} has a negative x".format(chip))
+            if chip.y < 0:
+                raise SpinnMachineException(
+                    "{} has a negative y".format(chip))
+            if not chip.virtual:
+                if chip.x >= self._width:
+                    raise SpinnMachineException(
+                        "{} has an x large than width {}".format(
+                            chip, self._width))
+                if chip.y >= self._height:
+                    raise SpinnMachineException(
+                        "{} has an y large than heigth {}".format(
+                            chip, self._width))
+            # Ethernet Chip checks
+            if chip.ip_address:
+            # None Ethernet chip checks
+                if chip.x % 4 != 0:
+                    raise SpinnMachineException(
+                        "Ethernet {} has a x which is not divisible by 4"
+                        "".format(chip))
+                if (chip.x + chip.y) % 12 != 0:
+                    raise SpinnMachineException(
+                        "Ethernet {} has a x y pair that do not add up to 12"
+                        "".format(chip))
+            elif not chip.virtual:
+                if not self.is_chip_at(
+                        chip.nearest_ethernet_x, chip.nearest_ethernet_y):
+                    raise SpinnMachineException(
+                        "{} has an invalid ethernet chip".format(chip))
+                    local_xy = self.get_local_xy(chip)
+                    if not local_xy in self._board_chips:
+                        raise SpinnMachineException(
+                            "{} has an unexpected local xy of {}".format(
+                                chip, local_xy))
+
     @abstractproperty
     def wrap(self):
         """
@@ -237,16 +319,6 @@ class Machine(object):
             raise SpinnMachineAlreadyExistsException(
                 "chip", "{}, {}".format(chip.x, chip.y))
 
-        if not chip.virtual:
-            if chip.x >= self._width:
-                raise SpinnMachineInvalidParameterException(
-                    "chip", chip,
-                    "x to high for machine with width {}".format(self._width))
-            if chip.y >= self._height:
-                raise SpinnMachineInvalidParameterException(
-                    "chip", chip,
-                    "y to high for machine with height {}".format(
-                        self._height))
         self._chips[chip_id] = chip
 
         if chip.x > self._max_chip_x:
@@ -255,12 +327,6 @@ class Machine(object):
             self._max_chip_y = chip.y
 
         if chip.ip_address is not None:
-            if len(self._ethernet_connected_chips) == 1:
-                if not self.multiple_48_chip_boards():
-                    raise NotImplementedError(
-                        "A {} machine of size {}, {} can not handle machines "
-                        "with multiple ethernet chips".format(
-                            self.wrap, self._width, self._height))
             self._ethernet_connected_chips.append(chip)
             if (chip.x == 0) and (chip.y == 0):
                 self._boot_ethernet_address = chip.ip_address
