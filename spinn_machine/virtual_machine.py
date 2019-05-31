@@ -158,7 +158,7 @@ class _VirtualMachine(object):
 
     ORIGIN = "Virtual"
 
-    # pylint: disable=too-maa  ny-arguments
+    # pylint: disable=too-many-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
