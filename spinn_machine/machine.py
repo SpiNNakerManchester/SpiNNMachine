@@ -173,7 +173,7 @@ class Machine(object):
         """
 
     @abstractmethod
-    def get_down_xy_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
         Yeilds the xy coorindates of the down chips on the board with this
         ethernet.
