@@ -245,7 +245,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = self._create_chips()
         new_machine = machine_from_size(8, 8, chips)
         for eth_chip in new_machine._ethernet_connected_chips:
-            chips_in_machine = list(new_machine.get_chips_on_board(eth_chip))
+            chips_in_machine = list(new_machine.get_existing_xys_on_board(eth_chip))
             # _create_chips made a 5*5 grid of 25 chips,
             # but (0,4) is not on a standard 48-node board
             self.assertEquals(len(chips), 25)

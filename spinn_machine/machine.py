@@ -209,6 +209,23 @@ class Machine(object):
         """
 
     @abstractmethod
+    def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yeilds the (x,y)s of actual chips on the board with this ethernet.
+        Including the Ethernet chip itself.
+
+        Wraparounds are handled as appropriate.
+
+        This method does check if the chip actually exists.
+
+        :param ethernet_x: The x coordinate of a (local 0,0) legal ethernet
+        chip
+        :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
+        chip
+        :return: Yeilds the (x,y)s of chips on this board.
+        """
+
+    @abstractmethod
     def xy_over_link(self, x, y, link):
         """
         Get the protential x,y location of the chip reached over this link.
@@ -757,14 +774,14 @@ class Machine(object):
         """
         return self._chips[0, 0]
 
-    def get_chips_on_board(self, chip):
+    def get_existing_xys_on_board(self, chip):
         """ Get the chips that are on the same board as the given chip
 
         :param chip: The chip to find other chips on the same board as
         :return: An iterable of (x, y) coordinates of chips on the same board
         :rtype: iterable(tuple(int,int))
         """
-        return self.get_chips_by_ethernet(
+        return self.get_existing_xys_by_ethernet(
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
 
     @property
