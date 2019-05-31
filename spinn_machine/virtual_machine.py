@@ -98,7 +98,8 @@ def virtual_machine(
         n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP, with_monitors=True,
         sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES, down_chips=None,
         down_cores=None, down_links=None,
-        router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES):
+        router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
+        validate=True):
     """
     :param width: the width of the virtual machine in chips
     :type width: int
@@ -124,12 +125,14 @@ def virtual_machine(
     :type sdram_per_chip: int or None
     :param router_entries_per_chip: the number of entries to each router
     :type router_entries_per_chip: int
+    :param validate: if True will call the machine validate function
+    :type validate: bool
     """
 
     factory = _VirtualMachine(
         width, height, with_wrap_arounds, version, n_cpus_per_chip,
         with_monitors, sdram_per_chip, down_chips, down_cores, down_links,
-        router_entries_per_chip)
+        router_entries_per_chip, validate)
     return factory.machine
 
 
@@ -161,7 +164,8 @@ class _VirtualMachine(object):
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
             with_monitors=True, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
             down_chips=None, down_cores=None, down_links=None,
-            router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES):
+            router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
+            validate=True):
 
         self._n_router_entries_per_router = router_entries_per_chip
 
@@ -255,6 +259,8 @@ class _VirtualMachine(object):
 
         self._machine.add_spinnaker_links(version)
         self._machine.add_fpga_links(version)
+        if validate:
+            self._machine.validate()
 
     @property
     def machine(self):
