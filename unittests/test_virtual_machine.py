@@ -606,6 +606,11 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             assert xy not in hole
         self.assertEquals(46, count)
+        count = 0
+        for xy in machine.get_down_xys_by_ethernet(0, 0):
+            count += 1
+            assert xy in hole
+        self.assertEquals(2, count)
         # Board 4, 8
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(4, 8))))
         count = 0
@@ -650,6 +655,11 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             assert xy not in hole
         self.assertEquals(46, count)
+        count = 0
+        for xy in machine.get_down_xys_by_ethernet(0, 0):
+            count += 1
+            assert xy in hole
+        self.assertEquals(2, count)
         # Board 4, 8
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(4, 8))))
         count = 0
@@ -693,6 +703,11 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             assert xy not in hole
         self.assertEquals(46, count)
+        count = 0
+        for xy in machine.get_down_xys_by_ethernet(0, 0):
+            count += 1
+            assert xy in hole
+        self.assertEquals(2, count)
         # Board 4, 8
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(4, 8))))
         count = 0
@@ -736,6 +751,11 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             assert xy not in hole
         self.assertEquals(46, count)
+        count = 0
+        for xy in machine.get_down_xys_by_ethernet(0, 0):
+            count += 1
+            assert xy in hole
+        self.assertEquals(2, count)
         # Board 4, 8
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(4, 8))))
         count = 0
