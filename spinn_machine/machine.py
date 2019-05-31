@@ -81,8 +81,8 @@ class Machine(object):
 
         Use machine_fatcory methods to dettermine the correct machine class
 
-        :param width: The width of the machine excluding any vertical chips
-        :param height: The height of the machine excluding any vertical chips
+        :param width: The width of the machine excluding any virtual chips
+        :param height: The height of the machine excluding any virtual chips
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
         :param origin: Extra inforamation about how this mnachine was created
@@ -139,9 +139,11 @@ class Machine(object):
     def multiple_48_chip_boards(self):
         """
         Checks that the width and height coorespond to the expected size for a
-        multipy board machine made up of more than one 48 chip board.
+        multi board machine made up of more than one 48 chip board.
 
-        The assumption is that any size machine can be supported but that none
+        The assumption is that any size machine can be supported but that
+        only ones with an expected 48 chip board size can have more than one
+        ethernet chip.
 
         +++++
         return: True if this machine can have multiple 48 chip boards
@@ -150,7 +152,7 @@ class Machine(object):
     @abstractmethod
     def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yields the protential x,y locations of all the chips on the board #
+        Yields the protential x,y locations of all the chips on the board
         with this ethernet. Including the Ethernet chip itself.
 
         Wraparounds are handled as appropriate.
@@ -167,13 +169,13 @@ class Machine(object):
         :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
         chip
         :return: Yeilds the (x, Y) coordinated of all the protential chips on
-         this board.
+        this board.
         """
 
     @abstractmethod
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yields the actual chips on the board with this ethernet.
+        Yeilds the actual chips on the board with this ethernet.
         Including the Ethernet chip itself.
 
         Wraparounds are handled as appropriate.
@@ -205,8 +207,8 @@ class Machine(object):
         chip on the machine.
 
         On machine without full wraparound it is possible that this method
-        generates x_Y values that fall outside of the legal values including
-        negatives values, x = width or y = height.
+        generates x,y values that fall outside of the legal values including
+        negative values, x = width or y = height.
 
         :param x: The x coordinate of a chip that will exist on the machine
         :param y: The x coordinate of a chip that will exist on the machine
@@ -240,7 +242,7 @@ class Machine(object):
         This method does take wrap arounds into consideration.
 
         GIGO: This method does not check if input parameters make sense,
-        nor does it check if there is a chip at the resulting global xy
+        nor does it check if there is a chip at the resulting global x,y
 
         :param chip. A Chip in the machine
         :return: Local (x, y) coordinates.

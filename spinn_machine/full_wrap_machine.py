@@ -11,8 +11,8 @@ class FullWrapMachine(Machine):
         """
         Creates a fully wrapped machine
 
-        :param width: The width of the machine excluding any vertical chips
-        :param height: The height of the machine excluding any vertical chips
+        :param width: The width of the machine excluding any virtual chips
+        :param height: The height of the machine excluding any virtual chips
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
         :param origin: Extra information about how this mnachine was created

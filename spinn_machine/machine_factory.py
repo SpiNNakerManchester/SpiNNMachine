@@ -6,13 +6,13 @@ from spinn_machine.full_wrap_machine import FullWrapMachine
 
 def machine_from_size(width, height, chips=None, origin=None):
     """
-    Create a machine with the assumed wrap arround based on the sizes.
+    Create a machine with the assumed wrap around based on the sizes.
 
-    This could include a machine with no wrap arrounds, only vertical ones,
+    This could include a machine with no wrap arounds, only vertical ones,
     only horizontal ones or both.
 
     Note: If the sizes do not match the ones for a known wrap arround machine,
-    no wrap arrounds is assumed.
+    no wrap arounds is assumed.
 
     :param width: The width of the machine excluding any vertical chips
     :param height: The height of the machine excluding any vertical chips

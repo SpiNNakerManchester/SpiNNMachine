@@ -20,7 +20,11 @@ class Router(object):
 
     ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
 
+    # The maximum number of links/directions a router can handle
     MAX_LINKS_PER_ROUTER = 6
+
+    # Number to add or sub from a link to get its opposite
+    LINK_OPPOSITE = 3
 
     MAX_CORES_PER_ROUTER = 18
 
@@ -234,3 +238,17 @@ class Router(object):
 
     def __repr__(self):
         return self.__str__()
+
+    @staticmethod
+    def opposite(link_id):
+        """
+        Given a valid link_id this method returns its opposite.
+
+        GIGO: this method assumes the input is valid.
+        No verfication is done
+
+        :param link_id: A valid link_id
+        :return: The link_id for the opposite direction
+        """
+        # Mod is faster than if
+        return (link_id + Router.LINK_OPPOSITE) % Router.MAX_LINKS_PER_ROUTER
