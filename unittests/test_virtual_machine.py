@@ -383,19 +383,16 @@ class TestVirtualMachine(unittest.TestCase):
         count04 = 0
         count2436 = 0
         for eth_chip in vm._ethernet_connected_chips:
-            allCount = 0
-            for chip in vm.get_existing_xys_on_board(eth_chip):
-                allCount += 1
-                if chip.x == 0 and chip.y == 0:
-                    count00 += 1
-                if chip.x == 5 and chip.y == 0:
-                    count50 += 1
-                if chip.x == 0 and chip.y == 4:
-                    count04 += 1
-                if chip.x == 24 and chip.y == 36:
-                    count2436 += 1
-            self.assertEqual(allCount, 48)
-
+            list_of_chips = list(vm.get_existing_xys_on_board(eth_chip))
+            self.assertEqual(len(list_of_chips), 48)
+            if (0, 0) in list_of_chips:
+                count00 += 1
+            if (5, 0) in list_of_chips:
+                count50 += 1
+            if (0, 4) in list_of_chips:
+                count04 += 1
+            if (24, 36) in list_of_chips:
+                count2436 += 1
         # (0,0), (5,0), (0,4) are all on this virtual machine
         self.assertEqual(count00, 1)
         self.assertEqual(count50, 1)
@@ -577,7 +574,7 @@ class TestVirtualMachine(unittest.TestCase):
     def test_size_2_2_hole(self):
         hole = [(1, 1)]
         machine = virtual_machine(2, 2, down_chips=hole, validate=True)
-        self.assertEqual(4, machine.get_xys_by_ethernet(0, 0))
+        self.assertEqual(4, len(list(machine.get_xys_by_ethernet(0, 0))))
         count = 0
         for chip in machine.get_chips_by_ethernet(0, 0):
             count += 1
