@@ -635,7 +635,6 @@ class TestVirtualMachine(unittest.TestCase):
             assert xy not in hole
         self.assertEquals(46, count)
 
-
     def test_vertical_wrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 13), (8, 10), (1, 8), (9, 6)]
         machine = virtual_machine(12, 16, down_chips=hole, validate=True)
