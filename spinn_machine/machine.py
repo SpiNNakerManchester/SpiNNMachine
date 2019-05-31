@@ -50,14 +50,14 @@ class Machine(object):
 
     __slots__ = (
         "_boot_ethernet_address",
-        # List of the possible chips (x,y) on each board of the machine
-        "_board_chips",
         "_chips",
         "_ethernet_connected_chips",
         "_fpga_links",
         # Declared height of the machine excluding virtual chips
         # This can not be changed
         "_height",
+        # List of the possible chips (x,y) on each board of the machine
+        "_local_xys",
         # Max x value of any chip including virtual chips
         # This could change as new chips are added
         "_max_chip_x",
@@ -95,12 +95,12 @@ class Machine(object):
 
         if (self._width == self._height == 8) or \
                 self.multiple_48_chip_boards():
-            self._board_chips = self.BOARD_48_CHIPS
+            self._local_xys = self.BOARD_48_CHIPS
         else:
-            self._board_chips = []
+            self._local_xys = []
             for x in range(width):
                 for y in range(height):
-                    self._board_chips.append((x, y))
+                    self._local_xys.append((x, y))
 
         # The current maximum chip x coordinate
         self._max_chip_x = 0
@@ -168,8 +168,27 @@ class Machine(object):
         chip
         :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
         chip
-        :return: Yeilds the (x, Y) coordinated of all the protential chips on
+        :return: Yeilds the (x, y) coordinated of all the protential chips on
         this board.
+        """
+
+    @abstractmethod
+    def get_down_xy_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yeilds the xy coorindates of the down chips on the board with this
+        ethernet.
+
+        Note the Ethernet chip itself can not be missing if vaiadated
+
+        Wraparounds are handled as appropriate.
+
+        This method does check if the chip actually exists.
+
+        :param ethernet_x: The x coordinate of a (local 0,0) legal ethernet
+        chip
+        :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
+        chip
+        :return: Yeilds the (x, y) of the down chips on this board.
         """
 
     @abstractmethod
@@ -186,7 +205,7 @@ class Machine(object):
         chip
         :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
         chip
-        :return: Yeilds the chips on (x, Y) chips on this board.
+        :return: Yeilds the chips on this board.
         """
 
     @abstractmethod
@@ -318,7 +337,7 @@ class Machine(object):
                     raise SpinnMachineException(
                         "{} has an invalid ethernet chip".format(chip))
                 local_xy = self.get_local_xy(chip)
-                if local_xy not in self._board_chips:
+                if local_xy not in self._local_xys:
                     raise SpinnMachineException(
                         "{} has an unexpected local xy of {}".format(
                             chip, local_xy))
@@ -820,3 +839,18 @@ class Machine(object):
     @property
     def virtual_chips(self):
         return itervalues(self._virtual_chips)
+
+    @property
+    def local_xys(self):
+        """
+        Provides a list of local (x,y) values for a perfect board on this
+        machine.
+
+        Local xys never include wrap arounds.
+
+        Note: no check is done to see if any board in the machine actually
+        has a chip with this local x, y
+
+        :return: a list of (x,y) coordinates
+        """
+        return self._local_xys

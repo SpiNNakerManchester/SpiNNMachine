@@ -199,6 +199,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertFalse(vm.is_link_at(3, 2, 2))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(228, count)
+        self.assertEquals(48, len(vm.local_xys))
 
     def test_new_vm_no_monitor(self):
         n_cpus = 11
@@ -382,16 +383,18 @@ class TestVirtualMachine(unittest.TestCase):
         count04 = 0
         count2436 = 0
         for eth_chip in vm._ethernet_connected_chips:
-            list_of_chips = list(vm.get_chips_on_board(eth_chip))
-            self.assertEqual(len(list_of_chips), 48)
-            if (0, 0) in list_of_chips:
-                count00 += 1
-            if (5, 0) in list_of_chips:
-                count50 += 1
-            if (0, 4) in list_of_chips:
-                count04 += 1
-            if (24, 36) in list_of_chips:
-                count2436 += 1
+            allCount = 0
+            for chip in vm.get_chips_on_board(eth_chip):
+                allCount += 1
+                if chip.x == 0 and chip.y == 0:
+                    count00 += 1
+                if chip.x == 5 and chip.y == 0:
+                    count50 += 1
+                if chip.x == 0 and chip.y == 4:
+                    count04 += 1
+                if chip.x == 24 and chip.y == 36:
+                    count2436 += 1
+            self.assertEqual(allCount, 48)
 
         # (0,0), (5,0), (0,4) are all on this virtual machine
         self.assertEqual(count00, 1)
@@ -513,6 +516,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 4)
+        self.assertEquals(4, len(machine.local_xys))
 
     def test_fullwrap(self):
         machine = virtual_machine(12, 12, validate=True)
@@ -535,6 +539,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 3)
+        self.assertEquals(48, len(machine.local_xys))
 
     def test_vertical_wrap(self):
         machine = virtual_machine(16, 12, validate=True)
@@ -554,6 +559,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 3)
+        self.assertEquals(48, len(machine.local_xys))
 
     def test_horizontal_wrap(self):
         machine = virtual_machine(12, 16, validate=True)
@@ -573,6 +579,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 3)
+        self.assertEquals(48, len(machine.local_xys))
 
     def test_no_wrap(self):
         machine = virtual_machine(16, 16, validate=True)
@@ -592,6 +599,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 3)
+        self.assertEquals(48, len(machine.local_xys))
 
 
 if __name__ == '__main__':
