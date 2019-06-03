@@ -4,7 +4,7 @@ test for testing the python representation of a spinnaker machine
 import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip
 from spinn_machine.machine_factory import (
-    machine_from_chips, machine_from_size)
+    machine_from_chips, machine_from_size, machine_repair)
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
@@ -289,8 +289,8 @@ class SpinnMachineTestCase(unittest.TestCase):
             if machine.is_link_at(x, y, link):
                 del machine._chips[x, y].router._links[link]
 
-        machine.remove_unreachable_chips()
-        self.assertFalse(machine.is_chip_at(3, 3))
+        new_machine = machine_repair(machine, True)
+        self.assertFalse(new_machine.is_chip_at(3, 3))
 
     def test_unreachable_outgoing_chips(self):
         chips = self._create_chips()
@@ -301,8 +301,8 @@ class SpinnMachineTestCase(unittest.TestCase):
             if machine.is_link_at(3, 3, link):
                 del machine._chips[3, 3].router._links[link]
 
-        machine.remove_unreachable_chips()
-        self.assertFalse(machine.is_chip_at(3, 3))
+        new_machine = machine_repair(machine, True)
+        self.assertFalse(new_machine.is_chip_at(3, 3))
 
 
 if __name__ == '__main__':

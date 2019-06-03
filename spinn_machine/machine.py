@@ -628,13 +628,13 @@ class Machine(object):
         return self._fpga_links.get(
             (board_address, fpga_id, fpga_link_id), None)
 
-    def add_spinnaker_links(self, version_no):
+    def add_spinnaker_links(self):
         """ Add SpiNNaker links that are on a given machine depending on the\
             version of the board.
 
         :param version_no: which version of board to use
         """
-        if version_no in self.BOARD_VERSION_FOR_4_CHIPS:
+        if (self._width == self._height == 2):
             chip_0_0 = self.get_chip_at(0, 0)
             if not chip_0_0.router.is_link(3):
                 self._spinnaker_links[chip_0_0.ip_address, 0] = \
@@ -643,22 +643,22 @@ class Machine(object):
             if not chip.router.is_link(0):
                 self._spinnaker_links[chip_0_0.ip_address, 1] = \
                     SpinnakerLinkData(1, 1, 0, 0, chip_0_0.ip_address)
-        elif (version_no in self.BOARD_VERSION_FOR_48_CHIPS or
-                version_no is None):
+        elif (self._width == self._height == 8) or \
+                        self.multiple_48_chip_boards():
             for chip in self._ethernet_connected_chips:
                 if not chip.router.is_link(4):
                     self._spinnaker_links[
                         chip.ip_address, 0] = SpinnakerLinkData(
                             0, chip.x, chip.y, 4, chip.ip_address)
 
-    def add_fpga_links(self, version_no):
+    def add_fpga_links(self):
         """ Add FPGA links that are on a given machine depending on the\
             version of the board.
 
         :param version_no: which version of board to use
         """
-        if (version_no in self.BOARD_VERSION_FOR_48_CHIPS or
-                version_no is None):
+        if (self._width == self._height == 8) or \
+                        self.multiple_48_chip_boards():
 
             for ethernet_connected_chip in self._ethernet_connected_chips:
 
@@ -810,19 +810,7 @@ class Machine(object):
         return len([
             processor for chip in self.chips for processor in chip.processors])
 
-    def remove_unreachable_chips(self):
-        """ Remove chips that can't be reached or that can't reach other chips\
-            due to missing links
-        """
-        for (x, y) in self._unreachable_incoming_chips:
-            if (x, y) in self._chips:
-                del self._chips[x, y]
-        for (x, y) in self._unreachable_outgoing_chips:
-            if (x, y) in self._chips:
-                del self._chips[x, y]
-
-    @property
-    def _unreachable_outgoing_chips(self):
+    def unreachable_outgoing_chips(self):
         removable_coords = list()
         for (x, y) in self.chip_coordinates:
             # If no links out of the chip work, remove it
@@ -835,8 +823,7 @@ class Machine(object):
                 removable_coords.append((x, y))
         return removable_coords
 
-    @property
-    def _unreachable_incoming_chips(self):
+    def unreachable_incoming_chips(self):
         removable_coords = list()
         for (x, y) in self.chip_coordinates:
             # Go through all the chips that surround this one
@@ -853,13 +840,10 @@ class Machine(object):
                 removable_coords.append((x, y))
         return removable_coords
 
-    @property
     def one_way_links(self):
         link_checks = [(0, 3), (1, 4), (2, 5), (3, 0), (4, 1), (5, 2)]
         for chip in self.chips:
             for out, back in link_checks:
-                if chip.x == 3 and chip.y ==3:
-                    print("here")
                 link = chip.router.get_link(out)
                 if link is not None:
                     if not self.is_link_at(

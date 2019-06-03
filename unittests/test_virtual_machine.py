@@ -2,6 +2,7 @@ import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, virtual_machine
 from spinn_machine.exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from spinn_machine.machine_factory import machine_repair
 
 
 class TestVirtualMachine(unittest.TestCase):
@@ -410,6 +411,7 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_fpga_links_single_board(self):
         machine = virtual_machine(version=5)
+        machine.add_fpga_links()
         self._assert_fpga_link(machine, 0, 0, 7, 3, 0)
         self._assert_fpga_link(machine, 0, 1, 7, 3, 5)
         self._assert_fpga_link(machine, 0, 2, 6, 2, 0)
@@ -489,6 +491,7 @@ class TestVirtualMachine(unittest.TestCase):
 
         machine = virtual_machine(
             width=12, height=12, with_wrap_arounds=True, down_links=down_links)
+        machine.add_fpga_links()
         for ip, fpga, fpga_link, x, y, link in fpga_links:
             self._assert_fpga_link(machine, fpga, fpga_link, x, y, link, ip)
 
@@ -779,18 +782,17 @@ class TestVirtualMachine(unittest.TestCase):
             assert xy not in hole
         self.assertEquals(46, count)
 
-    def test_unreachable_incoming_chips(self):
+    def test_oneway_link(self):
         machine = virtual_machine(8, 8)
 
         # Delete links incoming to 3, 3
         down_links = [
-            (2, 2, 1), (2, 3, 0), (3, 4, 5), (4, 4, 4), (4, 3, 3), (3, 2, 2)]
+            (3, 6, 0), (5, 4, 1), (3, 2, 5), (1, 3, 3)]
         for (x, y, link) in down_links:
             if machine.is_link_at(x, y, link):
                 del machine._chips[x, y].router._links[link]
-        print(list(machine.one_way_links))
-        machine.remove_unreachable_chips()
-        self.assertFalse(machine.is_chip_at(3, 3))
+        print(list(machine.one_way_links()))
+        new_machine = machine_repair(machine, True)
 
 
 if __name__ == '__main__':

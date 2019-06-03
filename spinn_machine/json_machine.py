@@ -126,8 +126,8 @@ def machine_from_json(j_machine):
             tag_ids)
         machine.add_chip(chip)
 
-    machine.add_spinnaker_links(version_no=None)
-    machine.add_fpga_links(version_no=None)
+    machine.add_spinnaker_links()
+    machine.add_fpga_links()
 
     return machine
 
