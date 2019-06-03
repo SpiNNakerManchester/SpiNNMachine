@@ -24,15 +24,31 @@ class NoWrapMachine(Machine):
 
     @overrides(Machine.get_xys_by_ethernet)
     def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._board_chips:
+        for (x, y) in self._local_xys:
             yield (x + ethernet_x, y + ethernet_y)
 
     @overrides(Machine.get_chips_by_ethernet)
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._board_chips:
-            local_xy = (x + ethernet_x, y + ethernet_y)
-            if (local_xy) in self._chips:
-                yield local_xy
+        for (x, y) in self._local_xys:
+            chip_xy = (x + ethernet_x, y + ethernet_y)
+            if (chip_xy) in self._chips:
+                yield self._chips[chip_xy]
+
+    @overrides(Machine.get_existing_xys_by_ethernet)
+    def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
+        for (x, y) in self._local_xys:
+            chip_xy = (x + ethernet_x, y + ethernet_y)
+            if (chip_xy) in self._chips:
+                yield chip_xy
+
+    @overrides(Machine.get_down_xys_by_ethernet)
+    def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
+        for (x, y) in self._local_xys:
+            chip_xy = (
+                           (x + ethernet_x),
+                           (y + ethernet_y))
+            if (chip_xy) not in self._chips:
+                yield chip_xy
 
     @overrides(Machine.xy_over_link)
     def xy_over_link(self, x, y, link):
