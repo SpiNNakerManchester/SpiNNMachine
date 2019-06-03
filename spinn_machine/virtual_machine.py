@@ -260,8 +260,6 @@ class _VirtualMachine(object):
                 new_chip = self._create_chip(x, y, configured_chips)
             self._machine.add_chip(new_chip)
 
-        self._machine.add_spinnaker_links(version)
-        self._machine.add_fpga_links(version)
         if validate:
             self._machine.validate()
 
