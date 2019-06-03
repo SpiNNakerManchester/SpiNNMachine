@@ -515,8 +515,8 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(len(global_xys), 4)
         self.assertEquals(4, len(machine.local_xys))
 
-    def test_fullwrap(self):
-        machine = virtual_machine(12, 12, validate=True)
+    def test_48_28(self):
+        machine = virtual_machine(48, 24, validate=True)
         global_xys = set()
         for chip in machine.chips:
             local_x, local_y = machine.get_local_xy(chip)
@@ -526,11 +526,11 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_x, chip.x)
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
-        self.assertEqual(len(global_xys), 48 * 3)
+        self.assertEqual(len(global_xys), 48 * 24)
         self.assertEquals(48, len(machine.local_xys))
 
-    def test_vertical_wrap(self):
-        machine = virtual_machine(16, 12, validate=True)
+    def test_48_24(self):
+        machine = virtual_machine(48, 24, validate=True)
         global_xys = set()
         for chip in machine.chips:
             local_x, local_y = machine.get_local_xy(chip)
@@ -540,11 +540,11 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_x, chip.x)
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
-        self.assertEqual(len(global_xys), 48 * 3)
+        self.assertEqual(len(global_xys), 48 * 24)
         self.assertEquals(48, len(machine.local_xys))
 
-    def test_horizontal_wrap(self):
-        machine = virtual_machine(12, 16, validate=True)
+    def test_52_28(self):
+        machine = virtual_machine(48, 24, validate=True)
         global_xys = set()
         for chip in machine.chips:
             local_x, local_y = machine.get_local_xy(chip)
@@ -554,11 +554,11 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_x, chip.x)
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
-        self.assertEqual(len(global_xys), 48 * 3)
+        self.assertEqual(len(global_xys), 48 * 24)
         self.assertEquals(48, len(machine.local_xys))
 
-    def test_no_wrap(self):
-        machine = virtual_machine(16, 16, validate=True)
+    def test_52_24(self):
+        machine = virtual_machine(48, 24, validate=True)
         global_xys = set()
         for chip in machine.chips:
             local_x, local_y = machine.get_local_xy(chip)
@@ -568,7 +568,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_x, chip.x)
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
-        self.assertEqual(len(global_xys), 48 * 3)
+        self.assertEqual(len(global_xys), 48 * 24)
         self.assertEquals(48, len(machine.local_xys))
 
     def test_size_2_2_hole(self):
