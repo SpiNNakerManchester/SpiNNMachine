@@ -85,7 +85,7 @@ def create_one_board_submachine(machine, ethernet_chip):
 
     # Work out where all the down chips on the board are
     down_chips = {
-        (x, y) for x, y in machine.local_xys()
+        (x, y) for x, y in machine.local_xys
         if not machine.is_chip_at(
             *machine.get_global_xy(x, y, eth_x, eth_y))}
 
