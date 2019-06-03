@@ -854,6 +854,19 @@ class Machine(object):
         return removable_coords
 
     @property
+    def one_way_links(self):
+        link_checks = [(0, 3), (1, 4), (2, 5), (3, 0), (4, 1), (5, 2)]
+        for chip in self.chips:
+            for out, back in link_checks:
+                if chip.x == 3 and chip.y ==3:
+                    print("here")
+                link = chip.router.get_link(out)
+                if link is not None:
+                    if not self.is_link_at(
+                            link.destination_x, link.destination_y, back):
+                        yield chip.x, chip.y, out
+
+    @property
     def virtual_chips(self):
         return itervalues(self._virtual_chips)
 
