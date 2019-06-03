@@ -5,7 +5,10 @@ from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .link import Link
-from collections import defaultdict, namedtuple, OrderedDict
+try:
+    from collections.abc import defaultdict, namedtuple, OrderedDict
+except ImportError:
+    from collections import defaultdict, namedtuple, OrderedDict
 import json
 from .machine_factory import machine_from_size
 
