@@ -782,7 +782,7 @@ class TestVirtualMachine(unittest.TestCase):
             assert xy not in hole
         self.assertEquals(46, count)
 
-    def test_oneway_link(self):
+    def test_oneway_link_true(self):
         machine = virtual_machine(8, 8)
 
         # Delete links incoming to 3, 3
@@ -791,9 +791,18 @@ class TestVirtualMachine(unittest.TestCase):
         for (x, y, link) in down_links:
             if machine.is_link_at(x, y, link):
                 del machine._chips[x, y].router._links[link]
-        print(list(machine.one_way_links()))
         new_machine = machine_repair(machine, True)
 
+    def test_oneway_link_no_repair(self):
+        machine = virtual_machine(8, 8)
+
+        # Delete links incoming to 3, 3
+        down_links = [
+            (3, 6, 0), (5, 4, 1), (3, 2, 5), (1, 3, 3)]
+        for (x, y, link) in down_links:
+            if machine.is_link_at(x, y, link):
+                del machine._chips[x, y].router._links[link]
+        new_machine = machine_repair(machine, False)
 
 if __name__ == '__main__':
     unittest.main()
