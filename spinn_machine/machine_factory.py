@@ -9,20 +9,20 @@ from spinn_machine.virtual_machine import virtual_machine
 
 def machine_from_size(width, height, chips=None, origin=None):
     """
-    Create a machine with the assumed wrap around based on the sizes.
+    Create a machine with the assumed wrap-around based on the sizes.
 
-    This could include a machine with no wrap arounds, only vertical ones,
+    This could include a machine with no wrap-arounds, only vertical ones,
     only horizontal ones or both.
 
     Note: If the sizes do not match the ones for a known wrap around machine,
-    no wrap arounds is assumed.
+    no wrap-arounds is assumed.
 
     :param width: The width of the machine excluding any vertical chips
     :param height: The height of the machine excluding any vertical chips
     :param chips: Any chips to be add.
     :param origin: Extra information about how this machine was created
         to be used in the str method. Example "Virtual" or "Json"
-    :return: A sub class of Machine
+    :return: A subclass of Machine
     """
     if chips is None:
         chips = []
@@ -42,14 +42,14 @@ def machine_from_size(width, height, chips=None, origin=None):
 
 def machine_from_chips(chips):
     """
-    Create a machine with the assumed wrap around based on the sizes.
+    Create a machine with the assumed wrap-around based on the sizes.
 
     The size of the machine is calculated from the list of chips.
 
     :param chips: Full list of all chips on this machine.
     Or at least a list which includes a chip with the highest x and
     one with the highest Y (excluding any virtual chips)
-    :return: A sub class of Machine
+    :return: A subclass of Machine
     """
     max_x = 0
     max_y = 0

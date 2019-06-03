@@ -86,7 +86,7 @@ class Machine(object):
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
         :param origin: Extra information about how this machine was created
-        to be used in the str method. Example "Virtual" or "Json"
+            to be used in the str method. Example "Virtual" or "Json"
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
@@ -155,7 +155,7 @@ class Machine(object):
         Yields the potential x,y locations of all the chips on the board
         with this ethernet. Including the Ethernet chip itself.
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         Note: This method does not check if the chip actually exists as is
         intended to be called to create the chips.
@@ -175,12 +175,12 @@ class Machine(object):
     @abstractmethod
     def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yields the xy coorindates of the down chips on the board with this
+        Yields the (x,y) coordinates of the down chips on the board with this
         ethernet.
 
         Note the Ethernet chip itself can not be missing if validated
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         This method does check if the chip actually exists.
 
@@ -197,7 +197,7 @@ class Machine(object):
         Yields the actual chips on the board with this ethernet.
         Including the Ethernet chip itself.
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         This method does check if the chip actually exists.
 
@@ -214,7 +214,7 @@ class Machine(object):
         Yields the (x,y)s of actual chips on the board with this ethernet.
         Including the Ethernet chip itself.
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         This method does check if the chip actually exists.
 
@@ -230,7 +230,7 @@ class Machine(object):
         """
         Get the potential x,y location of the chip reached over this link.
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         Note: This method does not check if either chip source or destination
         actually exists as is intended to be called to create the links.
@@ -242,12 +242,12 @@ class Machine(object):
         width and height of the machine, and that the link goes to another
         chip on the machine.
 
-        On machine without full wraparound it is possible that this method
+        On machine without full wrap-around it is possible that this method
         generates x,y values that fall outside of the legal values including
         negative values, x = width or y = height.
 
         :param x: The x coordinate of a chip that will exist on the machine
-        :param y: The x coordinate of a chip that will exist on the machine
+        :param y: The y coordinate of a chip that will exist on the machine
         :param link: The link to another chip that could exist on the machine
         :return: x and y coordinates of the chip over that link if it is valid
         or some fictional x y if not.
@@ -808,19 +808,19 @@ class Machine(object):
         :return: total
         :rtype: int
         """
-        return len([
-            processor for chip in self.chips for processor in chip.processors])
+        return sum(
+            1 for chip in self.chips for _processor in chip.processors)
 
     def remove_unreachable_chips(self):
         """ Remove chips that can't be reached or that can't reach other chips\
             due to missing links
         """
-        for (x, y) in self._unreachable_incoming_chips:
-            if (x, y) in self._chips:
-                del self._chips[x, y]
-        for (x, y) in self._unreachable_outgoing_chips:
-            if (x, y) in self._chips:
-                del self._chips[x, y]
+        for xy in self._unreachable_incoming_chips:
+            if xy in self._chips:
+                del self._chips[xy]
+        for xy in self._unreachable_outgoing_chips:
+            if xy in self._chips:
+                del self._chips[xy]
 
     @property
     def _unreachable_outgoing_chips(self):
@@ -864,7 +864,7 @@ class Machine(object):
         Provides a list of local (x,y) values for a perfect board on this
         machine.
 
-        Local xys never include wrap arounds.
+        Local (x,y)s never include wrap-arounds.
 
         Note: no check is done to see if any board in the machine actually
         has a chip with this local x, y
