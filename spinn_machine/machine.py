@@ -77,16 +77,16 @@ class Machine(object):
 
     def __init__(self, width, height, chips=None, origin=None):
         """
-        Creates an abstarct machine that must be superclassed by wrap type.
+        Creates an abstract machine that must be superclassed by wrap type.
 
-        Use machine_fatcory methods to dettermine the correct machine class
+        Use machine_fatcory methods to determine the correct machine class
 
         :param width: The width of the machine excluding any virtual chips
         :param height: The height of the machine excluding any virtual chips
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
-        :param origin: Extra inforamation about how this mnachine was created
-        to be used in the str method. Example "Virtual" or "Json"
+        :param origin: Extra information about how this machine was created
+            to be used in the str method. Example "Virtual" or "Json"
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
@@ -138,8 +138,8 @@ class Machine(object):
     @abstractmethod
     def multiple_48_chip_boards(self):
         """
-        Checks that the width and height coorespond to the expected size for a
-        multi board machine made up of more than one 48 chip board.
+        Checks that the width and height correspond to the expected size for a
+        multi-board machine made up of more than one 48 chip board.
 
         The assumption is that any size machine can be supported but that
         only ones with an expected 48 chip board size can have more than one
@@ -152,10 +152,10 @@ class Machine(object):
     @abstractmethod
     def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yields the protential x,y locations of all the chips on the board
+        Yields the potential x,y locations of all the chips on the board
         with this ethernet. Including the Ethernet chip itself.
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         Note: This method does not check if the chip actually exists as is
         intended to be called to create the chips.
@@ -164,90 +164,90 @@ class Machine(object):
         the local 0,0 of an existing board,
         within the width and height of the machine.
 
-        :param ethernet_x: The x coordinate of a (local 0,0) legal ethernet
-        chip
-        :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
-        chip
-        :return: Yeilds the (x, y) coordinated of all the protential chips on
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields the (x, y) coordinated of all the potential chips on
         this board.
         """
 
     @abstractmethod
     def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yeilds the xy coorindates of the down chips on the board with this
+        Yields the (x,y) coordinates of the down chips on the board with this
         ethernet.
 
-        Note the Ethernet chip itself can not be missing if vaiadated
+        Note the Ethernet chip itself can not be missing if validated
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         This method does check if the chip actually exists.
 
-        :param ethernet_x: The x coordinate of a (local 0,0) legal ethernet
-        chip
-        :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
-        chip
-        :return: Yeilds the (x, y) of the down chips on this board.
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields the (x, y) of the down chips on this board.
         """
 
     @abstractmethod
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yeilds the actual chips on the board with this ethernet.
+        Yields the actual chips on the board with this ethernet.
         Including the Ethernet chip itself.
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         This method does check if the chip actually exists.
 
-        :param ethernet_x: The x coordinate of a (local 0,0) legal ethernet
-        chip
-        :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
-        chip
-        :return: Yeilds the chips on this board.
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields the chips on this board.
         """
 
     @abstractmethod
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yeilds the (x,y)s of actual chips on the board with this ethernet.
+        Yields the (x,y)s of actual chips on the board with this ethernet.
         Including the Ethernet chip itself.
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         This method does check if the chip actually exists.
 
-        :param ethernet_x: The x coordinate of a (local 0,0) legal ethernet
-        chip
-        :param ethernet_y: The x coordinate of a (local 0,0) legal ethernet
-        chip
-        :return: Yeilds the (x,y)s of chips on this board.
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields the (x,y)s of chips on this board.
         """
 
     @abstractmethod
     def xy_over_link(self, x, y, link):
         """
-        Get the protential x,y location of the chip reached over this link.
+        Get the potential x,y location of the chip reached over this link.
 
-        Wraparounds are handled as appropriate.
+        Wrap-arounds are handled as appropriate.
 
         Note: This method does not check if either chip source or destination
         actually exists as is intended to be called to create the links.
 
         It is the callers responsibility to check the validity of this call
-        before making it or the validty of the result.
+        before making it or the validity of the result.
 
         Warning: GIGO! This methods assumes that x and y are within the
         width and height of the machine, and that the link goes to another
         chip on the machine.
 
-        On machine without full wraparound it is possible that this method
+        On machine without full wrap-around it is possible that this method
         generates x,y values that fall outside of the legal values including
         negative values, x = width or y = height.
 
         :param x: The x coordinate of a chip that will exist on the machine
-        :param y: The x coordinate of a chip that will exist on the machine
+        :param y: The y coordinate of a chip that will exist on the machine
         :param link: The link to another chip that could exist on the machine
         :return: x and y coordinates of the chip over that link if it is valid
         or some fictional x y if not.
@@ -256,10 +256,10 @@ class Machine(object):
     @abstractmethod
     def get_local_xy(self, chip):
         """
-        Converts the x and y cooridinates into the local cooridnates on the
+        Converts the x and y coordinates into the local coordinates on the
         board as if the ethernet was at position 0,0
 
-        This method does take wrap arounds into consideration.
+        This method does take wrap-arounds into consideration.
 
         This method assumes that chip is on the machine or is a copy of a
         chip on the machine
@@ -271,11 +271,11 @@ class Machine(object):
     @abstractmethod
     def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
         """
-        Converts the local x and y cooridinates into global x,y coordinates,
+        Converts the local x and y coordinates into global x,y coordinates,
         under the assumption that they are on the board with local 0,0 at
         ethernet_x, ethernet_y
 
-        This method does take wrap arounds into consideration.
+        This method does take wrap-arounds into consideration.
 
         GIGO: This method does not check if input parameters make sense,
         nor does it check if there is a chip at the resulting global x,y
@@ -283,11 +283,11 @@ class Machine(object):
         :param chip. A Chip in the machine
         :return: Local (x, y) coordinates.
 
-        :param local_x: A valid local x coorindate for a chip
-        :param local_y: A valid local y coorindate for a chip
+        :param local_x: A valid local x coordinate for a chip
+        :param local_y: A valid local y coordinate for a chip
         :param ethernet_x: The global ethernet x for the board the chip is on
         :param ethernet_y: The global ethernet y for the board the chip is on
-        :return: global (x,y) cooridinates of the chip
+        :return: global (x,y) coordinates of the chip
         """
 
     def validate(self):
@@ -361,8 +361,8 @@ class Machine(object):
 
     @abstractproperty
     def wrap(self):
-        """
-        String to represent the type of wrap.
+        """ String to represent the type of wrap.
+
         :return: Short String for type of wrap
         """
 
@@ -798,7 +798,7 @@ class Machine(object):
         :return: total
         :rtype: int
         """
-        return sum([chip._n_user_processors for chip in self.chips])
+        return sum(chip._n_user_processors for chip in self.chips)
 
     @property
     def total_cores(self):
@@ -807,19 +807,19 @@ class Machine(object):
         :return: total
         :rtype: int
         """
-        return len([
-            processor for chip in self.chips for processor in chip.processors])
+        return sum(
+            1 for chip in self.chips for _processor in chip.processors)
 
     def remove_unreachable_chips(self):
         """ Remove chips that can't be reached or that can't reach other chips\
             due to missing links
         """
-        for (x, y) in self._unreachable_incoming_chips:
-            if (x, y) in self._chips:
-                del self._chips[x, y]
-        for (x, y) in self._unreachable_outgoing_chips:
-            if (x, y) in self._chips:
-                del self._chips[x, y]
+        for xy in self._unreachable_incoming_chips:
+            if xy in self._chips:
+                del self._chips[xy]
+        for xy in self._unreachable_outgoing_chips:
+            if xy in self._chips:
+                del self._chips[xy]
 
     @property
     def _unreachable_outgoing_chips(self):
@@ -863,7 +863,7 @@ class Machine(object):
         Provides a list of local (x,y) values for a perfect board on this
         machine.
 
-        Local xys never include wrap arounds.
+        Local (x,y)s never include wrap-arounds.
 
         Note: no check is done to see if any board in the machine actually
         has a chip with this local x, y

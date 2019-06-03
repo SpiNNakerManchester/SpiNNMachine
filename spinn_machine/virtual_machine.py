@@ -39,7 +39,7 @@ def _verify_4_chip_board(version, width, height, wrap_arounds):
         raise SpinnMachineInvalidParameterException(
             "version and with_wrap_arounds",
             "{} and {}".format(version, wrap_arounds),
-            "A version {} board has complex wrap arounds; set version "
+            "A version {} board has complex wrap-arounds; set version "
             "to None or with_wrap_arounds to None".format(version))
     if ((width is not None and width != 2) or
             (height is not None and height != 2)):
@@ -158,7 +158,7 @@ class _VirtualMachine(object):
 
     ORIGIN = "Virtual"
 
-    # pylint: disable=too-maa  ny-arguments
+    # pylint: disable=too-many-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
