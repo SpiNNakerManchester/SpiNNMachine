@@ -1,7 +1,7 @@
-from spinn_machine.no_wrap_machine import NoWrapMachine
-from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
-from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
-from spinn_machine.full_wrap_machine import FullWrapMachine
+from .no_wrap_machine import NoWrapMachine
+from .horizontal_wrap_machine import HorizontalWrapMachine
+from .vertical_wrap_machine import VerticalWrapMachine
+from .full_wrap_machine import FullWrapMachine
 
 
 def machine_from_size(width, height, chips=None, origin=None):

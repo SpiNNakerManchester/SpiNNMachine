@@ -3,6 +3,7 @@ from spinn_utilities.overrides import overrides
 
 
 class NoWrapMachine(Machine):
+    # pylint: disable=useless-super-delegation
     def __init__(self, width, height, chips=None, origin=None):
         """
         Creates an unwrapped machine

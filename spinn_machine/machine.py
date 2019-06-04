@@ -64,7 +64,7 @@ class Machine(object):
         # Max y value of any chip including virtual chips
         # This could change as new chips are added
         "_max_chip_y",
-        # Extra inforamtion about how this mnachine was created
+        # Extra information about how this machine was created
         # to be used in the str method
         "_origin",
         "_spinnaker_links",
@@ -798,6 +798,7 @@ class Machine(object):
         :return: total
         :rtype: int
         """
+        # pylint: disable=protected-access
         return sum(chip._n_user_processors for chip in self.chips)
 
     @property

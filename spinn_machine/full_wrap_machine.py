@@ -6,6 +6,7 @@ class FullWrapMachine(Machine):
     """
     Provides an extension of Machine which supports full wrap arounds
     """
+    # pylint: disable=useless-super-delegation
 
     def __init__(self, width, height, chips=None, origin=None):
         """

@@ -3,6 +3,7 @@ from .machine import Machine
 
 
 class VerticalWrapMachine(Machine):
+    # pylint: disable=useless-super-delegation
     def __init__(self, width, height, chips=None, origin=None):
         """
         Creates a vertically wrapped machine
