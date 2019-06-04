@@ -1,8 +1,6 @@
 """
 a Link in a SpiNNaker machine
 """
-from .exceptions import SpinnMachineAlreadyExistsException
-
 
 class Link(object):
     """ Represents a directional link between SpiNNaker chips in the machine

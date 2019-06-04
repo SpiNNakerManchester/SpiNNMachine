@@ -184,8 +184,7 @@ class _VirtualMachine(object):
         "_machine",
         "_sdram_per_chip",
         "_weird_processor",
-        "_with_monitors"
-        )
+        "_with_monitors")
 
     _4_chip_down_links = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
@@ -341,7 +340,6 @@ class _VirtualMachine(object):
             if (x, y, link_id) not in self._down_links:
                 link_x_y = self._machine.xy_over_link(x, y, link_id)
                 if link_x_y in configured_chips:
-                    link_to = (link_id + 3) % 6
                     links.append(
                         Link(source_x=x, source_y=y,
                              destination_x=link_x_y[0],

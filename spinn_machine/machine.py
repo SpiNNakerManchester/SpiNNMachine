@@ -640,7 +640,7 @@ class Machine(object):
                 self._spinnaker_links[chip_0_0.ip_address, 1] = \
                     SpinnakerLinkData(1, 1, 0, 0, chip_0_0.ip_address)
         elif (self._width == self._height == 8) or \
-                        self.multiple_48_chip_boards():
+                self.multiple_48_chip_boards():
             for chip in self._ethernet_connected_chips:
                 if not chip.router.is_link(4):
                     self._spinnaker_links[
@@ -654,7 +654,7 @@ class Machine(object):
         :param version_no: which version of board to use
         """
         if (self._width == self._height == 8) or \
-                        self.multiple_48_chip_boards():
+                self.multiple_48_chip_boards():
 
             for ethernet_connected_chip in self._ethernet_connected_chips:
 

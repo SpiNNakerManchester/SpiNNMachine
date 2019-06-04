@@ -1,6 +1,5 @@
 import unittest
 from spinn_machine import Link
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
 class TestingLinks(unittest.TestCase):
