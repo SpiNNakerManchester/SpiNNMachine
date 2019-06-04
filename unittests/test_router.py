@@ -38,14 +38,12 @@ class TestingRouter(unittest.TestCase):
             r.__repr__(),
             "[Router: clock_speed=0 MHz, emergency_routing=False, "
             "available_entries=1024, links=[[Link: source_x=0, source_y=0, "
-            "source_link_id=0, destination_x=1, destination_y=1, "
-            "default_from=2, default_to=2], [Link: source_x=0, source_y=1, "
-            "source_link_id=1, destination_x=1, destination_y=0, "
-            "default_from=5, default_to=5], [Link: source_x=1, source_y=1, "
-            "source_link_id=2, destination_x=0, destination_y=0, "
-            "default_from=0, default_to=0], [Link: source_x=1, source_y=0, "
-            "source_link_id=3, destination_x=0, destination_y=1, "
-            "default_from=3, default_to=3]]]")
+            "source_link_id=0, destination_x=1, destination_y=1], "
+            "[Link: source_x=0, source_y=1, source_link_id=1, "
+            "destination_x=1, destination_y=0], [Link: source_x=1, source_y=1, "
+            "source_link_id=2, destination_x=0, destination_y=0], "
+            "[Link: source_x=1, source_y=0, source_link_id=3, destination_x=0, "
+            "destination_y=1]]]")
 
     def test_creating_new_router_with_emergency_routing_on(self):
         links = list()

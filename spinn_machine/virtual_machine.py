@@ -314,7 +314,5 @@ class _VirtualMachine(object):
                         Link(source_x=x, source_y=y,
                              destination_x=link_x_y[0],
                              destination_y=link_x_y[1],
-                             source_link_id=link_id,
-                             multicast_default_from=link_to,
-                             multicast_default_to=link_to))
+                             source_link_id=link_id))
         return links
