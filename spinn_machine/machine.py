@@ -2,11 +2,15 @@ try:
     from collections.abc import OrderedDict
 except ImportError:
     from collections import OrderedDict
-from six import iteritems, iterkeys, itervalues
-from .exceptions import SpinnMachineAlreadyExistsException
+from six import iteritems, iterkeys, itervalues, add_metaclass
+from .exceptions import (SpinnMachineAlreadyExistsException,
+                         SpinnMachineException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
+from spinn_utilities.abstract_base import (
+    AbstractBase, abstractproperty, abstractmethod)
 
 
+@add_metaclass(AbstractBase)
 class Machine(object):
     """ A representation of a SpiNNaker Machine with a number of Chips.\
         Machine is also iterable, providing ((x, y), chip) where:
@@ -45,35 +49,63 @@ class Machine(object):
     ]
 
     __slots__ = (
-        "_boot_x",
-        "_boot_y",
         "_boot_ethernet_address",
         "_chips",
         "_ethernet_connected_chips",
         "_fpga_links",
+        # Declared height of the machine excluding virtual chips
+        # This can not be changed
+        "_height",
+        # List of the possible chips (x,y) on each board of the machine
+        "_local_xys",
+        # Max x value of any chip including virtual chips
+        # This could change as new chips are added
         "_max_chip_x",
+        # Max y value of any chip including virtual chips
+        # This could change as new chips are added
         "_max_chip_y",
+        # Extra information about how this machine was created
+        # to be used in the str method
+        "_origin",
         "_spinnaker_links",
         "_maximum_user_cores_on_chip",
-        "_virtual_chips"
+        "_virtual_chips",
+        # Declared width of the machine excluding virtual chips
+        # This can not be changed
+        "_width"
     )
 
-    def __init__(self, chips, boot_x, boot_y):
+    def __init__(self, width, height, chips=None, origin=None):
         """
+        Creates an abstract machine that must be superclassed by wrap type.
+
+        Use machine_fatcory methods to determine the correct machine class
+
+        :param width: The width of the machine excluding any virtual chips
+        :param height: The height of the machine excluding any virtual chips
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
-        :param boot_x: The x-coordinate of the chip used to boot the machine
-        :type boot_x: int
-        :param boot_y: The y-coordinate of the chip used to boot the machine
-        :type boot_y: int
+        :param origin: Extra information about how this machine was created \
+            to be used in the str method. Example "Virtual" or "Json"
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
+        self._width = width
+        self._height = height
 
-        # The maximum chip x coordinate
+        if (self._width == self._height == 8) or \
+                self.multiple_48_chip_boards():
+            self._local_xys = self.BOARD_48_CHIPS
+        else:
+            self._local_xys = []
+            for x in range(width):
+                for y in range(height):
+                    self._local_xys.append((x, y))
+
+        # The current maximum chip x coordinate
         self._max_chip_x = 0
 
-        # The maximum chip y coordinate
+        # The current maximum chip y coordinate
         self._max_chip_y = 0
 
         # The maximum number of user cores on any chip
@@ -89,15 +121,245 @@ class Machine(object):
         self._fpga_links = dict()
 
         # Store the boot chip information
-        self._boot_x = boot_x
-        self._boot_y = boot_y
         self._boot_ethernet_address = None
 
         # The dictionary of chips
         self._chips = OrderedDict()
-        self.add_chips(chips)
+        if chips is not None:
+            self.add_chips(chips)
 
         self._virtual_chips = list()
+
+        if origin is None:
+            self._origin = ""
+        else:
+            self._origin = origin
+
+    @abstractmethod
+    def multiple_48_chip_boards(self):
+        """
+        Checks that the width and height correspond to the expected size for a
+        multi-board machine made up of more than one 48 chip board.
+
+        The assumption is that any size machine can be supported but that
+        only ones with an expected 48 chip board size can have more than one
+        ethernet chip.
+
+        :return: True if this machine can have multiple 48 chip boards
+        """
+
+    @abstractmethod
+    def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yields the potential x,y locations of all the chips on the board
+        with this ethernet. Including the Ethernet chip itself.
+
+        Wrap-arounds are handled as appropriate.
+
+        Note: This method does not check if the chip actually exists as is
+        intended to be called to create the chips.
+
+        Warning: GIGO! This methods assumes that ethernet_x and ethernet_y are
+        the local 0,0 of an existing board, within the width and height of the
+        machine.
+
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields the (x, y) coordinates of all the potential chips on \
+            this board.
+        """
+
+    @abstractmethod
+    def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yields the (x,y) coordinates of the down chips on the board with this
+        ethernet.
+
+        Note the Ethernet chip itself can not be missing if validated
+
+        Wrap-arounds are handled as appropriate.
+
+        This method does check if the chip actually exists.
+
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields the (x, y) of the down chips on this board.
+        """
+
+    @abstractmethod
+    def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yields the actual chips on the board with this ethernet.
+        Including the Ethernet chip itself.
+
+        Wrap-arounds are handled as appropriate.
+
+        This method does check if the chip actually exists.
+
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields the chips on this board.
+        """
+
+    @abstractmethod
+    def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yields the (x,y)s of actual chips on the board with this ethernet.
+        Including the Ethernet chip itself.
+
+        Wrap-arounds are handled as appropriate.
+
+        This method does check if the chip actually exists.
+
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields the (x,y)s of chips on this board.
+        """
+
+    @abstractmethod
+    def xy_over_link(self, x, y, link):
+        """
+        Get the potential x,y location of the chip reached over this link.
+
+        Wrap-arounds are handled as appropriate.
+
+        Note: This method does not check if either chip source or destination
+        actually exists as is intended to be called to create the links.
+
+        It is the callers responsibility to check the validity of this call
+        before making it or the validity of the result.
+
+        Warning: GIGO! This methods assumes that x and y are within the
+        width and height of the machine, and that the link goes to another
+        chip on the machine.
+
+        On machine without full wrap-around it is possible that this method
+        generates x,y values that fall outside of the legal values including
+        negative values, x = width or y = height.
+
+        :param x: The x coordinate of a chip that will exist on the machine
+        :param y: The y coordinate of a chip that will exist on the machine
+        :param link: The link to another chip that could exist on the machine
+        :return: x and y coordinates of the chip over that link if it is \
+            valid or some fictional x,y if not.
+        """
+
+    @abstractmethod
+    def get_local_xy(self, chip):
+        """
+        Converts the x and y coordinates into the local coordinates on the
+        board as if the ethernet was at position 0,0
+
+        This method does take wrap-arounds into consideration.
+
+        This method assumes that chip is on the machine or is a copy of a
+        chip on the machine
+
+        :param chip: A Chip in the machine
+        :return: Local (x, y) coordinates.
+        """
+
+    @abstractmethod
+    def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
+        """
+        Converts the local x and y coordinates into global x,y coordinates,
+        under the assumption that they are on the board with local 0,0 at
+        ethernet_x, ethernet_y
+
+        This method does take wrap-arounds into consideration.
+
+        GIGO: This method does not check if input parameters make sense,
+        nor does it check if there is a chip at the resulting global x,y
+
+        :param local_x: A valid local x coordinate for a chip
+        :param local_y: A valid local y coordinate for a chip
+        :param ethernet_x: The global ethernet x for the board the chip is on
+        :param ethernet_y: The global ethernet y for the board the chip is on
+        :return: global (x,y) coordinates of the chip
+        """
+
+    def validate(self):
+        """
+        Validates the machine and raises an exception in unexpected conditions.
+
+        Assumes that at the time this is called all chips are on the board.
+
+        This allows the checks to be avoided when creating a virtual machine
+        (Except of course in testing)
+
+        An Error is raised if there is a chip with a x outside of the
+        range 0 to width -1 (except for virtual ones)
+        An Error is raised if there is a chip with a y outside of the
+        range 0 to height -1 (except for virtual ones)
+        An Error is raise if there is no chip at the declared ethernet x and y
+        An Error is raised if an ethernet chip is not at a local 0,0
+        An Error is raised if there is no ethernet chip is at 0,0
+        An Error is raised if this is a unexpected multiple board situation
+        """
+        if self._boot_ethernet_address is None:
+            raise SpinnMachineException(
+                "no ethernet chip at 0, 0 found")
+        if len(self._ethernet_connected_chips) > 1:
+            if not self.multiple_48_chip_boards():
+                raise SpinnMachineException(
+                    "A {} machine of size {}, {} can not handle multiple "
+                    "ethernet chips".format(
+                        self.wrap, self._width, self._height))
+        # The fact that self._boot_ethernet_address is set means there is an
+        # ethernet chip and it is at 0,0 so no need to check that
+
+        for chip in self.chips:
+            if chip.x < 0:
+                raise SpinnMachineException(
+                    "{} has a negative x".format(chip))
+            if chip.y < 0:
+                raise SpinnMachineException(
+                    "{} has a negative y".format(chip))
+            if not chip.virtual:
+                if chip.x >= self._width:
+                    raise SpinnMachineException(
+                        "{} has an x large than width {}".format(
+                            chip, self._width))
+                if chip.y >= self._height:
+                    raise SpinnMachineException(
+                        "{} has an y large than heigth {}".format(
+                            chip, self._width))
+            if chip.ip_address:
+                # Ethernet Chip checks
+                if chip.x % 4 != 0:
+                    raise SpinnMachineException(
+                        "Ethernet {} has a x which is not divisible by 4"
+                        "".format(chip))
+                if (chip.x + chip.y) % 12 != 0:
+                    raise SpinnMachineException(
+                        "Ethernet {} has a x y pair that do not add up to 12"
+                        "".format(chip))
+            elif not chip.virtual:
+                # None Ethernet chip checks
+                if not self.is_chip_at(
+                        chip.nearest_ethernet_x, chip.nearest_ethernet_y):
+                    raise SpinnMachineException(
+                        "{} has an invalid ethernet chip".format(chip))
+                local_xy = self.get_local_xy(chip)
+                if local_xy not in self._local_xys:
+                    raise SpinnMachineException(
+                        "{} has an unexpected local xy of {}".format(
+                            chip, local_xy))
+
+    @abstractproperty
+    def wrap(self):
+        """ String to represent the type of wrap.
+
+        :return: Short string for type of wrap
+        """
 
     def add_chip(self, chip):
         """ Add a chip to the machine
@@ -123,7 +385,7 @@ class Machine(object):
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
-            if (chip.x == self._boot_x) and (chip.y == self._boot_y):
+            if (chip.x == 0) and (chip.y == 0):
                 self._boot_ethernet_address = chip.ip_address
 
         if chip.n_user_processors > self._maximum_user_cores_on_chip:
@@ -141,7 +403,7 @@ class Machine(object):
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
-            If a chip with the same x and y coordinates as one being added\
+            If a chip with the same x and y coordinates as one being added \
             already exists
         """
         for next_chip in chips:
@@ -277,6 +539,24 @@ class Machine(object):
         return self._max_chip_y
 
     @property
+    def width(self):
+        """ The width to the machine ignoring virtual chips
+
+        :return: The width to the machine ignoring virtual chips
+        :rtype: int
+        """
+        return self._width
+
+    @property
+    def height(self):
+        """ The height to the machine ignoring virtual chips
+
+        :return: The height to the machine ignoring virtual chips
+        :rtype: int
+        """
+        return self._height
+
+    @property
     def n_chips(self):
         return len(self._chips)
 
@@ -342,21 +622,6 @@ class Machine(object):
             board_address = self._boot_ethernet_address
         return self._fpga_links.get(
             (board_address, fpga_id, fpga_link_id), None)
-
-    @staticmethod
-    def get_chip_over_link(x, y, link, width, height):
-        """ Get the x and y coordinates of the chip over the given link
-
-        :param x: The x coordinate of the chip to start from
-        :param y: The y coordinate of the chip to start from
-        :param link: The ID of the link to traverse, between 0 and 5
-        :param width: The width of the machine being considered
-        :param height: The height of the machine being considered
-        """
-        add_x, add_y = Machine.LINK_ADD_TABLE[link]
-        link_x = (x + add_x + width) % width
-        link_y = (y + add_y + height) % height
-        return link_x, link_y
 
     def add_spinnaker_links(self, version_no):
         """ Add SpiNNaker links that are on a given machine depending on the\
@@ -461,8 +726,9 @@ class Machine(object):
         return fpga_id, fpga_link + 1
 
     def __str__(self):
-        return "[Machine: max_x={}, max_y={}, n_chips={}]".format(
-            self._max_chip_x, self._max_chip_y, self.n_chips)
+        return "[{}{}Machine: max_x={}, max_y={}, n_chips={}]".format(
+            self._origin, self.wrap, self._max_chip_x, self._max_chip_y,
+            self.n_chips)
 
     def __repr__(self):
         return self.__str__()
@@ -496,53 +762,22 @@ class Machine(object):
         return "{} cores and {} links".format(cores, links)
 
     @property
-    def boot_x(self):
-        """ The x-coordinate of the chip used to boot the machine
-
-        :rtype: int
-        """
-        return self._boot_x
-
-    @property
-    def boot_y(self):
-        """ The y-coordinate of the chip used to boot the machine
-
-        :rtype: int
-        """
-        return self._boot_y
-
-    @property
     def boot_chip(self):
         """ The chip used to boot the machine
 
         :rtype: `~py:class:spinn_machine.Chip`
         """
-        return self._chips[self._boot_x, self._boot_y]
+        return self._chips[0, 0]
 
-    def get_chips_on_board(self, chip):
+    def get_existing_xys_on_board(self, chip):
         """ Get the chips that are on the same board as the given chip
 
         :param chip: The chip to find other chips on the same board as
         :return: An iterable of (x, y) coordinates of chips on the same board
         :rtype: iterable(tuple(int,int))
         """
-        if self._max_chip_x == 1:
-            for x in range(0, 2):
-                for y in range(0, 2):
-                    if (self.is_chip_at(x, y)):
-                        yield x, y
-        else:
-            eth_x = chip.nearest_ethernet_x
-            eth_y = chip.nearest_ethernet_y
-            for (chip_x, chip_y) in self.BOARD_48_CHIPS:
-                if self.has_wrap_arounds:
-                    x = (eth_x + chip_x) % (self._max_chip_x + 1)
-                    y = (eth_y + chip_y) % (self._max_chip_y + 1)
-                else:
-                    x = eth_x + chip_x
-                    y = eth_y + chip_y
-                if (self.is_chip_at(x, y)):
-                    yield x, y
+        return self.get_existing_xys_by_ethernet(
+            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
 
     @property
     def maximum_user_cores_on_chip(self):
@@ -558,7 +793,8 @@ class Machine(object):
         :return: total
         :rtype: int
         """
-        return sum([chip._n_user_processors for chip in self.chips])
+        # pylint: disable=protected-access
+        return sum(chip._n_user_processors for chip in self.chips)
 
     @property
     def total_cores(self):
@@ -567,30 +803,19 @@ class Machine(object):
         :return: total
         :rtype: int
         """
-        return len([
-            processor for chip in self.chips for processor in chip.processors])
-
-    @property
-    def has_wrap_arounds(self):
-        """ If the machine has wrap around links
-
-        :return: True if wrap around links exist, false otherwise
-        :rtype: bool
-        """
-        return ((self.max_chip_x + 1 == 2 and self.max_chip_y+1 == 2) or
-                ((self.max_chip_x + 1) % 12 == 0 and
-                 (self.max_chip_y + 1) % 12 == 0))
+        return sum(
+            1 for chip in self.chips for _processor in chip.processors)
 
     def remove_unreachable_chips(self):
         """ Remove chips that can't be reached or that can't reach other chips\
             due to missing links
         """
-        for (x, y) in self._unreachable_incoming_chips:
-            if (x, y) in self._chips:
-                del self._chips[x, y]
-        for (x, y) in self._unreachable_outgoing_chips:
-            if (x, y) in self._chips:
-                del self._chips[x, y]
+        for xy in self._unreachable_incoming_chips:
+            if xy in self._chips:
+                del self._chips[xy]
+        for xy in self._unreachable_outgoing_chips:
+            if xy in self._chips:
+                del self._chips[xy]
 
     @property
     def _unreachable_outgoing_chips(self):
@@ -627,3 +852,18 @@ class Machine(object):
     @property
     def virtual_chips(self):
         return itervalues(self._virtual_chips)
+
+    @property
+    def local_xys(self):
+        """
+        Provides a list of local (x,y) values for a perfect board on this
+        machine.
+
+        Local (x,y)s never include wrap-arounds.
+
+        Note: no check is done to see if any board in the machine actually
+        has a chip with this local x, y
+
+        :return: a list of (x,y) coordinates
+        """
+        return self._local_xys
