@@ -7,10 +7,6 @@ try:
 except ImportError:
     from collections import defaultdict
 from spinn_machine import (Chip, Router)
-from spinn_machine.no_wrap_machine import NoWrapMachine
-from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
-from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
-from spinn_machine.full_wrap_machine import FullWrapMachine
 from .exceptions import SpinnMachineException
 
 BAD_MSG = "Your machine has {} at {} on board {} which will cause " \
