@@ -11,12 +11,12 @@ def machine_from_size(width, height, chips=None, origin=None):
     This could include a machine with no wrap-arounds, only vertical ones,
     only horizontal ones or both.
 
-    Note: If the sizes do not match the ones for a known wrap around machine,
+    Note: If the sizes do not match the ones for a known wrap-around machine,
     no wrap-arounds is assumed.
 
-    :param width: The width of the machine excluding any vertical chips
-    :param height: The height of the machine excluding any vertical chips
-    :param chips: Any chips to be add.
+    :param width: The width of the machine excluding any virtual chips
+    :param height: The height of the machine excluding any virtual chips
+    :param chips: Any chips to be added.
     :param origin: Extra information about how this machine was created
         to be used in the str method. Example "Virtual" or "Json"
     :return: A subclass of Machine
@@ -44,8 +44,8 @@ def machine_from_chips(chips):
     The size of the machine is calculated from the list of chips.
 
     :param chips: Full list of all chips on this machine.
-    Or at least a list which includes a chip with the highest x and
-    one with the highest Y (excluding any virtual chips)
+        Or at least a list which includes a chip with the highest X and
+        one with the highest Y (excluding any virtual chips)
     :return: A subclass of Machine
     """
     max_x = 0
