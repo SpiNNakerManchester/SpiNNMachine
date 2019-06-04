@@ -1,7 +1,8 @@
 import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, virtual_machine
 from spinn_machine.exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+    SpinnMachineException, SpinnMachineAlreadyExistsException,
+    SpinnMachineInvalidParameterException)
 from spinn_machine.machine_factory import machine_repair
 
 
@@ -782,6 +783,30 @@ class TestVirtualMachine(unittest.TestCase):
             assert xy not in hole
         self.assertEquals(46, count)
 
+    def test_unreachable_incoming_chips(self):
+        machine = virtual_machine(8, 8)
+
+        # Delete links incoming to 3, 3
+        down_links = [
+            (2, 2, 1), (2, 3, 0), (3, 4, 5), (4, 4, 4), (4, 3, 3), (3, 2, 2)]
+        for (x, y, link) in down_links:
+            if machine.is_link_at(x, y, link):
+                del machine._chips[x, y].router._links[link]
+
+        new_machine = machine_repair(machine, True)
+        self.assertFalse(new_machine.is_chip_at(3, 3))
+
+    def test_unreachable_outgoing_chips(self):
+        machine = virtual_machine(8, 8)
+
+        # Delete links outgoing from 3, 3
+        for link in range(6):
+            if machine.is_link_at(3, 3, link):
+                del machine._chips[3, 3].router._links[link]
+
+        new_machine = machine_repair(machine, True)
+        self.assertFalse(new_machine.is_chip_at(3, 3))
+
     def test_oneway_link_true(self):
         machine = virtual_machine(8, 8)
 
@@ -802,7 +827,8 @@ class TestVirtualMachine(unittest.TestCase):
         for (x, y, link) in down_links:
             if machine.is_link_at(x, y, link):
                 del machine._chips[x, y].router._links[link]
-        new_machine = machine_repair(machine, False)
+        with self.assertRaises(SpinnMachineException):
+            new_machine = machine_repair(machine, False)
 
 if __name__ == '__main__':
     unittest.main()
