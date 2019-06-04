@@ -1,10 +1,7 @@
-from spinn_machine.no_wrap_machine import NoWrapMachine
-from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
-from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
-from spinn_machine.full_wrap_machine import FullWrapMachine
-from spinn_machine.router import Router
-from spinn_machine.machine import Machine
-from spinn_machine.virtual_machine import virtual_machine
+from .no_wrap_machine import NoWrapMachine
+from .horizontal_wrap_machine import HorizontalWrapMachine
+from .vertical_wrap_machine import VerticalWrapMachine
+from .full_wrap_machine import FullWrapMachine
 
 
 def machine_from_size(width, height, chips=None, origin=None):
@@ -59,38 +56,3 @@ def machine_from_chips(chips):
         if chip.y > max_y:
             max_y = chip.y
     return machine_from_size(max_x + 1, max_y + 1, chips)
-
-
-def create_one_board_submachine(machine, ethernet_chip):
-    """ Creates a virtual machine based off a real machine but just with the \
-        system resources of a single board (identified by its ethernet chip).
-
-    :param machine: The machine to create the virtual machine from.
-    :param ethernet_chip: The chip that can talk to the board's ethernet.
-    """
-    # build fake setup for the routing
-    eth_x = ethernet_chip.x
-    eth_y = ethernet_chip.y
-
-    # Work out where all the down links on the board are
-    down_links = set()
-    for chip in machine.get_chips_by_ethernet(eth_x, eth_y):
-        # adjust for wrap around's
-        fake_x, fake_y = machine.get_local_xy(chip)
-        # remove links to ensure it maps on just chips of this board.
-        down_links.update({
-            (fake_x, fake_y, link)
-            for link in range(Router.MAX_LINKS_PER_ROUTER)
-            if not chip.router.is_link(link)})
-
-    # Work out where all the down chips on the board are
-    down_chips = {
-        (x, y) for x, y in machine.local_xys
-        if not machine.is_chip_at(
-            *machine.get_global_xy(x, y, eth_x, eth_y))}
-
-    # Create a fake machine consisting of only the one board that
-    # the routes should go over
-    return virtual_machine(
-        Machine.SIZE_X_OF_ONE_BOARD, Machine.SIZE_Y_OF_ONE_BOARD,
-        False, down_chips=down_chips, down_links=down_links)
