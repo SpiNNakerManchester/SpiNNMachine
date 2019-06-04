@@ -116,7 +116,7 @@ def machine_from_json(j_machine):
                     Router.MAX_LINKS_PER_ROUTER)
                 links.append(Link(
                     source_x, source_y, source_link_id, destination_x,
-                    destination_y, opposite_link_id, opposite_link_id))
+                    destination_y))
         router = Router(links, False, clock_speed, router_entries)
 
         # Create and add a chip with this router

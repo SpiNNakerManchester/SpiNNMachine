@@ -16,12 +16,11 @@ class SpinnMachineTestCase(unittest.TestCase):
     def setUp(self):
         self._sdram = SDRAM(128)
 
-        (e, _, n, w, _, s) = range(6)
         links = list()
-        links.append(Link(0, 0, 0, 1, 1, n, n))
-        links.append(Link(0, 1, 1, 1, 0, s, s))
-        links.append(Link(1, 1, 2, 0, 0, e, e))
-        links.append(Link(1, 0, 3, 0, 1, w, w))
+        links.append(Link(0, 0, 0, 1, 1))
+        links.append(Link(0, 1, 1, 1, 0))
+        links.append(Link(1, 1, 2, 0, 0))
+        links.append(Link(1, 0, 3, 0, 1))
         self._router = Router(links, False, 100, 1024)
 
         self._nearest_ethernet_chip = (0, 0)

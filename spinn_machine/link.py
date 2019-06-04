@@ -15,8 +15,7 @@ class Link(object):
 
     # pylint: disable=too-many-arguments
     def __init__(self, source_x, source_y, source_link_id, destination_x,
-                 destination_y, multicast_default_from=None,
-                 multicast_default_to=None):
+                 destination_y):
         """
         :param source_x: The x-coordinate of the source chip of the link
         :type source_x: int
@@ -30,10 +29,6 @@ class Link(object):
         :param destination_y: \
             The y-coordinate of the destination chip of the link
         :type destination_y: int
-        :param multicast_default_from: \
-            UNUSED purely kept to not break existing code
-        :param multicast_default_to: \
-            UNUSED purely kept to not break existing code
         :raise None: No known exceptions are raised
         """
         self._source_x = source_x

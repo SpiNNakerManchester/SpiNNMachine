@@ -6,11 +6,10 @@ from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 class TestingRouter(unittest.TestCase):
     def test_creating_new_router(self):
         links = list()
-        (e, ne, n, w, sw, s) = range(6)
-        links.append(Link(0, 0, 0, 1, 1, n, n))
-        links.append(Link(0, 1, 1, 1, 0, s, s))
-        links.append(Link(1, 1, 2, 0, 0, e, e))
-        links.append(Link(1, 0, 3, 0, 1, w, w))
+        links.append(Link(0, 0, 0, 1, 1))
+        links.append(Link(0, 1, 1, 1, 0))
+        links.append(Link(1, 1, 2, 0, 0))
+        links.append(Link(1, 0, 3, 0, 1))
         r = Router(links, False, 100, 1024)
 
         self.assertEqual(len(r), 4)
@@ -48,16 +47,16 @@ class TestingRouter(unittest.TestCase):
     def test_creating_new_router_with_emergency_routing_on(self):
         links = list()
         (e, ne, n, w, sw, s) = range(6)
-        links.append(Link(0, 0, 0, 0, 1, s, s))
-        links.append(Link(0, 1, 1, 0, 1, s, s))
+        links.append(Link(0, 0, 0, 0, 1))
+        links.append(Link(0, 1, 1, 0, 1))
         r = Router(links, True, 100, 1024)
         self.assertTrue(r.emergency_routing_enabled)
 
     def test_creating_new_router_with_duplicate_links(self):
         links = list()
         (e, ne, n, w, sw, s) = range(6)
-        links.append(Link(0, 0, 0, 0, 1, s, s))
-        links.append(Link(0, 1, 0, 0, 1, s, s))
+        links.append(Link(0, 0, 0, 0, 1))
+        links.append(Link(0, 1, 0, 0, 1))
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             Router(links, False, 100, 1024)
 
