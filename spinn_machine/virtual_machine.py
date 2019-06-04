@@ -279,7 +279,6 @@ class _VirtualMachine(object):
                 if x_y not in down_chips:
                     configured_chips[x_y] = (eth_x, eth_y)
 
-        # TODO This needs to change as it previous checked against empty
         # for chip in self._unreachable_outgoing_chips:
         #    configured_chips.remove(chip)
         # for chip in self._unreachable_incoming_chips:
