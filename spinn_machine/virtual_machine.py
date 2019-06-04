@@ -139,6 +139,39 @@ def virtual_machine(
     return factory.machine
 
 
+def virtual_submachine(machine, ethernet_chip):
+    """ Creates a virtual machine based off a real machine but just with the \
+        system resources of a single board (identified by its ethernet chip).
+
+    :param machine: The machine to create the virtual machine from. \
+        May be a virtual machine. May be a single-board machine.
+    :param ethernet_chip: The chip that can talk to the board's ethernet.
+    """
+    # build fake setup for the routing
+    eth_x = ethernet_chip.x
+    eth_y = ethernet_chip.y
+
+    # Work out where all the down chips and links on the board are
+    down_links = set()
+    up_chips = set()
+    for chip in machine.get_chips_by_ethernet(eth_x, eth_y):
+        fake_x, fake_y = fake_xy = machine.get_local_xy(chip)
+        up_chips.add(fake_xy)
+        down_links.update({
+            (fake_x, fake_y, link)
+            for link in range(Router.MAX_LINKS_PER_ROUTER)
+            if not chip.router.is_link(link)})
+    down_chips = {
+        xy for xy in machine.local_xys if xy not in up_chips}
+
+    # Create a fake machine consisting of only the one board that
+    # the routes should go over
+    return virtual_machine(
+        min(machine.width, Machine.SIZE_X_OF_ONE_BOARD),
+        min(machine.height, Machine.SIZE_Y_OF_ONE_BOARD),
+        False, down_chips=down_chips, down_links=down_links)
+
+
 class _VirtualMachine(object):
     """ A Virtual SpiNNaker machine factory
     """

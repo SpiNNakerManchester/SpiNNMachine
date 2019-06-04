@@ -65,7 +65,7 @@ class Machine(object):
         # Max y value of any chip including virtual chips
         # This could change as new chips are added
         "_max_chip_y",
-        # Extra inforamtion about how this mnachine was created
+        # Extra information about how this machine was created
         # to be used in the str method
         "_origin",
         "_spinnaker_links",
@@ -86,7 +86,7 @@ class Machine(object):
         :param height: The height of the machine excluding any virtual chips
         :param chips: An iterable of chips in the machine
         :type chips: iterable of :py:class:`~spinn_machine.Chip`
-        :param origin: Extra information about how this machine was created
+        :param origin: Extra information about how this machine was created \
             to be used in the str method. Example "Virtual" or "Json"
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
@@ -146,8 +146,7 @@ class Machine(object):
         only ones with an expected 48 chip board size can have more than one
         ethernet chip.
 
-        +++++
-        return: True if this machine can have multiple 48 chip boards
+        :return: True if this machine can have multiple 48 chip boards
         """
 
     @abstractmethod
@@ -162,15 +161,15 @@ class Machine(object):
         intended to be called to create the chips.
 
         Warning: GIGO! This methods assumes that ethernet_x and ethernet_y are
-        the local 0,0 of an existing board,
-        within the width and height of the machine.
+        the local 0,0 of an existing board, within the width and height of the
+        machine.
 
         :param ethernet_x: \
             The x coordinate of a (local 0,0) legal ethernet chip
         :param ethernet_y: \
             The y coordinate of a (local 0,0) legal ethernet chip
-        :return: Yields the (x, y) coordinated of all the potential chips on
-        this board.
+        :return: Yields the (x, y) coordinates of all the potential chips on \
+            this board.
         """
 
     @abstractmethod
@@ -250,8 +249,8 @@ class Machine(object):
         :param x: The x coordinate of a chip that will exist on the machine
         :param y: The y coordinate of a chip that will exist on the machine
         :param link: The link to another chip that could exist on the machine
-        :return: x and y coordinates of the chip over that link if it is valid
-        or some fictional x y if not.
+        :return: x and y coordinates of the chip over that link if it is \
+            valid or some fictional x,y if not.
         """
 
     @abstractmethod
@@ -265,7 +264,7 @@ class Machine(object):
         This method assumes that chip is on the machine or is a copy of a
         chip on the machine
 
-        :param chip. A Chip in the machine
+        :param chip: A Chip in the machine
         :return: Local (x, y) coordinates.
         """
 
@@ -280,9 +279,6 @@ class Machine(object):
 
         GIGO: This method does not check if input parameters make sense,
         nor does it check if there is a chip at the resulting global x,y
-
-        :param chip. A Chip in the machine
-        :return: Local (x, y) coordinates.
 
         :param local_x: A valid local x coordinate for a chip
         :param local_y: A valid local y coordinate for a chip
@@ -308,7 +304,6 @@ class Machine(object):
         An Error is raised if an ethernet chip is not at a local 0,0
         An Error is raised if there is no ethernet chip is at 0,0
         An Error is raised if this is a unexpected multiple board situation
-
         """
         if self._boot_ethernet_address is None:
             raise SpinnMachineException(
@@ -364,7 +359,7 @@ class Machine(object):
     def wrap(self):
         """ String to represent the type of wrap.
 
-        :return: Short String for type of wrap
+        :return: Short string for type of wrap
         """
 
     def add_chip(self, chip):
@@ -409,7 +404,7 @@ class Machine(object):
         :return: Nothing is returned
         :rtype: None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
-            If a chip with the same x and y coordinates as one being added\
+            If a chip with the same x and y coordinates as one being added \
             already exists
         """
         for next_chip in chips:
@@ -798,6 +793,7 @@ class Machine(object):
         :return: total
         :rtype: int
         """
+        # pylint: disable=protected-access
         return sum(chip._n_user_processors for chip in self.chips)
 
     @property
