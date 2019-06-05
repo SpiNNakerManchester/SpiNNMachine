@@ -52,8 +52,8 @@ class TestingChip(unittest.TestCase):
             # For example if reserve_a_system_processor() is called
             self.assertTrue(p in new_chip.processors)
             self.assertTrue(p.processor_id in new_chip)
-            self.assertEquals(new_chip[p.processor_id], p)
-        self.assertEquals(new_chip.n_user_processors,
+            self.assertEqual(new_chip[p.processor_id], p)
+        self.assertEqual(new_chip.n_user_processors,
                           len(self._processors) - 1)
         with self.assertRaises(KeyError):
             self.assertIsNone(new_chip[42])
