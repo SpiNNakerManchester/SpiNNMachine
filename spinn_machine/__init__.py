@@ -64,7 +64,6 @@ from spinn_machine._version import __version_year__  # NOQA
 from .chip import Chip
 from .core_subset import CoreSubset
 from .core_subsets import CoreSubsets
-from .json_machine import JsonMachine
 from .link import Link
 from .machine import Machine
 from .multicast_routing_entry import MulticastRoutingEntry
@@ -72,11 +71,13 @@ from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
-from .virtual_machine import VirtualMachine
+from .virtual_machine import virtual_machine, virtual_submachine
 from .fixed_route_entry import FixedRouteEntry
+from .machine_factory import machine_from_chips, machine_from_size
 
 
 __all__ = ["Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
-           "JsonMachine", "Link", "Machine", "MulticastRoutingEntry",
+           "Link", "Machine", "MulticastRoutingEntry",
            "Processor", "Router", "SDRAM", "SpiNNakerTriadGeometry",
-           "VirtualMachine"]
+           "virtual_machine", "virtual_submachine",
+           "machine_from_chips", "machine_from_size"]
