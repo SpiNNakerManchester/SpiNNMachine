@@ -248,8 +248,8 @@ class SpinnMachineTestCase(unittest.TestCase):
                 new_machine.get_existing_xys_on_board(eth_chip))
             # _create_chips made a 5*5 grid of 25 chips,
             # but (0,4) is not on a standard 48-node board
-            self.assertEquals(len(chips), 25)
-            self.assertEquals(len(chips_in_machine), 24)
+            self.assertEqual(len(chips), 25)
+            self.assertEqual(len(chips_in_machine), 24)
         self.assertIsNone(new_machine.get_spinnaker_link_with_id(1))
         self.assertIsNone(new_machine.get_fpga_link_with_id(1, 0))
 

@@ -200,7 +200,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertFalse(vm.is_link_at(3, 2, 2))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(228, count)
-        self.assertEquals(48, len(vm.local_xys))
+        self.assertEqual(48, len(vm.local_xys))
 
     def test_new_vm_no_monitor(self):
         n_cpus = 11
@@ -516,7 +516,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 4)
-        self.assertEquals(4, len(machine.local_xys))
+        self.assertEqual(4, len(machine.local_xys))
 
     def test_48_28(self):
         machine = virtual_machine(48, 24, validate=True)
@@ -530,7 +530,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 24)
-        self.assertEquals(48, len(machine.local_xys))
+        self.assertEqual(48, len(machine.local_xys))
 
     def test_48_24(self):
         machine = virtual_machine(48, 24, validate=True)
@@ -544,7 +544,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 24)
-        self.assertEquals(48, len(machine.local_xys))
+        self.assertEqual(48, len(machine.local_xys))
 
     def test_52_28(self):
         machine = virtual_machine(48, 24, validate=True)
@@ -558,7 +558,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 24)
-        self.assertEquals(48, len(machine.local_xys))
+        self.assertEqual(48, len(machine.local_xys))
 
     def test_52_24(self):
         machine = virtual_machine(48, 24, validate=True)
@@ -572,7 +572,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 24)
-        self.assertEquals(48, len(machine.local_xys))
+        self.assertEqual(48, len(machine.local_xys))
 
     def test_size_2_2_hole(self):
         hole = [(1, 1)]
@@ -583,12 +583,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(3, count)
+        self.assertEqual(3, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(0, 0):
             count += 1
             assert xy not in hole
-        self.assertEquals(3, count)
+        self.assertEqual(3, count)
 
     def test_fullwrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 1), (8, 10), (1, 8), (9, 6)]
@@ -600,17 +600,17 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(0, 0):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_down_xys_by_ethernet(0, 0):
             count += 1
             assert xy in hole
-        self.assertEquals(2, count)
+        self.assertEqual(2, count)
         # Board 4, 8
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(4, 8))))
         count = 0
@@ -618,12 +618,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(4, 8):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         # Board 8,4
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(8, 4))))
         count = 0
@@ -631,12 +631,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(8, 4):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
 
     def test_vertical_wrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 13), (8, 10), (1, 8), (9, 6)]
@@ -648,17 +648,17 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(0, 0):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_down_xys_by_ethernet(0, 0):
             count += 1
             assert xy in hole
-        self.assertEquals(2, count)
+        self.assertEqual(2, count)
         # Board 4, 8
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(4, 8))))
         count = 0
@@ -666,12 +666,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(4, 8):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         # Board 8,4
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(8, 4))))
         count = 0
@@ -679,12 +679,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(8, 4):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
 
     def test_horizontal_wrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 1), (8, 10), (13, 8), (9, 6)]
@@ -696,17 +696,17 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(0, 0):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_down_xys_by_ethernet(0, 0):
             count += 1
             assert xy in hole
-        self.assertEquals(2, count)
+        self.assertEqual(2, count)
         # Board 4, 8
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(4, 8))))
         count = 0
@@ -714,12 +714,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(4, 8):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         # Board 8,4
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(8, 4))))
         count = 0
@@ -727,12 +727,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(8, 4):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
 
     def test_no_wrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 13), (8, 10), (13, 8), (9, 6)]
@@ -744,17 +744,17 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(0, 0):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_down_xys_by_ethernet(0, 0):
             count += 1
             assert xy in hole
-        self.assertEquals(2, count)
+        self.assertEqual(2, count)
         # Board 4, 8
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(4, 8))))
         count = 0
@@ -762,12 +762,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(4, 8):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         # Board 8,4
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(8, 4))))
         count = 0
@@ -775,12 +775,12 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             xy = (chip.x, chip.y)
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
         count = 0
         for xy in machine.get_existing_xys_by_ethernet(8, 4):
             count += 1
             assert xy not in hole
-        self.assertEquals(46, count)
+        self.assertEqual(46, count)
 
     def test_unreachable_incoming_chips(self):
         machine = virtual_machine(8, 8)
