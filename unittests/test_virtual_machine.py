@@ -813,7 +813,7 @@ class TestVirtualMachine(unittest.TestCase):
         down_links = [
             (3, 6, 0), (5, 4, 1), (3, 2, 5), (1, 3, 3)]
         for (x, y, link) in down_links:
-                del machine._chips[x, y].router._links[link]
+            del machine._chips[x, y].router._links[link]
         new_machine = machine_repair(machine, True)
         self.assertIsNotNone(new_machine)
 
