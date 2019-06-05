@@ -54,7 +54,7 @@ class TestingChip(unittest.TestCase):
             self.assertTrue(p.processor_id in new_chip)
             self.assertEqual(new_chip[p.processor_id], p)
         self.assertEqual(new_chip.n_user_processors,
-                          len(self._processors) - 1)
+                         len(self._processors) - 1)
         with self.assertRaises(KeyError):
             self.assertIsNone(new_chip[42])
         self.assertEqual(
