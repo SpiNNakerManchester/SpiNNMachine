@@ -70,31 +70,31 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         new_machine = machine_from_chips(chips)
 
-        self.assertEqual(new_machine.max_chip_x, 4)
-        self.assertEqual(new_machine.max_chip_y, 4)
+        self.assertEquals(new_machine.max_chip_x, 4)
+        self.assertEquals(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):
-                self.assertEqual(c.ip_address, self._ip)
+                self.assertEquals(c.ip_address, self._ip)
             else:
                 self.assertIsNone(c.ip_address)
-            self.assertEqual(c.sdram, self._sdram)
-            self.assertEqual(c.router, self._router)
+            self.assertEquals(c.sdram, self._sdram)
+            self.assertEquals(c.router, self._router)
             for p in processors:
                 self.assertTrue(p in c.processors)
 
-        self.assertEqual(new_machine.total_cores, 450)
-        self.assertEqual(new_machine.total_available_user_cores, 425)
-        self.assertEqual(new_machine.boot_chip.ip_address, self._ip)
-        self.assertEqual(new_machine.n_chips, 25)
-        self.assertEqual(len(new_machine), 25)
-        self.assertEqual(next(x[1].ip_address for x in new_machine), self._ip)
-        self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
-        self.assertEqual(new_machine.cores_and_link_output_string(),
+        self.assertEquals(new_machine.total_cores, 450)
+        self.assertEquals(new_machine.total_available_user_cores, 425)
+        self.assertEquals(new_machine.boot_chip.ip_address, self._ip)
+        self.assertEquals(new_machine.n_chips, 25)
+        self.assertEquals(len(new_machine), 25)
+        self.assertEquals(next(x[1].ip_address for x in new_machine), self._ip)
+        self.assertEquals(next(new_machine.chip_coordinates), (0, 0))
+        self.assertEquals(new_machine.cores_and_link_output_string(),
                          "450 cores and 3 links")
-        self.assertEqual(new_machine.__repr__(),
+        self.assertEquals(new_machine.__repr__(),
                          "[NoWrapMachine: max_x=4, max_y=4, n_chips=25]")
-        self.assertEqual(list(new_machine.spinnaker_links), [])
+        self.assertEquals(list(new_machine.spinnaker_links), [])
 
     def test_create_new_machine_with_invalid_chips(self):
         """
@@ -122,16 +122,16 @@ class SpinnMachineTestCase(unittest.TestCase):
         processor.append(Processor(100, 100, False))
         extra_chip = self._create_chip(5, 0, processor)
         new_machine.add_chip(extra_chip)
-        self.assertEqual(new_machine.max_chip_x, 5)
-        self.assertEqual(new_machine.max_chip_y, 4)
+        self.assertEquals(new_machine.max_chip_x, 5)
+        self.assertEquals(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):
-                self.assertEqual(c.ip_address, self._ip)
+                self.assertEquals(c.ip_address, self._ip)
             else:
                 self.assertIsNone(c.ip_address)
-            self.assertEqual(c.sdram, self._sdram)
-            self.assertEqual(c.router, self._router)
+            self.assertEquals(c.sdram, self._sdram)
+            self.assertEquals(c.router, self._router)
             if c is extra_chip:
                 with self.assertRaises(AssertionError):
                     for p in c.processors:
@@ -165,16 +165,16 @@ class SpinnMachineTestCase(unittest.TestCase):
         extra_chips.append(self._create_chip(5, 3, processors))
 
         new_machine.add_chips(extra_chips)
-        self.assertEqual(new_machine.max_chip_x, 5)
-        self.assertEqual(new_machine.max_chip_y, 4)
+        self.assertEquals(new_machine.max_chip_x, 5)
+        self.assertEquals(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):
-                self.assertEqual(c.ip_address, self._ip)
+                self.assertEquals(c.ip_address, self._ip)
             else:
                 self.assertIsNone(c.ip_address)
-            self.assertEqual(c.sdram, self._sdram)
-            self.assertEqual(c.router, self._router)
+            self.assertEquals(c.sdram, self._sdram)
+            self.assertEquals(c.router, self._router)
             for p in processors:
                 self.assertTrue(p in c.processors)
 
@@ -204,7 +204,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         chips = self._create_chips()
         new_machine = machine_from_chips(chips)
-        self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
+        self.assertEquals(chips[0], new_machine.get_chip_at(0, 0))
 
     def test_machine_get_chip_at_invalid_location(self):
         """
@@ -216,7 +216,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = self._create_chips()
 
         new_machine = machine_from_chips(chips)
-        self.assertEqual(None, new_machine.get_chip_at(10, 0))
+        self.assertEquals(None, new_machine.get_chip_at(10, 0))
 
     def test_machine_is_chip_at_true(self):
         """
@@ -249,8 +249,8 @@ class SpinnMachineTestCase(unittest.TestCase):
                 new_machine.get_existing_xys_on_board(eth_chip))
             # _create_chips made a 5*5 grid of 25 chips,
             # but (0,4) is not on a standard 48-node board
-            self.assertEquals(len(chips), 25)
-            self.assertEquals(len(chips_in_machine), 24)
+            self.assertEqualss(len(chips), 25)
+            self.assertEqualss(len(chips_in_machine), 24)
         self.assertIsNone(new_machine.get_spinnaker_link_with_id(1))
         self.assertIsNone(new_machine.get_fpga_link_with_id(1, 0))
 
@@ -263,20 +263,20 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         # full wrap around
         machine = machine_from_size(24, 24)
-        self.assertEqual(machine.xy_over_link(0, 0, 4), (23, 23))
-        self.assertEqual(machine.xy_over_link(23, 23, 1), (0, 0))
+        self.assertEquals(machine.xy_over_link(0, 0, 4), (23, 23))
+        self.assertEquals(machine.xy_over_link(23, 23, 1), (0, 0))
         # no wrap around'
         machine = machine_from_size(16, 16)
-        self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, -1))
-        self.assertEqual(machine.xy_over_link(15, 15, 1), (16, 16))
+        self.assertEquals(machine.xy_over_link(0, 0, 4), (-1, -1))
+        self.assertEquals(machine.xy_over_link(15, 15, 1), (16, 16))
         # Horizontal wrap arounds
         machine = machine_from_size(24, 16)
-        self.assertEqual(machine.xy_over_link(0, 0, 4), (23, -1))
-        self.assertEqual(machine.xy_over_link(23, 15, 1), (0, 16))
+        self.assertEquals(machine.xy_over_link(0, 0, 4), (23, -1))
+        self.assertEquals(machine.xy_over_link(23, 15, 1), (0, 16))
         # Vertical wrap arounds
         machine = machine_from_size(16, 24)
-        self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, 23))
-        self.assertEqual(machine.xy_over_link(15, 23, 1), (16, 0))
+        self.assertEquals(machine.xy_over_link(0, 0, 4), (-1, 23))
+        self.assertEquals(machine.xy_over_link(15, 23, 1), (16, 0))
 
     def test_unreachable_incoming_chips(self):
         chips = self._create_chips()

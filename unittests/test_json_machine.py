@@ -14,9 +14,9 @@ class TestJsonMachine(unittest.TestCase):
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")
-        self.assertEquals(vstr, jstr)
+        self.assertEqualss(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
-            self.assertEqual(str(vchip), str(jchip))
+            self.assertEquals(str(vchip), str(jchip))
 
     def test_exceptions(self):
         vm = virtual_machine(version=5)
@@ -36,11 +36,11 @@ class TestJsonMachine(unittest.TestCase):
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")
-        self.assertEqual(vstr, jstr)
+        self.assertEquals(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
             print(vchip)
             print(jchip)
-            self.assertEqual(str(vchip), str(jchip))
+            self.assertEquals(str(vchip), str(jchip))
 
 
 if __name__ == '__main__':

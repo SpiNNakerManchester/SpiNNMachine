@@ -26,7 +26,7 @@ class TestingIptag(unittest.TestCase):
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
         board_address = iptag.board_address
-        self.assertEqual("", board_address)
+        self.assertEquals("", board_address)
 
     def test_retrival_of_ip_address(self):
         """ test if the board address retrieval works
@@ -36,7 +36,7 @@ class TestingIptag(unittest.TestCase):
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
         ip_address = iptag.ip_address
-        self.assertEqual("", ip_address)
+        self.assertEquals("", ip_address)
 
     def test_retrival_of_tag(self):
         """ test if the board address retrieval works
@@ -46,7 +46,7 @@ class TestingIptag(unittest.TestCase):
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
         tag = iptag.tag
-        self.assertEqual(tag, 0)
+        self.assertEquals(tag, 0)
 
     def test_retrival_of_port(self):
         """ test if the board address retrieval works
@@ -56,7 +56,7 @@ class TestingIptag(unittest.TestCase):
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
         port = iptag.port
-        self.assertEqual(port, 1)
+        self.assertEquals(port, 1)
 
     def test_retrival_of_strip_sdp(self):
         """ test if the board address retrieval works
@@ -66,7 +66,7 @@ class TestingIptag(unittest.TestCase):
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
         strip_sdp = iptag.strip_sdp
-        self.assertEqual(strip_sdp, False)
+        self.assertEquals(strip_sdp, False)
 
     def test_tag_rendering(self):
         iptag = IPTag("localhost", 1, 2, 3, "abc", 4, True)

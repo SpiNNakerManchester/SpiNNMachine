@@ -10,8 +10,8 @@ class TestingProcessor(unittest.TestCase):
             processors.append(Processor(i, flops))
 
         for _id in range(18):
-            self.assertEqual(processors[_id].processor_id, _id)
-            self.assertEqual(processors[_id].clock_speed, flops)
+            self.assertEquals(processors[_id].processor_id, _id)
+            self.assertEquals(processors[_id].clock_speed, flops)
             self.assertFalse(processors[_id].is_monitor)
 
     def test_creating_monitor_processors(self):
@@ -21,8 +21,8 @@ class TestingProcessor(unittest.TestCase):
             processors.append(Processor(i, flops, is_monitor=True))
 
         for _id in range(18):
-            self.assertEqual(processors[_id].processor_id, _id)
-            self.assertEqual(processors[_id].clock_speed, flops)
+            self.assertEquals(processors[_id].processor_id, _id)
+            self.assertEquals(processors[_id].clock_speed, flops)
             self.assertTrue(processors[_id].is_monitor)
 
     def test_creating_processors_with_negative_clock_speed(self):

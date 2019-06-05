@@ -18,15 +18,15 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         a_multicast = MulticastRoutingEntry(
             key, mask, proc_ids, link_ids, True)
 
-        self.assertEqual(a_multicast.routing_entry_key, key)
-        self.assertEqual(a_multicast.link_ids, set(link_ids))
-        self.assertEqual(a_multicast.mask, mask)
-        self.assertEqual(a_multicast.processor_ids, set(proc_ids))
+        self.assertEquals(a_multicast.routing_entry_key, key)
+        self.assertEquals(a_multicast.link_ids, set(link_ids))
+        self.assertEquals(a_multicast.mask, mask)
+        self.assertEquals(a_multicast.processor_ids, set(proc_ids))
         # While we're here, let's check a few other basic operations
-        self.assertEqual(str(a_multicast),
+        self.assertEquals(str(a_multicast),
                          "1:1:True:{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,"
                          " 12, 13, 14, 15, 16, 17}:{0, 1, 2, 3, 4, 5}")
-        self.assertEqual(
+        self.assertEquals(
             a_multicast,
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
 
@@ -42,8 +42,8 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         mask = 1
         with self.assertRaises(SpinnMachineAlreadyExistsException) as e:
             MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
-        self.assertEqual(e.exception.item, "processor ID")
-        self.assertEqual(e.exception.value, "0")
+        self.assertEquals(e.exception.item, "processor ID")
+        self.assertEquals(e.exception.value, "0")
 
     def test_duplicate_link_ids(self):
         link_ids = list()
@@ -97,15 +97,15 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         comparison_proc_ids = list()
         for i in range(6):
             comparison_link_ids.append(i)
-        self.assertEqual(link_ids + link_ids2, comparison_link_ids)
+        self.assertEquals(link_ids + link_ids2, comparison_link_ids)
         for i in range(18):
             comparison_proc_ids.append(i)
-        self.assertEqual(proc_ids + proc_ids2, comparison_proc_ids)
+        self.assertEquals(proc_ids + proc_ids2, comparison_proc_ids)
 
-        self.assertEqual(result_multicast.routing_entry_key, key)
-        self.assertEqual(result_multicast.link_ids, set(comparison_link_ids))
-        self.assertEqual(result_multicast.mask, mask)
-        self.assertEqual(result_multicast.processor_ids,
+        self.assertEquals(result_multicast.routing_entry_key, key)
+        self.assertEquals(result_multicast.link_ids, set(comparison_link_ids))
+        self.assertEquals(result_multicast.mask, mask)
+        self.assertEquals(result_multicast.processor_ids,
                          set(comparison_proc_ids))
 
     def test_merger_with_different_defaultable(self):
@@ -133,18 +133,18 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         comparison_proc_ids = list()
         for i in range(6):
             comparison_link_ids.append(i)
-        self.assertEqual(link_ids + link_ids2, comparison_link_ids)
+        self.assertEquals(link_ids + link_ids2, comparison_link_ids)
         for i in range(18):
             comparison_proc_ids.append(i)
-        self.assertEqual(proc_ids + proc_ids2, comparison_proc_ids)
+        self.assertEquals(proc_ids + proc_ids2, comparison_proc_ids)
 
-        self.assertEqual(result_multicast.routing_entry_key, key)
-        self.assertEqual(result_multicast.link_ids, set(comparison_link_ids))
-        self.assertEqual(result_multicast.mask, mask)
-        self.assertEqual(result_multicast.processor_ids,
+        self.assertEquals(result_multicast.routing_entry_key, key)
+        self.assertEquals(result_multicast.link_ids, set(comparison_link_ids))
+        self.assertEquals(result_multicast.mask, mask)
+        self.assertEquals(result_multicast.processor_ids,
                          set(comparison_proc_ids))
-        self.assertEqual(result_multicast, a_multicast + b_multicast)
-        self.assertEqual(result_multicast, a_multicast | b_multicast)
+        self.assertEquals(result_multicast, a_multicast + b_multicast)
+        self.assertEquals(result_multicast, a_multicast | b_multicast)
         self.assertNotEqual(result_multicast, a_multicast)
         self.assertNotEqual(result_multicast, b_multicast)
 
@@ -169,9 +169,9 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             key_combo + 1, mask + 1, proc_ids2, link_ids2, True)
         with self.assertRaises(SpinnMachineInvalidParameterException) as e:
             a_multicast.merge(b_multicast)
-        self.assertEqual(e.exception.parameter, "other_entry.key")
-        self.assertEqual(e.exception.value, "0x2")
-        self.assertEqual(e.exception.problem, "The key does not match 0x1")
+        self.assertEquals(e.exception.parameter, "other_entry.key")
+        self.assertEquals(e.exception.value, "0x2")
+        self.assertEquals(e.exception.problem, "The key does not match 0x1")
 
     def test_merger_with_invalid_parameter_mask(self):
         link_ids = list()

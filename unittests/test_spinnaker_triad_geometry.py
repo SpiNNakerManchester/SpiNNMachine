@@ -36,21 +36,21 @@ class TestingGeometry(unittest.TestCase):
                 px, py = delta_table[y][x]
                 q = g.get_local_chip_coordinate(x, y)
                 qx, qy = q
-                self.assertEqual(
+                self.assertEquals(
                     (-px, -py), q,
                     "x at ({},{}): expected ({},{}) but got ({},{})".format(
                         x, y, -px, -py, qx, qy))
 
     def test_get_potential_ethernet_chips(self):
         g = SpiNNakerTriadGeometry.get_spinn5_geometry()
-        self.assertEqual(1, len(g.get_potential_ethernet_chips(2, 2)))
-        self.assertEqual(1, len(g.get_potential_ethernet_chips(8, 8)))
-        self.assertEqual(3, len(g.get_potential_ethernet_chips(12, 12)))
-        self.assertEqual(3, len(g.get_potential_ethernet_chips(16, 16)))
-        self.assertEqual(6, len(g.get_potential_ethernet_chips(20, 20)))
-        self.assertEqual(12, len(g.get_potential_ethernet_chips(24, 24)))
+        self.assertEquals(1, len(g.get_potential_ethernet_chips(2, 2)))
+        self.assertEquals(1, len(g.get_potential_ethernet_chips(8, 8)))
+        self.assertEquals(3, len(g.get_potential_ethernet_chips(12, 12)))
+        self.assertEquals(3, len(g.get_potential_ethernet_chips(16, 16)))
+        self.assertEquals(6, len(g.get_potential_ethernet_chips(20, 20)))
+        self.assertEquals(12, len(g.get_potential_ethernet_chips(24, 24)))
         self.assertIn((0, 12), g.get_potential_ethernet_chips(20, 20))
-        self.assertEqual(3, len(g.get_potential_ethernet_chips(16, 12)))
+        self.assertEquals(3, len(g.get_potential_ethernet_chips(16, 12)))
 
 
 if __name__ == '__main__':
