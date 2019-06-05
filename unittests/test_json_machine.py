@@ -1,24 +1,25 @@
 from tempfile import mktemp
 import unittest
-from spinn_machine import (SDRAM, JsonMachine, VirtualMachine)
+from spinn_machine import (SDRAM, virtual_machine)
+from spinn_machine.json_machine import (machine_from_json, to_json_path)
 
 
 class TestJsonMachine(unittest.TestCase):
 
     def test_json_version_5_hole(self):
         hole = [(3, 3)]
-        vm = VirtualMachine(version=5, down_chips=hole)
+        vm = virtual_machine(version=5, down_chips=hole)
         jpath = mktemp("json")
-        JsonMachine.to_json_path(vm, jpath)
-        jm = JsonMachine(jpath)
-        vstr = str(vm).replace("VirtualMachine", "Machine")
-        jstr = str(jm).replace("JsonMachine", "Machine")
+        to_json_path(vm, jpath)
+        jm = machine_from_json(jpath)
+        vstr = str(vm).replace("Virtual", "")
+        jstr = str(jm).replace("Json", "")
         self.assertEquals(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_exceptions(self):
-        vm = VirtualMachine(version=5)
+        vm = virtual_machine(version=5)
         chip22 = vm.get_chip_at(2, 2)
         router22 = chip22.router
         router22._clock_speed = router22._clock_speed - 10
@@ -31,10 +32,10 @@ class TestJsonMachine(unittest.TestCase):
         chip03._virtual = True
         jpath = mktemp("json")
         jpath = "temp.json"
-        JsonMachine.to_json_path(vm, jpath)
-        jm = JsonMachine(jpath)
-        vstr = str(vm).replace("VirtualMachine", "Machine")
-        jstr = str(jm).replace("JsonMachine", "Machine")
+        to_json_path(vm, jpath)
+        jm = machine_from_json(jpath)
+        vstr = str(vm).replace("Virtual", "")
+        jstr = str(jm).replace("Json", "")
         self.assertEqual(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
             print(vchip)
