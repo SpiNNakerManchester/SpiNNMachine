@@ -78,6 +78,48 @@ class FullWrapMachine(Machine):
         global_y = (local_y + ethernet_y) % self._height
         return global_x, global_y
 
+    @overrides(Machine.shortest_path_length)
+    def shortest_path_length(self, source, destination):
+        # Aliases for convenience
+        w, h = self._width, self._height
+
+        # Get (non-wrapping) x, y vector from source to destination as if the
+        # source was at (0, 0).
+        x = (destination[0] - source[0]) % w
+        y = (destination[1] - source[1]) % h
+
+        # Calculate the shortest path length.
+        #
+        # In an ideal world, the following code would be used::
+        #
+        #     >>> return min(max(x, y),      # No wrap
+        #     ...            w - x + y,      # Wrap X
+        #     ...            x + h - y,      # Wrap Y
+        #     ...            max(w-x, h-y))  # Wrap X and Y
+        #
+
+        # No wrap
+        length = x if x > y else y
+
+        # Wrap X
+        wrap_x = w - x + y
+        if wrap_x < length:
+            length = wrap_x
+
+        # Wrap Y
+        wrap_y = x + h - y
+        if wrap_y < length:
+            length = wrap_y
+
+        # Wrap X and Y
+        dx = w - x
+        dy = h - y
+        wrap_xy = dx if dx > dy else dy
+        if wrap_xy < length:
+            return wrap_xy
+        else:
+            return length
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):

@@ -2,6 +2,8 @@ import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, virtual_machine
 from spinn_machine.exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from .geometry import to_xyz, shortest_mesh_path_length, \
+    shortest_torus_path_length
 
 
 class TestVirtualMachine(unittest.TestCase):
@@ -778,6 +780,64 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
             assert xy not in hole
         self.assertEqual(46, count)
+
+    def test_nowrap_shortest_path(self):
+        machine = virtual_machine(16, 16, validate=True)
+        for source in machine.chip_coordinates:
+            for target in machine.chip_coordinates:
+                rig_len = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(target))
+                mac_len = machine.shortest_path_length(source, target)
+                self.assertEqual(rig_len, mac_len)
+
+    def test_fullwrap_shortest_path(self):
+        width = 12
+        height = 12
+        machine = virtual_machine(width, height, validate=True)
+        for source in machine.chip_coordinates:
+            for target in machine.chip_coordinates:
+                rig_len = shortest_torus_path_length(
+                    to_xyz(source), to_xyz(target), width, height)
+                mac_len = machine.shortest_path_length(source, target)
+                self.assertEqual(rig_len, mac_len)
+
+    def test_hoizontal_wrap_shortest_path(self):
+        width = 12
+        height = 16
+        machine = virtual_machine(width, height, validate=False)
+        for source in machine.chip_coordinates:
+            for target in machine.chip_coordinates:
+                rig_no = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(target))
+                if source[0] < target[0]:
+                    fake = (target[0] - width, target[1])
+                else:
+                    fake = (target[0] + width, target[1])
+                rig_with = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(fake))
+                rig_len = min(rig_no, rig_with)
+                mac_len = machine.shortest_path_length(source, target)
+                self.assertEqual(rig_len, mac_len, "{} {}".format(
+                    source, target))
+
+    def test_vertical_wrap_shortest_path(self):
+        width = 16
+        height = 12
+        machine = virtual_machine(width, height, validate=False)
+        for source in machine.chip_coordinates:
+            for target in machine.chip_coordinates:
+                rig_no = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(target))
+                if source[1] < target[1]:
+                    fake = (target[0], target[1] - height)
+                else:
+                    fake = (target[0], target[1] + height)
+                rig_with = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(fake))
+                rig_len = min(rig_no, rig_with)
+                mac_len = machine.shortest_path_length(source, target)
+                self.assertEqual(rig_len, mac_len, "{} {}".format(
+                    source, target))
 
 
 if __name__ == '__main__':

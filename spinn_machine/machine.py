@@ -286,6 +286,35 @@ class Machine(object):
         :return: global (x,y) coordinates of the chip
         """
 
+    @abstractmethod
+    def shortest_path_length(self, source, destination):
+        """
+        Get the mathematical length of a shortest path from source to
+        destination
+
+        This method does not check if the chips and links it assumes to take
+        actually exist.
+
+        This method does take wrap-arounds into consideration.
+
+        From https://github.com/project-rig/rig/blob/master/rig/geometry.py
+        Described in http://jhnet.co.uk/articles/torus_paths
+
+        Optimized with the knowledge that the  we only have chip x and chip y
+        So the original vector only has movement on x (2, 5) and y (0, 3)
+        If the movement is 2 and 0 matching pairs of 2 and 0 can be replaced
+            with 1.  so the distance in the max of the x or y direction
+        Similarly 5 and 3 pairs become 4
+        However pairs of 2,3 or 5,0 have to use all the steps.
+
+        GIGO: This method does not check if input parameters make sense,
+
+        :param source: (x,y) coordinates of the source chip
+        :type source: (int, int)
+        :param destination:  (x,y) coordinates of the destination chip
+        :return: The distantance in steps
+        """
+
     def validate(self):
         """
         Validates the machine and raises an exception in unexpected conditions.

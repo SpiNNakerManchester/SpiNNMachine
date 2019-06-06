@@ -69,6 +69,48 @@ class NoWrapMachine(Machine):
         global_y = local_y + ethernet_y
         return global_x, global_y
 
+    @overrides(Machine.shortest_path_length)
+    def shortest_path_length(self, source, destination):
+        x = destination[0] - source[0]
+        y = destination[1] - source[1]
+
+        # When vectors are minimised, (1,1,1) is added or subtracted from them.
+        # This process does not change the range of numbers in the vector.
+        # When a vector is minimal,
+        # it is easy to see that the range of numbers gives the
+        # magnitude since there are at most two non-zero numbers (with opposite
+        # signs) and the sum of their magnitudes will also be their range.
+        #
+        # Though ideally this code would be written::
+        #
+        #     >>> return max(x, y, z) - min(x, y, z)
+
+        # This can be farther optimised with then knowledge that z is always 0
+        # An x and y ahave the samne sign they can be replaced with a z
+        #     IE: Replace a North and an East with a NorthEast
+        # So the length is the greater absolutule value of x or y
+        # If the are opossite use the sum of the absolute values
+
+        if x > 0:
+            if y > 0:
+                # the greater abs
+                if x > y:
+                    return x
+                else:
+                    return y
+            else:
+                # abs(postive x) + abs(negative y)
+                return x - y
+        else:
+            if y > 0:
+                return y - x
+            else:
+                # the greater abs
+                if x > y:
+                    return - y
+                else:
+                    return - x
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):
