@@ -86,7 +86,7 @@ class NoWrapMachine(Machine):
         #     >>> return max(x, y, z) - min(x, y, z)
 
         # This can be farther optimised with then knowledge that z is always 0
-        # An x and y ahave the samne sign they can be replaced with a z
+        # An x and y having the samne sign they can be replaced with a z
         #     IE: Replace a North and an East with a NorthEast
         # So the length is the greater absolutule value of x or y
         # If the are opossite use the sum of the absolute values
@@ -99,7 +99,7 @@ class NoWrapMachine(Machine):
                 else:
                     return y
             else:
-                # abs(postive x) + abs(negative y)
+                # abs(positve x) + abs(negative y)
                 return x - y
         else:
             if y > 0:
@@ -110,6 +110,11 @@ class NoWrapMachine(Machine):
                     return - y
                 else:
                     return - x
+
+    @overrides(Machine.shortest_path)
+    def shortest_path(self, source, destination):
+        return self._minimize_vector(
+            destination[0]-source[0], destination[1]-source[1])
 
     @property
     @overrides(Machine.wrap)

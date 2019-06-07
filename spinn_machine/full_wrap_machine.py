@@ -83,42 +83,70 @@ class FullWrapMachine(Machine):
         # Aliases for convenience
         w, h = self._width, self._height
 
-        # Get (non-wrapping) x, y vector from source to destination as if the
-        # source was at (0, 0).
-        x = (destination[0] - source[0]) % w
-        y = (destination[1] - source[1]) % h
+        x_up = (destination[0] - source[0]) % w
+        x_down = x_up - w
+        y_right = (destination[1] - source[1]) % h
+        y_left = y_right - h
 
-        # Calculate the shortest path length.
-        #
-        # In an ideal world, the following code would be used::
-        #
-        #     >>> return min(max(x, y),      # No wrap
-        #     ...            w - x + y,      # Wrap X
-        #     ...            x + h - y,      # Wrap Y
-        #     ...            max(w-x, h-y))  # Wrap X and Y
-        #
+        # Both possitve so greater
+        length = x_up if x_up > y_right else y_right
 
-        # No wrap
-        length = x if x > y else y
+        # negative x possitive y so sum of abs
+        negative_x = y_right - x_down
+        if negative_x < length:
+            length = negative_x
 
-        # Wrap X
-        wrap_x = w - x + y
-        if wrap_x < length:
-            length = wrap_x
+        # possitive x negative Y so sum of abs
+        negative_y = x_up - y_left
+        if negative_y < length:
+            length = negative_y
 
-        # Wrap Y
-        wrap_y = x + h - y
-        if wrap_y < length:
-            length = wrap_y
-
-        # Wrap X and Y
-        dx = w - x
-        dy = h - y
-        wrap_xy = dx if dx > dy else dy
-        if wrap_xy < length:
-            return wrap_xy
+        # both negative so abs smaller (farthest from zero)
+        if x_down > y_left:
+            negative_xy = - y_left
+        else:
+            negative_xy = - x_down
+        if negative_xy < length:
+            return negative_xy
         else:
             return length
+
+    def shortest_path(self, source, destination):
+        # Aliases for convenience
+        w, h = self._width, self._height
+
+        x_up = (destination[0] - source[0]) % w
+        x_down = x_up - w
+        y_right = (destination[1] - source[1]) % h
+        y_left = y_right - h
+
+        # Both possitve so greater
+        length = x_up if x_up > y_right else y_right
+        dx = x_up
+        dy = y_right
+
+        # negative x possitive y so sum of abs
+        negative_x = y_right - x_down
+        if negative_x < length:
+            length = negative_x
+            dx = x_down
+
+        # possitive x negative Y so sum of abs
+        negative_y = x_up - y_left
+        if negative_y < length:
+            length = negative_y
+            dx = x_up
+            dy = y_left
+
+        # both negative so abs smaller (farthest from zero)
+        if x_down > y_left:
+            negative_xy = - y_left
+        else:
+            negative_xy = - x_down
+        if negative_xy < length:
+            return self._minimize_vector(x_down, y_left)
+        else:
+            return self._minimize_vector(dx, dy)
 
     @property
     @overrides(Machine.wrap)

@@ -107,6 +107,36 @@ class HorizontalWrapMachine(Machine):
         else:
             return len_left
 
+    @overrides(Machine.shortest_path)
+    def shortest_path(self, source, destination):
+        # Aliases for convenience
+        w = self._width
+
+        x_right = (destination[0] - source[0]) % w
+        x_left = x_right - w
+        y = destination[1] - source[1]
+
+        if y > 0:
+            # Positive (x_right) + positive(y) use greater
+            if x_right > y:
+                len_right = x_right
+            else:
+                len_right = y
+            # Negative (x_left) and positive(y) sum of abs
+            len_left = y - x_left
+        else:
+            # Positive (x_right) + negative(y) use sum of  abs
+            len_right = x_right - y
+            # Negative (x_left) + negative(y) use greater abs
+            if x_left > y:
+                len_left = - y
+            else:
+                len_left = - x_left
+        if len_right < len_left:
+            return self._minimize_vector(x_right, y)
+        else:
+            return self._minimize_vector(x_left, y)
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):
