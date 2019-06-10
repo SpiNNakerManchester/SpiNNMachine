@@ -1,3 +1,6 @@
+from spinn_machine.machine import Machine
+
+
 class SpiNNakerTriadGeometry(object):
     """ Geometry of a "triad" of SpiNNaker boards
 
@@ -192,13 +195,17 @@ class SpiNNakerTriadGeometry(object):
         :param width: The width of the machine to find the chips in
         :param height: The height of the machine to find the chips in
         """
-        eth_width = (width // self._triad_width) * self._triad_width
-        if eth_width == 0:
+        if width % self._triad_width == 0:
             eth_width = width
-        eth_height = (height // self._triad_height) * self._triad_height
-        if eth_height == 0:
+        else:
+            eth_width = width - Machine.SIZE_X_OF_ONE_BOARD + 1
+        if height % self._triad_height == 0:
             eth_height = height
-
+        else:
+            eth_height = height - Machine.SIZE_Y_OF_ONE_BOARD + 1
+        # special case for single boards like the 2,2
+        if (eth_width <= 0 or eth_height <= 0):
+            return [(0, 0)]
         return [
             (x, y)
             for start_x, start_y in self._roots

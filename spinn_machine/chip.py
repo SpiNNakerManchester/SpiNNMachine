@@ -1,7 +1,12 @@
-from collections import OrderedDict
+try:
+    from collections.abc import OrderedDict
+except ImportError:
+    from collections import OrderedDict
 from six import iteritems, itervalues
-from .exceptions import SpinnMachineAlreadyExistsException
+from .machine import Machine
+from .processor import Processor
 from spinn_utilities.ordered_set import OrderedSet
+from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class Chip(object):
@@ -22,6 +27,16 @@ class Chip(object):
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
         "_n_user_processors"
     )
+
+    @staticmethod
+    def default_processors():
+        processors = dict()
+        processors[0] = Processor.factory(0, True)
+        for i in range(1, Machine.MAX_CORES_PER_CHIP):
+            processors[i] = Processor.factory(i)
+        return processors
+
+    DEFAULT_PROCESSORS = default_processors.__func__()
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
@@ -48,7 +63,7 @@ class Chip(object):
         :param tag_ids: IDs to identify the chip for SDP can be empty to
             define no tags or None to allocate tag automatically
             based on if there is an ip_address
-        :type tag_ids: iterable(int)
+        :type tag_ids: iterable(int) or None
         :param nearest_ethernet_x: the nearest Ethernet x coordinate
         :type nearest_ethernet_x: int or None
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
@@ -59,27 +74,30 @@ class Chip(object):
         """
         self._x = x
         self._y = y
-        self._p = OrderedDict()
-        self._n_user_processors = 0
-        for processor in sorted(processors, key=lambda i: i.processor_id):
-            if processor.processor_id in self._p:
-                raise SpinnMachineAlreadyExistsException(
-                    "processor on {}:{}".format(x, y),
-                    str(processor.processor_id))
-            self._p[processor.processor_id] = processor
-            if not processor.is_monitor:
-                self._n_user_processors += 1
+        if processors is None:
+            self._p = Chip.DEFAULT_PROCESSORS
+            self._n_user_processors = Machine.MAX_CORES_PER_CHIP - 1
+        else:
+            self._p = OrderedDict()
+            self._n_user_processors = 0
+            for processor in sorted(processors, key=lambda i: i.processor_id):
+                if processor.processor_id in self._p:
+                    raise SpinnMachineAlreadyExistsException(
+                        "processor on {}:{}".format(x, y),
+                        str(processor.processor_id))
+                self._p[processor.processor_id] = processor
+                if not processor.is_monitor:
+                    self._n_user_processors += 1
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
-        self._virtual = virtual
         if tag_ids is not None:
             self._tag_ids = tag_ids
+        elif self._ip_address is None:
+            self._tag_ids = []
         else:
-            if self._ip_address is None:
-                self._tag_ids = []
-            else:
-                self._tag_ids = self.IPTAG_IDS
+            self._tag_ids = self.IPTAG_IDS
+        self._virtual = virtual
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
 
@@ -230,29 +248,6 @@ class Chip(object):
         for processor in self.processors:
             if not processor.is_monitor:
                 return processor
-
-    def reserve_a_system_processor(self):
-        """ Sets one of the none monitor processors as a system processor.
-
-        Updates n_user_processors
-
-        .. warning::
-            This method should ONLY be called via\
-            :py:meth:`spinn_machine.Machine.reserve_system_processors`
-
-        :return:\
-            The ID of the processor reserved, or None if no processor could\
-            be found
-        :rtype: int or None
-        """
-        for processor_id, processor in iteritems(self._p):
-            if not processor.is_monitor:
-                system_processor = processor.clone_as_system_processor()
-                self._p[processor_id] = system_processor
-                self._n_user_processors -= 1
-                return processor_id
-
-        return None
 
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors

@@ -1,4 +1,7 @@
-from collections import OrderedDict
+try:
+    from collections.abc import OrderedDict
+except ImportError:
+    from collections import OrderedDict
 from six import itervalues
 from .core_subset import CoreSubset
 
@@ -166,3 +169,6 @@ class CoreSubsets(object):
                 if subset:
                     result._core_subsets[xy] = subset
         return result
+
+    def values(self):
+        return self._core_subsets.values()
