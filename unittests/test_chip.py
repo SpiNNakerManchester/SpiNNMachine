@@ -21,12 +21,11 @@ class TestingChip(unittest.TestCase):
                 self._processors.append(Processor(i, flops))
 
         # create router
-        (e, _, n, w, _, s) = range(6)
         links = list()
-        links.append(Link(0, 0, 0, 1, 1, n, n))
-        links.append(Link(0, 1, 1, 1, 0, s, s))
-        links.append(Link(1, 1, 2, 0, 0, e, e))
-        links.append(Link(1, 0, 3, 0, 1, w, w))
+        links.append(Link(0, 0, 0, 1, 1))
+        links.append(Link(0, 1, 1, 1, 0))
+        links.append(Link(1, 1, 2, 0, 0))
+        links.append(Link(1, 0, 3, 0, 1))
         self._router = Router(links, False, 100, 1024)
 
         self._sdram = SDRAM(128)
@@ -63,13 +62,13 @@ class TestingChip(unittest.TestCase):
             "router=[Router: clock_speed=0 MHz, emergency_routing=False, "
             "available_entries=1024, links=["
             "[Link: source_x=0, source_y=0, source_link_id=0, "
-            "destination_x=1, destination_y=1, default_from=2, default_to=2], "
+            "destination_x=1, destination_y=1], "
             "[Link: source_x=0, source_y=1, source_link_id=1, "
-            "destination_x=1, destination_y=0, default_from=5, default_to=5], "
+            "destination_x=1, destination_y=0], "
             "[Link: source_x=1, source_y=1, source_link_id=2, "
-            "destination_x=0, destination_y=0, default_from=0, default_to=0], "
+            "destination_x=0, destination_y=0], "
             "[Link: source_x=1, source_y=0, source_link_id=3, "
-            "destination_x=0, destination_y=1, default_from=3, default_to=3]"
+            "destination_x=0, destination_y=1]"
             "]], processors=["
             "[CPU: id=0, clock_speed=0 MHz, monitor=False], "
             "[CPU: id=1, clock_speed=0 MHz, monitor=False], "

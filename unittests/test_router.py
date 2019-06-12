@@ -6,11 +6,10 @@ from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 class TestingRouter(unittest.TestCase):
     def test_creating_new_router(self):
         links = list()
-        (e, ne, n, w, sw, s) = range(6)
-        links.append(Link(0, 0, 0, 1, 1, n, n))
-        links.append(Link(0, 1, 1, 1, 0, s, s))
-        links.append(Link(1, 1, 2, 0, 0, e, e))
-        links.append(Link(1, 0, 3, 0, 1, w, w))
+        links.append(Link(0, 0, 0, 1, 1))
+        links.append(Link(0, 1, 1, 1, 0))
+        links.append(Link(1, 1, 2, 0, 0))
+        links.append(Link(1, 0, 3, 0, 1))
         r = Router(links, False, 100, 1024)
 
         self.assertEqual(len(r), 4)
@@ -37,29 +36,29 @@ class TestingRouter(unittest.TestCase):
         self.assertEqual(
             r.__repr__(),
             "[Router: clock_speed=0 MHz, emergency_routing=False, "
-            "available_entries=1024, links=[[Link: source_x=0, source_y=0, "
-            "source_link_id=0, destination_x=1, destination_y=1, "
-            "default_from=2, default_to=2], [Link: source_x=0, source_y=1, "
-            "source_link_id=1, destination_x=1, destination_y=0, "
-            "default_from=5, default_to=5], [Link: source_x=1, source_y=1, "
-            "source_link_id=2, destination_x=0, destination_y=0, "
-            "default_from=0, default_to=0], [Link: source_x=1, source_y=0, "
-            "source_link_id=3, destination_x=0, destination_y=1, "
-            "default_from=3, default_to=3]]]")
+            "available_entries=1024, links=["
+            "[Link: source_x=0, source_y=0, source_link_id=0, "
+            "destination_x=1, destination_y=1], "
+            "[Link: source_x=0, source_y=1, source_link_id=1, "
+            "destination_x=1, destination_y=0], "
+            "[Link: source_x=1, source_y=1, source_link_id=2, "
+            "destination_x=0, destination_y=0], "
+            "[Link: source_x=1, source_y=0, source_link_id=3, "
+            "destination_x=0, destination_y=1]]]")
 
     def test_creating_new_router_with_emergency_routing_on(self):
         links = list()
         (e, ne, n, w, sw, s) = range(6)
-        links.append(Link(0, 0, 0, 0, 1, s, s))
-        links.append(Link(0, 1, 1, 0, 1, s, s))
+        links.append(Link(0, 0, 0, 0, 1))
+        links.append(Link(0, 1, 1, 0, 1))
         r = Router(links, True, 100, 1024)
         self.assertTrue(r.emergency_routing_enabled)
 
     def test_creating_new_router_with_duplicate_links(self):
         links = list()
         (e, ne, n, w, sw, s) = range(6)
-        links.append(Link(0, 0, 0, 0, 1, s, s))
-        links.append(Link(0, 1, 0, 0, 1, s, s))
+        links.append(Link(0, 0, 0, 0, 1))
+        links.append(Link(0, 1, 0, 0, 1))
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             Router(links, False, 100, 1024)
 
