@@ -5,7 +5,10 @@ from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .link import Link
-from collections import defaultdict, namedtuple, OrderedDict
+try:
+    from collections.abc import defaultdict, namedtuple, OrderedDict
+except ImportError:
+    from collections import defaultdict, namedtuple, OrderedDict
 import json
 from .machine_factory import machine_from_size
 
@@ -108,12 +111,9 @@ def machine_from_json(j_machine):
             if source_link_id not in dead_links:
                 destination_x, destination_y = machine.xy_over_link(
                     source_x, source_y, source_link_id)
-                opposite_link_id = (
-                    (source_link_id + OPPOSITE_LINK_OFFSET) %
-                    Router.MAX_LINKS_PER_ROUTER)
                 links.append(Link(
                     source_x, source_y, source_link_id, destination_x,
-                    destination_y, opposite_link_id, opposite_link_id))
+                    destination_y))
         router = Router(links, False, clock_speed, router_entries)
 
         # Create and add a chip with this router
@@ -123,8 +123,8 @@ def machine_from_json(j_machine):
             tag_ids)
         machine.add_chip(chip)
 
-    machine.add_spinnaker_links(version_no=None)
-    machine.add_fpga_links(version_no=None)
+    machine.add_spinnaker_links()
+    machine.add_fpga_links()
 
     return machine
 

@@ -1,4 +1,7 @@
-from collections import defaultdict
+try:
+    from collections.abc import defaultdict
+except ImportError:
+    from collections import defaultdict
 import logging
 
 from .chip import Chip
@@ -181,8 +184,7 @@ class _VirtualMachine(object):
         "_machine",
         "_sdram_per_chip",
         "_weird_processor",
-        "_with_monitors"
-        )
+        "_with_monitors")
 
     _4_chip_down_links = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
@@ -276,7 +278,6 @@ class _VirtualMachine(object):
                 if x_y not in down_chips:
                     configured_chips[x_y] = (eth_x, eth_y)
 
-        # TODO This needs to change as it previous checked against empty
         # for chip in self._unreachable_outgoing_chips:
         #    configured_chips.remove(chip)
         # for chip in self._unreachable_incoming_chips:
@@ -290,8 +291,8 @@ class _VirtualMachine(object):
                 new_chip = self._create_chip(x, y, configured_chips)
             self._machine.add_chip(new_chip)
 
-        self._machine.add_spinnaker_links(version)
-        self._machine.add_fpga_links(version)
+        self._machine.add_spinnaker_links()
+        self._machine.add_fpga_links()
         if validate:
             self._machine.validate()
 
@@ -339,12 +340,9 @@ class _VirtualMachine(object):
             if (x, y, link_id) not in self._down_links:
                 link_x_y = self._machine.xy_over_link(x, y, link_id)
                 if link_x_y in configured_chips:
-                    link_to = (link_id + 3) % 6
                     links.append(
                         Link(source_x=x, source_y=y,
                              destination_x=link_x_y[0],
                              destination_y=link_x_y[1],
-                             source_link_id=link_id,
-                             multicast_default_from=link_to,
-                             multicast_default_to=link_to))
+                             source_link_id=link_id))
         return links

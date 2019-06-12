@@ -1,3 +1,4 @@
+from __future__ import division
 try:
     from collections.abc import OrderedDict
 except ImportError:
@@ -623,13 +624,13 @@ class Machine(object):
         return self._fpga_links.get(
             (board_address, fpga_id, fpga_link_id), None)
 
-    def add_spinnaker_links(self, version_no):
+    def add_spinnaker_links(self):
         """ Add SpiNNaker links that are on a given machine depending on the\
             version of the board.
 
         :param version_no: which version of board to use
         """
-        if version_no in self.BOARD_VERSION_FOR_4_CHIPS:
+        if (self._width == self._height == 2):
             chip_0_0 = self.get_chip_at(0, 0)
             if not chip_0_0.router.is_link(3):
                 self._spinnaker_links[chip_0_0.ip_address, 0] = \
@@ -638,22 +639,22 @@ class Machine(object):
             if not chip.router.is_link(0):
                 self._spinnaker_links[chip_0_0.ip_address, 1] = \
                     SpinnakerLinkData(1, 1, 0, 0, chip_0_0.ip_address)
-        elif (version_no in self.BOARD_VERSION_FOR_48_CHIPS or
-                version_no is None):
+        elif (self._width == self._height == 8) or \
+                self.multiple_48_chip_boards():
             for chip in self._ethernet_connected_chips:
                 if not chip.router.is_link(4):
                     self._spinnaker_links[
                         chip.ip_address, 0] = SpinnakerLinkData(
                             0, chip.x, chip.y, 4, chip.ip_address)
 
-    def add_fpga_links(self, version_no):
+    def add_fpga_links(self):
         """ Add FPGA links that are on a given machine depending on the\
             version of the board.
 
         :param version_no: which version of board to use
         """
-        if (version_no in self.BOARD_VERSION_FOR_48_CHIPS or
-                version_no is None):
+        if (self._width == self._height == 8) or \
+                self.multiple_48_chip_boards():
 
             for ethernet_connected_chip in self._ethernet_connected_chips:
 
@@ -736,22 +737,21 @@ class Machine(object):
     def get_cores_and_link_count(self):
         """ Get the number of cores and links from the machine
 
+        Links are assumed to be bidirectional so the total links counted is
+        half of the unidirectional links found.
+
+        Spinnaker and fpga links are not included.
+
         :return: tuple of (n_cores, n_links)
         :rtype: tuple(int,int)
         """
         cores = 0
-        total_links = dict()
+        total_links = 0
         for chip_key in self._chips:
             chip = self._chips[chip_key]
             cores += chip.n_processors
-            for link in chip.router.links:
-                key1 = (link.source_x, link.source_y, link.source_link_id)
-                key2 = (link.destination_x, link.destination_y,
-                        link.multicast_default_from)
-                if key1 not in total_links and key2 not in total_links:
-                    total_links[key1] = key1
-        links = len(total_links.keys())
-        return cores, links
+            total_links += len(chip.router)
+        return cores, total_links / 2
 
     def cores_and_link_output_string(self):
         """ Get a string detailing the number of cores and links
@@ -806,19 +806,7 @@ class Machine(object):
         return sum(
             1 for chip in self.chips for _processor in chip.processors)
 
-    def remove_unreachable_chips(self):
-        """ Remove chips that can't be reached or that can't reach other chips\
-            due to missing links
-        """
-        for xy in self._unreachable_incoming_chips:
-            if xy in self._chips:
-                del self._chips[xy]
-        for xy in self._unreachable_outgoing_chips:
-            if xy in self._chips:
-                del self._chips[xy]
-
-    @property
-    def _unreachable_outgoing_chips(self):
+    def unreachable_outgoing_chips(self):
         removable_coords = list()
         for (x, y) in self.chip_coordinates:
             # If no links out of the chip work, remove it
@@ -831,8 +819,7 @@ class Machine(object):
                 removable_coords.append((x, y))
         return removable_coords
 
-    @property
-    def _unreachable_incoming_chips(self):
+    def unreachable_incoming_chips(self):
         removable_coords = list()
         for (x, y) in self.chip_coordinates:
             # Go through all the chips that surround this one
@@ -848,6 +835,16 @@ class Machine(object):
             if not is_link:
                 removable_coords.append((x, y))
         return removable_coords
+
+    def one_way_links(self):
+        link_checks = [(0, 3), (1, 4), (2, 5), (3, 0), (4, 1), (5, 2)]
+        for chip in self.chips:
+            for out, back in link_checks:
+                link = chip.router.get_link(out)
+                if link is not None:
+                    if not self.is_link_at(
+                            link.destination_x, link.destination_y, back):
+                        yield chip.x, chip.y, out
 
     @property
     def virtual_chips(self):

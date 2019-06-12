@@ -33,27 +33,24 @@ class FullWrapMachine(Machine):
     @overrides(Machine.get_chips_by_ethernet)
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:
-            chip_xy = (
-                           (x + ethernet_x) % self._width,
-                           (y + ethernet_y) % self._height)
+            chip_xy = ((x + ethernet_x) % self._width,
+                       (y + ethernet_y) % self._height)
             if (chip_xy) in self._chips:
                 yield self._chips[chip_xy]
 
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:
-            chip_xy = (
-                           (x + ethernet_x) % self._width,
-                           (y + ethernet_y) % self._height)
+            chip_xy = ((x + ethernet_x) % self._width,
+                       (y + ethernet_y) % self._height)
             if (chip_xy) in self._chips:
                 yield chip_xy
 
     @overrides(Machine.get_down_xys_by_ethernet)
     def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:
-            chip_xy = (
-                           (x + ethernet_x) % self._width,
-                           (y + ethernet_y) % self._height)
+            chip_xy = ((x + ethernet_x) % self._width,
+                       (y + ethernet_y) % self._height)
             if (chip_xy) not in self._chips:
                 yield chip_xy
 

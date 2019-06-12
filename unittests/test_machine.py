@@ -16,12 +16,11 @@ class SpinnMachineTestCase(unittest.TestCase):
     def setUp(self):
         self._sdram = SDRAM(128)
 
-        (e, _, n, w, _, s) = range(6)
         links = list()
-        links.append(Link(0, 0, 0, 1, 1, n, n))
-        links.append(Link(0, 1, 1, 1, 0, s, s))
-        links.append(Link(1, 1, 2, 0, 0, e, e))
-        links.append(Link(1, 0, 3, 0, 1, w, w))
+        links.append(Link(0, 0, 0, 1, 1))
+        links.append(Link(0, 1, 1, 1, 0))
+        links.append(Link(1, 1, 2, 0, 0))
+        links.append(Link(1, 0, 3, 0, 1))
         self._router = Router(links, False, 100, 1024)
 
         self._nearest_ethernet_chip = (0, 0)
@@ -91,7 +90,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(next(x[1].ip_address for x in new_machine), self._ip)
         self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
         self.assertEqual(new_machine.cores_and_link_output_string(),
-                         "450 cores and 3 links")
+                         "450 cores and 50.0 links")
         self.assertEqual(new_machine.__repr__(),
                          "[NoWrapMachine: max_x=4, max_y=4, n_chips=25]")
         self.assertEqual(list(new_machine.spinnaker_links), [])
@@ -277,32 +276,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         machine = machine_from_size(16, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, 23))
         self.assertEqual(machine.xy_over_link(15, 23, 1), (16, 0))
-
-    def test_unreachable_incoming_chips(self):
-        chips = self._create_chips()
-        machine = machine_from_chips(chips)
-
-        # Delete links incoming to 3, 3
-        down_links = [
-            (2, 2, 1), (2, 3, 0), (3, 4, 5), (4, 4, 4), (4, 3, 3), (3, 2, 2)]
-        for (x, y, link) in down_links:
-            if machine.is_link_at(x, y, link):
-                del machine._chips[x, y].router._links[link]
-
-        machine.remove_unreachable_chips()
-        self.assertFalse(machine.is_chip_at(3, 3))
-
-    def test_unreachable_outgoing_chips(self):
-        chips = self._create_chips()
-        machine = machine_from_chips(chips)
-
-        # Delete links outgoing from 3, 3
-        for link in range(6):
-            if machine.is_link_at(3, 3, link):
-                del machine._chips[3, 3].router._links[link]
-
-        machine.remove_unreachable_chips()
-        self.assertFalse(machine.is_chip_at(3, 3))
 
 
 if __name__ == '__main__':
