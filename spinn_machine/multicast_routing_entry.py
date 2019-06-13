@@ -243,19 +243,3 @@ class MulticastRoutingEntry(object):
         link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
                     if self._spinnaker_route & 1 << li]
         return processor_ids, link_ids
-
-    def to_json(self):
-        json_obj = OrderedDict()
-        json_obj["key"] = self._routing_entry_key
-        json_obj["mask"] = self._mask
-        json_obj["defaultable"] = self.defaultable
-        json_obj["route"] = self._spinnaker_route
-        return json_obj
-
-    @staticmethod
-    def from_json(json_obj):
-        entry = MulticastRoutingEntry(
-            json_obj["key"], json_obj["mask"], defaultable=False,
-            spinnaker_route=json_obj["route"])
-        entry._calc_routing_ids()
-        return entry
