@@ -1,5 +1,10 @@
+try:
+    from collections.abc import OrderedDict
+except ImportError:
+    from collections import OrderedDict
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from spinn_machine.router import Router
 
 
 class MulticastRoutingEntry(object):
@@ -8,12 +13,12 @@ class MulticastRoutingEntry(object):
 
     __slots__ = (
         "_routing_entry_key", "_mask", "_defaultable", "_processor_ids",
-        "_link_ids"
+        "_link_ids", "_spinnaker_route"
     )
 
     # pylint: disable=too-many-arguments
-    def __init__(self, routing_entry_key, mask, processor_ids, link_ids,
-                 defaultable):
+    def __init__(self, routing_entry_key, mask, processor_ids=None,
+                 link_ids=None, defaultable=False, spinnaker_route=None):
         """
         :param routing_entry_key: The routing key_combo
         :type routing_entry_key: int
@@ -43,20 +48,25 @@ class MulticastRoutingEntry(object):
                 "correct this and try again.")
 
         # Add processor IDs, checking that there is only one of each
-        self._processor_ids = set()
-        for processor_id in processor_ids:
-            if processor_id in self._processor_ids:
-                raise SpinnMachineAlreadyExistsException(
-                    "processor ID", str(processor_id))
-            self._processor_ids.add(processor_id)
-
-        # Add link IDs, checking that there is only one of each
-        self._link_ids = set()
-        for link_id in link_ids:
-            if link_id in self._link_ids:
-                raise SpinnMachineAlreadyExistsException(
-                    "link ID", str(link_id))
-            self._link_ids.add(link_id)
+        if spinnaker_route is None:
+            self._processor_ids = set()
+            for processor_id in processor_ids:
+                if processor_id in self._processor_ids:
+                    raise SpinnMachineAlreadyExistsException(
+                        "processor ID", str(processor_id))
+                self._processor_ids.add(processor_id)
+                # Add link IDs, checking that there is only one of each
+            self._link_ids = set()
+            for link_id in link_ids:
+                if link_id in self._link_ids:
+                    raise SpinnMachineAlreadyExistsException(
+                        "link ID", str(link_id))
+                self._link_ids.add(link_id)
+            self._spinnaker_route = self._calc_spinnaker_route()
+        else:
+            self._spinnaker_route = spinnaker_route
+            self._processor_ids = None
+            self._link_ids = None
 
     @property
     def routing_entry_key(self):
@@ -83,6 +93,8 @@ class MulticastRoutingEntry(object):
         :return: An iterable of processor IDs
         :rtype: iterable(int)
         """
+        if self._processor_ids is None:
+            self._processor_ids, self._link_ids = self._calc_routing_ids()
         return self._processor_ids
 
     @property
@@ -92,6 +104,8 @@ class MulticastRoutingEntry(object):
         :return: An iterable of link IDs
         :rtype: iterable(int)
         """
+        if self._link_ids is None:
+            self._processor_ids, self._link_ids = self._calc_routing_ids()
         return self._link_ids
 
     @property
@@ -102,6 +116,10 @@ class MulticastRoutingEntry(object):
         :rtype: bool
         """
         return self._defaultable
+
+    @property
+    def spinnaker_route(self):
+        return self._spinnaker_route
 
     def merge(self, other_entry):
         """ Merges together two multicast routing entries.  The entry to merge\
@@ -166,8 +184,8 @@ class MulticastRoutingEntry(object):
     def __repr__(self):
         return "{}:{}:{}:{{{}}}:{{{}}}".format(
             self._routing_entry_key, self._mask, self._defaultable,
-            ", ".join(map(str, self._processor_ids)),
-            ", ".join(map(str, self._link_ids)))
+            ", ".join(map(str, self.processor_ids)),
+            ", ".join(map(str, self.link_ids)))
 
     def __str__(self):
         return self.__repr__()
@@ -182,3 +200,46 @@ class MulticastRoutingEntry(object):
     def __setstate__(self, state):
         for slot, value in state.items():
             setattr(self, slot, value)
+
+    def get_generality(self):
+        """Count the number of Xs in the key-mask pair.
+
+        For example, there are 32 Xs in ``0x00000000/0x00000000``::
+
+            >>> _get_generality(0x0, 0x0)
+            32
+
+        And no Xs in ``0xffffffff/0xffffffff``::
+
+            >>> _get_generality(0xffffffff, 0xffffffff)
+            0
+        """
+        xs = (~self._routing_entry_key) & (~self._mask)
+        return sum(1 for i in range(32) if xs & (1 << i))
+
+    def _calc_spinnaker_route(self):
+        """ Convert a routing table entry represented in software to a\
+            binary routing table entry usable on the machine
+
+        :rtype: int
+        """
+        route_entry = 0
+        for processor_id in self.processor_ids:
+            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
+        for link_id in self.link_ids:
+            route_entry |= (1 << link_id)
+        return route_entry
+
+    def _calc_routing_ids(self):
+        """ Convert a binary routing table entry usable on the machine to \
+            lists of route IDs usable in a routing table entry represented in \
+            software.
+
+        :rtype: tuple(list(int), list(int))
+        """
+        processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+                         if self._spinnaker_route & 1 <<
+                         (Router.MAX_LINKS_PER_ROUTER + pi)]
+        link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
+                    if self._spinnaker_route & 1 << li]
+        return processor_ids, link_ids
