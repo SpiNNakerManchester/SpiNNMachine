@@ -1,7 +1,3 @@
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    from collections import OrderedDict
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 from spinn_machine.router import Router
