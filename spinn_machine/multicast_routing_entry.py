@@ -207,22 +207,6 @@ class MulticastRoutingEntry(object):
         for slot, value in state.items():
             setattr(self, slot, value)
 
-    def get_generality(self):
-        """Count the number of Xs in the key-mask pair.
-
-        For example, there are 32 Xs in ``0x00000000/0x00000000``::
-
-            >>> _get_generality(0x0, 0x0)
-            32
-
-        And no Xs in ``0xffffffff/0xffffffff``::
-
-            >>> _get_generality(0xffffffff, 0xffffffff)
-            0
-        """
-        xs = (~self._routing_entry_key) & (~self._mask)
-        return sum(1 for i in range(32) if xs & (1 << i))
-
     def _calc_spinnaker_route(self):
         """ Convert a routing table entry represented in software to a\
             binary routing table entry usable on the machine
@@ -249,62 +233,3 @@ class MulticastRoutingEntry(object):
         link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
                     if self._spinnaker_route & 1 << li]
         return processor_ids, link_ids
-
-    def get_generality(self):
-        """Count the number of Xs in the key-mask pair.
-
-        For example, there are 32 Xs in ``0x00000000/0x00000000``::
-
-            >>> _get_generality(0x0, 0x0)
-            32
-
-        And no Xs in ``0xffffffff/0xffffffff``::
-
-            >>> _get_generality(0xffffffff, 0xffffffff)
-            0
-        """
-        xs = (~self._routing_entry_key) & (~self._mask)
-        return sum(1 for i in range(32) if xs & (1 << i))
-
-    def _calc_spinnaker_route(self):
-        """ Convert a routing table entry represented in software to a\
-            binary routing table entry usable on the machine
-
-        :rtype: int
-        """
-        route_entry = 0
-        for processor_id in self.processor_ids:
-            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
-        for link_id in self.link_ids:
-            route_entry |= (1 << link_id)
-        return route_entry
-
-    def _calc_routing_ids(self):
-        """ Convert a binary routing table entry usable on the machine to \
-            lists of route IDs usable in a routing table entry represented in \
-            software.
-
-        :rtype: tuple(list(int), list(int))
-        """
-        processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
-                         if self._spinnaker_route & 1 <<
-                         (Router.MAX_LINKS_PER_ROUTER + pi)]
-        link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
-                    if self._spinnaker_route & 1 << li]
-        return processor_ids, link_ids
-
-    def to_json(self):
-        json_obj = OrderedDict()
-        json_obj["key"] = self._routing_entry_key
-        json_obj["mask"] = self._mask
-        json_obj["defaultable"] = self.defaultable
-        json_obj["route"] = self._spinnaker_route
-        return json_obj
-
-    @staticmethod
-    def from_json(json_obj):
-        entry = MulticastRoutingEntry(
-            json_obj["key"], json_obj["mask"], defaultable=False,
-            spinnaker_route=json_obj["route"])
-        entry._calc_routing_ids()
-        return entry
