@@ -1,3 +1,4 @@
+import logging
 from .no_wrap_machine import NoWrapMachine
 from .horizontal_wrap_machine import HorizontalWrapMachine
 from .vertical_wrap_machine import VerticalWrapMachine
@@ -8,6 +9,8 @@ except ImportError:
     from collections import defaultdict
 from spinn_machine import (Chip, Router)
 from .exceptions import SpinnMachineException
+
+logger = logging.getLogger(__name__)
 
 BAD_MSG = "Your machine has {} at {} on board {} which will cause " \
           "algorithms to fail. " \
@@ -126,34 +129,41 @@ def machine_repair(original, repair_machine=False):
     dead_chips = set()
     dead_links = set()
     for xy in original.unreachable_incoming_chips():
+        chip = original.get_chip_at(xy[0], xy[1])
+        error_xy = original.get_local_xy(chip)
+        ethernet = original.get_chip_at(
+            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        msg = BAD_MSG.format(
+            "unreachable incoming chips", error_xy, ethernet.ip_address)
         if repair_machine:
             dead_chips.add(xy)
+            logger.warn(msg)
         else:
-            chip = original.get_chip_at(xy[0], xy[1])
-            ethernet = original.get_chip_at(
-                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-            raise SpinnMachineException(
-                BAD_MSG.format(
-                    "unreachable incoming chips", xy, ethernet.ip_address))
+            raise SpinnMachineException(msg)
     for xy in original.unreachable_outgoing_chips():
+        chip = original.get_chip_at(xy[0], xy[1])
+        error_xy = original.get_local_xy(chip)
+        ethernet = original.get_chip_at(
+            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        msg = BAD_MSG.format(
+            "unreachable outgoing chips", error_xy, ethernet.ip_address)
         if repair_machine:
             dead_chips.add(xy)
+            logger.warn(msg)
         else:
-            chip = original.get_chip_at(xy[0], xy[1])
-            ethernet = original.get_chip_at(
-                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-            raise SpinnMachineException(
-                BAD_MSG.format(
-                    "unreachable outcoming chips", xy, ethernet.ip_address))
+            raise SpinnMachineException(msg)
     for xyd in original.one_way_links():
+        chip = original.get_chip_at(xyd[0], xyd[1])
+        x, y = original.get_local_xy(chip)
+        error_xyd = (x, y, xyd[2])
+        ethernet = original.get_chip_at(
+            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        msg = BAD_MSG.format("One way links", error_xyd, ethernet.ip_address)
         if repair_machine:
             dead_links.add(xyd)
+            logger.warn(msg)
         else:
-            chip = original.get_chip_at(xyd[0], xyd[1])
-            ethernet = original.get_chip_at(
-                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-            raise SpinnMachineException(
-                BAD_MSG.format("One way links", xyd, ethernet.ip_address))
+            raise SpinnMachineException(msg)
     if len(dead_chips) == 0 and len(dead_links) == 0:
         return original
     new_machine = _machine_ignore(original, dead_chips, dead_links)

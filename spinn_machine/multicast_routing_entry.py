@@ -1,7 +1,3 @@
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    from collections import OrderedDict
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 from spinn_machine.router import Router
@@ -172,11 +168,21 @@ class MulticastRoutingEntry(object):
     def __eq__(self, other_entry):
         if not isinstance(other_entry, MulticastRoutingEntry):
             return False
-        return (self._defaultable == other_entry.defaultable and
-                self._link_ids == other_entry.link_ids and
-                self._mask == other_entry.mask and
-                self._processor_ids == other_entry.processor_ids and
-                self._routing_entry_key == other_entry.routing_entry_key)
+        if self.routing_entry_key != other_entry.routing_entry_key:
+            return False
+        if self.mask != other_entry.mask:
+            return False
+        if self._spinnaker_route != other_entry._spinnaker_route:
+            return False
+        if self._link_ids != other_entry._link_ids:
+            # try as sets and make sure they are created so use wiothout _
+            if set(self.link_ids) != set(other_entry.link_ids):
+                return False
+        if self._processor_ids != other_entry._processor_ids:
+            # try as sets and make sure they are created so use wiothout _
+            if set(self.processor_ids) != set(other_entry.processor_ids):
+                return False
+        return (self._defaultable == other_entry.defaultable)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -200,22 +206,6 @@ class MulticastRoutingEntry(object):
     def __setstate__(self, state):
         for slot, value in state.items():
             setattr(self, slot, value)
-
-    def get_generality(self):
-        """Count the number of Xs in the key-mask pair.
-
-        For example, there are 32 Xs in ``0x00000000/0x00000000``::
-
-            >>> _get_generality(0x0, 0x0)
-            32
-
-        And no Xs in ``0xffffffff/0xffffffff``::
-
-            >>> _get_generality(0xffffffff, 0xffffffff)
-            0
-        """
-        xs = (~self._routing_entry_key) & (~self._mask)
-        return sum(1 for i in range(32) if xs & (1 << i))
 
     def _calc_spinnaker_route(self):
         """ Convert a routing table entry represented in software to a\
