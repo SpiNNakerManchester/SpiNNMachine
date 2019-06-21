@@ -120,11 +120,25 @@ def _machine_ignore(original, dead_chips, dead_links):
     return new_machine
 
 
-def machine_repair(original, repair_machine=False):
+def machine_repair(original, repair_machine=False, removed_chips=[]):
     """ Remove chips that can't be reached or that can't reach other chips\
         due to missing links
 
         Also Reomve and one way links
+    :param original: the original machine
+    :param repair_machine: A flag to say if the machine requires unexpected
+        repairs.
+        It True the unexpected repairs are logged and then done
+        If false will raise an exception if the machine needs an unexpected
+        repair
+    :type repair_machine: bool
+    :param removed_chips: List of chips (x and y cooridinates) that have been
+        removed while the machine was being created.
+        Oneway links to these chip are expected repairs so always done and
+        never logged
+    :raises:SpinnMachineException if repair_machine is false and an unexpected
+        repair is needed.
+    :return: Either the original machine or a repaired replacement
     """
     dead_chips = set()
     dead_links = set()
@@ -153,17 +167,22 @@ def machine_repair(original, repair_machine=False):
         else:
             raise SpinnMachineException(msg)
     for xyd in original.one_way_links():
-        chip = original.get_chip_at(xyd[0], xyd[1])
-        x, y = original.get_local_xy(chip)
-        error_xyd = (x, y, xyd[2])
-        ethernet = original.get_chip_at(
-            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-        msg = BAD_MSG.format("One way links", error_xyd, ethernet.ip_address)
-        if repair_machine:
+        target = original.xy_over_link(xyd[0], xyd[1], xyd[2])
+        if target in removed_chips:
             dead_links.add(xyd)
-            logger.warn(msg)
         else:
-            raise SpinnMachineException(msg)
+            chip = original.get_chip_at(xyd[0], xyd[1])
+            local_x, local_y = original.get_local_xy(chip)
+            error_xyd = (local_x, local_y, xyd[2])
+            ethernet = original.get_chip_at(
+                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+            msg = BAD_MSG.format(
+                "One way links", error_xyd, ethernet.ip_address)
+            if repair_machine:
+                dead_links.add(xyd)
+                logger.warn(msg)
+            else:
+                raise SpinnMachineException(msg)
     if len(dead_chips) == 0 and len(dead_links) == 0:
         return original
     new_machine = _machine_ignore(original, dead_chips, dead_links)
