@@ -27,6 +27,10 @@ class NoWrapMachine(Machine):
         for (x, y) in self._local_xys:
             yield (x + ethernet_x, y + ethernet_y)
 
+    @property
+    def has_wrap_arounds(self):
+        return False
+
     @overrides(Machine.get_chips_by_ethernet)
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:
