@@ -3,6 +3,11 @@ python:
   - 2.7
   - 3.6
 dist: trusty
+addons:
+  apt:
+    packages:
+      - openjdk-8-jre-headless
+      - ant
 matrix:
   include:
     - python: 3.7
@@ -12,6 +17,7 @@ cache: pip
 
 before_install:
   - git clone https://github.com/SpiNNakerManchester/SupportScripts.git support
+  - support/rat.sh download
   # SpiNNakerManchester internal dependencies; development mode
   - support/pipinstall.sh git://github.com/SpiNNakerManchester/SpiNNUtils.git
 
@@ -24,6 +30,7 @@ script:
   - py.test unittests --cov spinn_machine
   # Code quality check
   - flake8 spinn_machine unittests
+  - support/rat.sh run
   - cd doc/source
   - sphinx-build -T -E -b html -d _build/doctrees-readthedocsdirhtml -D language=en . _build/html
   - sphinx-build -T -b json -d _build/doctrees-json -D language=en . _build/json
