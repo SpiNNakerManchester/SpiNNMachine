@@ -795,9 +795,9 @@ class TestVirtualMachine(unittest.TestCase):
             for target in machine.chip_coordinates:
                 rig_len = shortest_mesh_path_length(
                     to_xyz(source), to_xyz(target))
-                mac_len = machine.shortest_path_length(source, target)
+                mac_len = machine.get_vector_length(source, target)
                 self.assertEqual(rig_len, mac_len)
-                path = machine.shortest_path(source, target)
+                path = machine.get_vector(source, target)
                 self.assertEqual(
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]))
                 self._check_path(source, target, path, 1000000, 1000000)
@@ -810,9 +810,9 @@ class TestVirtualMachine(unittest.TestCase):
             for target in machine.chip_coordinates:
                 rig_len = shortest_torus_path_length(
                     to_xyz(source), to_xyz(target), width, height)
-                mac_len = machine.shortest_path_length(source, target)
+                mac_len = machine.get_vector_length(source, target)
                 self.assertEqual(rig_len, mac_len)
-                path = machine.shortest_path(source, target)
+                path = machine.get_vector(source, target)
                 self.assertEqual(
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
                     "{}{}{}".format(source, target, path))
@@ -833,10 +833,10 @@ class TestVirtualMachine(unittest.TestCase):
                 rig_with = shortest_mesh_path_length(
                     to_xyz(source), to_xyz(fake))
                 rig_len = min(rig_no, rig_with)
-                mac_len = machine.shortest_path_length(source, target)
+                mac_len = machine.get_vector_length(source, target)
                 self.assertEqual(rig_len, mac_len, "{} {}".format(
                     source, target))
-                path = machine.shortest_path(source, target)
+                path = machine.get_vector(source, target)
                 self.assertEqual(
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
                     "{}{}{}".format(source, target, path))
@@ -857,10 +857,10 @@ class TestVirtualMachine(unittest.TestCase):
                 rig_with = shortest_mesh_path_length(
                     to_xyz(source), to_xyz(fake))
                 rig_len = min(rig_no, rig_with)
-                mac_len = machine.shortest_path_length(source, target)
+                mac_len = machine.get_vector_length(source, target)
                 self.assertEqual(rig_len, mac_len, "{} {}".format(
                     source, target))
-                path = machine.shortest_path(source, target)
+                path = machine.get_vector(source, target)
                 self.assertEqual(
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
                     "{}{}{}".format(source, target, path))

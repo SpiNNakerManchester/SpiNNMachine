@@ -74,8 +74,8 @@ class HorizontalWrapMachine(Machine):
         global_y = local_y + ethernet_y
         return global_x, global_y
 
-    @overrides(Machine.shortest_path_length)
-    def shortest_path_length(self, source, destination):
+    @overrides(Machine.get_vector_length)
+    def get_vector_length(self, source, destination):
         # Aliases for convenience
         w = self._width
 
@@ -104,8 +104,8 @@ class HorizontalWrapMachine(Machine):
         else:
             return len_left
 
-    @overrides(Machine.shortest_path)
-    def shortest_path(self, source, destination):
+    @overrides(Machine.get_vector)
+    def get_vector(self, source, destination):
         # Aliases for convenience
         w = self._width
 

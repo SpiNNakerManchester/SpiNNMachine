@@ -68,8 +68,8 @@ class NoWrapMachine(Machine):
         global_y = local_y + ethernet_y
         return global_x, global_y
 
-    @overrides(Machine.shortest_path_length)
-    def shortest_path_length(self, source, destination):
+    @overrides(Machine.get_vector_length)
+    def get_vector_length(self, source, destination):
         x = destination[0] - source[0]
         y = destination[1] - source[1]
 
@@ -110,8 +110,8 @@ class NoWrapMachine(Machine):
                 else:
                     return - x
 
-    @overrides(Machine.shortest_path)
-    def shortest_path(self, source, destination):
+    @overrides(Machine.get_vector)
+    def get_vector(self, source, destination):
         return self._minimize_vector(
             destination[0]-source[0], destination[1]-source[1])
 

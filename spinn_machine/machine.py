@@ -288,10 +288,13 @@ class Machine(object):
         """
 
     @abstractmethod
-    def shortest_path_length(self, source, destination):
+    def get_vector_length(self, source, destination):
         """
-        Get the mathematical length of a shortest path from source to
+        Get the mathematical length of a vector (x, y, z) from source to
         destination
+
+        Use the same algorithm as vector to find the best x, y pair but then
+        is optimised to directly calculate length
 
         This method does not check if the chips and links it assumes to take
         actually exist.
@@ -327,9 +330,9 @@ class Machine(object):
         """
 
     @abstractmethod
-    def shortest_path(self, source, destination):
+    def get_vector(self, source, destination):
         """
-        Get a mathematical shortest path from source to destination
+        Get a mathematical vector (x, y, z) from source to destination
 
         This method does not check if the chips and links it assumes to take
         actually exist.
@@ -341,7 +344,7 @@ class Machine(object):
         From https://github.com/project-rig/rig/blob/master/rig/geometry.py
         Described in http://jhnet.co.uk/articles/torus_paths
 
-        Use the same algorithm as shortest_path_length
+        Use the same algorithm as vector_length
         using the best x, y pair as minimize(x, y, 0)
 
         :param source: (x,y) coordinates of the source chip
