@@ -174,14 +174,6 @@ class MulticastRoutingEntry(object):
             return False
         if self._spinnaker_route != other_entry._spinnaker_route:
             return False
-        if self._link_ids != other_entry._link_ids:
-            # try as sets and make sure they are created so use wiothout _
-            if set(self.link_ids) != set(other_entry.link_ids):
-                return False
-        if self._processor_ids != other_entry._processor_ids:
-            # try as sets and make sure they are created so use wiothout _
-            if set(self.processor_ids) != set(other_entry.processor_ids):
-                return False
         return (self._defaultable == other_entry.defaultable)
 
     def __ne__(self, other):
