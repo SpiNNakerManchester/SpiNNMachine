@@ -830,6 +830,14 @@ class TestVirtualMachine(unittest.TestCase):
             new_machine = machine_repair(machine, False)
             self.assertIsNotNone(new_machine)
 
+    def test_removed_chip_repair(self):
+        machine = virtual_machine(8, 8)
+
+        del machine._chips[(3, 3)]
+        new_machine = machine_repair(machine, False, [(3, 3)])
+        self.assertIsNotNone(new_machine)
+        self.assertFalse(new_machine.is_link_at(2, 2, 1))
+
 
 if __name__ == '__main__':
     unittest.main()
