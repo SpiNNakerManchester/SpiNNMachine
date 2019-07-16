@@ -290,8 +290,8 @@ class Machine(object):
     @abstractmethod
     def get_vector_length(self, source, destination):
         """
-        Get the mathematical length of a vector (x, y, z) from source to
-        destination
+        Get the mathematical length of the shortest vector (x, y, z) from
+        source to destination
 
         Use the same algorithm as vector to find the best x, y pair but then
         is optimised to directly calculate length
@@ -332,7 +332,7 @@ class Machine(object):
     @abstractmethod
     def get_vector(self, source, destination):
         """
-        Get a mathematical vector (x, y, z) from source to destination
+        Get mathematical shortest vector (x, y, z) from source to destination
 
         This method does not check if the chips and links it assumes to take
         actually exist.
