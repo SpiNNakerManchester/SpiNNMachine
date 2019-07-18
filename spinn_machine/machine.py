@@ -302,6 +302,72 @@ class Machine(object):
         :return: global (x,y) coordinates of the chip
         """
 
+    @abstractmethod
+    def get_vector_length(self, source, destination):
+        """
+        Get the mathematical length of the shortest vector (x, y, z) from
+        source to destination
+
+        Use the same algorithm as vector to find the best x, y pair but then
+        is optimised to directly calculate length
+
+        This method does not check if the chips and links it assumes to take
+        actually exist.
+        For example long paths along a none wrapping edge may well travel
+        through the missing area.
+
+        This method does take wrap-arounds into consideration as applicable.
+
+        From https://github.com/project-rig/rig/blob/master/rig/geometry.py
+        Described in http://jhnet.co.uk/articles/torus_paths
+
+        On full wrap-around machines (before minization) the vectors can have
+        any of the 4 combinations of possitive and negative x and y
+        The possitive one is: destination - source % dimension
+        The negative one is: possitive - dimension
+        If source is less than dimension the negative one is the wrap around
+        If destination is greater than source the possitive one wraps
+
+        One no wrap or part wrap boards the x/y that does not wrap is just
+        destination - source
+
+        The length of vectors where both x and y have the same sign will be
+        max(abs(x), abs(y))   As the z direction can be used in minization
+        The length of vectors where x and y have opposite signs will be
+        abs(x) and abs(y) as these are alread minimum so z is not used.
+
+        GIGO: This method does not check if input parameters make sense,
+
+        :param source: (x,y) coordinates of the source chip
+        :type source: (int, int)
+        :param destination:  (x,y) coordinates of the destination chip
+        :return: The distantance in steps
+        """
+
+    @abstractmethod
+    def get_vector(self, source, destination):
+        """
+        Get mathematical shortest vector (x, y, z) from source to destination
+
+        This method does not check if the chips and links it assumes to take
+        actually exist.
+        For example long paths along a none wrapping edge may well travel
+        through the missing area.
+
+        This method does take wrap-arounds into consideration as applicable.
+
+        From https://github.com/project-rig/rig/blob/master/rig/geometry.py
+        Described in http://jhnet.co.uk/articles/torus_paths
+
+        Use the same algorithm as vector_length
+        using the best x, y pair as minimize(x, y, 0)
+
+        :param source: (x,y) coordinates of the source chip
+        :type source: (int, int)
+        :param destination:  (x,y) coordinates of the destination chip
+        :return:
+        """
+
     def validate(self):
         """
         Validates the machine and raises an exception in unexpected conditions.
@@ -860,6 +926,44 @@ class Machine(object):
                     if not self.is_link_at(
                             link.destination_x, link.destination_y, back):
                         yield chip.x, chip.y, out
+
+    def _minimize_vector(self, x, y):
+        """
+        Minimizes an x, y, 0 vector.
+
+        When vectors are minimised, (1,1,1) is added or subtracted from them.
+        This process does not change the range of numbers in the vector.
+        When a vector is minimal,
+        it is easy to see that the range of numbers gives the
+        magnitude since there are at most two non-zero numbers (with opposite
+        signs) and the sum of their magnitudes will also be their range.
+
+        This can be farther optimised with then knowledge that z is always 0
+
+        :param x:
+        :param y:
+        :return: (x, y, z) vector
+        """
+        if x > 0:
+            if y > 0:
+                # delta is the smaller of x or y
+                if x > y:
+                    return (x - y, 0, -y)
+                else:
+                    return (0, y - x, -x)
+            else:
+                # two non-zero numbers (with opposite signs)
+                return (x, y, 0)
+        else:
+            if y > 0:
+                # two non-zero numbers (with opposite signs)
+                return (x, y, 0)
+            else:
+                # delta is the greater (nearest to zero) of x or y
+                if x > y:
+                    return (0, y - x, -x)
+                else:
+                    return (x - y, 0, -y)
 
     @property
     def virtual_chips(self):
