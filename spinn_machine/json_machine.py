@@ -1,15 +1,29 @@
-import logging
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+import json
+try:
+    from collections.abc import defaultdict, namedtuple, OrderedDict
+except ImportError:
+    from collections import defaultdict, namedtuple, OrderedDict
 from .chip import Chip
 from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .link import Link
-try:
-    from collections.abc import defaultdict, namedtuple, OrderedDict
-except ImportError:
-    from collections import defaultdict, namedtuple, OrderedDict
-import json
 from .machine_factory import machine_from_size
 
 
