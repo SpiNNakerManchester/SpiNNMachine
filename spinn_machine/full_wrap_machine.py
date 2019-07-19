@@ -90,6 +90,76 @@ class FullWrapMachine(Machine):
         global_y = (local_y + ethernet_y) % self._height
         return global_x, global_y
 
+    @overrides(Machine.get_vector_length)
+    def get_vector_length(self, source, destination):
+        # Aliases for convenience
+        w, h = self._width, self._height
+
+        x_up = (destination[0] - source[0]) % w
+        x_down = x_up - w
+        y_right = (destination[1] - source[1]) % h
+        y_left = y_right - h
+
+        # Both possitve so greater
+        length = x_up if x_up > y_right else y_right
+
+        # negative x possitive y so sum of abs
+        negative_x = y_right - x_down
+        if negative_x < length:
+            length = negative_x
+
+        # possitive x negative Y so sum of abs
+        negative_y = x_up - y_left
+        if negative_y < length:
+            length = negative_y
+
+        # both negative so abs smaller (farthest from zero)
+        if x_down > y_left:
+            negative_xy = - y_left
+        else:
+            negative_xy = - x_down
+        if negative_xy < length:
+            return negative_xy
+        else:
+            return length
+
+    def get_vector(self, source, destination):
+        # Aliases for convenience
+        w, h = self._width, self._height
+
+        x_up = (destination[0] - source[0]) % w
+        x_down = x_up - w
+        y_right = (destination[1] - source[1]) % h
+        y_left = y_right - h
+
+        # Both possitve so greater
+        length = x_up if x_up > y_right else y_right
+        dx = x_up
+        dy = y_right
+
+        # negative x possitive y so sum of abs
+        negative_x = y_right - x_down
+        if negative_x < length:
+            length = negative_x
+            dx = x_down
+
+        # possitive x negative Y so sum of abs
+        negative_y = x_up - y_left
+        if negative_y < length:
+            length = negative_y
+            dx = x_up
+            dy = y_left
+
+        # both negative so abs smaller (farthest from zero)
+        if x_down > y_left:
+            negative_xy = - y_left
+        else:
+            negative_xy = - x_down
+        if negative_xy < length:
+            return self._minimize_vector(x_down, y_left)
+        else:
+            return self._minimize_vector(dx, dy)
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):
