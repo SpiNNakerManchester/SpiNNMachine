@@ -1,3 +1,18 @@
+# Copyright (c) 2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from spinn_utilities.overrides import overrides
 from .machine import Machine
 
@@ -72,6 +87,66 @@ class VerticalWrapMachine(Machine):
         global_x = local_x + ethernet_x
         global_y = (local_y + ethernet_y) % self._height
         return global_x, global_y
+
+    @overrides(Machine.get_vector_length)
+    def get_vector_length(self, source, destination):
+        # Aliases for convenience
+        h = self._height
+
+        x = destination[0] - source[0]
+        y_up = (destination[1] - source[1]) % h
+        y_down = y_up - h
+
+        if x > 0:
+            # positive (x) and positive (y_up) use greater
+            if x > y_up:
+                len_up = x
+            else:
+                len_up = y_up
+            # positive (x) and negative(y_down) use sum of abs
+            len_down = x - y_down
+        else:
+            # negative (x) and positive (y_up)
+            len_up = y_up - x
+            # negative (x) and negative(y) use greater abs
+            if x > y_down:
+                len_down = - y_down
+            else:
+                len_down = - x
+        if len_up < len_down:
+            return len_up
+        else:
+            return len_down
+
+    @overrides(Machine.get_vector)
+    def get_vector(self, source, destination):
+        # Aliases for convenience
+        h = self._height
+
+        x = destination[0] - source[0]
+        y_up = (destination[1] - source[1]) % h
+        y_down = y_up - h
+
+        if x > 0:
+            # positive (x) and positive (y_up) use greater
+            if x > y_up:
+                len_up = x
+            else:
+                len_up = y_up
+            # positive (x) and negative(y_down) use sum of abs
+            len_down = x - y_down
+        else:
+            # negative (x) and positive (y_up)
+            len_up = y_up - x
+            # negative (x) and negative(y) use greater abs
+            if x > y_down:
+                len_down = - y_down
+            else:
+                len_down = - x
+        if len_up < len_down:
+            return self._minimize_vector(x, y_up)
+        else:
+            return self._minimize_vector(x, y_down)
 
     @property
     @overrides(Machine.wrap)

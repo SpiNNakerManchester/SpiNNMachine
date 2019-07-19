@@ -1,9 +1,26 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import unittest
 from spinn_machine import Processor, Link, SDRAM, Router, Chip, virtual_machine
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException,
     SpinnMachineInvalidParameterException)
 from spinn_machine.machine_factory import machine_repair
+from .geometry import (to_xyz, shortest_mesh_path_length,
+                       shortest_torus_path_length, minimise_xyz)
 
 
 class TestVirtualMachine(unittest.TestCase):
@@ -782,6 +799,96 @@ class TestVirtualMachine(unittest.TestCase):
             assert xy not in hole
         self.assertEqual(46, count)
 
+    def _check_path(self, source, target, path, width, height):
+        new_target = ((source[0] + path[0] - path[2]) % width,
+                      (source[1] + path[1] - path[2]) % height)
+        self.assertEqual(target, new_target, "{}{}".format(source, path))
+
+    def test_nowrap_shortest_path(self):
+        machine = virtual_machine(16, 28, validate=True)
+        for source in machine.chip_coordinates:
+            for target in machine.chip_coordinates:
+                rig_len = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(target))
+                mac_len = machine.get_vector_length(source, target)
+                self.assertEqual(rig_len, mac_len)
+                path = machine.get_vector(source, target)
+                self.assertEqual(
+                    mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]))
+                self._check_path(source, target, path, 1000000, 1000000)
+
+    def test_fullwrap_shortest_path(self):
+        width = 12
+        height = 24
+        machine = virtual_machine(width, height, validate=True)
+        for source in machine.chip_coordinates:
+            for target in machine.chip_coordinates:
+                rig_len = shortest_torus_path_length(
+                    to_xyz(source), to_xyz(target), width, height)
+                mac_len = machine.get_vector_length(source, target)
+                self.assertEqual(rig_len, mac_len)
+                path = machine.get_vector(source, target)
+                self.assertEqual(
+                    mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
+                    "{}{}{}".format(source, target, path))
+                self._check_path(source, target, path, width, height)
+
+    def test_hoizontal_wrap_shortest_path(self):
+        width = 12
+        height = 16
+        machine = virtual_machine(width, height, validate=False)
+        for source in machine.chip_coordinates:
+            for target in machine.chip_coordinates:
+                rig_no = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(target))
+                if source[0] < target[0]:
+                    fake = (target[0] - width, target[1])
+                else:
+                    fake = (target[0] + width, target[1])
+                rig_with = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(fake))
+                rig_len = min(rig_no, rig_with)
+                mac_len = machine.get_vector_length(source, target)
+                self.assertEqual(rig_len, mac_len, "{} {}".format(
+                    source, target))
+                path = machine.get_vector(source, target)
+                self.assertEqual(
+                    mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
+                    "{}{}{}".format(source, target, path))
+                self._check_path(source, target, path, width, height)
+
+    def test_vertical_wrap_shortest_path(self):
+        width = 16
+        height = 12
+        machine = virtual_machine(width, height, validate=False)
+        for source in machine.chip_coordinates:
+            for target in machine.chip_coordinates:
+                rig_no = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(target))
+                if source[1] < target[1]:
+                    fake = (target[0], target[1] - height)
+                else:
+                    fake = (target[0], target[1] + height)
+                rig_with = shortest_mesh_path_length(
+                    to_xyz(source), to_xyz(fake))
+                rig_len = min(rig_no, rig_with)
+                mac_len = machine.get_vector_length(source, target)
+                self.assertEqual(rig_len, mac_len, "{} {}".format(
+                    source, target))
+                path = machine.get_vector(source, target)
+                self.assertEqual(
+                    mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
+                    "{}{}{}".format(source, target, path))
+                self._check_path(source, target, path, width, height)
+
+    def test_minimize(self):
+        machine = virtual_machine(2, 2, validate=False)
+        for x in range(-3, 3):
+            for y in range(-3, 3):
+                min1 = minimise_xyz((x, y, 0))
+                min2 = machine._minimize_vector(x, y)
+                self.assertEqual(min1, min2)
+
     def test_unreachable_incoming_chips(self):
         machine = virtual_machine(8, 8)
 
@@ -829,6 +936,14 @@ class TestVirtualMachine(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             new_machine = machine_repair(machine, False)
             self.assertIsNotNone(new_machine)
+
+    def test_removed_chip_repair(self):
+        machine = virtual_machine(8, 8)
+
+        del machine._chips[(3, 3)]
+        new_machine = machine_repair(machine, False, [(3, 3)])
+        self.assertIsNotNone(new_machine)
+        self.assertFalse(new_machine.is_link_at(2, 2, 1))
 
 
 if __name__ == '__main__':

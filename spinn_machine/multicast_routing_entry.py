@@ -1,7 +1,18 @@
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    from collections import OrderedDict
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 from spinn_machine.router import Router
@@ -172,11 +183,13 @@ class MulticastRoutingEntry(object):
     def __eq__(self, other_entry):
         if not isinstance(other_entry, MulticastRoutingEntry):
             return False
-        return (self._defaultable == other_entry.defaultable and
-                self._link_ids == other_entry.link_ids and
-                self._mask == other_entry.mask and
-                self._processor_ids == other_entry.processor_ids and
-                self._routing_entry_key == other_entry.routing_entry_key)
+        if self.routing_entry_key != other_entry.routing_entry_key:
+            return False
+        if self.mask != other_entry.mask:
+            return False
+        if self._spinnaker_route != other_entry._spinnaker_route:
+            return False
+        return (self._defaultable == other_entry.defaultable)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -200,22 +213,6 @@ class MulticastRoutingEntry(object):
     def __setstate__(self, state):
         for slot, value in state.items():
             setattr(self, slot, value)
-
-    def get_generality(self):
-        """Count the number of Xs in the key-mask pair.
-
-        For example, there are 32 Xs in ``0x00000000/0x00000000``::
-
-            >>> _get_generality(0x0, 0x0)
-            32
-
-        And no Xs in ``0xffffffff/0xffffffff``::
-
-            >>> _get_generality(0xffffffff, 0xffffffff)
-            0
-        """
-        xs = (~self._routing_entry_key) & (~self._mask)
-        return sum(1 for i in range(32) if xs & (1 << i))
 
     def _calc_spinnaker_route(self):
         """ Convert a routing table entry represented in software to a\
@@ -243,19 +240,3 @@ class MulticastRoutingEntry(object):
         link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
                     if self._spinnaker_route & 1 << li]
         return processor_ids, link_ids
-
-    def to_json(self):
-        json_obj = OrderedDict()
-        json_obj["key"] = self._routing_entry_key
-        json_obj["mask"] = self._mask
-        json_obj["defaultable"] = self.defaultable
-        json_obj["route"] = self._spinnaker_route
-        return json_obj
-
-    @staticmethod
-    def from_json(json_obj):
-        entry = MulticastRoutingEntry(
-            json_obj["key"], json_obj["mask"], defaultable=False,
-            spinnaker_route=json_obj["route"])
-        entry._calc_routing_ids()
-        return entry

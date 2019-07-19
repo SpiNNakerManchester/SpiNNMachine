@@ -1,15 +1,29 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import logging
+import json
 try:
     from collections.abc import defaultdict, namedtuple, OrderedDict
 except ImportError:
     from collections import defaultdict, namedtuple, OrderedDict
-import logging
-
 from .chip import Chip
 from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .link import Link
-import json
 from .machine_factory import machine_from_size
 
 
@@ -111,12 +125,9 @@ def machine_from_json(j_machine):
             if source_link_id not in dead_links:
                 destination_x, destination_y = machine.xy_over_link(
                     source_x, source_y, source_link_id)
-                opposite_link_id = (
-                    (source_link_id + OPPOSITE_LINK_OFFSET) %
-                    Router.MAX_LINKS_PER_ROUTER)
                 links.append(Link(
                     source_x, source_y, source_link_id, destination_x,
-                    destination_y, opposite_link_id, opposite_link_id))
+                    destination_y))
         router = Router(links, False, clock_speed, router_entries)
 
         # Create and add a chip with this router
@@ -126,8 +137,8 @@ def machine_from_json(j_machine):
             tag_ids)
         machine.add_chip(chip)
 
-    machine.add_spinnaker_links(version_no=None)
-    machine.add_fpga_links(version_no=None)
+    machine.add_spinnaker_links()
+    machine.add_fpga_links()
 
     return machine
 
