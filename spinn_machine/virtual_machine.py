@@ -216,9 +216,6 @@ class _VirtualMachine(object):
             router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
             validate=True):
 
-        if n_cpus_per_chip > Machine.MAX_CORES_PER_CHIP:
-            n_cpus_per_chip = Machine.MAX_CORES_PER_CHIP
-
         self._n_router_entries_per_router = router_entries_per_chip
 
         if down_chips is None:
