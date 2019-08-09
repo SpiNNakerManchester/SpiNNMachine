@@ -888,6 +888,14 @@ class Machine(object):
             1 for chip in self.chips for _processor in chip.processors)
 
     def unreachable_outgoing_chips(self):
+        """
+        Detects chips that can not reach any of their neighbours
+
+        Current implementation does NOT deal with group of unreachable chips
+
+        :return: List (hopefully empty) if the (x,y) cooridinates of
+            unreachable chips.
+        """
         removable_coords = list()
         for (x, y) in self.chip_coordinates:
             # If no links out of the chip work, remove it
@@ -901,6 +909,14 @@ class Machine(object):
         return removable_coords
 
     def unreachable_incoming_chips(self):
+        """
+        Detects chips that are not reachable from any of their neighbours
+
+        Current implementation does NOT deal with group of unreachable chips
+
+        :return: List (hopefully empty) if the (x,y) cooridinates of
+            unreachable chips.
+        """
         removable_coords = list()
         for (x, y) in self.chip_coordinates:
             # Go through all the chips that surround this one
@@ -913,6 +929,72 @@ class Machine(object):
                 if self.is_link_at(next_x, next_y, opposite):
                     is_link = True
                     break
+            if not is_link:
+                removable_coords.append((x, y))
+        return removable_coords
+
+    def unreachable_outgoing_local_chips(self):
+        """
+        Detects chips that can not reach any of their LOCAL neighbours
+
+        Current implementation does NOT deal with group of unreachable chips
+
+        :return: List (hopefully empty) if the (x,y) cooridinates of
+            unreachable chips.
+        """
+        removable_coords = list()
+        for chip in self._chips.values():
+            # If no links out of the chip work, remove it
+            is_link = False
+            moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
+            x = chip.x
+            y = chip.y
+            nearest_ethernet_x = chip.nearest_ethernet_x
+            nearest_ethernet_y = chip.nearest_ethernet_y
+            for link, (x_move, y_move) in enumerate(moves):
+                if chip.router.is_link(link):
+                    n_x_y = (x + x_move, y + y_move)
+                    if n_x_y in self._chips:
+                        neighbour = self._chips[n_x_y]
+                        if (neighbour.nearest_ethernet_x ==
+                                nearest_ethernet_x and
+                            neighbour.nearest_ethernet_y ==
+                                nearest_ethernet_y):
+                            is_link = True
+                            break
+            if not is_link:
+                removable_coords.append((x, y))
+        return removable_coords
+
+    def unreachable_incoming_local_chips(self):
+        """
+        Detects chips that are not reachable from any of their LOCAL neighbours
+
+        Current implementation does NOT deal with group of unreachable chips
+
+        :return: List (hopefully empty) if the (x,y) cooridinates of
+            unreachable chips.
+        """
+        removable_coords = list()
+        for chip in self._chips.values():
+            x = chip.x
+            y = chip.y
+            nearest_ethernet_x = chip.nearest_ethernet_x
+            nearest_ethernet_y = chip.nearest_ethernet_y
+            # Go through all the chips that surround this one
+            moves = [(-1, 0), (-1, -1), (0, -1), (1, 0), (1, 1), (0, 1)]
+            is_link = False
+            for opposite, (x_move, y_move) in enumerate(moves):
+                n_x_y = (x + x_move, y + y_move)
+                if n_x_y in self._chips:
+                    neighbour = self._chips[n_x_y]
+                    if neighbour.router.is_link(opposite):
+                        if (neighbour.nearest_ethernet_x ==
+                                nearest_ethernet_x and
+                            neighbour.nearest_ethernet_y ==
+                                nearest_ethernet_y):
+                            is_link = True
+                            break
             if not is_link:
                 removable_coords.append((x, y))
         return removable_coords

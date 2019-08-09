@@ -157,7 +157,7 @@ def machine_repair(original, repair_machine=False, removed_chips=[]):
     """
     dead_chips = set()
     dead_links = set()
-    for xy in original.unreachable_incoming_chips():
+    for xy in original.unreachable_incoming_local_chips():
         chip = original.get_chip_at(xy[0], xy[1])
         error_xy = original.get_local_xy(chip)
         ethernet = original.get_chip_at(
@@ -169,7 +169,7 @@ def machine_repair(original, repair_machine=False, removed_chips=[]):
             logger.warn(msg)
         else:
             raise SpinnMachineException(msg)
-    for xy in original.unreachable_outgoing_chips():
+    for xy in original.unreachable_outgoing_local_chips():
         chip = original.get_chip_at(xy[0], xy[1])
         error_xy = original.get_local_xy(chip)
         ethernet = original.get_chip_at(
