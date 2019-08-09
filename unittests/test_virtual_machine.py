@@ -898,9 +898,8 @@ class TestVirtualMachine(unittest.TestCase):
         for (x, y, link) in down_links:
             if machine.is_link_at(x, y, link):
                 del machine._chips[x, y].router._links[link]
-
-        new_machine = machine_repair(machine, True)
-        self.assertFalse(new_machine.is_chip_at(3, 3))
+        unreachable = machine.unreachable_incoming_chips()
+        self.assertListEqual([(3, 3)], unreachable)
 
     def test_unreachable_outgoing_chips(self):
         machine = virtual_machine(8, 8)
@@ -909,9 +908,8 @@ class TestVirtualMachine(unittest.TestCase):
         for link in range(6):
             if machine.is_link_at(3, 3, link):
                 del machine._chips[3, 3].router._links[link]
-
-        new_machine = machine_repair(machine, True)
-        self.assertFalse(new_machine.is_chip_at(3, 3))
+        unreachable = machine.unreachable_outgoing_chips()
+        self.assertListEqual([(3, 3)], unreachable)
 
     def test_unreachable_incoming_local_chips(self):
         down_chips = [(8, 6), (9, 7), (9, 8)]
