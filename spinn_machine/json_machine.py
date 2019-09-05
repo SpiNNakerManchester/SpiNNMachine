@@ -35,8 +35,6 @@ _Desc = namedtuple("_Desc", [
     "monitors",
     # The entries on the router
     "router_entries",
-    # The speed of the router
-    "router_clock_speed",
     # The amount of SDRAM on the chip
     "sdram",
     # Whether this is a virtual chip
@@ -67,15 +65,11 @@ def machine_from_json(j_machine):
     machine = machine_from_size(width, height, origin="Json")
     s_monitors = j_machine["standardResources"]["monitors"]
     s_router_entries = j_machine["standardResources"]["routerEntries"]
-    s_router_clock_speed = \
-        j_machine["standardResources"]["routerClockSpeed"]
     s_sdram = SDRAM(j_machine["standardResources"]["sdram"])
     s_tag_ids = j_machine["standardResources"]["tags"]
 
     e_monitors = j_machine["ethernetResources"]["monitors"]
     e_router_entries = j_machine["ethernetResources"]["routerEntries"]
-    e_router_clock_speed = \
-        j_machine["ethernetResources"]["routerClockSpeed"]
     e_sdram = SDRAM(j_machine["ethernetResources"]["sdram"])
     e_tag_ids = j_machine["ethernetResources"]["tags"]
 
@@ -88,14 +82,12 @@ def machine_from_json(j_machine):
         # get the details
         if "ipAddress" in details:
             ip_address = details["ipAddress"]
-            clock_speed = e_router_clock_speed
             router_entries = e_router_entries
             sdram = e_sdram
             tag_ids = e_tag_ids
             monitors = e_monitors
         else:
             ip_address = None
-            clock_speed = s_router_clock_speed
             router_entries = s_router_entries
             sdram = s_sdram
             tag_ids = s_tag_ids
@@ -104,8 +96,6 @@ def machine_from_json(j_machine):
             exceptions = j_chip[3]
             if "monitors" in exceptions:
                 monitors = exceptions["monitors"]
-            if "routerClockSpeed" in exceptions:
-                clock_speed = exceptions["routerClockSpeed"]
             if "routerEntries" in exceptions:
                 router_entries = exceptions["routerEntries"]
             if "sdram" in exceptions:
@@ -128,7 +118,7 @@ def machine_from_json(j_machine):
                 links.append(Link(
                     source_x, source_y, source_link_id, destination_x,
                     destination_y))
-        router = Router(links, False, clock_speed, router_entries)
+        router = Router(links, False, router_entries)
 
         # Create and add a chip with this router
         chip = Chip(
@@ -229,9 +219,6 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
                 chip.n_processors - chip.n_user_processors
         if router_entries != eth.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.router.clock_speed != eth.router_clock_speed:
-            exceptions["routerClockSpeed"] = \
-                chip.router.n_available_multicast_entries
         if chip.sdram.size != eth.sdram:
             exceptions["sdram"] = chip.sdram.size
         if chip.virtual != eth.virtual:
@@ -245,9 +232,6 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
                 chip.n_processors - chip.n_user_processors
         if router_entries != std.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.router.clock_speed != std.router_clock_speed:
-            exceptions["routerClockSpeed"] = \
-                chip.router.clock_speed
         if chip.sdram.size != std.sdram:
             exceptions["sdram"] = chip.sdram.size
         if chip.virtual != std.virtual:
@@ -276,7 +260,6 @@ def to_json(machine):
                 monitors=chip.n_processors - chip.n_user_processors,
                 router_entries=_int_value(
                     chip.router.n_available_multicast_entries),
-                router_clock_speed=chip.router.clock_speed,
                 sdram=chip.sdram.size,
                 virtual=chip.virtual,
                 tags=chip.tag_ids)
@@ -291,7 +274,6 @@ def to_json(machine):
         monitors=chip.n_processors - chip.n_user_processors,
         router_entries=_int_value(
             chip.router.n_available_multicast_entries),
-        router_clock_speed=chip.router.clock_speed,
         sdram=chip.sdram.size,
         virtual=chip.virtual,
         tags=chip.tag_ids)
@@ -300,7 +282,6 @@ def to_json(machine):
     standard_resources = OrderedDict()
     standard_resources["monitors"] = std.monitors
     standard_resources["routerEntries"] = std.router_entries
-    standard_resources["routerClockSpeed"] = std.router_clock_speed
     standard_resources["sdram"] = std.sdram
     standard_resources["virtual"] = std.virtual
     standard_resources["tags"] = list(std.tags)
@@ -309,7 +290,6 @@ def to_json(machine):
     ethernet_resources = OrderedDict()
     ethernet_resources["monitors"] = eth.monitors
     ethernet_resources["routerEntries"] = eth.router_entries
-    ethernet_resources["routerClockSpeed"] = eth.router_clock_speed
     ethernet_resources["sdram"] = eth.sdram
     ethernet_resources["virtual"] = eth.virtual
     ethernet_resources["tags"] = list(eth.tags)

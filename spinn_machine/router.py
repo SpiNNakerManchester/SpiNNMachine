@@ -33,8 +33,6 @@ class Router(object):
 
     ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
 
-    ROUTER_DEFAULT_CLOCK_SPEED = 150 * 1024 * 1024
-
     # The maximum number of links/directions a router can handle
     MAX_LINKS_PER_ROUTER = 6
 
@@ -44,13 +42,12 @@ class Router(object):
     MAX_CORES_PER_ROUTER = 18
 
     __slots__ = (
-        "_clock_speed", "_emergency_routing_enabled", "_links",
+        "_emergency_routing_enabled", "_links",
         "_n_available_multicast_entries"
     )
 
     def __init__(
             self, links, emergency_routing_enabled=False,
-            clock_speed=ROUTER_DEFAULT_CLOCK_SPEED,
             n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
         :param links: iterable of links
@@ -58,8 +55,6 @@ class Router(object):
         :param emergency_routing_enabled: \
             Determines if the router emergency routing is operating
         :type emergency_routing_enabled: bool
-        :param clock_speed: The router clock speed in cycles per second
-        :type clock_speed: int
         :param n_available_multicast_entries: \
             The number of entries available in the routing table
         :type n_available_multicast_entries: int
@@ -71,7 +66,6 @@ class Router(object):
             self.add_link(link)
 
         self._emergency_routing_enabled = emergency_routing_enabled
-        self._clock_speed = clock_speed
         self._n_available_multicast_entries = n_available_multicast_entries
 
     def add_link(self, link):
@@ -165,16 +159,6 @@ class Router(object):
         return self._emergency_routing_enabled
 
     @property
-    def clock_speed(self):
-        """ The clock speed of the router in cycles per second
-
-        :return: The clock speed in cycles per second
-        :rtype: int
-        :raise None: does not raise any known exceptions
-        """
-        return self._clock_speed
-
-    @property
     def n_available_multicast_entries(self):
         """ The number of available multicast entries in the routing tables
 
@@ -244,9 +228,8 @@ class Router(object):
 
     def __str__(self):
         return (
-            "[Router: clock_speed={} MHz, emergency_routing={}, "
+            "[Router: emergency_routing={}, "
             "available_entries={}, links={}]".format(
-                (self._clock_speed // 1000000),
                 self._emergency_routing_enabled,
                 self._n_available_multicast_entries,
                 list(self._links.values())))

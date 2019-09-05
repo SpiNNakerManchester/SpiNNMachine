@@ -37,7 +37,6 @@ class TestJsonMachine(unittest.TestCase):
         vm = virtual_machine(version=5)
         chip22 = vm.get_chip_at(2, 2)
         router22 = chip22.router
-        router22._clock_speed = router22._clock_speed - 10
         router22._n_available_multicast_entries =  \
             router22._n_available_multicast_entries - 20
         chip33 = vm.get_chip_at(3, 3)
