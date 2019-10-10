@@ -297,8 +297,9 @@ class _VirtualMachine(object):
         # for chip in self._unreachable_incoming_chips:
         #    configured_chips.remove(chip)
 
-        for (x, y) in configured_chips:
-            if configured_chips[(x, y)] == (x, y):
+        for xy in configured_chips:
+            x, y = xy
+            if configured_chips[xy] == xy:
                 new_chip = self._create_chip(
                     x, y, configured_chips, "127.0.{}.{}".format(x, y))
             else:
