@@ -17,17 +17,13 @@ language: python
 python:
   - 2.7
   - 3.6
-dist: trusty
+  - 3.7
+dist: xenial
 addons:
   apt:
     packages:
       - openjdk-8-jre-headless
       - ant
-matrix:
-  include:
-    - python: 3.7
-      dist: xenial
-      sudo: true
 cache: pip
 
 before_install:
@@ -39,12 +35,13 @@ before_install:
 install:
   - python ./setup.py install
   - pip install -r requirements-test.txt
-  - pip install python-coveralls 'coverage>=4.4'
+  - pip install pylint python-coveralls 'coverage>=4.4'
 
 script:
   - py.test unittests --cov spinn_machine
   # Code quality check
   - flake8 spinn_machine unittests
+  - ( pylint --output-format=colorized --disable=R,C spinn_machine; exit $(($? & 35)) )
   - support/rat.sh run
   - cd doc/source
   - sphinx-build -T -E -b html -d _build/doctrees-readthedocsdirhtml -D language=en . _build/html

@@ -134,7 +134,7 @@ def _machine_ignore(original, dead_chips, dead_links):
     return new_machine
 
 
-def machine_repair(original, repair_machine=False, removed_chips=[]):
+def machine_repair(original, repair_machine=False, removed_chips=tuple()):
     """ Remove chips that can't be reached or that can't reach other chips\
         due to missing links
 
@@ -165,7 +165,7 @@ def machine_repair(original, repair_machine=False, removed_chips=[]):
             "unreachable incoming chips", error_xy, ethernet.ip_address)
         if repair_machine:
             dead_chips.add(xy)
-            logger.warn(msg)
+            logger.warning(msg)
         else:
             raise SpinnMachineException(msg)
     for xy in original.unreachable_outgoing_local_chips():
@@ -177,7 +177,7 @@ def machine_repair(original, repair_machine=False, removed_chips=[]):
             "unreachable outgoing chips", error_xy, ethernet.ip_address)
         if repair_machine:
             dead_chips.add(xy)
-            logger.warn(msg)
+            logger.warning(msg)
         else:
             raise SpinnMachineException(msg)
     for xyd in original.one_way_links():
@@ -194,7 +194,7 @@ def machine_repair(original, repair_machine=False, removed_chips=[]):
                 "One way links", error_xyd, ethernet.ip_address)
             if repair_machine:
                 dead_links.add(xyd)
-                logger.warn(msg)
+                logger.warning(msg)
             else:
                 raise SpinnMachineException(msg)
     if len(dead_chips) == 0 and len(dead_links) == 0:
