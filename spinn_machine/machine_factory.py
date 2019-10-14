@@ -14,10 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-try:
-    from collections.abc import defaultdict
-except ImportError:
-    from collections import defaultdict
+from collections import defaultdict
 from spinn_machine import (Chip, Router)
 from .no_wrap_machine import NoWrapMachine
 from .horizontal_wrap_machine import HorizontalWrapMachine
