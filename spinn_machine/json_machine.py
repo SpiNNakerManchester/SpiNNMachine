@@ -15,10 +15,7 @@
 
 import logging
 import json
-try:
-    from collections.abc import defaultdict, namedtuple, OrderedDict
-except ImportError:
-    from collections import defaultdict, namedtuple, OrderedDict
+from collections import defaultdict, namedtuple, OrderedDict
 from .chip import Chip
 from .processor import Processor
 from .router import Router
