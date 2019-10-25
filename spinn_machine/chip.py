@@ -44,7 +44,7 @@ class Chip(object):
     def default_processors():
         processors = dict()
         processors[0] = Processor.factory(0, True)
-        for i in range(1, Machine.MAX_CORES_PER_CHIP):
+        for i in range(1, Machine.max_cores_per_chip()):
             processors[i] = Processor.factory(i)
         return processors
 
@@ -88,7 +88,7 @@ class Chip(object):
         self._y = y
         if processors is None:
             self._p = Chip.DEFAULT_PROCESSORS
-            self._n_user_processors = Machine.MAX_CORES_PER_CHIP - 1
+            self._n_user_processors = Machine.max_cores_per_chip() - 1
         else:
             self._p = OrderedDict()
             self._n_user_processors = 0

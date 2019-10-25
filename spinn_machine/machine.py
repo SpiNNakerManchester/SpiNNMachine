@@ -36,7 +36,7 @@ class Machine(object):
     # current opinions is that the Ethernet connected chip can handle 10
     # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
-    MAX_CORES_PER_CHIP = 18
+    DEFAULT_MAX_CORES_PER_CHIP = 18
     MAX_CHIPS_PER_48_BOARD = 48
     MAX_CHIPS_PER_4_CHIP_BOARD = 4
     BOARD_VERSION_FOR_48_CHIPS = [4, 5]
@@ -87,6 +87,10 @@ class Machine(object):
         # This can not be changed
         "_width"
     )
+
+    @staticmethod
+    def max_cores_per_chip():
+        return Machine.DEFAULT_MAX_CORES_PER_CHIP
 
     def __init__(self, width, height, chips=None, origin=None):
         """

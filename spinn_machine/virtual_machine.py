@@ -109,7 +109,7 @@ def _verify_width_height(width, height):
 
 def virtual_machine(
         width=None, height=None, with_wrap_arounds=None, version=None,
-        n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP, with_monitors=True,
+        n_cpus_per_chip=Machine.max_cores_per_chip(), with_monitors=True,
         sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES, down_chips=None,
         down_cores=None, down_links=None,
         router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
@@ -207,7 +207,7 @@ class _VirtualMachine(object):
     # pylint: disable=too-many-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
-            version=None, n_cpus_per_chip=Machine.MAX_CORES_PER_CHIP,
+            version=None, n_cpus_per_chip=Machine.max_cores_per_chip(),
             with_monitors=True, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
             down_chips=None, down_cores=None, down_links=None,
             router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
@@ -261,7 +261,7 @@ class _VirtualMachine(object):
             self._with_monitors = 0
             self._weird_processor = True
         self._n_cpus_per_chip = n_cpus_per_chip
-        if n_cpus_per_chip != Machine.MAX_CORES_PER_CHIP:
+        if n_cpus_per_chip != Machine.max_cores_per_chip():
             self._weird_processor = True
 
         # Store the down items
