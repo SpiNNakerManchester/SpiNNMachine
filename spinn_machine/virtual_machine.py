@@ -109,7 +109,7 @@ def _verify_width_height(width, height):
 
 def virtual_machine(
         width=None, height=None, with_wrap_arounds=None, version=None,
-        n_cpus_per_chip=Machine.max_cores_per_chip(), with_monitors=True,
+        n_cpus_per_chip=None, with_monitors=True,
         sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES, down_chips=None,
         down_cores=None, down_links=None,
         router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
@@ -142,6 +142,9 @@ def virtual_machine(
     :param validate: if True will call the machine validate function
     :type validate: bool
     """
+
+    if n_cpus_per_chip is None:
+        n_cpus_per_chip = Machine.max_cores_per_chip()
 
     factory = _VirtualMachine(
         width, height, with_wrap_arounds, version, n_cpus_per_chip,
@@ -207,12 +210,14 @@ class _VirtualMachine(object):
     # pylint: disable=too-many-arguments
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
-            version=None, n_cpus_per_chip=Machine.max_cores_per_chip(),
+            version=None, n_cpus_per_chip=None,
             with_monitors=True, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
             down_chips=None, down_cores=None, down_links=None,
             router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
             validate=True):
 
+        if n_cpus_per_chip is None:
+            n_cpus_per_chip = Machine.max_cores_per_chip()
         self._n_router_entries_per_router = router_entries_per_chip
 
         if down_chips is None:

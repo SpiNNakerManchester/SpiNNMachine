@@ -37,6 +37,7 @@ class Machine(object):
     # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
     DEFAULT_MAX_CORES_PER_CHIP = 18
+    __max_cores = None
     MAX_CHIPS_PER_48_BOARD = 48
     MAX_CHIPS_PER_4_CHIP_BOARD = 4
     BOARD_VERSION_FOR_48_CHIPS = [4, 5]
@@ -90,7 +91,18 @@ class Machine(object):
 
     @staticmethod
     def max_cores_per_chip():
-        return Machine.DEFAULT_MAX_CORES_PER_CHIP
+        if Machine.__max_cores is None:
+            Machine.__max_cores = Machine.DEFAULT_MAX_CORES_PER_CHIP
+        return Machine.__max_cores
+
+    @staticmethod
+    def set_max_cores_per_chip(max):
+        if Machine.__max_cores is None:
+            Machine.__max_cores = max
+        elif Machine.__max_cores != max:
+            raise SpinnMachineException(
+                "max_cores_per_chip has already been accessed "
+                "so can not be changed.")
 
     def __init__(self, width, height, chips=None, origin=None):
         """
