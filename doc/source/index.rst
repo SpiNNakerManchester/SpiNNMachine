@@ -19,7 +19,7 @@ Contents
 .. toctree::
    :maxdepth: 10
 
-   spinn_machine
+   modules
 
 
 Indices and tables

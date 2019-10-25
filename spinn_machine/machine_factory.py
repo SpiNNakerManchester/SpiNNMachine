@@ -133,9 +133,10 @@ def _machine_ignore(original, dead_chips, dead_links):
 
 def machine_repair(original, repair_machine=False, removed_chips=tuple()):
     """ Remove chips that can't be reached or that can't reach other chips\
-        due to missing links
+        due to missing links.
 
-        Also Reomve and one way links
+        Also remove any one way links.
+
     :param original: the original machine
     :param repair_machine: A flag to say if the machine requires unexpected
         repairs.
@@ -143,11 +144,11 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
         If false will raise an exception if the machine needs an unexpected
         repair
     :type repair_machine: bool
-    :param removed_chips: List of chips (x and y cooridinates) that have been
+    :param removed_chips: List of chips (x and y coordinates) that have been
         removed while the machine was being created.
         Oneway links to these chip are expected repairs so always done and
         never logged
-    :raises:SpinnMachineException if repair_machine is false and an unexpected
+    :raises SpinnMachineException: if repair_machine is false and an unexpected
         repair is needed.
     :return: Either the original machine or a repaired replacement
     """
