@@ -91,12 +91,34 @@ class Machine(object):
 
     @staticmethod
     def max_cores_per_chip():
+        """
+        Gets the max core per chip for the while system.
+
+        There is no guarantee that there will be any Chips with this many\
+        cores, only that there will be no cores with more.
+
+        :return: the default cores per chip unless overridden by set
+        """
         if Machine.__max_cores is None:
             Machine.__max_cores = Machine.DEFAULT_MAX_CORES_PER_CHIP
         return Machine.__max_cores
 
     @staticmethod
     def set_max_cores_per_chip(max):
+        """
+        Allows setting the max number of cores per chip for the whole system.
+
+        Allows virtual machines to go higher than normal.
+
+        Real machines can only be capped never increased beyond what they
+        actually have.
+
+        :param max: New value to use for the max
+        :raises: SpinnMachineException if max_cores_per_chip has already been\
+            used and is now being changed.\
+            The Exception also happens if the value is set twice to difference\
+            values. For example in the script and in the config.
+        """
         if Machine.__max_cores is None:
             Machine.__max_cores = max
         elif Machine.__max_cores != max:
