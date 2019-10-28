@@ -12,6 +12,8 @@ SpiNNMachine
 ============
 
 .. automodule:: spinn_machine
+  :no-undoc-members:
+  :special-members:
 
 Contents
 --------
