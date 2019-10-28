@@ -20,6 +20,8 @@ from .processor import Processor
 from spinn_utilities.ordered_set import OrderedSet
 from .exceptions import SpinnMachineAlreadyExistsException
 
+default_processors = None
+
 
 class Chip(object):
     """ Represents a SpiNNaker chip with a number of cores, an amount of\
@@ -39,16 +41,6 @@ class Chip(object):
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
         "_n_user_processors"
     )
-
-    @staticmethod
-    def default_processors():
-        processors = dict()
-        processors[0] = Processor.factory(0, True)
-        for i in range(1, Machine.MAX_CORES_PER_CHIP):
-            processors[i] = Processor.factory(i)
-        return processors
-
-    DEFAULT_PROCESSORS = default_processors.__func__()
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
@@ -87,8 +79,8 @@ class Chip(object):
         self._x = x
         self._y = y
         if processors is None:
-            self._p = Chip.DEFAULT_PROCESSORS
-            self._n_user_processors = Machine.MAX_CORES_PER_CHIP - 1
+            self._p = self.get_default_processors()
+            self._n_user_processors = Machine.max_cores_per_chip() - 1
         else:
             self._p = OrderedDict()
             self._n_user_processors = 0
@@ -112,6 +104,15 @@ class Chip(object):
         self._virtual = virtual
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
+
+    def get_default_processors(self):
+        global default_processors
+        if default_processors is None:
+            default_processors = dict()
+            default_processors[0] = Processor.factory(0, True)
+            for i in range(1, Machine.max_cores_per_chip()):
+                default_processors[i] = Processor.factory(i)
+        return default_processors
 
     def is_processor_with_id(self, processor_id):
         """ Determines if a processor with the given ID exists in the chip.\
