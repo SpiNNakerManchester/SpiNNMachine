@@ -17,8 +17,7 @@
 test for testing the python representation of a spinnaker machine
 """
 import unittest
-from spinn_machine import (
-    Processor, Link, SDRAM, Router, Chip, machine_from_chips,
+from spinn_machine import (Link, SDRAM, Router, Chip, machine_from_chips,
     machine_from_size)
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
@@ -42,45 +41,27 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         self._ip = "192.162.240.253"
 
-    def _create_processors(self, monitor=3, number=18):
-        """ Create a list of processors.
-
-        As some test change the processors this must be called each time.
-
-        :param monitor: Id of process to make the monitor
-        :type monitor: int
-        """
-        flops = 1000
-        processors = list()
-        for i in range(number):
-            processors.append(Processor(i, flops, is_monitor=(i == monitor)))
-        return processors
-
-    def _create_chip(self, x, y, processors):
+    def _create_chip(self, x, y):
         if x == y == 0:
-            return Chip(x, y, processors, self._router, self._sdram,
+            return Chip(x, y, 18, self._router, self._sdram,
                         self._nearest_ethernet_chip[0],
                         self._nearest_ethernet_chip[1], self._ip)
-        return Chip(x, y, processors, self._router, self._sdram,
+        return Chip(x, y, 18, self._router, self._sdram,
                     self._nearest_ethernet_chip[0],
                     self._nearest_ethernet_chip[1], None)
 
-    def _create_chips(self, processors=None, monitor=3):
-        if not processors:
-            processors = self._create_processors(monitor)
+    def _create_chips(self, monitor=3):
         chips = list()
         for x in range(5):
             for y in range(5):
-                chips.append(self._create_chip(x, y, processors))
+                chips.append(self._create_chip(x, y))
         return chips
 
     def test_create_new_machine(self):
         """
         test creating a new machine
         """
-        processors = self._create_processors()
-
-        chips = self._create_chips(processors)
+        chips = self._create_chips()
 
         new_machine = machine_from_chips(chips)
 
@@ -94,8 +75,6 @@ class SpinnMachineTestCase(unittest.TestCase):
                 self.assertIsNone(c.ip_address)
             self.assertEqual(c.sdram, self._sdram)
             self.assertEqual(c.router, self._router)
-            for p in processors:
-                self.assertTrue(p in c.processors)
 
         self.assertEqual(new_machine.total_cores, 450)
         self.assertEqual(new_machine.total_available_user_cores, 425)
@@ -118,7 +97,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         chips = self._create_chips()
         chips.append(Chip(
-            0, 0, self._create_processors(), self._router, self._sdram,
+            0, 0, 18, self._router, self._sdram,
             self._nearest_ethernet_chip[0],
             self._nearest_ethernet_chip[1], self._ip))
         with self.assertRaises(SpinnMachineAlreadyExistsException):
@@ -130,11 +109,8 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        processors = self._create_processors()
-        new_machine = machine_from_size(6, 5, self._create_chips(processors))
-        processor = list()
-        processor.append(Processor(100, 100, False))
-        extra_chip = self._create_chip(5, 0, processor)
+        new_machine = machine_from_size(6, 5, self._create_chips())
+        extra_chip = self._create_chip(5, 0)
         new_machine.add_chip(extra_chip)
         self.assertEqual(new_machine.max_chip_x, 5)
         self.assertEqual(new_machine.max_chip_y, 4)
@@ -146,10 +122,6 @@ class SpinnMachineTestCase(unittest.TestCase):
                 self.assertIsNone(c.ip_address)
             self.assertEqual(c.sdram, self._sdram)
             self.assertEqual(c.router, self._router)
-            if c is extra_chip:
-                with self.assertRaises(AssertionError):
-                    for p in c.processors:
-                        self.assertTrue(p in processors)
 
     def test_machine_add_duplicate_chip(self):
         """
@@ -168,15 +140,14 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        processors = self._create_processors()
-        chips = self._create_chips(processors)
+        chips = self._create_chips()
         new_machine = machine_from_size(6, 5, chips)
 
         extra_chips = list()
-        extra_chips.append(self._create_chip(5, 0, processors))
-        extra_chips.append(self._create_chip(5, 1, processors))
-        extra_chips.append(self._create_chip(5, 2, processors))
-        extra_chips.append(self._create_chip(5, 3, processors))
+        extra_chips.append(self._create_chip(5, 0))
+        extra_chips.append(self._create_chip(5, 1))
+        extra_chips.append(self._create_chip(5, 2))
+        extra_chips.append(self._create_chip(5, 3))
 
         new_machine.add_chips(extra_chips)
         self.assertEqual(new_machine.max_chip_x, 5)
@@ -189,8 +160,6 @@ class SpinnMachineTestCase(unittest.TestCase):
                 self.assertIsNone(c.ip_address)
             self.assertEqual(c.sdram, self._sdram)
             self.assertEqual(c.router, self._router)
-            for p in processors:
-                self.assertTrue(p in c.processors)
 
     def test_machine_add_duplicate_chips(self):
         """
@@ -202,9 +171,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = self._create_chips()
         new_machine = machine_from_size(7, 5, chips)
 
-        processors = self._create_processors()
         extra_chips = list()
-        extra_chips.append(self._create_chip(6, 0, processors))
+        extra_chips.append(self._create_chip(6, 0))
         extra_chips.append(chips[3])
 
         with self.assertRaises(SpinnMachineAlreadyExistsException):

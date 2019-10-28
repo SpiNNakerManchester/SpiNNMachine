@@ -143,6 +143,8 @@ def virtual_machine(
     :type validate: bool
     """
 
+    if not with_monitors:
+        raise NotImplementedError("with_monitors")
     if n_cpus_per_chip is None:
         n_cpus_per_chip = Machine.max_cores_per_chip()
 
@@ -197,7 +199,6 @@ class _VirtualMachine(object):
         "_n_router_entries_per_router",
         "_machine",
         "_sdram_per_chip",
-        "_weird_processor",
         "_with_monitors")
 
     _4_chip_down_links = {
@@ -259,15 +260,7 @@ class _VirtualMachine(object):
 
         # Store the details
         self._sdram_per_chip = sdram_per_chip
-        if with_monitors:
-            self._with_monitors = 1
-            self._weird_processor = False
-        else:
-            self._with_monitors = 0
-            self._weird_processor = True
         self._n_cpus_per_chip = n_cpus_per_chip
-        if n_cpus_per_chip != Machine.max_cores_per_chip():
-            self._weird_processor = True
 
         # Store the down items
         self._down_cores = defaultdict(set)
@@ -317,24 +310,7 @@ class _VirtualMachine(object):
     def machine(self):
         return self._machine
 
-    def _create_processors_specific(self, x, y):
-        processors = list()
-        down = self._down_cores[(x, y)]
-        for processor_id in range(0, self._with_monitors):
-            if (x, y, processor_id) not in down:
-                processor = Processor.factory(processor_id, is_monitor=True)
-                processors.append(processor)
-        for processor_id in range(self._with_monitors, self._n_cpus_per_chip):
-            if (x, y, processor_id) not in down:
-                processor = Processor.factory(processor_id, is_monitor=False)
-                processors.append(processor)
-        return processors
-
     def _create_chip(self, x, y, configured_chips, ip_address=None):
-        if self._weird_processor or (x, y) in self._down_cores:
-            processors = self._create_processors_specific(x, y)
-        else:
-            processors = None
         chip_links = self._calculate_links(x, y, configured_chips)
         chip_router = Router(
             chip_links,
@@ -347,7 +323,8 @@ class _VirtualMachine(object):
         (eth_x, eth_y) = configured_chips[(x, y)]
 
         return Chip(
-            x, y, processors, chip_router, sdram, eth_x, eth_y, ip_address)
+            x, y, self._n_cpus_per_chip, chip_router, sdram, eth_x, eth_y,
+            ip_address)
 
     def _calculate_links(self, x, y, configured_chips):
         """ Calculate the links needed for a machine structure

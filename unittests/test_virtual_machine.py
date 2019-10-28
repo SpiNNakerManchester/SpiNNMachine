@@ -28,10 +28,7 @@ class TestVirtualMachine(unittest.TestCase):
     def _create_chip(self, x, y):
         # Create a list of processors.
 
-        flops = 1000
-        processors = list()
-        for i in range(18):
-            processors.append(Processor(i, flops, is_monitor=(i == 0)))
+        n_processors = 18
 
         links = list()
         links.append(Link(0, 0, 0, 1, 1))
@@ -45,11 +42,11 @@ class TestVirtualMachine(unittest.TestCase):
         _ip = "192.162.240.253"
 
         if (x == y == 0):
-            return Chip(x, y, processors, _router, _sdram,
+            return Chip(x, y, n_processors, _router, _sdram,
                         nearest_ethernet_chip[0],
                         nearest_ethernet_chip[1], _ip)
         else:
-            return Chip(x, y, processors, _router, _sdram,
+            return Chip(x, y, n_processors, _router, _sdram,
                         nearest_ethernet_chip[0],
                         nearest_ethernet_chip[1], None)
 
@@ -219,24 +216,6 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(228, count)
         self.assertEqual(48, len(vm.local_xys))
 
-    def test_new_vm_no_monitor(self):
-        n_cpus = 11
-        vm = virtual_machine(
-            2, 2, n_cpus_per_chip=n_cpus, with_monitors=False, validate=True)
-        self.assertEqual(vm.max_chip_x, 1)
-        self.assertEqual(vm.max_chip_y, 1)
-        self.assertEqual(n_cpus, vm.maximum_user_cores_on_chip)
-        _chip = vm.get_chip_at(1, 1)
-        self.assertEqual(n_cpus, _chip.n_processors)
-        monitors = 0
-        normal = 0
-        for core in _chip.processors:
-            if core.is_monitor:
-                monitors += 1
-            else:
-                normal += 1
-        self.assertEqual(n_cpus, normal)
-        self.assertEqual(0, monitors)
 
     def test_new_vm_with_monitor(self):
         n_cpus = 13

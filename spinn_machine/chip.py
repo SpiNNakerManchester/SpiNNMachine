@@ -20,7 +20,7 @@ from .processor import Processor
 from spinn_utilities.ordered_set import OrderedSet
 from .exceptions import SpinnMachineAlreadyExistsException
 
-default_processors = None
+standard_processors = {}
 
 
 class Chip(object):
@@ -43,9 +43,9 @@ class Chip(object):
     )
 
     # pylint: disable=too-many-arguments
-    def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
+    def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
                  nearest_ethernet_y, ip_address=None, virtual=False,
-                 tag_ids=None):
+                 tag_ids=None, down_cores=None):
         """
         :param x: the x-coordinate of the chip's position in the\
             two-dimensional grid of chips
@@ -53,8 +53,9 @@ class Chip(object):
         :param y: the y-coordinate of the chip's position in the\
             two-dimensional grid of chips
         :type y: int
-        :param processors: an iterable of processor objects
-        :type processors: iterable(:py:class:`~spinn_machine.Processor`)
+        :param n_processors: the number of processors including monitor\
+        processors.
+        :type processors: int
         :param router: a router for the chip
         :type router: :py:class:`~spinn_machine.Router`
         :param sdram: an SDRAM for the chip
@@ -72,26 +73,16 @@ class Chip(object):
         :type nearest_ethernet_x: int or None
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
         :type nearest_ethernet_y: int or None
+        :param down_cores: Ids of cores that are down for this Chip
+        :type down_cores: collection of int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If processors contains any two processors with the same\
             processor_id
         """
         self._x = x
         self._y = y
-        if processors is None:
-            self._p = self.get_default_processors()
-            self._n_user_processors = Machine.max_cores_per_chip() - 1
-        else:
-            self._p = OrderedDict()
-            self._n_user_processors = 0
-            for processor in sorted(processors, key=lambda i: i.processor_id):
-                if processor.processor_id in self._p:
-                    raise SpinnMachineAlreadyExistsException(
-                        "processor on {}:{}".format(x, y),
-                        str(processor.processor_id))
-                self._p[processor.processor_id] = processor
-                if not processor.is_monitor:
-                    self._n_user_processors += 1
+
+        self._p = self.__generate_processors(n_processors, down_cores)
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
@@ -104,6 +95,29 @@ class Chip(object):
         self._virtual = virtual
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
+
+    def __generate_processors(self, n_processors, down_cores):
+        global standard_processors
+        if down_cores is None:
+            if n_processors not in standard_processors:
+                processors = OrderedDict()
+                processors[0] = Processor.factory(0, True)
+                for i in range(1, n_processors):
+                    processors[i] = Processor.factory(i)
+                standard_processors[n_processors] = processors
+            self._n_user_processors = n_processors - 1
+            return standard_processors[n_processors]
+        else:
+            processors = dict()
+            if 0 in down_cores:
+                raise NotImplementedError(
+                    "Declaring core 0 as down is not supported")
+            processors[0] = Processor.factory(0, True)
+            for i in range(1, n_processors):
+                if i not in down_cores:
+                    processors[i] = Processor.factory(i)
+            self._n_user_processors = n_processors - 1 - len(down_cores)
+            return processors
 
     def get_default_processors(self):
         global default_processors
