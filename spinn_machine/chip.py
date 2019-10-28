@@ -20,6 +20,8 @@ from .processor import Processor
 from spinn_utilities.ordered_set import OrderedSet
 from .exceptions import SpinnMachineAlreadyExistsException
 
+default_processors = None
+
 
 class Chip(object):
     """ Represents a SpiNNaker chip with a number of cores, an amount of\
@@ -39,8 +41,6 @@ class Chip(object):
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
         "_n_user_processors"
     )
-
-    default_processors = None
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
