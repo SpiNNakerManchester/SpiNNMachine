@@ -52,8 +52,6 @@ def machine_from_json(j_machine):
         with open(j_machine) as j_file:
             j_machine = json.load(j_file)
 
-    processors_by_cores = {}
-
     # get the default values
     width = j_machine["width"]
     height = j_machine["height"]
