@@ -15,8 +15,7 @@
 
 import unittest
 from spinn_utilities.ordered_set import OrderedSet
-from spinn_machine import Processor, Link, SDRAM, Router, Chip
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine import Link, SDRAM, Router, Chip
 
 
 class TestingChip(unittest.TestCase):

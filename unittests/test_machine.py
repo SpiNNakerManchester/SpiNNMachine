@@ -17,8 +17,8 @@
 test for testing the python representation of a spinnaker machine
 """
 import unittest
-from spinn_machine import (Link, SDRAM, Router, Chip, machine_from_chips,
-    machine_from_size)
+from spinn_machine import (
+    Link, SDRAM, Router, Chip, machine_from_chips, machine_from_size)
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 

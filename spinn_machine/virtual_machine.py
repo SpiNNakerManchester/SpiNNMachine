@@ -20,7 +20,6 @@ from .exceptions import SpinnMachineInvalidParameterException
 from .full_wrap_machine import FullWrapMachine
 from .machine import Machine
 from .no_wrap_machine import NoWrapMachine
-from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .link import Link

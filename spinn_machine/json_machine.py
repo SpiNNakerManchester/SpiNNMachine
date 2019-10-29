@@ -17,7 +17,6 @@ import logging
 import json
 from collections import defaultdict, namedtuple, OrderedDict
 from .chip import Chip
-from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .link import Link
@@ -70,10 +69,6 @@ def machine_from_json(j_machine):
     e_sdram = SDRAM(j_machine["ethernetResources"]["sdram"])
     e_tag_ids = j_machine["ethernetResources"]["tags"]
 
-    if s_monitors != 1 or e_monitors != 1:
-        raise NotImplementedError(
-            "We currently only support exactly 1 monitor per core")
-
     for j_chip in j_machine["chips"]:
         details = j_chip[2]
         source_x = j_chip[0]
@@ -103,6 +98,9 @@ def machine_from_json(j_machine):
                 sdram = SDRAM(exceptions["sdram"])
             if "tags" in exceptions:
                 tag_ids = exceptions["tags"]
+        if monitors != 1:
+            raise NotImplementedError(
+                "We currently only support exactly 1 monitor per core")
 
         # create a router based on the details
         if "deadLinks" in details:

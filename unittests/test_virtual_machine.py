@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from spinn_machine import Processor, Link, SDRAM, Router, Chip, virtual_machine
+from spinn_machine import Link, SDRAM, Router, Chip, virtual_machine
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException,
     SpinnMachineInvalidParameterException)
