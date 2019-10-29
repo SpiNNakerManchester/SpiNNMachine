@@ -70,6 +70,10 @@ def machine_from_json(j_machine):
     e_sdram = SDRAM(j_machine["ethernetResources"]["sdram"])
     e_tag_ids = j_machine["ethernetResources"]["tags"]
 
+    if s_monitors != 1 or e_monitors != 1:
+        raise NotImplementedError(
+            "We currently only support exactly 1 monitor per core")
+
     for j_chip in j_machine["chips"]:
         details = j_chip[2]
         source_x = j_chip[0]
@@ -101,8 +105,6 @@ def machine_from_json(j_machine):
                 tag_ids = exceptions["tags"]
 
         # create a router based on the details
-        processors = _get_processors(
-            details["cores"], monitors, processors_by_cores)
         if "deadLinks" in details:
             dead_links = details["deadLinks"]
         else:
@@ -119,7 +121,7 @@ def machine_from_json(j_machine):
 
         # Create and add a chip with this router
         chip = Chip(
-            source_x, source_y, processors, router, sdram,
+            source_x, source_y, details["cores"], router, sdram,
             nearest_ethernet[0], nearest_ethernet[1], ip_address, False,
             tag_ids)
         machine.add_chip(chip)
@@ -128,17 +130,6 @@ def machine_from_json(j_machine):
     machine.add_fpga_links()
 
     return machine
-
-
-def _get_processors(cores, monitors, processors_by_cores):
-    if not (cores, monitors) in processors_by_cores:
-        processors = []
-        for i in range(0, monitors):
-            processors.append(Processor.factory(0, True))
-        for i in range(monitors, cores):
-            processors.append(Processor.factory(i))
-        processors_by_cores[(cores, monitors)] = processors
-    return processors_by_cores[(cores, monitors)]
 
 
 def _int_value(value):
