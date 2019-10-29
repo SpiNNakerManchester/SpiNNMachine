@@ -15,7 +15,6 @@
 
 from collections import OrderedDict
 from six import iteritems, itervalues
-from .machine import Machine
 from .processor import Processor
 from spinn_utilities.ordered_set import OrderedSet
 
