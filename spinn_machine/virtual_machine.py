@@ -109,7 +109,7 @@ def _verify_width_height(width, height):
 
 def virtual_machine(
         width=None, height=None, with_wrap_arounds=None, version=None,
-        n_cpus_per_chip=None, with_monitors=True,
+        n_cpus_per_chip=None,
         sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES, down_chips=None,
         down_cores=None, down_links=None,
         router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
@@ -133,8 +133,6 @@ def virtual_machine(
     :type version: int
     :param n_cpus_per_chip: The number of CPUs to put on each chip
     :type n_cpus_per_chip: int
-    :param with_monitors: True if CPU 0 should be marked as a monitor
-    :type with_monitors: bool
     :param sdram_per_chip: The amount of SDRAM to give to each chip
     :type sdram_per_chip: int or None
     :param router_entries_per_chip: the number of entries to each router
@@ -143,14 +141,12 @@ def virtual_machine(
     :type validate: bool
     """
 
-    if not with_monitors:
-        raise NotImplementedError("with_monitors")
     if n_cpus_per_chip is None:
         n_cpus_per_chip = Machine.max_cores_per_chip()
 
     factory = _VirtualMachine(
         width, height, with_wrap_arounds, version, n_cpus_per_chip,
-        with_monitors, sdram_per_chip, down_chips, down_cores, down_links,
+        sdram_per_chip, down_chips, down_cores, down_links,
         router_entries_per_chip, validate)
     return factory.machine
 
@@ -212,7 +208,7 @@ class _VirtualMachine(object):
     def __init__(
             self, width=None, height=None, with_wrap_arounds=False,
             version=None, n_cpus_per_chip=None,
-            with_monitors=True, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
+            sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
             down_chips=None, down_cores=None, down_links=None,
             router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
             validate=True):
