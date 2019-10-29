@@ -118,15 +118,6 @@ class Chip(object):
             self._n_user_processors = n_processors - 1 - len(down_cores)
             return processors
 
-    def get_default_processors(self):
-        global default_processors
-        if default_processors is None:
-            default_processors = dict()
-            default_processors[0] = Processor.factory(0, True)
-            for i in range(1, Machine.max_cores_per_chip()):
-                default_processors[i] = Processor.factory(i)
-        return default_processors
-
     def is_processor_with_id(self, processor_id):
         """ Determines if a processor with the given ID exists in the chip.\
             Also implemented as __contains__(processor_id)

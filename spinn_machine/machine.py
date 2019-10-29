@@ -107,7 +107,7 @@ class Machine(object):
         return Machine.__max_cores
 
     @staticmethod
-    def set_max_cores_per_chip(max):
+    def set_max_cores_per_chip(new_max):
         """
         Allows setting the max number of cores per chip for the whole system.
 
@@ -116,15 +116,15 @@ class Machine(object):
         Real machines can only be capped never increased beyond what they
         actually have.
 
-        :param max: New value to use for the max
+        :param new_max: New value to use for the max
         :raises: SpinnMachineException if max_cores_per_chip has already been\
             used and is now being changed.\
             The Exception also happens if the value is set twice to difference\
             values. For example in the script and in the config.
         """
         if Machine.__max_cores is None:
-            Machine.__max_cores = max
-        elif Machine.__max_cores != max:
+            Machine.__max_cores = new_max
+        elif Machine.__max_cores != new_max:
             raise SpinnMachineException(
                 "max_cores_per_chip has already been accessed "
                 "so can not be changed.")
