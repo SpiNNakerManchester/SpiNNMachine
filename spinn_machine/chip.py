@@ -14,13 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import OrderedDict
-import logging
 from six import iteritems, itervalues
-from spinn_utilities.log import FormatAdapter
 from spinn_utilities.ordered_set import OrderedSet
 from .processor import Processor
-
-logger = FormatAdapter(logging.getLogger(__name__))
 
 standard_processors = {}
 
@@ -116,10 +112,7 @@ class Chip(object):
                     "Declaring core 0 as down is not supported")
             processors[0] = Processor.factory(0, True)
             for i in range(1, n_processors):
-                if i in down_cores:
-                    logger.warning("Not using Core {}:{}:{}",
-                                   self._x, self._y, i)
-                else:
+                if i not in down_cores:
                     processors[i] = Processor.factory(i)
             self._n_user_processors = n_processors - 1 - len(down_cores)
             return processors
