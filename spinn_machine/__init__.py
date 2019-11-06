@@ -51,8 +51,8 @@ Use Cases
     * :py:class:`~spinn_machine.Machine` is returned as a representation of\
       the current state of a machine.
 
-    * :py:class:`~spinn_machine.VirtualMachine` is used as an outline of a\
-      machine on which a simulation will be run, e.g., for placement of\
+    * :py:func:`~spinn_machine.virtual_machine` is used to make an outline of\
+      a machine on which a simulation will be run, e.g., for placement of\
       executables and/or finding routes between placed executables.
 
     * :py:class:`~spinn_machine.Machine` is extended to add a virtual\

@@ -15,10 +15,10 @@
 
 from collections import OrderedDict
 from six import iteritems, itervalues
-from spinn_utilities.ordered_set import OrderedSet
+from .machine import Machine
 from .processor import Processor
-
-standard_processors = {}
+from spinn_utilities.ordered_set import OrderedSet
+from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class Chip(object):
@@ -32,7 +32,7 @@ class Chip(object):
     """
 
     # tag 0 is reserved for stuff like IO STD
-    IPTAG_IDS = OrderedSet(range(1, 8))
+    _IPTAG_IDS = OrderedSet(range(1, 8))
 
     __slots__ = (
         "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
@@ -40,10 +40,20 @@ class Chip(object):
         "_n_user_processors"
     )
 
+    @staticmethod
+    def default_processors():
+        processors = dict()
+        processors[0] = Processor.factory(0, True)
+        for i in range(1, Machine.MAX_CORES_PER_CHIP):
+            processors[i] = Processor.factory(i)
+        return processors
+
+    _DEFAULT_PROCESSORS = default_processors.__func__()
+
     # pylint: disable=too-many-arguments
-    def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
+    def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
                  nearest_ethernet_y, ip_address=None, virtual=False,
-                 tag_ids=None, down_cores=None):
+                 tag_ids=None):
         """
         :param x: the x-coordinate of the chip's position in the\
             two-dimensional grid of chips
@@ -51,9 +61,8 @@ class Chip(object):
         :param y: the y-coordinate of the chip's position in the\
             two-dimensional grid of chips
         :type y: int
-        :param n_processors: the number of processors including monitor\
-        processors.
-        :type processors: int
+        :param processors: an iterable of processor objects
+        :type processors: iterable(:py:class:`~spinn_machine.Processor`)
         :param router: a router for the chip
         :type router: :py:class:`~spinn_machine.Router`
         :param sdram: an SDRAM for the chip
@@ -71,16 +80,26 @@ class Chip(object):
         :type nearest_ethernet_x: int or None
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
         :type nearest_ethernet_y: int or None
-        :param down_cores: Ids of cores that are down for this Chip
-        :type down_cores: collection of int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If processors contains any two processors with the same\
             processor_id
         """
         self._x = x
         self._y = y
-
-        self._p = self.__generate_processors(n_processors, down_cores)
+        if processors is None:
+            self._p = Chip._DEFAULT_PROCESSORS
+            self._n_user_processors = Machine.MAX_CORES_PER_CHIP - 1
+        else:
+            self._p = OrderedDict()
+            self._n_user_processors = 0
+            for processor in sorted(processors, key=lambda i: i.processor_id):
+                if processor.processor_id in self._p:
+                    raise SpinnMachineAlreadyExistsException(
+                        "processor on {}:{}".format(x, y),
+                        str(processor.processor_id))
+                self._p[processor.processor_id] = processor
+                if not processor.is_monitor:
+                    self._n_user_processors += 1
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
@@ -89,33 +108,10 @@ class Chip(object):
         elif self._ip_address is None:
             self._tag_ids = []
         else:
-            self._tag_ids = self.IPTAG_IDS
+            self._tag_ids = self._IPTAG_IDS
         self._virtual = virtual
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
-
-    def __generate_processors(self, n_processors, down_cores):
-        global standard_processors
-        if down_cores is None:
-            if n_processors not in standard_processors:
-                processors = OrderedDict()
-                processors[0] = Processor.factory(0, True)
-                for i in range(1, n_processors):
-                    processors[i] = Processor.factory(i)
-                standard_processors[n_processors] = processors
-            self._n_user_processors = n_processors - 1
-            return standard_processors[n_processors]
-        else:
-            processors = dict()
-            if 0 in down_cores:
-                raise NotImplementedError(
-                    "Declaring core 0 as down is not supported")
-            processors[0] = Processor.factory(0, True)
-            for i in range(1, n_processors):
-                if i not in down_cores:
-                    processors[i] = Processor.factory(i)
-            self._n_user_processors = n_processors - 1 - len(down_cores)
-            return processors
 
     def is_processor_with_id(self, processor_id):
         """ Determines if a processor with the given ID exists in the chip.\
@@ -137,7 +133,7 @@ class Chip(object):
         :type processor_id: int
         :return: \
             the processor with the specified ID, or None if no such processor
-        :rtype: :py:class:`~spinn_machine.Processor`
+        :rtype: Processor
         :raise None: does not raise any known exceptions
         """
         if processor_id in self._p:
@@ -168,8 +164,7 @@ class Chip(object):
     def processors(self):
         """ An iterable of available processors
 
-        :return: iterable of processors
-        :rtype: iterable(:py:class:`~spinn_machine.Processor`)
+        :rtype: iterable(Processor)
         :raise None: does not raise any known exceptions
         """
         return itervalues(self._p)
@@ -177,12 +172,16 @@ class Chip(object):
     @property
     def n_processors(self):
         """ The total number of processors
+
+        :rtype: int
         """
         return len(self._p)
 
     @property
     def n_user_processors(self):
         """ The total number of processors that are not monitors
+
+        :rtype: int
         """
         return self._n_user_processors
 
@@ -201,7 +200,7 @@ class Chip(object):
         """ The router object associated with the chip
 
         :return: router associated with the chip
-        :rtype: :py:class:`~spinn_machine.Router`
+        :rtype: Router
         :raise None: does not raise any known exceptions
         """
         return self._router
@@ -211,7 +210,7 @@ class Chip(object):
         """ The SDRAM associated with the chip
 
         :return: SDRAM associated with the chip
-        :rtype: :py:class:`~spinn_machine.SDRAM`
+        :rtype: SDRAM
         :raise None: does not raise any known exceptions
         """
         return self._sdram
@@ -252,6 +251,7 @@ class Chip(object):
         """ The tag IDs supported by this chip
 
         :return: the set of IDs.
+        :rtype: iterable(int)
         :raise None: this method does not raise any exception
         """
         return self._tag_ids
@@ -259,11 +259,13 @@ class Chip(object):
     def get_first_none_monitor_processor(self):
         """ Get the first processor in the list which is not a monitor core
 
-        :return: a processor
+        :return: a processor, if any non-monitor processors exist
+        :rtype: Processor or None
         """
         for processor in self.processors:
             if not processor.is_monitor:
                 return processor
+        return None
 
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors
@@ -271,7 +273,7 @@ class Chip(object):
         :return: An iterable of (processor_id, processor) where:
             * processor_id is the ID of a processor
             * processor is the processor with the ID
-        :rtype: iterable(int,:py:class:`~spinn_machine.Processor`)
+        :rtype: iterable(int,Processor)
         :raise None: does not raise any known exceptions
         """
         return iteritems(self._p)

@@ -40,11 +40,16 @@ def machine_from_size(width, height, chips=None, origin=None):
     no wrap-arounds is assumed.
 
     :param width: The width of the machine excluding any virtual chips
+    :type width: int
     :param height: The height of the machine excluding any virtual chips
+    :type height: int
     :param chips: Any chips to be added.
+    :type chips: list(Chip) or None
     :param origin: Extra information about how this machine was created
         to be used in the str method. Example "Virtual" or "Json"
+    :type origin: str or None
     :return: A subclass of Machine
+    :rtype: Machine
     """
     if chips is None:
         chips = []
@@ -71,7 +76,9 @@ def machine_from_chips(chips):
     :param chips: Full list of all chips on this machine.
         Or at least a list which includes a chip with the highest X and
         one with the highest Y (excluding any virtual chips)
+    :type chips: list(Chip)
     :return: A subclass of Machine
+    :rtype: Machine
     """
     max_x = 0
     max_y = 0
@@ -133,23 +140,27 @@ def _machine_ignore(original, dead_chips, dead_links):
 
 def machine_repair(original, repair_machine=False, removed_chips=tuple()):
     """ Remove chips that can't be reached or that can't reach other chips\
-        due to missing links
+        due to missing links.
 
-        Also Reomve and one way links
+        Also remove any one way links.
+
     :param original: the original machine
+    :type original: Machine
     :param repair_machine: A flag to say if the machine requires unexpected
         repairs.
         It True the unexpected repairs are logged and then done
         If false will raise an exception if the machine needs an unexpected
         repair
     :type repair_machine: bool
-    :param removed_chips: List of chips (x and y cooridinates) that have been
+    :param removed_chips: List of chips (x and y coordinates) that have been
         removed while the machine was being created.
         Oneway links to these chip are expected repairs so always done and
         never logged
-    :raises:SpinnMachineException if repair_machine is false and an unexpected
+    :type removed_chips: list(tuple(int,int))
+    :raises SpinnMachineException: if repair_machine is false and an unexpected
         repair is needed.
     :return: Either the original machine or a repaired replacement
+    :rtype: Machine
     """
     dead_chips = set()
     dead_links = set()
