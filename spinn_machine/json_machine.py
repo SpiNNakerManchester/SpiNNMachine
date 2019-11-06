@@ -45,9 +45,10 @@ OPPOSITE_LINK_OFFSET = 3
 
 def machine_from_json(j_machine):
     """
-    :param j_machine: json description of the machine
+    :param j_machine: JSON description of the machine
     :type j_machine: dict in format returned by json.load or a
-        str representing a path to the json file
+        str representing a path to the JSON file
+    :rtype: Machine
     """
     if isinstance(j_machine, str):
         with open(j_machine) as j_file:
@@ -246,7 +247,8 @@ def to_json(machine):
     """ Runs the code to write the machine in Java readable JSON.
 
     :param machine: Machine to convert
-    :type machine: :py:class:`spinn_machine.machine.Machine`
+    :type machine: Machine
+    :rtype: dict
     """
 
     # Find the std values for one non-ethernet chip to use as standard
@@ -315,9 +317,10 @@ def to_json_path(machine, file_path):
     """ Runs the code to write the machine in Java readable JSON.
 
     :param machine: Machine to convert
-    :type machine: :py:class:`spinn_machine.machine.Machine`
+    :type machine: Machine
     :param file_path: Location to write file to. Warning will overwrite!
     :type file_path: str
+    :rtype: None
     """
     json_obj = to_json(machine)
 

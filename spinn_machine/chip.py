@@ -32,7 +32,7 @@ class Chip(object):
     """
 
     # tag 0 is reserved for stuff like IO STD
-    IPTAG_IDS = OrderedSet(range(1, 8))
+    _IPTAG_IDS = OrderedSet(range(1, 8))
 
     __slots__ = (
         "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
@@ -48,7 +48,7 @@ class Chip(object):
             processors[i] = Processor.factory(i)
         return processors
 
-    DEFAULT_PROCESSORS = default_processors.__func__()
+    _DEFAULT_PROCESSORS = default_processors.__func__()
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, processors, router, sdram, nearest_ethernet_x,
@@ -87,7 +87,7 @@ class Chip(object):
         self._x = x
         self._y = y
         if processors is None:
-            self._p = Chip.DEFAULT_PROCESSORS
+            self._p = Chip._DEFAULT_PROCESSORS
             self._n_user_processors = Machine.MAX_CORES_PER_CHIP - 1
         else:
             self._p = OrderedDict()
@@ -108,7 +108,7 @@ class Chip(object):
         elif self._ip_address is None:
             self._tag_ids = []
         else:
-            self._tag_ids = self.IPTAG_IDS
+            self._tag_ids = self._IPTAG_IDS
         self._virtual = virtual
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
@@ -133,7 +133,7 @@ class Chip(object):
         :type processor_id: int
         :return: \
             the processor with the specified ID, or None if no such processor
-        :rtype: :py:class:`~spinn_machine.Processor`
+        :rtype: Processor
         :raise None: does not raise any known exceptions
         """
         if processor_id in self._p:
@@ -164,8 +164,7 @@ class Chip(object):
     def processors(self):
         """ An iterable of available processors
 
-        :return: iterable of processors
-        :rtype: iterable(:py:class:`~spinn_machine.Processor`)
+        :rtype: iterable(Processor)
         :raise None: does not raise any known exceptions
         """
         return itervalues(self._p)
@@ -173,12 +172,16 @@ class Chip(object):
     @property
     def n_processors(self):
         """ The total number of processors
+
+        :rtype: int
         """
         return len(self._p)
 
     @property
     def n_user_processors(self):
         """ The total number of processors that are not monitors
+
+        :rtype: int
         """
         return self._n_user_processors
 
@@ -197,7 +200,7 @@ class Chip(object):
         """ The router object associated with the chip
 
         :return: router associated with the chip
-        :rtype: :py:class:`~spinn_machine.Router`
+        :rtype: Router
         :raise None: does not raise any known exceptions
         """
         return self._router
@@ -207,7 +210,7 @@ class Chip(object):
         """ The SDRAM associated with the chip
 
         :return: SDRAM associated with the chip
-        :rtype: :py:class:`~spinn_machine.SDRAM`
+        :rtype: SDRAM
         :raise None: does not raise any known exceptions
         """
         return self._sdram
@@ -248,6 +251,7 @@ class Chip(object):
         """ The tag IDs supported by this chip
 
         :return: the set of IDs.
+        :rtype: iterable(int)
         :raise None: this method does not raise any exception
         """
         return self._tag_ids
@@ -255,11 +259,13 @@ class Chip(object):
     def get_first_none_monitor_processor(self):
         """ Get the first processor in the list which is not a monitor core
 
-        :return: a processor
+        :return: a processor, if any non-monitor processors exist
+        :rtype: Processor or None
         """
         for processor in self.processors:
             if not processor.is_monitor:
                 return processor
+        return None
 
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors
@@ -267,7 +273,7 @@ class Chip(object):
         :return: An iterable of (processor_id, processor) where:
             * processor_id is the ID of a processor
             * processor is the processor with the ID
-        :rtype: iterable(int,:py:class:`~spinn_machine.Processor`)
+        :rtype: iterable(int,Processor)
         :raise None: does not raise any known exceptions
         """
         return iteritems(self._p)

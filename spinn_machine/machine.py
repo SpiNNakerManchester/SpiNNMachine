@@ -95,12 +95,15 @@ class Machine(object):
         Use machine_fatcory methods to determine the correct machine class
 
         :param width: The width of the machine excluding any virtual chips
+        :type width: int
         :param height: The height of the machine excluding any virtual chips
+        :type height: int
         :param chips: An iterable of chips in the machine
-        :type chips: iterable of :py:class:`~spinn_machine.Chip`
+        :type chips: iterable(Chip)
         :param origin: Extra information about how this machine was created \
             to be used in the str method. Example "Virtual" or "Json"
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+        :type origin: str
+        :raise SpinnMachineAlreadyExistsException: \
             If any two chips have the same x and y coordinates
         """
         self._width = width
@@ -159,6 +162,7 @@ class Machine(object):
         ethernet chip.
 
         :return: True if this machine can have multiple 48 chip boards
+        :rtype: bool
         """
 
     @abstractmethod
@@ -182,6 +186,7 @@ class Machine(object):
             The y coordinate of a (local 0,0) legal ethernet chip
         :return: Yields the (x, y) coordinates of all the potential chips on \
             this board.
+        :rtype: iterable(tuple(int,int))
         """
 
     @abstractmethod
@@ -201,6 +206,7 @@ class Machine(object):
         :param ethernet_y: \
             The y coordinate of a (local 0,0) legal ethernet chip
         :return: Yields the (x, y) of the down chips on this board.
+        :rtype: iterable(tuple(int,int))
         """
 
     @abstractmethod
@@ -218,6 +224,7 @@ class Machine(object):
         :param ethernet_y: \
             The y coordinate of a (local 0,0) legal ethernet chip
         :return: Yields the chips on this board.
+        :rtype: iterable(Chip)
         """
 
     @abstractmethod
@@ -235,6 +242,7 @@ class Machine(object):
         :param ethernet_y: \
             The y coordinate of a (local 0,0) legal ethernet chip
         :return: Yields the (x,y)s of chips on this board.
+        :rtype: iterable(tuple(int,int))
         """
 
     @abstractmethod
@@ -263,6 +271,7 @@ class Machine(object):
         :param link: The link to another chip that could exist on the machine
         :return: x and y coordinates of the chip over that link if it is \
             valid or some fictional x,y if not.
+        :rtype: tuple(int,int)
         """
 
     @abstractmethod
@@ -278,6 +287,7 @@ class Machine(object):
 
         :param chip: A Chip in the machine
         :return: Local (x, y) coordinates.
+        :rtype: tuple(int,int)
         """
 
     @abstractmethod
@@ -297,6 +307,7 @@ class Machine(object):
         :param ethernet_x: The global ethernet x for the board the chip is on
         :param ethernet_y: The global ethernet y for the board the chip is on
         :return: global (x,y) coordinates of the chip
+        :rtype: tuple(int,int)
         """
 
     @abstractmethod
@@ -318,27 +329,29 @@ class Machine(object):
         From https://github.com/project-rig/rig/blob/master/rig/geometry.py
         Described in http://jhnet.co.uk/articles/torus_paths
 
-        On full wrap-around machines (before minization) the vectors can have
-        any of the 4 combinations of possitive and negative x and y
-        The possitive one is: destination - source % dimension
-        The negative one is: possitive - dimension
+        On full wrap-around machines (before minimisation) the vectors can have
+        any of the 4 combinations of positive and negative x and y
+        The positive one is: `destination - source % dimension`
+        The negative one is: `positive - dimension`
         If source is less than dimension the negative one is the wrap around
-        If destination is greater than source the possitive one wraps
+        If destination is greater than source the positive one wraps
 
         One no wrap or part wrap boards the x/y that does not wrap is just
         destination - source
 
         The length of vectors where both x and y have the same sign will be
-        max(abs(x), abs(y))   As the z direction can be used in minization
+        `max(abs(x), abs(y))`.  As the z direction can be used in minimisation
         The length of vectors where x and y have opposite signs will be
-        abs(x) and abs(y) as these are alread minimum so z is not used.
+        `abs(x)` and `abs(y)` as these are already minimum so z is not used.
 
         GIGO: This method does not check if input parameters make sense,
 
         :param source: (x,y) coordinates of the source chip
         :type source: (int, int)
         :param destination:  (x,y) coordinates of the destination chip
-        :return: The distantance in steps
+        :type destination: (int, int)
+        :return: The distance in steps
+        :rtype: int
         """
 
     @abstractmethod
@@ -382,6 +395,7 @@ class Machine(object):
         An Error is raised if an ethernet chip is not at a local 0,0
         An Error is raised if there is no ethernet chip is at 0,0
         An Error is raised if this is a unexpected multiple board situation
+        :rtype: None
         """
         if self._boot_ethernet_address is None:
             raise SpinnMachineException(
@@ -447,7 +461,7 @@ class Machine(object):
         :type chip: :py:class:`~spinn_machine.Chip`
         :return: Nothing is returned
         :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+        :raise SpinnMachineAlreadyExistsException: \
             If a chip with the same x and y coordinates already exists
         """
         chip_id = (chip.x, chip.y)
@@ -471,6 +485,9 @@ class Machine(object):
             self._maximum_user_cores_on_chip = chip.n_user_processors
 
     def add_virtual_chip(self, chip):
+        """
+        :rtype: None
+        """
         self._virtual_chips.append(chip)
         self.add_chip(chip)
 
@@ -481,7 +498,7 @@ class Machine(object):
         :type chips: iterable(:py:class:`~spinn_machine.Chip`)
         :return: Nothing is returned
         :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+        :raise SpinnMachineAlreadyExistsException: \
             If a chip with the same x and y coordinates as one being added \
             already exists
         """
@@ -637,14 +654,17 @@ class Machine(object):
 
     @property
     def n_chips(self):
+        """ The number of chips in the machine.
+
+        :rtype: int
+        """
         return len(self._chips)
 
     @property
     def ethernet_connected_chips(self):
         """ The chips in the machine that have an Ethernet connection
 
-        :return: An iterable of chips
-        :rtype: iterable of :py:class:`~spinn_machine.Chip`
+        :rtype: iterable(Chip)
         """
         return self._ethernet_connected_chips
 
@@ -652,9 +672,7 @@ class Machine(object):
     def spinnaker_links(self):
         """ The set of SpiNNaker links in the machine
 
-        :return: An iterable of SpiNNaker links
-        :rtype: iterable of\
-            :py:class:`~spinn_machine.link_data_objects.SpinnakerLinkData`
+        :rtype: iterable(~spinn_machine.link_data_objects.SpinnakerLinkData)
         """
         return iteritems(self._spinnaker_links)
 
@@ -705,10 +723,8 @@ class Machine(object):
     def add_spinnaker_links(self):
         """ Add SpiNNaker links that are on a given machine depending on the\
             version of the board.
-
-        :param version_no: which version of board to use
         """
-        if (self._width == self._height == 2):
+        if self._width == self._height == 2:
             chip_0_0 = self.get_chip_at(0, 0)
             if not chip_0_0.router.is_link(3):
                 self._spinnaker_links[chip_0_0.ip_address, 0] = \
@@ -728,11 +744,8 @@ class Machine(object):
     def add_fpga_links(self):
         """ Add FPGA links that are on a given machine depending on the\
             version of the board.
-
-        :param version_no: which version of board to use
         """
-        if (self._width == self._height == 8) or \
-                self.multiple_48_chip_boards():
+        if self._width == self._height == 8 or self.multiple_48_chip_boards():
 
             for ethernet_connected_chip in self._ethernet_connected_chips:
 
@@ -843,7 +856,7 @@ class Machine(object):
     def boot_chip(self):
         """ The chip used to boot the machine
 
-        :rtype: `~py:class:spinn_machine.Chip`
+        :rtype: Chip
         """
         return self._chips[0, 0]
 
@@ -997,6 +1010,9 @@ class Machine(object):
         return removable_coords
 
     def one_way_links(self):
+        """
+        :rtype: iterable(tuple(int,int,int))
+        """
         link_checks = [(0, 3), (1, 4), (2, 5), (3, 0), (4, 1), (5, 2)]
         for chip in self.chips:
             for out, back in link_checks:
@@ -1022,6 +1038,7 @@ class Machine(object):
         :param x:
         :param y:
         :return: (x, y, z) vector
+        :rtype: tuple(int,int,int)
         """
         if x > 0:
             if y > 0:
@@ -1046,6 +1063,9 @@ class Machine(object):
 
     @property
     def virtual_chips(self):
+        """
+        :rtype: iterable(Chip)
+        """
         return itervalues(self._virtual_chips)
 
     @property
@@ -1060,5 +1080,6 @@ class Machine(object):
         has a chip with this local x, y
 
         :return: a list of (x,y) coordinates
+        :rtype: iterable(tuple(int,int))
         """
         return self._local_xys

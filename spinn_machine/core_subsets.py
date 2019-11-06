@@ -28,7 +28,7 @@ class CoreSubsets(object):
     def __init__(self, core_subsets=None):
         """
         :param core_subsets: The cores for each desired chip
-        :type core_subsets: iterable(:py:class:`~spinn_machine.CoreSubset`)
+        :type core_subsets: iterable(CoreSubset)
         """
         self._core_subsets = OrderedDict()
         if core_subsets is not None:
@@ -39,7 +39,7 @@ class CoreSubsets(object):
         """ Add a core subset to the set
 
         :param core_subset: The core subset to add
-        :type core_subset: :py:class:`spinn_machine.CoreSubset`
+        :type core_subset: CoreSubset
         :rtype: None
         """
         x = core_subset.x
@@ -97,6 +97,7 @@ class CoreSubsets(object):
         :type processor_id: int
         :return: Whether there is a chip with coordinates (x, y) in the\
             subset, which has a core with the given ID in the subset
+        :rtype: bool
         """
         xy = (x, y)
         if xy not in self._core_subsets:
@@ -108,7 +109,7 @@ class CoreSubsets(object):
         """ The one-per-chip subsets.
 
         :return: Iterable of core subsets
-        :rtype: iterable(:py:class:`spinn_machine.CoreSubset`)
+        :rtype: iterable(CoreSubset)
         """
         return itervalues(self._core_subsets)
 
@@ -120,7 +121,7 @@ class CoreSubsets(object):
         :param y: The y-coordinate of a chip
         :type y: int
         :return: The core subset of a chip, which will be empty if not added
-        :rtype: :py:class:`~spinn_machine.CoreSubset`
+        :rtype: CoreSubset
         """
         xy = (x, y)
         if xy not in self._core_subsets:
@@ -169,9 +170,9 @@ class CoreSubsets(object):
             other.
 
         :param other: A second CoreSubsets with possibly overlapping cores
-        :type other: :py:class:`spinn_machine.CoreSubsets`
+        :type other: CoreSubsets
         :return: A new CoreSubsets with any overlap
-        :rtype: :py:class:`spinn_machine.CoreSubsets`
+        :rtype: CoreSubsets
         """
         result = CoreSubsets()
         for xy in self._core_subsets:
@@ -183,4 +184,7 @@ class CoreSubsets(object):
         return result
 
     def values(self):
+        """
+        :rtype: iterable(CoreSubset)
+        """
         return self._core_subsets.values()

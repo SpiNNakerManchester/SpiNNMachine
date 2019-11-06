@@ -12,6 +12,8 @@ SpiNNMachine
 ============
 
 .. automodule:: spinn_machine
+  :no-undoc-members:
+  :special-members:
 
 Contents
 --------
@@ -19,7 +21,7 @@ Contents
 .. toctree::
    :maxdepth: 10
 
-   spinn_machine
+   modules
 
 
 Indices and tables

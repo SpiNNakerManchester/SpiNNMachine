@@ -141,6 +141,8 @@ def virtual_machine(
     :type router_entries_per_chip: int
     :param validate: if True will call the machine validate function
     :type validate: bool
+    :returns: a virtual machine (that cannot execute code)
+    :rtype: Machine
     """
 
     factory = _VirtualMachine(
@@ -156,7 +158,11 @@ def virtual_submachine(machine, ethernet_chip):
 
     :param machine: The machine to create the virtual machine from. \
         May be a virtual machine. May be a single-board machine.
+    :type machine: Machine
     :param ethernet_chip: The chip that can talk to the board's ethernet.
+    :type ethernet_chip: Chip
+    :returns: a virtual machine (that cannot execute code)
+    :rtype: Machine
     """
     # build fake setup for the routing
     eth_x = ethernet_chip.x
