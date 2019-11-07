@@ -53,7 +53,7 @@ class Chip(object):
         :type y: int
         :param n_processors: the number of processors including monitor\
             processors.
-        :type n_processors: int        :param processors: an iterable of processor objects
+        :type n_processors: int
         :param router: a router for the chip
         :type router: :py:class:`~spinn_machine.Router`
         :param sdram: an SDRAM for the chip
