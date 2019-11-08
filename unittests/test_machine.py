@@ -50,7 +50,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                     self._nearest_ethernet_chip[0],
                     self._nearest_ethernet_chip[1], None)
 
-    def _create_chips(self, monitor=3):
+    def _create_chips(self):
         chips = list()
         for x in range(5):
             for y in range(5):

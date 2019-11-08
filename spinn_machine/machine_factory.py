@@ -128,7 +128,7 @@ def _machine_ignore(original, dead_chips, dead_links):
             router = Router(links, chip.router.emergency_routing_enabled,
                             chip.router.n_available_multicast_entries)
             chip = Chip(
-                chip.x, chip.y, chip.n_user_processors+1, router, chip.sdram,
+                chip.x, chip.y, chip.n_processors, router, chip.sdram,
                 chip.nearest_ethernet_x, chip.nearest_ethernet_y,
                 chip.ip_address, chip.virtual, chip.tag_ids)
         new_machine.add_chip(chip)
