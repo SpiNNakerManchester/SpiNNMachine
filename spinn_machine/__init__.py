@@ -86,7 +86,7 @@ from .processor import Processor
 from .router import Router
 from .sdram import SDRAM
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
-from .virtual_machine import virtual_machine, virtual_submachine
+from .virtual_machine import virtual_machine
 from .fixed_route_entry import FixedRouteEntry
 from .machine_factory import machine_from_chips, machine_from_size
 
