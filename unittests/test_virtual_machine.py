@@ -18,6 +18,7 @@ from spinn_machine import Link, SDRAM, Router, Chip, virtual_machine
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException,
     SpinnMachineInvalidParameterException)
+from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.machine_factory import machine_repair
 from .geometry import (to_xyz, shortest_mesh_path_length,
                        shortest_torus_path_length, minimise_xyz)
@@ -938,6 +939,45 @@ class TestVirtualMachine(unittest.TestCase):
         new_machine = machine_repair(machine, False, [(3, 3)])
         self.assertIsNotNone(new_machine)
         self.assertFalse(new_machine.is_link_at(2, 2, 1))
+
+    def test_ignores(self):
+        down_chips = IgnoreChip.parse_string("4,4:6,6,ignored_ip")
+        down_chips.add((2, 2))
+
+        down_cores = IgnoreCore.parse_string("3,3,3: 5,5,-5:7,7,7,ignored_ip")
+        down_cores.add((1, 1, 1))
+
+        down_links = IgnoreLink.parse_string("1,3,3:5,3,3,ignored_ip")
+        down_links.add((3, 5, 3))
+
+        machine = virtual_machine(
+            8, 8, down_chips=down_chips, down_cores=down_cores,
+            down_links=down_links)
+
+        self.assertFalse(machine.is_chip_at(4, 4))
+        self.assertFalse(machine.is_chip_at(2, 2))
+        self.assertTrue(machine.is_chip_at(6, 6))
+
+        chip = machine.get_chip_at(3, 3)
+        self.assertFalse(chip.is_processor_with_id(3))
+
+        chip = machine.get_chip_at(5, 5)
+        self.assertFalse(chip.is_processor_with_id(6))
+
+        chip = machine.get_chip_at(7, 7)
+        self.assertTrue(chip.is_processor_with_id(6))
+
+        chip = machine.get_chip_at(1, 1)
+        self.assertFalse(chip.is_processor_with_id(1))
+
+        router = machine.get_chip_at(1, 3).router
+        self.assertFalse(router.is_link(3))
+
+        router = machine.get_chip_at(3, 5).router
+        self.assertFalse(router.is_link(3))
+
+        router = machine.get_chip_at(5, 3).router
+        self.assertTrue(router.is_link(3))
 
 
 if __name__ == '__main__':

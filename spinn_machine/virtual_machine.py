@@ -25,6 +25,7 @@ from .sdram import SDRAM
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .machine_factory import machine_from_size
+from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
 logger = logging.getLogger(__name__)
 
@@ -193,8 +194,8 @@ class _VirtualMachine(object):
     """
 
     __slots__ = (
-        "_down_cores",
-        "_down_links",
+        "_unused_cores",
+        "_unused_links",
         "_n_cpus_per_chip",
         "_n_router_entries_per_router",
         "_machine",
@@ -220,9 +221,6 @@ class _VirtualMachine(object):
         if n_cpus_per_chip is None:
             n_cpus_per_chip = Machine.max_cores_per_chip()
         self._n_router_entries_per_router = router_entries_per_chip
-
-        if down_chips is None:
-            down_chips = []
 
         # Verify the machine
         # Check for not enough info or out of range
@@ -263,15 +261,38 @@ class _VirtualMachine(object):
         self._n_cpus_per_chip = n_cpus_per_chip
 
         # Store the down items
-        self._down_cores = defaultdict(set)
+        unused_chips = []
+        if down_chips is not None:
+            for down_chip in down_chips:
+                if isinstance(down_chip, IgnoreChip):
+                    if down_chip.ip_address is None:
+                        unused_chips.append((down_chip.x, down_chip.y))
+                else:
+                    unused_chips.append((down_chip[0], down_chip[1]))
+
+        self._unused_cores = defaultdict(set)
         if down_cores is not None:
-            for (x, y, p) in down_cores:
-                self._down_cores[(x, y)].add(p)
-        self._down_links = down_links if down_links is not None else set()
+            for down_core in down_cores:
+                if isinstance(down_core, IgnoreCore):
+                    self._unused_cores[(down_core.x, down_core.y)].add(
+                        down_core.virtual_p)
+                else:
+                    self._unused_cores[(down_core[0], down_core[1])].add(
+                        down_core[2])
+
+        self._unused_links = set()
+        if down_links is not None:
+            for down_link in down_links:
+                if isinstance(down_link, IgnoreLink):
+                   if down_link.ip_address is None:
+                       self._unused_links.add(
+                           (down_link.x, down_link.y, down_link.link))
+                else:
+                    self._unused_links.add(
+                        (down_link[0], down_link[1], down_link[2]))
+
         if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
-            self._down_links.update(_VirtualMachine._4_chip_down_links)
-        if down_chips is None:
-            down_chips = []
+            self._unused_links.update(_VirtualMachine._4_chip_down_links)
 
         # Calculate the Ethernet connections in the machine, assuming 48-node
         # boards
@@ -284,7 +305,7 @@ class _VirtualMachine(object):
         configured_chips = dict()
         for (eth_x, eth_y) in ethernet_chips:
             for x_y in self._machine.get_xys_by_ethernet(eth_x, eth_y):
-                if x_y not in down_chips:
+                if x_y not in unused_chips:
                     configured_chips[x_y] = (eth_x, eth_y)
 
         # for chip in self._unreachable_outgoing_chips:
@@ -322,16 +343,17 @@ class _VirtualMachine(object):
 
         (eth_x, eth_y) = configured_chips[(x, y)]
 
+        down_cores = self._unused_cores.get((x, y), None)
         return Chip(
             x, y, self._n_cpus_per_chip, chip_router, sdram, eth_x, eth_y,
-            ip_address)
+            ip_address, down_cores=down_cores)
 
     def _calculate_links(self, x, y, configured_chips):
         """ Calculate the links needed for a machine structure
         """
         links = list()
         for link_id in range(6):
-            if (x, y, link_id) not in self._down_links:
+            if (x, y, link_id) not in self._unused_links:
                 link_x_y = self._machine.xy_over_link(x, y, link_id)
                 if link_x_y in configured_chips:
                     links.append(
