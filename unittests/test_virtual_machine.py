@@ -57,20 +57,10 @@ class TestVirtualMachine(unittest.TestCase):
         with self.assertRaises(SpinnMachineInvalidParameterException):
             virtual_machine(width=2, height=-1)
         with self.assertRaises(SpinnMachineInvalidParameterException):
-            virtual_machine(version=0)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            virtual_machine(version=3, with_wrap_arounds=True)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            virtual_machine(version=3, width=12, height=12)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            virtual_machine(version=5, with_wrap_arounds=True)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            virtual_machine(version=5, width=12, height=12)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            virtual_machine(with_wrap_arounds=True, width=15, height=15)
+            virtual_machine(width=15, height=15)
 
     def test_version_2(self):
-        vm = virtual_machine(version=2, with_wrap_arounds=None)
+        vm = virtual_machine(width=2, height=2)
         self.assertEqual(vm.max_chip_x, 1)
         self.assertEqual(vm.max_chip_y, 1)
         self.assertEqual(4, vm.n_chips)
@@ -118,46 +108,8 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
         self.assertEqual(4, count)
 
-    def test_2_with_wrapparound(self):
-        vm = virtual_machine(
-            height=2, width=2, with_wrap_arounds=True, validate=True)
-        self.assertEqual(vm.max_chip_x, 1)
-        self.assertEqual(vm.max_chip_y, 1)
-        self.assertEqual(4, vm.n_chips)
-        self.assertEqual(1, len(vm.ethernet_connected_chips))
-        self.assertTrue(vm.is_link_at(0, 0, 5))
-        self.assertTrue(vm.is_link_at(0, 1, 2))
-        self.assertTrue(vm.is_link_at(0, 0, 4))
-        self.assertTrue(vm.is_link_at(0, 1, 3))
-
-        # Test that the chip south of 0, 0 is 0, 1 (with wrap around)
-        chip = vm.get_chip_at(0, 0)
-        link = chip.router.get_link(5)
-        self.assertEqual(link.destination_x, 0)
-        self.assertEqual(link.destination_y, 1)
-
-        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
-        self.assertEqual(24, count)
-
-    def test_2_no_wrapparound(self):
-        vm = virtual_machine(
-            height=2, width=2, with_wrap_arounds=False, validate=True)
-        self.assertEqual(vm.max_chip_x, 1)
-        self.assertEqual(vm.max_chip_y, 1)
-        self.assertEqual(4, vm.n_chips)
-        self.assertEqual(1, len(vm.ethernet_connected_chips))
-        self.assertFalse(vm.is_link_at(0, 0, 5))
-        self.assertFalse(vm.is_link_at(0, 1, 2))
-        self.assertFalse(vm.is_link_at(0, 0, 4))
-        self.assertFalse(vm.is_link_at(0, 1, 3))
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
-        self.assertEqual(10, count)
-
     def test_version_5(self):
-        vm = virtual_machine(version=5, validate=True)
+        vm = virtual_machine(width=8, height=8, validate=True)
         self.assertEqual(vm.max_chip_x, 7)
         self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
@@ -168,8 +120,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(240, count)
 
     def test_8_by_8(self):
-        vm = virtual_machine(width=8, height=8, version=None,
-                             with_wrap_arounds=False, validate=True)
+        vm = virtual_machine(width=8, height=8, validate=True)
         self.assertEqual(vm.max_chip_x, 7)
         self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
@@ -181,8 +132,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(240, count)
 
     def test_version_5_guess_12x12(self):
-        vm = virtual_machine(height=12, width=12, version=None,
-                             with_wrap_arounds=None, validate=True)
+        vm = virtual_machine(height=12, width=12, validate=True)
         self.assertEqual(vm.max_chip_x, 11)
         self.assertEqual(vm.max_chip_y, 11)
         self.assertEqual(144, vm.n_chips)
@@ -195,8 +145,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(48, count)
 
     def test_version_5_guess_8x8(self):
-        vm = virtual_machine(height=8, width=8, version=None,
-                             with_wrap_arounds=None, validate=True)
+        vm = virtual_machine(height=8, width=8, validate=True)
         self.assertEqual(vm.max_chip_x, 7)
         self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
@@ -206,7 +155,7 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_version_5_hole(self):
         hole = [(3, 3)]
-        vm = virtual_machine(version=5, down_chips=hole, validate=True)
+        vm = virtual_machine(height=8, width=8, down_chips=hole, validate=True)
         self.assertEqual(vm.max_chip_x, 7)
         self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(47, vm.n_chips)
@@ -273,8 +222,7 @@ class TestVirtualMachine(unittest.TestCase):
     def test_12_n_12_m(self):
         size_x = 12 * 5
         size_y = 12 * 7
-        vm = virtual_machine(size_x, size_y, with_wrap_arounds=True,
-                             validate=True)
+        vm = virtual_machine(size_x, size_y, validate=True)
         self.assertEqual(size_x * size_y, vm.n_chips)
 
     def test_add__chip(self):
@@ -360,7 +308,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(count, 4)
 
     def test_ethernet_chips_exist(self):
-        vm = virtual_machine(width=48, height=24, with_wrap_arounds=True)
+        vm = virtual_machine(width=48, height=24)
         for eth_chip in vm._ethernet_connected_chips:
             self.assertTrue(vm.get_chip_at(eth_chip.x, eth_chip.y),
                             "Eth chip location x={}, y={} not in "
@@ -372,7 +320,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertNotEqual(vm.boot_chip, None)
 
     def test_get_chips_on_boards(self):
-        vm = virtual_machine(width=24, height=36, with_wrap_arounds=True)
+        vm = virtual_machine(width=24, height=36)
         # check each chip appears only once on the entire board
         count00 = 0
         count50 = 0
@@ -405,7 +353,7 @@ class TestVirtualMachine(unittest.TestCase):
         assert(link.connected_link == link_id)
 
     def test_fpga_links_single_board(self):
-        machine = virtual_machine(version=5)
+        machine = virtual_machine(width=8, height=8)
         machine.add_fpga_links()
         self._assert_fpga_link(machine, 0, 0, 7, 3, 0)
         self._assert_fpga_link(machine, 0, 1, 7, 3, 5)
@@ -485,14 +433,14 @@ class TestVirtualMachine(unittest.TestCase):
         down_links = [(x, y, link) for _, _, _, x, y, link in fpga_links]
 
         machine = virtual_machine(
-            width=12, height=12, with_wrap_arounds=True, down_links=down_links)
+            width=12, height=12, down_links=down_links)
         machine.add_fpga_links()
         for ip, fpga, fpga_link, x, y, link in fpga_links:
             self._assert_fpga_link(machine, fpga, fpga_link, x, y, link, ip)
 
     def test_big(self):
         virtual_machine(
-            width=240, height=240, with_wrap_arounds=True, validate=True)
+            width=240, height=240, validate=True)
 
     def test_size_2_2(self):
         machine = virtual_machine(2, 2, validate=True)

@@ -17,9 +17,7 @@ from collections import defaultdict
 import logging
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
-from .full_wrap_machine import FullWrapMachine
 from .machine import Machine
-from .no_wrap_machine import NoWrapMachine
 from .router import Router
 from .sdram import SDRAM
 from .link import Link
@@ -30,67 +28,11 @@ from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 logger = logging.getLogger(__name__)
 
 
-def _verify_basic_sanity(version, width, height):
-    if ((width is not None and width < 0) or
-            (height is not None and height < 0)):
+def _verify_width_height(width, height):
+    if (width < 0 or height < 0):
         raise SpinnMachineInvalidParameterException(
             "width or height", "{} or {}".format(width, height),
             "Negative dimensions are not supported")
-    if version is None and (width is None or height is None):
-        raise SpinnMachineInvalidParameterException(
-            "version, width, height",
-            "{}, {}, {}".format(version, width, height),
-            "Either version must be specified, "
-            "or width and height must both be specified")
-    if version is not None and (version < 2 or version > 5):
-        raise SpinnMachineInvalidParameterException(
-            "version", str(version),
-            "Version must be between 2 and 5 inclusive or None")
-
-
-def _verify_4_chip_board(version, width, height, wrap_arounds):
-    if wrap_arounds is not None:
-        raise SpinnMachineInvalidParameterException(
-            "version and with_wrap_arounds",
-            "{} and {}".format(version, wrap_arounds),
-            "A version {} board has complex wrap-arounds; set version "
-            "to None or with_wrap_arounds to None".format(version))
-    if ((width is not None and width != 2) or
-            (height is not None and height != 2)):
-        raise SpinnMachineInvalidParameterException(
-            "version, width, height",
-            "{}, {}, {}".format(version, width, height),
-            "A version {} board has a width and height of 2; set version "
-            "to None or width and height to None".format(version))
-    if width is None:
-        width = 2
-    if height is None:
-        height = 2
-    return width, height
-
-
-def _verify_48_chip_board(version, width, height, wrap_arounds):
-    if wrap_arounds is not None and wrap_arounds:
-        raise SpinnMachineInvalidParameterException(
-            "version and with_wrap_arounds",
-            "{} and True".format(version),
-            "A version {} board does not have wrap-arounds; set version "
-            "to None or with_wrap_arounds to None".format(version))
-    if ((width is not None and width != 8) or
-            (height is not None and height != 8)):
-        raise SpinnMachineInvalidParameterException(
-            "version, width, height",
-            "{}, {}, {}".format(version, width, height),
-            "A version {} board has a width and height of 8; set version "
-            "to None or width and height to None".format(version))
-    if width is None:
-        width = 8
-    if height is None:
-        height = 8
-    return width, height
-
-
-def _verify_width_height(width, height):
     if (width == height == 2):
         return
     if (width == height == 8):
@@ -108,8 +50,8 @@ def _verify_width_height(width, height):
 
 
 def virtual_machine(
-        width=None, height=None, with_wrap_arounds=None, version=None,
-        n_cpus_per_chip=None, sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
+        width, height, n_cpus_per_chip=None,
+        sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
         down_chips=None, down_cores=None, down_links=None,
         router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
         validate=True):
@@ -118,18 +60,6 @@ def virtual_machine(
     :type width: int
     :param height: the height of the virtual machine in chips
     :type height: int
-    :param with_wrap_arounds: bool defining if wrap around links exist
-        If set a board with the requested wrap around is created
-        regardless of the board size.
-
-        In None the wrap around will be auto detected by machine_factory
-
-        Note: Use either with_wrap_arounds or version but not both
-    :type with_wrap_arounds: bool
-    :param version: the version ID of a board; if None, a machine is\
-        created with the correct dimensions, otherwise the machine will be\
-        a single board of the given version.
-    :type version: int
     :param n_cpus_per_chip: The number of CPUs to put on each chip
     :type n_cpus_per_chip: int
     :param sdram_per_chip: The amount of SDRAM to give to each chip
@@ -146,8 +76,8 @@ def virtual_machine(
         n_cpus_per_chip = Machine.max_cores_per_chip()
 
     factory = _VirtualMachine(
-        width, height, with_wrap_arounds, version, n_cpus_per_chip,
-        sdram_per_chip, down_chips, down_cores, down_links,
+        width, height, n_cpus_per_chip,  sdram_per_chip,
+        down_chips, down_cores, down_links,
         router_entries_per_chip, validate)
     return factory.machine
 
@@ -211,8 +141,7 @@ class _VirtualMachine(object):
 
     # pylint: disable=too-many-arguments
     def __init__(
-            self, width=None, height=None, with_wrap_arounds=False,
-            version=None, n_cpus_per_chip=None,
+            self, width, height, n_cpus_per_chip=None,
             sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
             down_chips=None, down_cores=None, down_links=None,
             router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
@@ -222,39 +151,8 @@ class _VirtualMachine(object):
             n_cpus_per_chip = Machine.max_cores_per_chip()
         self._n_router_entries_per_router = router_entries_per_chip
 
-        # Verify the machine
-        # Check for not enough info or out of range
-        _verify_basic_sanity(version, width, height)
-
-        # Version 2/3
-        if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
-            width, height = _verify_4_chip_board(
-                version, width, height, with_wrap_arounds)
-            self._machine = machine_from_size(
-                width, height, origin=self.ORIGIN)
-        # Version 4/5
-        elif version in Machine.BOARD_VERSION_FOR_48_CHIPS:
-            width, height = _verify_48_chip_board(
-                version, width, height, with_wrap_arounds)
-            self._machine = machine_from_size(
-                width, height, origin=self.ORIGIN)
-        # Autodetect
-        elif version is None:
-            _verify_width_height(width, height)
-            if with_wrap_arounds is None:
-                self._machine = machine_from_size(
-                    width, height, origin=self.ORIGIN)
-            elif with_wrap_arounds:
-                self._machine = FullWrapMachine(
-                    width, height, origin=self.ORIGIN)
-            else:
-                self._machine = NoWrapMachine(
-                    width, height, origin=self.ORIGIN)
-        else:
-            raise SpinnMachineInvalidParameterException(
-                "version",
-                version,
-                "The only supported version numbers are 2, 3, 4, 5")
+        _verify_width_height(width, height)
+        self._machine = machine_from_size(width, height, origin=self.ORIGIN)
 
         # Store the details
         self._sdram_per_chip = sdram_per_chip
@@ -291,7 +189,7 @@ class _VirtualMachine(object):
                     self._unused_links.add(
                         (down_link[0], down_link[1], down_link[2]))
 
-        if version in Machine.BOARD_VERSION_FOR_4_CHIPS:
+        if width == 2:  # Already checked height is now also 2
             self._unused_links.update(_VirtualMachine._4_chip_down_links)
 
         # Calculate the Ethernet connections in the machine, assuming 48-node
