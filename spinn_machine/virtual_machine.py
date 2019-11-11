@@ -145,9 +145,9 @@ class _VirtualMachine(object):
         if down_links is not None:
             for down_link in down_links:
                 if isinstance(down_link, IgnoreLink):
-                   if down_link.ip_address is None:
-                       self._unused_links.add(
-                           (down_link.x, down_link.y, down_link.link))
+                    if down_link.ip_address is None:
+                        self._unused_links.add(
+                            (down_link.x, down_link.y, down_link.link))
                 else:
                     self._unused_links.add(
                         (down_link[0], down_link[1], down_link[2]))

@@ -73,7 +73,8 @@ class IgnoreChip(object):
             <chip_x> is the x-coordinate of a down chip
             <chip_x> is the y-coordinate of a down chip
             <ip> is an OPTIONAL ip address in the 127.0.0.0 format.
-        If provided the <chip_x> <chip_y> will be considered local to the board with this ip address
+        If provided the <chip_x> <chip_y> will be considered local to the\
+        board with this ip address
 
         The string None (case insentitive) is used to represent no ignores
 
