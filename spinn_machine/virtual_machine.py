@@ -29,10 +29,18 @@ logger = logging.getLogger(__name__)
 
 
 def _verify_width_height(width, height):
-    if (width < 0 or height < 0):
-        raise SpinnMachineInvalidParameterException(
-            "width or height", "{} or {}".format(width, height),
-            "Negative dimensions are not supported")
+    try:
+        if (width < 0 or height < 0):
+            raise SpinnMachineInvalidParameterException(
+                "width or height", "{} and {}".format(width, height),
+                "Negative dimensions are not supported")
+    except TypeError:
+        if width is None or height is None:
+            raise SpinnMachineInvalidParameterException(
+                "width or height", "{} and {}".format(width, height),
+                "parameter required")
+        raise
+
     if (width == height == 2):
         return
     if (width == height == 8):
