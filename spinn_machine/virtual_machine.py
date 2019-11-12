@@ -135,8 +135,9 @@ class _VirtualMachine(object):
         if down_cores is not None:
             for down_core in down_cores:
                 if isinstance(down_core, IgnoreCore):
-                    self._unused_cores[(down_core.x, down_core.y)].add(
-                        down_core.virtual_p)
+                    if down_core.ip_address is None:
+                        self._unused_cores[(down_core.x, down_core.y)].add(
+                            down_core.virtual_p)
                 else:
                     self._unused_cores[(down_core[0], down_core[1])].add(
                         down_core[2])
