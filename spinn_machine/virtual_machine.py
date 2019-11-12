@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 def _verify_width_height(width, height):
     try:
-        if (width < 0 or height < 0):
+        if width < 0 or height < 0:
             raise SpinnMachineInvalidParameterException(
                 "width or height", "{} and {}".format(width, height),
                 "Negative dimensions are not supported")
@@ -41,16 +41,16 @@ def _verify_width_height(width, height):
                 "parameter required")
         raise
 
-    if (width == height == 2):
+    if width == height == 2:
         return
-    if (width == height == 8):
+    if width == height == 8:
         return
-    if (width % 12 != 0) and (width - 4) % 12 != 0:
+    if width % 12 != 0 and (width - 4) % 12 != 0:
         raise SpinnMachineInvalidParameterException(
             "width", width,
             "A virtual machine must have a width that is divisible by 12 or "
             "width - 4 that is divisible by 12")
-    if (height % 12 != 0) and (height - 4) % 12 != 0:
+    if height % 12 != 0 and (height - 4) % 12 != 0:
         raise SpinnMachineInvalidParameterException(
             "height", height,
             "A virtual machine must have a height that is divisible by 12 or "
