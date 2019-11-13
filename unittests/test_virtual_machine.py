@@ -14,8 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from spinn_machine import Link, SDRAM, Router, Chip, virtual_machine, Machine, \
-    machine_from_size
+from spinn_machine import (Chip, Link, Machine, machine_from_size, Router,
+                           SDRAM, virtual_machine)
+
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException,
     SpinnMachineInvalidParameterException)
@@ -932,27 +933,21 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_n_cores_full_wrap(self):
         machine = virtual_machine(12, 12)
-        n_cores = sum(chip.n_processors for chip in machine.chips)
         n_cores = sum(
             n_cores
             for (_, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
         self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
-
-    def test_n_cores_full_wrap(self):
-        machine = virtual_machine(12, 12)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        n_cores = sum(
-            n_cores
-            for (_, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
 
     def test_n_cores_no_wrap(self):
         machine = virtual_machine(16, 16)
-        n_cores = sum(chip.n_processors for chip in machine.chips)
         n_cores = sum(
             n_cores
             for (_, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
         self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+        n_cores = sum(chip.n_processors for chip in machine.chips)
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
 
     def test_n_cores_horizontal_wrap(self):
         machine = virtual_machine(12, 16)
@@ -976,7 +971,7 @@ class TestVirtualMachine(unittest.TestCase):
             cores for (_, cores) in machine.get_xy_cores_by_ethernet(0, 0))
         self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD )
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
 
     def test_n_cores_2_2(self):
         machine = virtual_machine(2, 2)

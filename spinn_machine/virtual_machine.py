@@ -17,7 +17,6 @@ from collections import defaultdict
 import logging
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
-from .machine import Machine
 from .router import Router
 from .sdram import SDRAM
 from .link import Link
@@ -170,8 +169,8 @@ class _VirtualMachine(object):
             for (eth_x, eth_y) in ethernet_chips:
                 for (x_y, n_cores) in self._machine.get_xy_cores_by_ethernet(
                         eth_x, eth_y):
-                   if x_y not in unused_chips:
-                       configured_chips[x_y] = (eth_x, eth_y, n_cores)
+                    if x_y not in unused_chips:
+                        configured_chips[x_y] = (eth_x, eth_y, n_cores)
         else:
             for (eth_x, eth_y) in ethernet_chips:
                 for x_y in self._machine.get_xys_by_ethernet(eth_x, eth_y):
