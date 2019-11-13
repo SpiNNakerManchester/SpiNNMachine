@@ -80,9 +80,6 @@ def virtual_machine(
     :rtype: Machine
     """
 
-    if n_cpus_per_chip is None:
-        n_cpus_per_chip = Machine.max_cores_per_chip()
-
     factory = _VirtualMachine(
         width, height, n_cpus_per_chip,  sdram_per_chip,
         down_chips, down_cores, down_links,
@@ -97,7 +94,6 @@ class _VirtualMachine(object):
     __slots__ = (
         "_unused_cores",
         "_unused_links",
-        "_n_cpus_per_chip",
         "_n_router_entries_per_router",
         "_machine",
         "_sdram_per_chip",
@@ -118,8 +114,6 @@ class _VirtualMachine(object):
             router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
             validate=True):
 
-        if n_cpus_per_chip is None:
-            n_cpus_per_chip = Machine.max_cores_per_chip()
         self._n_router_entries_per_router = router_entries_per_chip
 
         _verify_width_height(width, height)
@@ -127,7 +121,6 @@ class _VirtualMachine(object):
 
         # Store the details
         self._sdram_per_chip = sdram_per_chip
-        self._n_cpus_per_chip = n_cpus_per_chip
 
         # Store the down items
         unused_chips = []
@@ -173,19 +166,26 @@ class _VirtualMachine(object):
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
         configured_chips = dict()
-        for (eth_x, eth_y) in ethernet_chips:
-            for x_y in self._machine.get_xys_by_ethernet(eth_x, eth_y):
-                if x_y not in unused_chips:
-                    configured_chips[x_y] = (eth_x, eth_y)
+        if n_cpus_per_chip is None:
+            for (eth_x, eth_y) in ethernet_chips:
+                for (x_y, n_cores) in self._machine.get_xy_cores_by_ethernet(
+                        eth_x, eth_y):
+                   if x_y not in unused_chips:
+                       configured_chips[x_y] = (eth_x, eth_y, n_cores)
+        else:
+            for (eth_x, eth_y) in ethernet_chips:
+                for x_y in self._machine.get_xys_by_ethernet(eth_x, eth_y):
+                    if x_y not in unused_chips:
+                        configured_chips[x_y] = (eth_x, eth_y, n_cpus_per_chip)
 
         # for chip in self._unreachable_outgoing_chips:
         #    configured_chips.remove(chip)
         # for chip in self._unreachable_incoming_chips:
         #    configured_chips.remove(chip)
 
-        for xy in configured_chips:
-            x, y = xy
-            if configured_chips[xy] == xy:
+        for x_y in configured_chips:
+            x, y = x_y
+            if x_y in ethernet_chips:
                 new_chip = self._create_chip(
                     x, y, configured_chips, "127.0.{}.{}".format(x, y))
             else:
@@ -211,11 +211,11 @@ class _VirtualMachine(object):
         else:
             sdram = SDRAM(self._sdram_per_chip)
 
-        (eth_x, eth_y) = configured_chips[(x, y)]
+        (eth_x, eth_y, n_cores) = configured_chips[(x, y)]
 
         down_cores = self._unused_cores.get((x, y), None)
         return Chip(
-            x, y, self._n_cpus_per_chip, chip_router, sdram, eth_x, eth_y,
+            x, y, n_cores, chip_router, sdram, eth_x, eth_y,
             ip_address, down_cores=down_cores)
 
     def _calculate_links(self, x, y, configured_chips):
