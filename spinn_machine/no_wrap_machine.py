@@ -42,6 +42,19 @@ class NoWrapMachine(Machine):
         for (x, y) in self._local_xys:
             yield (x + ethernet_x, y + ethernet_y)
 
+    @overrides(Machine.get_xy_cores_by_ethernet)
+    def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
+        if (self._width == self._height == 8) or \
+                self.multiple_48_chip_boards():
+            for (x, y), n_cores in self.CHIPS_PER_BOARD.items():
+                # if ethernet_x/y != 0 GIGO mode so ignore ethernet
+                yield (x, y, n_cores)
+        else:
+            # covers 4 chip and weird sizes
+            n_cores = Machine.max_cores_per_chip()
+            for (x, y) in self._local_xys:
+                yield(x + ethernet_x, y + ethernet_y, n_cores)
+
     @overrides(Machine.get_chips_by_ethernet)
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:

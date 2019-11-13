@@ -53,7 +53,7 @@ class Machine(object):
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
-    CHIPS_PER_BAORD = {
+    CHIPS_PER_BOARD = {
         (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,
         (1, 2): 18, (1, 3): 17, (1, 4): 18, (2, 0): 18, (2, 1): 18, (2, 2): 18,
         (2, 3): 18, (2, 4): 18, (2, 5): 18, (3, 0): 18, (3, 1): 17, (3, 2): 18,
@@ -63,7 +63,7 @@ class Machine(object):
         (5, 7): 18, (6, 2): 18, (6, 3): 18, (6, 4): 18, (6, 5): 18, (6, 6): 18,
         (6, 7): 18, (7, 3): 18, (7, 4): 18, (7, 5): 18, (7, 6): 18, (7, 7): 18
     }
-    BOARD_48_CHIPS = list(CHIPS_PER_BAORD.keys())
+    BOARD_48_CHIPS = list(CHIPS_PER_BOARD.keys())
 
     __slots__ = (
         "_boot_ethernet_address",
@@ -227,6 +227,38 @@ class Machine(object):
             The y coordinate of a (local 0,0) legal ethernet chip
         :return: Yields the (x, y) coordinates of all the potential chips on \
             this board.
+        :rtype: iterable(tuple(int,int))
+        """
+
+    @abstractmethod
+    def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
+        """
+        Yields the potential x,y locations and the typical number of cores
+        of all the chips on the board with this ethernet.
+
+        Includes the Ethernet chip itself.
+
+        Wrap-arounds are handled as appropriate.
+
+        Note: This method does not check if the chip actually exists,
+        nor report the actual number of cores on this chip, as is
+        intended to be called to create the chips.
+
+        The number of cores is based on the 1,000,000 core machine where the
+        board where built with the the 17 core chips placed in the same
+        location on nearly every board.
+
+        Warning: GIGO! This methods assumes that ethernet_x and ethernet_y are
+        the local 0,0 of an existing board, within the width and height of the
+        machine.
+
+        :param ethernet_x: \
+            The x coordinate of a (local 0,0) legal ethernet chip
+        :param ethernet_y: \
+            The y coordinate of a (local 0,0) legal ethernet chip
+        :return: Yields (x, y, n_cores) where x , y are coordinates of all \
+            the potential chips on this board, and n_cores is the typcial \
+            number of cores for a chip in that possition.
         :rtype: iterable(tuple(int,int))
         """
 

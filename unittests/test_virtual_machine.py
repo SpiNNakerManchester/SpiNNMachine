@@ -14,7 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from spinn_machine import Link, SDRAM, Router, Chip, virtual_machine
+from spinn_machine import Link, SDRAM, Router, Chip, virtual_machine, Machine, \
+    machine_from_size
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException,
     SpinnMachineInvalidParameterException)
@@ -25,6 +26,8 @@ from .geometry import (to_xyz, shortest_mesh_path_length,
 
 
 class TestVirtualMachine(unittest.TestCase):
+
+    TYPICAL_N_CORES_PER_BOARD = sum(Machine.CHIPS_PER_BOARD.values())
 
     def _create_chip(self, x, y):
         # Create a list of processors.
@@ -581,7 +584,7 @@ class TestVirtualMachine(unittest.TestCase):
             assert xy not in hole
         self.assertEqual(46, count)
 
-    def test_vertical_wrap_holes(self):
+    def test_horizontal_wrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 13), (8, 10), (1, 8), (9, 6)]
         machine = virtual_machine(12, 16, down_chips=hole, validate=True)
         # Board 0,0
@@ -629,7 +632,7 @@ class TestVirtualMachine(unittest.TestCase):
             assert xy not in hole
         self.assertEqual(46, count)
 
-    def test_horizontal_wrap_holes(self):
+    def test_vertical_wrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 1), (8, 10), (13, 8), (9, 6)]
         machine = virtual_machine(16, 12, down_chips=hole, validate=True)
         # Board 0,0
@@ -926,6 +929,65 @@ class TestVirtualMachine(unittest.TestCase):
 
         router = machine.get_chip_at(5, 3).router
         self.assertTrue(router.is_link(3))
+
+    def test_n_cores_full_wrap(self):
+        machine = virtual_machine(12, 12)
+        n_cores = sum(chip.n_processors for chip in machine.chips)
+        n_cores = sum(
+            n_cores
+            for (_, _, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+
+    def test_n_cores_full_wrap(self):
+        machine = virtual_machine(12, 12)
+        n_cores = sum(chip.n_processors for chip in machine.chips)
+        n_cores = sum(
+            n_cores
+            for (_, _, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+
+    def test_n_cores_no_wrap(self):
+        machine = virtual_machine(16, 16)
+        n_cores = sum(chip.n_processors for chip in machine.chips)
+        n_cores = sum(
+            n_cores
+            for (_, _, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+
+    def test_n_cores_horizontal_wrap(self):
+        machine = virtual_machine(12, 16)
+        n_cores = sum(chip.n_processors for chip in machine.chips)
+        n_cores = sum(
+            n_cores
+            for (_, _, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+
+    def test_n_cores_vertical_wrap(self):
+        machine = virtual_machine(12, 16)
+        n_cores = sum(chip.n_processors for chip in machine.chips)
+        n_cores = sum(
+            cores for (_, _, cores) in machine.get_xy_cores_by_ethernet(0, 0))
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+
+    def test_n_cores_8_8(self):
+        machine = virtual_machine(8, 8)
+        n_cores = sum(chip.n_processors for chip in machine.chips)
+        n_cores = sum(
+            cores for (_, _, cores) in machine.get_xy_cores_by_ethernet(0, 0))
+        self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+
+    def test_n_cores_2_2(self):
+        machine = virtual_machine(2, 2)
+        n_cores = sum(chip.n_processors for chip in machine.chips)
+        n_cores = sum(
+            cores for (_, _, cores) in machine.get_xy_cores_by_ethernet(0, 0))
+        self.assertEquals(n_cores, 4 * 18)
+
+    def test_n_cores_weird(self):
+        machine = machine_from_size(5, 5)
+        n_cores = sum(
+            cores for (_, _, cores) in machine.get_xy_cores_by_ethernet(0, 0))
+        self.assertEquals(n_cores, 5 * 5 * 18)
 
 
 if __name__ == '__main__':

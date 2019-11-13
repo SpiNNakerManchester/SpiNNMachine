@@ -45,6 +45,11 @@ class HorizontalWrapMachine(Machine):
             chip_y = (y + ethernet_y)
             yield (chip_x, chip_y)
 
+    @overrides(Machine.get_xy_cores_by_ethernet)
+    def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
+        for (x, y), n_cores in self.CHIPS_PER_BOARD.items():
+            yield((x + ethernet_x) % self._width, (y + ethernet_y), n_cores)
+
     @overrides(Machine.get_chips_by_ethernet)
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:
