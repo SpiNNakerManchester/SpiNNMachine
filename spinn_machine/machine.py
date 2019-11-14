@@ -36,7 +36,8 @@ class Machine(object):
     # current opinions is that the Ethernet connected chip can handle 10
     # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
-    MAX_CORES_PER_CHIP = 18
+    DEFAULT_MAX_CORES_PER_CHIP = 18
+    __max_cores = None
     MAX_CHIPS_PER_48_BOARD = 48
     MAX_CHIPS_PER_4_CHIP_BOARD = 4
     BOARD_VERSION_FOR_48_CHIPS = [4, 5]
@@ -52,14 +53,17 @@ class Machine(object):
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
-    BOARD_48_CHIPS = [
-        (0, 0), (0, 1), (0, 2), (0, 3), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4),
-        (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2),
-        (3, 3), (3, 4), (3, 5), (3, 6), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4),
-        (4, 5), (4, 6), (4, 7), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6),
-        (5, 7), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 7), (7, 3), (7, 4),
-        (7, 5), (7, 6), (7, 7)
-    ]
+    CHIPS_PER_BAORD = {
+        (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,
+        (1, 2): 18, (1, 3): 17, (1, 4): 18, (2, 0): 18, (2, 1): 18, (2, 2): 18,
+        (2, 3): 18, (2, 4): 18, (2, 5): 18, (3, 0): 18, (3, 1): 17, (3, 2): 18,
+        (3, 3): 17, (3, 4): 18, (3, 5): 17, (3, 6): 18, (4, 0): 18, (4, 1): 18,
+        (4, 2): 18, (4, 3): 18, (4, 4): 18, (4, 5): 18, (4, 6): 18, (4, 7): 18,
+        (5, 1): 18, (5, 2): 17, (5, 3): 18, (5, 4): 17, (5, 5): 18, (5, 6): 17,
+        (5, 7): 18, (6, 2): 18, (6, 3): 18, (6, 4): 18, (6, 5): 18, (6, 6): 18,
+        (6, 7): 18, (7, 3): 18, (7, 4): 18, (7, 5): 18, (7, 6): 18, (7, 7): 18
+    }
+    BOARD_48_CHIPS = list(CHIPS_PER_BAORD.keys())
 
     __slots__ = (
         "_boot_ethernet_address",
@@ -87,6 +91,43 @@ class Machine(object):
         # This can not be changed
         "_width"
     )
+
+    @staticmethod
+    def max_cores_per_chip():
+        """
+        Gets the max core per chip for the while system.
+
+        There is no guarantee that there will be any Chips with this many\
+        cores, only that there will be no cores with more.
+
+        :return: the default cores per chip unless overridden by set
+        """
+        if Machine.__max_cores is None:
+            Machine.__max_cores = Machine.DEFAULT_MAX_CORES_PER_CHIP
+        return Machine.__max_cores
+
+    @staticmethod
+    def set_max_cores_per_chip(new_max):
+        """
+        Allows setting the max number of cores per chip for the whole system.
+
+        Allows virtual machines to go higher than normal.
+
+        Real machines can only be capped never increased beyond what they
+        actually have.
+
+        :param new_max: New value to use for the max
+        :raises: SpinnMachineException if max_cores_per_chip has already been\
+            used and is now being changed.\
+            The Exception also happens if the value is set twice to difference\
+            values. For example in the script and in the config.
+        """
+        if Machine.__max_cores is None:
+            Machine.__max_cores = new_max
+        elif Machine.__max_cores != new_max:
+            raise SpinnMachineException(
+                "max_cores_per_chip has already been accessed "
+                "so can not be changed.")
 
     def __init__(self, width, height, chips=None, origin=None):
         """

@@ -15,8 +15,7 @@
 
 import unittest
 from spinn_utilities.ordered_set import OrderedSet
-from spinn_machine import Processor, Link, SDRAM, Router, Chip
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine import Link, SDRAM, Router, Chip
 
 
 class TestingChip(unittest.TestCase):
@@ -26,14 +25,7 @@ class TestingChip(unittest.TestCase):
         self._y = 1
 
         # create processor
-        self._monitor_id = 3
-        flops = 1000
-        self._processors = list()
-        for i in range(18):
-            if i == self._monitor_id:
-                self._processors.append(Processor(i, flops, is_monitor=True))
-            else:
-                self._processors.append(Processor(i, flops))
+        self.n_processors = 18
 
         # create router
         links = list()
@@ -47,13 +39,10 @@ class TestingChip(unittest.TestCase):
         self._ip = "192.162.240.253"
 
     def _create_chip(self, x, y, processors, r, sdram, ip):
-        nearest_ethernet_chip = (0, 0)
-
-        return Chip(x, y, processors, r, sdram, nearest_ethernet_chip[0],
-                    nearest_ethernet_chip[1], ip)
+        return Chip(x, y, processors, r, sdram, 0, 0, ip)
 
     def test_create_chip(self):
-        new_chip = self._create_chip(self._x, self._y, self._processors,
+        new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
 
         self.assertEqual(new_chip.x, self._x)
@@ -61,16 +50,10 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(new_chip.ip_address, self._ip)
         self.assertEqual(new_chip.sdram, self._sdram)
         self.assertEqual(new_chip.router, self._router)
-        for p in self._processors:
-            # warning the chip will clone a processor if it changes it
-            # For example if reserve_a_system_processor() is called
-            self.assertTrue(p in new_chip.processors)
-            self.assertTrue(p.processor_id in new_chip)
-            self.assertEqual(new_chip[p.processor_id], p)
-        self.assertEqual(new_chip.n_user_processors,
-                         len(self._processors) - 1)
+        self.assertEqual(new_chip.n_user_processors, self.n_processors - 1)
         with self.assertRaises(KeyError):
             self.assertIsNone(new_chip[42])
+        print(new_chip.__repr__())
         self.assertEqual(
             new_chip.__repr__(),
             "[Chip: x=0, y=1, sdram=0 MB, ip_address=192.162.240.253, "
@@ -85,24 +68,24 @@ class TestingChip(unittest.TestCase):
             "[Link: source_x=1, source_y=0, source_link_id=3, "
             "destination_x=0, destination_y=1]"
             "]], processors=["
-            "[CPU: id=0, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=1, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=2, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=3, clock_speed=0 MHz, monitor=True], "
-            "[CPU: id=4, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=5, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=6, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=7, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=8, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=9, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=10, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=11, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=12, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=13, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=14, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=15, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=16, clock_speed=0 MHz, monitor=False], "
-            "[CPU: id=17, clock_speed=0 MHz, monitor=False]], "
+            "[CPU: id=0, clock_speed=200 MHz, monitor=True], "
+            "[CPU: id=1, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=2, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=3, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=4, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=5, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=6, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=7, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=8, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=9, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=10, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=11, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=12, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=13, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=14, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=15, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=16, clock_speed=200 MHz, monitor=False], "
+            "[CPU: id=17, clock_speed=200 MHz, monitor=False]], "
             "nearest_ethernet=0:0]")
         self.assertEqual(new_chip.tag_ids, OrderedSet([1, 2, 3, 4, 5, 6, 7]))
         self.assertFalse(new_chip.virtual)
@@ -111,28 +94,16 @@ class TestingChip(unittest.TestCase):
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
         self.assertEqual(
             [p[1].is_monitor for p in new_chip],
-            [False, False, False, True, False, False, False, False, False,
+            [True, False, False, False, False, False, False, False, False,
              False, False, False, False, False, False, False, False, False])
         self.assertTrue(new_chip.is_processor_with_id(3))
-
-    def test_create_chip_with_duplicate_processors(self):
-        flops = 1000
-
-        processors = list()
-        for i in range(18):
-            processors.append(Processor(i, flops))
-        processors.append(Processor(10, flops + 1))
-
-        with self.assertRaises(SpinnMachineAlreadyExistsException):
-            self._create_chip(self._x, self._y, processors, self._router,
-                              self._sdram, self._ip)
 
     def test_get_first_none_monitor_processor(self):
         """ test the get_first_none_monitor_processor
 
         NOTE: Not sure if method being tested is required.
         """
-        new_chip = self._create_chip(self._x, self._y, self._processors,
+        new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
         non_monitor = new_chip.get_first_none_monitor_processor()
         self.assertFalse(non_monitor.is_monitor)
