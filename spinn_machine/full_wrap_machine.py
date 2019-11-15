@@ -45,6 +45,18 @@ class FullWrapMachine(Machine):
             chip_y = (y + ethernet_y) % self._height
             yield (chip_x, chip_y)
 
+    @overrides(Machine.get_xy_cores_by_ethernet)
+    def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
+        if (self._width == self._height == 2):
+            n_cores = Machine.max_cores_per_chip()
+            for (x, y) in self._local_xys:
+                # if ethernet_x/y != 0 GIGO mode so ignore ethernet
+                yield (x, y), n_cores
+        else:
+            for (x, y), n_cores in self.CHIPS_PER_BOARD.items():
+                yield(((x + ethernet_x) % self._width,
+                      (y + ethernet_y) % self._height), n_cores)
+
     @overrides(Machine.get_chips_by_ethernet)
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:
