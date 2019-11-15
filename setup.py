@@ -71,7 +71,7 @@ setup(
     ],
     packages=packages,
     package_data=package_data,
-    install_requires=['SpiNNUtilities >= 1!5.0.1, < 1!6.0.0',
+    install_requires=['SpiNNUtilities >= 1!5.1.0, < 1!6.0.0',
                       'six'],
     maintainer="SpiNNakerTeam",
     maintainer_email="spinnakerusers@googlegroups.com"
