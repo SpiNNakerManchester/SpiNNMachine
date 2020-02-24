@@ -50,14 +50,6 @@ class MulticastRoutingEntry(object):
         self._mask = mask
         self._defaultable = defaultable
 
-        if (routing_entry_key & mask) != routing_entry_key:
-            raise SpinnMachineInvalidParameterException(
-                "key_mask_combo and mask",
-                "{} and {}".format(routing_entry_key, mask),
-                "The key combo is changed when masked with the mask. This"
-                " is determined to be an error in the tool chain. Please "
-                "correct this and try again.")
-
         # Add processor IDs, checking that there is only one of each
         if spinnaker_route is None:
             self._processor_ids = set()
