@@ -33,8 +33,8 @@ class TestingRouter(unittest.TestCase):
             self.assertTrue(i in r)
             self.assertEqual(r.get_link(i), links[i])
             self.assertEqual(r[i], links[i])
-        self.assertEqual([l[0] for l in r], [0, 1, 2, 3])
-        self.assertEqual([l[1].source_link_id for l in r], [0, 1, 2, 3])
+        self.assertEqual([link[0] for link in r], [0, 1, 2, 3])
+        self.assertEqual([link[1].source_link_id for link in r], [0, 1, 2, 3])
 
         self.assertFalse(r.emergency_routing_enabled)
         self.assertEqual(r.n_available_multicast_entries, 1024)
