@@ -874,7 +874,7 @@ class TestVirtualMachine(unittest.TestCase):
     def test_oneway_link_no_repair(self):
         machine = virtual_machine(8, 8)
 
-        # Delete links incoming to 3, 3
+        # Delete some random links
         down_links = [
             (3, 6, 0), (5, 4, 1), (3, 2, 5), (1, 3, 3)]
         for (x, y, link) in down_links:

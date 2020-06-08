@@ -24,10 +24,11 @@ from .exceptions import SpinnMachineException
 
 logger = logging.getLogger(__name__)
 
-BAD_MSG = "Your machine has {} at {} on board {} which will cause " \
-          "algorithms to fail. " \
-          "Please report this to spinnakerusers@googlegroups.com "
-
+BAD_MSG = (
+    "Your machine has {} at {} on board {} which will cause algorithms to"
+    "fail. Please report this to spinnakerusers@googlegroups.com \n\n")
+ONE_LINK_MSG = (
+    "Link from chip {}:{} to {}:{} does not exist, but the opposite does.")
 
 def machine_from_size(width, height, chips=None, origin=None):
     """
@@ -164,6 +165,10 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
     """
     dead_chips = set()
     dead_links = set()
+
+    # holder for error message
+    error_message = ""
+
     for xy in original.unreachable_incoming_local_chips():
         chip = original.get_chip_at(xy[0], xy[1])
         error_xy = original.get_local_xy(chip)
@@ -175,7 +180,8 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
             dead_chips.add(xy)
             logger.warning(msg)
         else:
-            raise SpinnMachineException(msg)
+            logger.error(msg)
+            error_message += msg
     for xy in original.unreachable_outgoing_local_chips():
         chip = original.get_chip_at(xy[0], xy[1])
         error_xy = original.get_local_xy(chip)
@@ -187,7 +193,8 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
             dead_chips.add(xy)
             logger.warning(msg)
         else:
-            raise SpinnMachineException(msg)
+            logger.error(msg)
+            error_message += msg
     for xyd in original.one_way_links():
         target = original.xy_over_link(xyd[0], xyd[1], xyd[2])
         if target in removed_chips:
@@ -195,7 +202,8 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
         else:
             chip = original.get_chip_at(xyd[0], xyd[1])
             local_x, local_y = original.get_local_xy(chip)
-            error_xyd = (local_x, local_y, xyd[2])
+            error_xyd = ONE_LINK_MSG.format(
+                target[0], target[1], local_x, local_y)
             ethernet = original.get_chip_at(
                 chip.nearest_ethernet_x, chip.nearest_ethernet_y)
             msg = BAD_MSG.format(
@@ -204,8 +212,14 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
                 dead_links.add(xyd)
                 logger.warning(msg)
             else:
-                raise SpinnMachineException(msg)
+                logger.error(msg)
+                error_message += msg
+
+    if not repair_machine and error_message != "":
+        raise SpinnMachineException(error_message)
+
     if len(dead_chips) == 0 and len(dead_links) == 0:
         return original
+
     new_machine = _machine_ignore(original, dead_chips, dead_links)
     return machine_repair(new_machine, repair_machine)
