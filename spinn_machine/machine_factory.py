@@ -53,8 +53,18 @@ def machine_from_size(width, height, chips=None, origin=None):
     """
     if chips is None:
         chips = []
+    # 4 chip board
     if width == 2 and height == 2:
         return FullWrapMachine(width, height, chips, origin)
+    # Three boars toroid
+    if width == 12 and height == 12:
+        return FullWrapMachine(width, height, chips, origin)
+    # All other small mahcines assumed not to wrap
+    if (width < 24) or (height < 24):
+        return NoWrapMachine(width, height, chips, origin)
+    # For big machines wraps tend to have a dimension of a multiple of 12
+    # None wraps tend to have a dimension of a multiple of 12 + 4
+    # However assume weird dimensions are none wrap
     if width % 12 == 0:
         if height % 12 == 0:
             return FullWrapMachine(width, height, chips, origin)
