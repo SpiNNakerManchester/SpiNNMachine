@@ -252,11 +252,11 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, -1))
         self.assertEqual(machine.xy_over_link(15, 15, 1), (16, 16))
         # Horizontal wrap arounds
-        machine = machine_from_size(24, 16)
+        machine = machine_from_size(24, 28)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, -1))
         self.assertEqual(machine.xy_over_link(23, 15, 1), (0, 16))
         # Vertical wrap arounds
-        machine = machine_from_size(16, 24)
+        machine = machine_from_size(28, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, 23))
         self.assertEqual(machine.xy_over_link(15, 23, 1), (16, 0))
 

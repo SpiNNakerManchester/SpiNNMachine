@@ -587,7 +587,7 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_horizontal_wrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 13), (8, 10), (1, 8), (9, 6)]
-        machine = virtual_machine(12, 16, down_chips=hole, validate=True)
+        machine = virtual_machine(24, 16, down_chips=hole, validate=True)
         # Board 0,0
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(0, 0))))
         count = 0
@@ -635,7 +635,7 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_vertical_wrap_holes(self):
         hole = [(1, 1), (7, 7), (8, 1), (8, 10), (13, 8), (9, 6)]
-        machine = virtual_machine(16, 12, down_chips=hole, validate=True)
+        machine = virtual_machine(16, 24, down_chips=hole, validate=True)
         # Board 0,0
         self.assertEqual(48, len(list(machine.get_xys_by_ethernet(0, 0))))
         count = 0
@@ -748,7 +748,7 @@ class TestVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, 1000000, 1000000)
 
     def test_fullwrap_shortest_path(self):
-        width = 12
+        width = 36
         height = 24
         machine = virtual_machine(width, height, validate=True)
         for source in machine.chip_coordinates:
@@ -764,8 +764,8 @@ class TestVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     def test_hoizontal_wrap_shortest_path(self):
-        width = 12
-        height = 16
+        width = 24
+        height = 28
         machine = virtual_machine(width, height, validate=False)
         for source in machine.chip_coordinates:
             for target in machine.chip_coordinates:
@@ -788,8 +788,8 @@ class TestVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     def test_vertical_wrap_shortest_path(self):
-        width = 16
-        height = 12
+        width = 28
+        height = 24
         machine = virtual_machine(width, height, validate=False)
         for source in machine.chip_coordinates:
             for target in machine.chip_coordinates:
@@ -950,7 +950,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
 
     def test_n_cores_horizontal_wrap(self):
-        machine = virtual_machine(12, 16)
+        machine = virtual_machine(24, 16)
         n_cores = sum(
             n_cores
             for (_, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
@@ -959,7 +959,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
 
     def test_n_cores_vertical_wrap(self):
-        machine = virtual_machine(12, 16)
+        machine = virtual_machine(24, 16)
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEquals(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
         n_cores = sum(chip.n_processors for chip in machine.chips)
