@@ -254,10 +254,8 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
         if (dest_x, dest_y) in removed_chips:
             dead_links.add((source_x, source_y, out, back))
         else:
-            chip = original.get_chip_at(source_x, source_y)
-            local_x, local_y = original.get_local_xy(chip)
             uni_direction_link_message = _generate_uni_direction_link_error(
-                dest_x, dest_y, local_x, local_y, back, original)
+                dest_x, dest_y, source_x, source_y, back, original)
             if repair_machine:
                 dead_links.add((source_x, source_y, out, back))
                 logger.warning(uni_direction_link_message)

@@ -861,7 +861,6 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertFalse(repaired.is_chip_at(8, 7))
 
     def test_repair_with_one_way_links_different_boards(self):
-        print("aaaa")
         machine = virtual_machine(12, 12)
         # Delete some links between boards
         down_links = [
@@ -870,7 +869,6 @@ class TestVirtualMachine(unittest.TestCase):
             del machine._chips[x, y].router._links[link]
         new_machine = machine_repair(machine, True)
         self.assertIsNotNone(new_machine)
-        print("aaaa")
 
     def test_oneway_link_true(self):
         machine = virtual_machine(8, 8)
