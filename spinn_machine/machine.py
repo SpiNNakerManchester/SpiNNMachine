@@ -133,7 +133,7 @@ class Machine(object):
         """
         Creates an abstract machine that must be superclassed by wrap type.
 
-        Use machine_fatcory methods to determine the correct machine class
+        Use machine_factory methods to determine the correct machine class
 
         :param width: The width of the machine excluding any virtual chips
         :type width: int
@@ -1093,7 +1093,7 @@ class Machine(object):
                 if link is not None:
                     if not self.is_link_at(
                             link.destination_x, link.destination_y, back):
-                        yield chip.x, chip.y, out
+                        yield chip.x, chip.y, out, back
 
     def _minimize_vector(self, x, y):
         """

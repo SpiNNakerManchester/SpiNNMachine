@@ -25,10 +25,25 @@ from .exceptions import SpinnMachineException
 logger = logging.getLogger(__name__)
 
 BAD_MSG = (
-    "Your machine has {} at {} on board {} which will cause algorithms to"
+    "Your machine has {} at {} on board {} which will cause algorithms to "
     "fail. Please report this to spinnakerusers@googlegroups.com \n\n")
-ONE_LINK_MSG = (
-    "Link from chip {}:{} to {}:{} does not exist, but the opposite does.")
+ONE_LINK_SAME_BOARD_MSG = (
+    "Link {} from global chip id {}:{} to global chip id {}:{} does not "
+    "exist, but the opposite does. Both chips live on the same board under "
+    "ip address {} and are local chip ids {}:{} and {}:{}. "
+    "Please report this to spinnakerusers@googlegroups.com \n\n")
+ONE_LINK_DIFFERENT_BOARDS_MSG = (
+    "Link {} from global chip id {}:{} to global chip id {}:{} does not "
+    "exist, but the opposite does. The chips live on different boards. "
+    "chip {}:{} resides on board with ip address {} with local id {}:{} and "
+    "chip {}:{} resides on board with ip address {} with local id {}:{}. "
+    "Please report this to spinnakerusers@googlegroups.com \n\n")
+ONE_LINK_DEAD_CHIP = (
+    "Link {} from global dead chip id {}:{} to global chip id {}:{} does not "
+    "exist, but the opposite does. chip {}:{} resides on board with ip "
+    "address {} but as chip {}:{} is dead, we cannot report its ip address. "
+    "Please report this to spinnakerusers@googlegroups.com \n\n")
+
 
 def machine_from_size(width, height, chips=None, origin=None):
     """
@@ -94,13 +109,13 @@ def machine_from_chips(chips):
 def _machine_ignore(original, dead_chips, dead_links):
     """ Creates a near copy of the machine without the dead bits.
 
-    Creates a new Machine with the the Chips that where in the orginal machine
-        but are not listed as dead.
+    Creates a new Machine with the the Chips that where in the original
+        machine but are not listed as dead.
 
     Each Chip will only have the links that already existed and are not listed
         as dead.
 
-    Spinnaker_links and fpga_links are readded so removing a wrap around link
+    Spinnaker_links and fpga_links are re-added so removing a wrap around link
         could results in and extra spinnaker or fpga link.
 
     Dead Chips or links not in the original machine are ignored.
@@ -116,7 +131,7 @@ def _machine_ignore(original, dead_chips, dead_links):
     """
     new_machine = machine_from_size(original.width, original.height)
     links_map = defaultdict(set)
-    for x, y, d in dead_links:
+    for x, y, d, _ in dead_links:
         links_map[(x, y)].add(d)
     for chip in original.chips:
         if (chip.x, chip.y) in dead_chips:
@@ -137,6 +152,45 @@ def _machine_ignore(original, dead_chips, dead_links):
     new_machine.add_fpga_links()
     new_machine.validate()
     return new_machine
+
+
+def _generate_uni_direction_link_error(
+        dest_x, dest_y, src_x, srx_y, back, original):
+    # get the chips so we can find ethernet's and local ids
+    dest_chip = original.get_chip_at(dest_x, dest_y)
+    src_chip = original.get_chip_at(src_x, srx_y)
+
+    # if the dest chip is dead. Only report src chip ip address.
+    if dest_chip is None:
+        src_ethernet = original.get_chip_at(
+            src_chip.nearest_ethernet_x,
+            src_chip.nearest_ethernet_y).ip_address
+        return ONE_LINK_DEAD_CHIP.format(
+            back, dest_x, dest_y, src_x, srx_y, src_x, srx_y, src_ethernet,
+            dest_x, dest_y)
+
+    # got working chips, so get the separate ethernet's
+    dest_ethernet = original.get_chip_at(
+        dest_chip.nearest_ethernet_x, dest_chip.nearest_ethernet_y).ip_address
+    src_ethernet = original.get_chip_at(
+        src_chip.nearest_ethernet_x, src_chip.nearest_ethernet_y).ip_address
+
+    # get board local ids
+    (local_src_chip_x, local_src_chip_y) = original.get_local_xy(src_chip)
+    (local_dest_chip_x, local_dest_chip_y) = original.get_local_xy(dest_chip)
+
+    # generate bespoke error message based off if they both reside on same
+    # board.
+    if src_ethernet == dest_ethernet:
+        return ONE_LINK_SAME_BOARD_MSG.format(
+            back, dest_x, dest_y, src_x, srx_y, src_ethernet,
+            local_dest_chip_x, local_dest_chip_y, local_src_chip_x,
+            local_src_chip_y)
+    else:
+        return ONE_LINK_DIFFERENT_BOARDS_MSG.format(
+            back, dest_x, dest_y, src_x, srx_y, dest_x, dest_y, dest_ethernet,
+            local_dest_chip_x, local_dest_chip_y, src_x, srx_y, src_ethernet,
+            local_src_chip_x, local_src_chip_y)
 
 
 def machine_repair(original, repair_machine=False, removed_chips=tuple()):
@@ -195,25 +249,21 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
         else:
             logger.error(msg)
             error_message += msg
-    for xyd in original.one_way_links():
-        target = original.xy_over_link(xyd[0], xyd[1], xyd[2])
-        if target in removed_chips:
-            dead_links.add(xyd)
+    for (source_x, source_y, out, back) in original.one_way_links():
+        (dest_x, dest_y) = original.xy_over_link(source_x, source_y, out)
+        if (dest_x, dest_y) in removed_chips:
+            dead_links.add((source_x, source_y, out, back))
         else:
-            chip = original.get_chip_at(xyd[0], xyd[1])
+            chip = original.get_chip_at(source_x, source_y)
             local_x, local_y = original.get_local_xy(chip)
-            error_xyd = ONE_LINK_MSG.format(
-                target[0], target[1], local_x, local_y)
-            ethernet = original.get_chip_at(
-                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-            msg = BAD_MSG.format(
-                "One way links", error_xyd, ethernet.ip_address)
+            uni_direction_link_message = _generate_uni_direction_link_error(
+                dest_x, dest_y, local_x, local_y, back, original)
             if repair_machine:
-                dead_links.add(xyd)
-                logger.warning(msg)
+                dead_links.add((source_x, source_y, out, back))
+                logger.warning(uni_direction_link_message)
             else:
-                logger.error(msg)
-                error_message += msg
+                logger.error(uni_direction_link_message)
+                error_message += uni_direction_link_message
 
     if not repair_machine and error_message != "":
         raise SpinnMachineException(error_message)
