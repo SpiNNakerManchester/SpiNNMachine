@@ -159,12 +159,11 @@ def _generate_uni_direction_link_error(
     # get the chips so we can find ethernet's and local ids
     dest_chip = original.get_chip_at(dest_x, dest_y)
     src_chip = original.get_chip_at(src_x, srx_y)
+    src_ethernet = original.get_chip_at(
+        src_chip.nearest_ethernet_x, src_chip.nearest_ethernet_y).ip_address
 
     # if the dest chip is dead. Only report src chip ip address.
     if dest_chip is None:
-        src_ethernet = original.get_chip_at(
-            src_chip.nearest_ethernet_x,
-            src_chip.nearest_ethernet_y).ip_address
         return ONE_LINK_DEAD_CHIP.format(
             back, dest_x, dest_y, src_x, srx_y, src_x, srx_y, src_ethernet,
             dest_x, dest_y)
@@ -172,8 +171,6 @@ def _generate_uni_direction_link_error(
     # got working chips, so get the separate ethernet's
     dest_ethernet = original.get_chip_at(
         dest_chip.nearest_ethernet_x, dest_chip.nearest_ethernet_y).ip_address
-    src_ethernet = original.get_chip_at(
-        src_chip.nearest_ethernet_x, src_chip.nearest_ethernet_y).ip_address
 
     # get board local ids
     (local_src_chip_x, local_src_chip_y) = original.get_local_xy(src_chip)
