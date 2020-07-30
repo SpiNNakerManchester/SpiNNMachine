@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/SpiNNakerManchester/SpiNNMachine.svg?branch=master)](https://travis-ci.org/SpiNNakerManchester/SpiNNMachine)
+[![Build Status](https://travis-ci.com/SpiNNakerManchester/SpiNNMachine.svg?branch=master)](https://travis-ci.com/SpiNNakerManchester/SpiNNMachine)
 [![Documentation Status](https://readthedocs.org/projects/spinnmachine/badge/?version=latest)](https://spinnmachine.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/SpiNNakerManchester/SpiNNMachine/badge.svg?branch=master)](https://coveralls.io/github/SpiNNakerManchester/SpiNNMachine?branch=master)
 
