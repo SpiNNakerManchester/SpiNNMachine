@@ -42,7 +42,7 @@ class Chip(object):
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
-                 nearest_ethernet_y, parent_link, ip_address=None,
+                 nearest_ethernet_y, parent_link=None, ip_address=None,
                  virtual=False, tag_ids=None, down_cores=None):
         """
         :param x: the x-coordinate of the chip's position in the\
