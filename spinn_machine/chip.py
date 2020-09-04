@@ -37,13 +37,13 @@ class Chip(object):
     __slots__ = (
         "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
-        "_n_user_processors"
+        "_n_user_processors", "_parent_link"
     )
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
-                 nearest_ethernet_y, ip_address=None, virtual=False,
-                 tag_ids=None, down_cores=None):
+                 nearest_ethernet_y, parent_link, ip_address=None,
+                 virtual=False, tag_ids=None, down_cores=None):
         """
         :param x: the x-coordinate of the chip's position in the\
             two-dimensional grid of chips
@@ -71,6 +71,9 @@ class Chip(object):
         :type nearest_ethernet_x: int or None
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
         :type nearest_ethernet_y: int or None
+        :param parent_link: The link down which the parent chips is found in
+            the tree of chips towards the root (boot) chip
+        :type parent_link: int or None
         :param down_cores: Ids of cores that are down for this Chip
         :type down_cores: collection of int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
@@ -92,6 +95,7 @@ class Chip(object):
         self._virtual = virtual
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
+        self._parent_link = parent_link
 
     def __generate_processors(self, n_processors, down_cores):
         global standard_processors
@@ -269,6 +273,16 @@ class Chip(object):
             if not processor.is_monitor:
                 return processor
         return None
+
+    @property
+    def parent_link(self):
+        """ The link down which the parent is found in the tree of chips rooted
+            at the machine root chip (probably 0, 0 in most cases).  This will
+            be None if the chip information didn't contain this value.
+
+        :rtype: int or None
+        """
+        return self._parent_link
 
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors
