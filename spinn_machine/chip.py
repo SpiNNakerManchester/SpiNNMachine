@@ -42,8 +42,8 @@ class Chip(object):
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
-                 nearest_ethernet_y, parent_link=None, ip_address=None,
-                 virtual=False, tag_ids=None, down_cores=None):
+                 nearest_ethernet_y, ip_address=None, virtual=False,
+                 tag_ids=None, down_cores=None, parent_link=None):
         """
         :param x: the x-coordinate of the chip's position in the\
             two-dimensional grid of chips
@@ -71,11 +71,11 @@ class Chip(object):
         :type nearest_ethernet_x: int or None
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
         :type nearest_ethernet_y: int or None
+        :param down_cores: Ids of cores that are down for this Chip
+        :type down_cores: collection of int
         :param parent_link: The link down which the parent chips is found in
             the tree of chips towards the root (boot) chip
         :type parent_link: int or None
-        :param down_cores: Ids of cores that are down for this Chip
-        :type down_cores: collection of int
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
             If processors contains any two processors with the same\
             processor_id
