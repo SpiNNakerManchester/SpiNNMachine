@@ -272,7 +272,7 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
                 msg = CHIP_REMOVED_BY_DEAD_PARENT.format(
                     chip.x, chip.y, parent_x, parent_y)
                 if repair_machine:
-                    dead_chips.add((parent_x, parent_y))
+                    dead_chips.add((chip.x, chip.y))
                     logger.warning(msg)
                 else:
                     logger.error(msg)
