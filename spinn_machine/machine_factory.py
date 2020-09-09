@@ -43,6 +43,10 @@ ONE_LINK_DEAD_CHIP = (
     "exist, but the opposite does. chip {}:{} resides on board with ip "
     "address {} but as chip {}:{} is dead, we cannot report its ip address. "
     "Please report this to spinnakerusers@googlegroups.com \n\n")
+CHIP_REMOVED_BY_DEAD_PARENT = (
+    "The chip {}:{} will fail to receive signals because its parent {}:{} in"
+    " the signal tree has disappeared from the machine since it was booted."
+    " Please report this to spinnakerusers@googlegroups.com \n\n")
 
 
 def machine_from_size(width, height, chips=None, origin=None):
@@ -259,6 +263,20 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
             else:
                 logger.error(uni_direction_link_message)
                 error_message += uni_direction_link_message
+
+    for chip in original.chips:
+        if chip.parent_link is not None:
+            parent_x, parent_y = original.xy_over_link(
+                chip.x, chip.y, chip.parent_link)
+            if not original.is_chip_at(parent_x, parent_y):
+                msg = CHIP_REMOVED_BY_DEAD_PARENT.format(
+                    chip.x, chip.y, parent_x, parent_y)
+                if repair_machine:
+                    dead_chips.add((chip.x, chip.y))
+                    logger.warning(msg)
+                else:
+                    logger.error(msg)
+                    error_message += msg
 
     if not repair_machine and error_message != "":
         raise SpinnMachineException(error_message)
