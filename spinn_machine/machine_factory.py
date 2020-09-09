@@ -44,8 +44,8 @@ ONE_LINK_DEAD_CHIP = (
     "address {} but as chip {}:{} is dead, we cannot report its ip address. "
     "Please report this to spinnakerusers@googlegroups.com \n\n")
 CHIP_REMOVED_BY_DEAD_PARENT = (
-    "The chip {}:{} will fail to receive signals because it's parent {}:{} in"
-    " the signal tree has dissapeared from the machine since it was booted."
+    "The chip {}:{} will fail to receive signals because its parent {}:{} in"
+    " the signal tree has disappeared from the machine since it was booted."
     " Please report this to spinnakerusers@googlegroups.com \n\n")
 
 
