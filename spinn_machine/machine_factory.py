@@ -45,8 +45,9 @@ ONE_LINK_DEAD_CHIP = (
     "Please report this to spinnakerusers@googlegroups.com \n\n")
 CHIP_REMOVED_BY_DEAD_PARENT = (
     "The chip {}:{} will fail to receive signals because its parent {}:{} in"
-    " the signal tree has disappeared from the machine since it was booted."
-    " Please report this to spinnakerusers@googlegroups.com \n\n")
+    " the signal tree has disappeared from the machine since it was booted. "
+    "This occurred on board with ip address {} Please report this to "
+    "spinnakerusers@googlegroups.com \n\n")
 
 
 def machine_from_size(width, height, chips=None, origin=None):
@@ -269,8 +270,11 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
             parent_x, parent_y = original.xy_over_link(
                 chip.x, chip.y, chip.parent_link)
             if not original.is_chip_at(parent_x, parent_y):
+                ethernet_chip = original.get_chip_at(
+                    chip.nearest_ethernet_x, chip.nearest_ethernet_y)
                 msg = CHIP_REMOVED_BY_DEAD_PARENT.format(
-                    chip.x, chip.y, parent_x, parent_y)
+                    chip.x, chip.y, parent_x, parent_y,
+                    ethernet_chip.ip_address)
                 if repair_machine:
                     dead_chips.add((chip.x, chip.y))
                     logger.warning(msg)
