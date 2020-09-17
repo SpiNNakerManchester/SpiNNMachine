@@ -19,7 +19,7 @@ from spinn_machine import (Chip, Link, Machine, machine_from_size, Router,
 
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException,
-    SpinnMachineInvalidParameterException)
+    SpinnMachineCorruptionException, SpinnMachineInvalidParameterException)
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.machine_factory import machine_repair
 from .geometry import (to_xyz, shortest_mesh_path_length,
@@ -901,6 +901,15 @@ class TestVirtualMachine(unittest.TestCase):
         new_machine = machine_repair(machine, False, [(3, 3)])
         self.assertIsNotNone(new_machine)
         self.assertFalse(new_machine.is_link_at(2, 2, 1))
+
+    def test_dead_parent(self):
+        machine = virtual_machine(12, 12, down_chips = [(9, 9)])
+
+        machine._chips[10, 10]._parent_link = 4
+        try:
+            new_machine = machine_repair(machine, False)
+        except SpinnMachineCorruptionException as ex:
+            assert "127.0.4.8" in ex.ipaddress
 
     def test_ignores(self):
         down_chips = IgnoreChip.parse_string("4,4:6,6,ignored_ip")

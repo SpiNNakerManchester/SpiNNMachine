@@ -20,7 +20,7 @@ from .no_wrap_machine import NoWrapMachine
 from .horizontal_wrap_machine import HorizontalWrapMachine
 from .vertical_wrap_machine import VerticalWrapMachine
 from .full_wrap_machine import FullWrapMachine
-from .exceptions import SpinnMachineException
+from .exceptions import SpinnMachineCorruptionException
 
 logger = logging.getLogger(__name__)
 
@@ -221,6 +221,7 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
     """
     dead_chips = set()
     dead_links = set()
+    ipaddresses = set()
 
     # holder for error message
     error_message = ""
@@ -232,6 +233,7 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
         msg = BAD_MSG.format(
             "unreachable incoming chips", error_xy, ethernet.ip_address)
+        ipaddresses.add(ethernet.ip_address)
         if repair_machine:
             dead_chips.add(xy)
             logger.warning(msg)
@@ -245,6 +247,7 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
         msg = BAD_MSG.format(
             "unreachable outgoing chips", error_xy, ethernet.ip_address)
+        ipaddresses.add(ethernet.ip_address)
         if repair_machine:
             dead_chips.add(xy)
             logger.warning(msg)
@@ -256,6 +259,10 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
         if (dest_x, dest_y) in removed_chips:
             dead_links.add((source_x, source_y, out, back))
         else:
+            chip = original.get_chip_at(source_x, source_y)
+            ethernet = original.get_chip_at(
+                chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+            ipaddresses.add(ethernet.ip_address)
             uni_direction_link_message = _generate_uni_direction_link_error(
                 dest_x, dest_y, source_x, source_y, back, original)
             if repair_machine:
@@ -272,6 +279,7 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
             if not original.is_chip_at(parent_x, parent_y):
                 ethernet_chip = original.get_chip_at(
                     chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+                ipaddresses.add(ethernet_chip.ip_address)
                 msg = CHIP_REMOVED_BY_DEAD_PARENT.format(
                     chip.x, chip.y, parent_x, parent_y,
                     ethernet_chip.ip_address)
@@ -283,7 +291,7 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
                     error_message += msg
 
     if not repair_machine and error_message != "":
-        raise SpinnMachineException(error_message)
+        raise SpinnMachineCorruptionException(error_message, str())
 
     if len(dead_chips) == 0 and len(dead_links) == 0:
         return original

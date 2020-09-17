@@ -93,3 +93,34 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         """ The problem with the setting of the parameter
         """
         return self._problem
+
+class SpinnMachineCorruptionException(SpinnMachineException):
+    """ Indicates that the machine was corrupt and one ipaddress where
+        corruption was detected
+    """
+    __slots__ = ["_ipaddress"]
+
+    def __init__(self, msg, ipaddress):
+        """
+        Records a corrupt machine Exception and where it was found.
+
+        note: In some case the ipaddress many be the neighbour to the board
+        with the hardware fault.
+
+        :param str msg: Message to be passed into the Exception
+        :param str ip_address: The ipaddress(es) of the board the corruption was
+            detected on. If more than one detected then
+        """
+        super(SpinnMachineCorruptionException, self).__init__(msg)
+        self._ipaddress = ipaddress
+
+    @property
+    def ipaddress(self):
+        """  The ipaddress of the board the corruption was detected on
+
+        In some case the ipaddress many be the neighbour to the board
+        with the hardware fault.
+
+        If there are multiple ipaddresses the result is in set notation
+        """
+        return self._ipaddress
