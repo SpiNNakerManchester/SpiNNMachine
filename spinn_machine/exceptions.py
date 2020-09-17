@@ -94,6 +94,7 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         """
         return self._problem
 
+
 class SpinnMachineCorruptionException(SpinnMachineException):
     """ Indicates that the machine was corrupt and one ipaddress where
         corruption was detected
@@ -108,8 +109,8 @@ class SpinnMachineCorruptionException(SpinnMachineException):
         with the hardware fault.
 
         :param str msg: Message to be passed into the Exception
-        :param str ip_address: The ipaddress(es) of the board the corruption was
-            detected on. If more than one detected then
+        :param str ip_address: The ipaddress(es) of the board the corruption
+            was detected on. This is in set notation
         """
         super(SpinnMachineCorruptionException, self).__init__(msg)
         self._ipaddress = ipaddress

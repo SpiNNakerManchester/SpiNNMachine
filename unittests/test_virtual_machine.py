@@ -903,11 +903,11 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertFalse(new_machine.is_link_at(2, 2, 1))
 
     def test_dead_parent(self):
-        machine = virtual_machine(12, 12, down_chips = [(9, 9)])
+        machine = virtual_machine(12, 12, down_chips=[(9, 9)])
 
         machine._chips[10, 10]._parent_link = 4
         try:
-            new_machine = machine_repair(machine, False)
+           machine_repair(machine, False)
         except SpinnMachineCorruptionException as ex:
             assert "127.0.4.8" in ex.ipaddress
 
