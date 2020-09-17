@@ -907,7 +907,7 @@ class TestVirtualMachine(unittest.TestCase):
 
         machine._chips[10, 10]._parent_link = 4
         try:
-           machine_repair(machine, False)
+            machine_repair(machine, False)
         except SpinnMachineCorruptionException as ex:
             assert "127.0.4.8" in ex.ipaddress
 
