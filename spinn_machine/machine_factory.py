@@ -291,7 +291,7 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
                     error_message += msg
 
     if not repair_machine and error_message != "":
-        raise SpinnMachineCorruptionException(error_message, str())
+        raise SpinnMachineCorruptionException(error_message, str(ipaddresses))
 
     if len(dead_chips) == 0 and len(dead_links) == 0:
         return original
