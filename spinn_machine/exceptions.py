@@ -99,9 +99,9 @@ class SpinnMachineCorruptionException(SpinnMachineException):
     """ Indicates that the machine was corrupt and one ipaddress where
         corruption was detected
     """
-    __slots__ = ["_ipaddress"]
+    __slots__ = ["__ipaddress"]
 
-    def __init__(self, msg, ipaddress):
+    def __init__(self, msg, ip_address):
         """
         Records a corrupt machine Exception and where it was found.
 
@@ -109,19 +109,19 @@ class SpinnMachineCorruptionException(SpinnMachineException):
         with the hardware fault.
 
         :param str msg: Message to be passed into the Exception
-        :param str ip_address: The ipaddress(es) of the board the corruption
-            was detected on. This is in set notation
+        :param set(str) ip_address:
+            The IP addresses of the boards the corruption was detected on.
         """
         super(SpinnMachineCorruptionException, self).__init__(msg)
-        self._ipaddress = ipaddress
+        self.__ipaddress = frozenset(ip_address)
 
     @property
     def ipaddress(self):
-        """  The ipaddress of the board the corruption was detected on
+        """ The IP addresses of the board the corruption was detected on.
 
-        In some case the ipaddress many be the neighbour to the board
+        In some case the IP addresses may be the neighbours to the board
         with the hardware fault.
 
-        If there are multiple ipaddresses the result is in set notation
+        :rtype: frozenset(str)
         """
-        return self._ipaddress
+        return self.__ipaddress
