@@ -36,8 +36,6 @@ jobs:
 
     - name: Checkout SpiNNMachine
       uses: actions/checkout@v2
-      with:
-        path: SpiNNMachine
     - name: Checkout SupportScripts
       uses: actions/checkout@v2
       with:
@@ -82,11 +80,9 @@ jobs:
     - name: Lint with flake8
       run: |
         # run flake8
-        flake8 SpiNNMachine/spinn_machine SpiNNMachine/unittests
+        flake8 spinn_machine unittests
     - name: Run rat copyright enforcement
       run: |
         support/rat.sh download
         pwd
-        cd ./SpiNNMachine
-        pwd
-        ../support/rat.sh run
+        support/rat.sh run
