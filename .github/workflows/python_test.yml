@@ -64,8 +64,6 @@ jobs:
       run: |
         pwd
         ls
-        cd ./SpiNNMachine
-        pwd
         python setup.py develop
         pip install -r requirements-test.txt
         pip install 'pylint<2.5' python-coveralls 'coverage>=4.4,<5.0'
