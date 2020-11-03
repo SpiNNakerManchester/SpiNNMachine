@@ -45,6 +45,7 @@ jobs:
       run: |
         pwd
         echo $GITHUB_REF
+        ls -al support
         support/gitclone2.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
 
     - name: Install -pip
