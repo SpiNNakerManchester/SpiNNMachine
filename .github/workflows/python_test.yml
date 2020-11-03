@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.6, 3.7, 3.8]
+        python-version: [3.6]
 
     steps:
     - name: Set up Python ${{ matrix.python-version }}
@@ -36,8 +36,6 @@ jobs:
 
     - name: Checkout SpiNNMachine
       uses: actions/checkout@v2
-      with:
-        path: SpiNNMachine
     - name: Checkout SupportScripts
       uses: actions/checkout@v2
       with:
@@ -66,8 +64,6 @@ jobs:
       run: |
         pwd
         ls
-        cd ./SpiNNMachine
-        pwd
         python setup.py develop
         pip install -r requirements-test.txt
         pip install 'pylint<2.5' python-coveralls 'coverage>=4.4,<5.0'
@@ -76,15 +72,17 @@ jobs:
     - name: Test with pytest
       run: |
         pwd
-        pytest SpiNNMachine/unitests --cov spinnman
+        ls
+        pytest unitests --cov spinnman
     - name: Lint with flake8
       run: |
+        pwd
+        ls
         # run flake8
-        flake8 SpiNNMachine/spinnman SpiNNMachine/unittests
+        flake8 spinnman unittests
     - name: Run rat copyright enforcement
       run: |
         support/rat.sh download
         pwd
-        cd ./SpiNNMachine
-        pwd
+        ls
         support/rat.sh run
