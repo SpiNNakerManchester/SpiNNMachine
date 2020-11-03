@@ -44,9 +44,9 @@ jobs:
     - name: Checkout SpiNNUtils
       run: |
         pwd
-        echo $GITHUB_REF
-        ls -al support
-        support/gitclone2.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
+        echo $TRAVIS_BRANCH
+        support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
+      env TRAVIS_BRANCH: $GITHUB_REF | cut -d'/' -f 3
 
     - name: Install -pip
       run: |
