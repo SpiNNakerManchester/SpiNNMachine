@@ -36,6 +36,8 @@ jobs:
 
     - name: Checkout SpiNNMachine
       uses: actions/checkout@v2
+      with:
+        path: SpiNNMachine
     - name: Checkout SupportScripts
       uses: actions/checkout@v2
       with:
@@ -64,6 +66,8 @@ jobs:
       run: |
         pwd
         ls
+        cd ./SpiNNMachine
+        pwd
         python setup.py develop
         pip install -r requirements-test.txt
         pip install 'pylint<2.5' python-coveralls 'coverage>=4.4,<5.0'
@@ -73,16 +77,16 @@ jobs:
       run: |
         pwd
         ls
-        pytest unitests --cov spinnman
+        ls SpiNNMachine
+        pytest SpiNNMachine/unittests --cov spinnman
     - name: Lint with flake8
       run: |
-        pwd
-        ls
         # run flake8
-        flake8 spinnman unittests
+        flake8 SpiNNMachine/spinnman SpiNNMachine/unittests
     - name: Run rat copyright enforcement
       run: |
         support/rat.sh download
         pwd
-        ls
+        cd ./SpiNNMachine
+        pwd
         support/rat.sh run
