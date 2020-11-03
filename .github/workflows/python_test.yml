@@ -73,8 +73,7 @@ jobs:
       run: |
         pwd
         ls
-        ls SpiNNMachine
-        pytest SpiNNMachine/unittests --cov spinnman
+        pytest unittests --cov spinnman
     - name: Lint with flake8
       run: |
         # run flake8
