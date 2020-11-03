@@ -36,18 +36,18 @@ jobs:
 
     - name: Checkout SupportScripts
       uses: actions/checkout@v2
-        with:
-          repository: SpiNNakerManchester/SupportScripts
-          path: support
+      with:
+        repository: SpiNNakerManchester/SupportScripts
+        path: support
     - name: Checkout SpiNNUtils
       uses: actions/checkout@v2
-        with:
-          repository: SpiNNakerManchester/SpiNNUtils
-          path: SpiNNUtils
+      with:
+        repository: SpiNNakerManchester/SpiNNUtils
+        path: SpiNNUtils
     - name: Checkout SpiNNMachine
       uses: actions/checkout@v2
-        with:
-          path: SpiNNMachine
+      with:
+        path: SpiNNMachine
 
     - name: Install dependencies
       run: |
