@@ -41,10 +41,14 @@ jobs:
       with:
         repository: SpiNNakerManchester/SupportScripts
         path: support
+    - name: debug
+      run: |
+        echo $GITHUB_REF
     - name: Checkout SpiNNUtils
       uses: actions/checkout@v2
       with:
         repository: SpiNNakerManchester/SpiNNUtils
+        ref: $GITHUB_REF
         path: SpiNNUtils
 
     - name: Install -pip
