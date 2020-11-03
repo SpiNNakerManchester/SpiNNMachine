@@ -46,7 +46,7 @@ jobs:
         pwd
         echo $TRAVIS_BRANCH
         support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
-      env TRAVIS_BRANCH: $GITHUB_REF | cut -d'/' -f 3
+      env: TRAVIS_BRANCH: $GITHUB_REF | cut -d'/' -f 3
 
     - name: Install -pip
       run: |
