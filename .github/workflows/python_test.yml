@@ -46,26 +46,24 @@ jobs:
         path: SpiNNUtils
     - name: Checkout SpiNNMachine
       uses: actions/checkout@v2
-      with:
-        path: SpiNNMachine
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         cd ./SpiNNUtils
         python setup.py install
-        cd ./SpiNNMachine/
+        cd ..
         python setup.py develop
         pip install -r requirements-test.txt
         pip install 'pylint<2.5' python-coveralls 'coverage>=4.4,<5.0'
 
     - name: Test with pytest
       run: |
-        pytest . --cov spinn_utilities
+        pytest . --cov spinnman
     - name: Lint with flake8
       run: |
         # run flake8
-        flake8 spinn_utilities unittests
+        flake8 spinnman unittests
     - name: Run rat copyright enforcement
       run: |
         support/rat.sh download
