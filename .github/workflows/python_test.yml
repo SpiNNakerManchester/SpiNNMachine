@@ -82,7 +82,7 @@ jobs:
     - name: Lint with flake8
       run: |
         # run flake8
-        flake8 SpiNNMachine/spinnman SpiNNMachine/unittests
+        flake8 SpiNNMachine/spinn_machine SpiNNMachine/unittests
     - name: Run rat copyright enforcement
       run: |
         support/rat.sh download
