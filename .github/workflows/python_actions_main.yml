@@ -42,26 +42,23 @@ jobs:
         repository: SpiNNakerManchester/SupportScripts
         path: support
 
-    - name: Get TRAVIS_BRANCH (merge)
+    - name: Set GITHUB_BRANCH (merge)
       if: github.event_name != 'pull_request'
       shell: bash
-      run: echo "TRAVIS_BRANCH=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-    - name: TRAVIS_BRANCH (pull request)
+      run: echo "GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+    - name: Set GITHUB_BRANCH (pull request)
       if: github.event_name == 'pull_request'
       shell: bash
-      run: echo "TRAVIS_BRANCH=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+      run: echo "GITHUB_BRANCH=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
 
     - name: Checkout SpiNNUtils
-      run: |
-        support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
+      run: support/gitclone2.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
     - name: Install -pip
-      run: |
-        python -m pip install --upgrade pip
+      run: python -m pip install --upgrade pip
 
     - name: Install SpiNNUtils
-      run: |
-        cd ./SpiNNUtils
-        python setup.py install
+      run: python setup.py install
+      working-directory: SpiNNUtils
 
     - name: Install SpiNNMachine
       run: |
