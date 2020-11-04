@@ -49,7 +49,15 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
+    'sphinx.ext.intersphinx'
 ]
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3.6', None),
+    'numpy': ("https://numpy.org/doc/stable/", None),
+    'spinn_utilities': (
+        'https://spinnutils.readthedocs.io/en/latest/', None),
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -65,7 +73,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'SpiNNMachine'
-copyright = u'2014-2017'
+copyright = u'2014-2020'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -359,5 +367,6 @@ for f in os.listdir("."):
         os.remove(f)
 apidoc.main([None, '-o', ".", "../../spinn_machine",
              # Exclusions...
-             "../../spinn_machine/[a-df-ikm-su-z]*.py",
+             "../../spinn_machine/[a-df-hkm-su-z]*.py",
+             "../../spinn_machine/ignores/i*.py",
              "../../spinn_machine/link.py"])

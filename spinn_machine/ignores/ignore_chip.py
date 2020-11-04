@@ -15,41 +15,54 @@
 
 
 class IgnoreChip(object):
+    """ Represents a chip to be ignored when building a machine. This is \
+        typically because it has a fault in the SpiNNaker router.
+    """
 
     __slots__ = ["x", "y", "ip_address"]
 
     def __init__(self, x, y, ip_address=None):
         """
-
-        :param x: X coorridate of a Chip to ignore
+        :param x: X coordinate of a Chip to ignore
         :type x: int or str
-        :param y: Y coorridate of a Chip to ignore
+        :param y: Y coordinate of a Chip to ignore
         :type y: int or str
-        :param ip_address: Optional ip_address which if provided make\
+        :param ip_address: Optional IP address which, if provided, make
             x and y local coordinates
         :type ip_address: str or None
         """
+        #: X coordinate of the chip to ignore
         self.x = int(x)
+        #: Y coordinate of the chip to ignore
         self.y = int(y)
+        #: IP address of the board with the chip; if not ``None``, the
+        #: coordinates are local to that board
         self.ip_address = ip_address
 
     @staticmethod
     def parse_single_string(downed_chip):
-        """
-        Converts a Sting into an IgnoreChip object
+        """ Converts a string into an :py:class:`IgnoreChip` object
 
-        format is:
+        The supported format is::
+
             <down_chip_id> = <chip_x>,<chip_y>[,<ip>]
-        where:
-            <chip_x> is the x-coordinate of a down chip
-            <chip_x> is the y-coordinate of a down chip
-            <ip> is an OPTIONAL ip address in the 127.0.0.0 format.
-        If provided the <chip_x> <chip_y> will be considered local to the\
-            board with this ip address
 
-        :param downed_chip: String representation of one chip to ignore
-        :type downed_chip: str
+        where:
+
+        * ``<chip_x>`` is the x-coordinate of a down chip
+        * ``<chip_x>`` is the y-coordinate of a down chip
+        * ``<ip>`` is an *optional* IP address in the ``127.0.0.0`` format.
+          If provided, the ``<chip_x>,<chip_y>`` will be considered local to
+          the board with this IP address.
+
+        Two examples::
+
+            4,7
+            6,5,10.11.12.13
+
+        :param str downed_chip: representation of one chip to ignore
         :return: An IgnoreChip Object
+        :rtype: IgnoreChip
         """
         parts = downed_chip.split(",")
 
@@ -63,24 +76,31 @@ class IgnoreChip(object):
 
     @staticmethod
     def parse_string(downed_chips):
-        """
-        Converts a Sting into a (possibly empty) set of IgnoreChip objects
+        """ Converts a string into a (possibly empty) set of \
+            :py:class:`IgnoreChip` objects
 
-        format is:
+        format is::
+
             down_chips = <down_chip_id>[:<down_chip_id]*
             <down_chip_id> = <chip_x>,<chip_y>[,<ip>]
+
         where:
-            <chip_x> is the x-coordinate of a down chip
-            <chip_x> is the y-coordinate of a down chip
-            <ip> is an OPTIONAL ip address in the 127.0.0.0 format.
-        If provided the <chip_x> <chip_y> will be considered local to the\
-        board with this ip address
 
-        The string None (case insentitive) is used to represent no ignores
+        * ``<chip_x>`` is the x-coordinate of a down chip
+        * ``<chip_y>`` is the y-coordinate of a down chip
+        * ``<ip>`` is an *optional** IP address in the ``127.0.0.0`` format.
+          If provided, the ``<chip_x>,<chip_y>`` will be considered local to
+          the board with this IP address.
 
-        :param downed_chips: String representation of zero or chips to ignore
-        :type downed_chips: str
-        :return:  Set (possibly empty) of IgnoreChips
+        The string ``None`` (case-insensitive) is used to represent no ignores
+
+        An example::
+
+            4,7:6,5,10.11.12.13
+
+        :param str downed_chips: representation of zero or chips to ignore
+        :return: Set (possibly empty) of IgnoreChips
+        :rtype: set(IgnoreChip)
         """
         ignored_chips = set()
         if downed_chips is None:
