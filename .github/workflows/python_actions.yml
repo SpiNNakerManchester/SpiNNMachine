@@ -42,14 +42,9 @@ jobs:
         repository: SpiNNakerManchester/SupportScripts
         path: support
 
-    - name: Set GITHUB_BRANCH (merge)
-      if: github.event_name != 'pull_request'
-      shell: bash
+    - name: Set GITHUB_BRANCH
+      # This step can not be merged with Checkout Spinnaker Dependencies
       run: echo "GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-    - name: Set GITHUB_BRANCH (pull request)
-      if: github.event_name == 'pull_request'
-      shell: bash
-      run: echo "GITHUB_BRANCH=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
 
     - name: Checkout Spinnaker Dependencies
       run: support/gitclone2.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
