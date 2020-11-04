@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.7, 3.8]
+        python-version: [3.6]
 
     steps:
     - name: Set up Python ${{ matrix.python-version }}
@@ -67,13 +67,32 @@ jobs:
       run: |
         python setup.py develop
         pip install -r requirements-test.txt
-        pip install 'pylint<2.5'
+        pip install 'pylint<2.5' python-coveralls 'coverage>=4.4,<5.0'
 
     - name: Test with pytest
       run: |
-        pytest unittests
+        pytest unittests --cov spinnman
 
     - name: Lint with flake8
       run: |
         # run flake8
         flake8 spinn_machine unittests
+
+    - name: Run rat copyright enforcement
+      run: |
+        support/rat.sh download
+        support/rat.sh run
+
+    - name: Build documentation with sphinx
+      run: |
+        cd doc/source
+        sphinx-build -W -T -E -b html -d _build/doctrees-readthedocsdirhtml -D language=en . _build/html
+        sphinx-build -W -T -b json -d _build/doctrees-json -D language=en . _build/json
+        sphinx-build -W -T -b singlehtml -d _build/doctrees-readthedocssinglehtmllocalmedia -D language=en . _build/localmedia
+    - name: Run coveralls and report coverage
+      env:
+        COVERALLS_SERVICE_NAME: 'GitHub CI'
+        COVERALLS_REPO_TOKEN : ${{ secrets.COVERALLS_REPO_TOKEN }}
+        NODE_COVERALLS_DEBUG: 1
+      run: |
+        coveralls
