@@ -50,7 +50,7 @@ jobs:
       shell: bash
       run: echo "TRAVIS_BRANCH=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
     - name: Debug TRAVIS_BRANCH
-        run: echo ${{ env.TRAVIS_BRANCH }}
+      run: echo ${{ env.TRAVIS_BRANCH }}
     - name: Checkout SpiNNUtils
       run: |
         support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
