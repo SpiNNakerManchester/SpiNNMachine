@@ -19,30 +19,43 @@ TYPICAL_PHYSICAL_VIRTUAL_MAP = {
 
 
 class IgnoreCore(object):
+    """ Represents a core to be ignored when building a machine.
+    """
 
     __slots__ = ["x", "y", "p", "ip_address"]
 
     def __init__(self, x, y, p, ip_address=None):
         """
-
-        :param x: X coorridate of a Chip to ignore
+        :param x: X coordinate of a core to ignore
         :type x: int or str
-        :param y: Y coorridate of a Chip to ignore
+        :param y: Y coordinate of a core to ignore
         :type y: int or str
-        :param p: P The virtual core ID of a core if > 0\
-            or the phsical core if <= 0
+        :param p: P The virtual core ID of a core if > 0,\
+            or the physical core if <= 0 (actual value will be negated)
         :type p: int or str
-        :param ip_address: Optional ip_address which if provided make\
+        :param ip_address: Optional IP address which, if provided, make
             x and y local coordinates
         :type ip_address: str or None
         """
+        #: X coordinate of the chip with the processor to ignore
         self.x = int(x)
+        #: Y coordinate of the chip with the processor to ignore
         self.y = int(y)
+        #: Core ID of the processor to ignore (virtual if positive, physical
+        #: if negative)
         self.p = int(p)
+        #: IP address of the board with the chip; if not ``None``, the
+        #: coordinates are local to that board
         self.ip_address = ip_address
 
     @property
     def virtual_p(self):
+        """ Get the virtual processor ID.
+
+        When the processor is given as a physical processor, this is converted
+        to a virtual core ID using the typical virtual/physical core map;
+        *the mapping in a real machine may be different!*
+        """
         if self.p > 0:
             return self.p
         else:
@@ -50,23 +63,30 @@ class IgnoreCore(object):
 
     @staticmethod
     def parse_single_string(downed_core):
-        """
-        Converts a Sting into an IgnoreChip object
+        """ Converts a string into an :py:class:`IgnoreCore` object
 
-        format is:
+        The format is::
+
             <down_core> = <chip_x>,<chip_y>,<core_id>[,<ip>]
-        where:
-            <chip_x> is the x-coordinate of a down chip
-            <chip_x> is the y-coordinate of a down chip
-            <core_id> is the virtual core ID of a core if > 0
-            or the phsical core if <= 0
-            <ip> is an OPTIONAL ip address in the 127.0.0.0 format.
-        If provided the <chip_x> <chip_y> will be considered local to the\
-            board with this ip address
 
-        :param downed_core: String representation of one chip to ignore
-        :type downed_core: str
-        :return: An IgnoreChip Object
+        where:
+
+        * ``<chip_x>`` is the x-coordinate of a down chip
+        * ``<chip_x>`` is the y-coordinate of a down chip
+        * ``<core_id>`` is the virtual core ID of a core if > 0,
+          or the physical core if <= 0 (actual value will be negated)
+        * ``<ip>`` is an *optional* IP address in the ``127.0.0.0`` format.
+          If provided, the ``<chip_x>,<chip_y>`` will be considered local to
+          the board with this IP address
+
+        Two examples::
+
+            4,7,3
+            6,5,-2,10.11.12.13
+
+        :param str downed_core: representation of one chip to ignore
+        :return: An IgnoreCore object
+        :rtype: IgnoreCore
         """
         parts = downed_core.split(",")
 
@@ -80,32 +100,39 @@ class IgnoreCore(object):
 
     @staticmethod
     def parse_string(downed_cores):
-        """
-        Converts a Sting into a (possibly empty) set of IgnoreChip objects
+        """ Converts a string into a (possibly empty) set of \
+            :py:class:`IgnoreCore` objects
 
-        format is:
+        The format is:
+
             down_cores = <down_core_id>[:<down_core_id]*
             <down_core_id> = <chip_x>,<chip_y>[,<ip>]
+
         where:
-            <chip_x> is the x-coordinate of a down chip
-            <chip_x> is the y-coordinate of a down chip
-            <core_id> is the virtual core ID of a core if > 0
-            or the phsical core if <= 0
-            <ip> is an OPTIONAL ip address in the 127.0.0.0 format.
-        If provided the <chip_x> <chip_y> will be considered local to the\
-            board with this ip address
 
-        The string None (case insentitive) is used to represent no ignores
+        * ``<chip_x>`` is the x-coordinate of a down chip
+        * ``<chip_x>`` is the y-coordinate of a down chip
+        * ``<core_id>`` is the virtual core ID of a core if > 0,
+          or the physical core if <= 0 (actual value will be negated)
+        * ``<ip>`` is an *optional* IP address in the ``127.0.0.0`` format.
+          If provided, the ``<chip_x>,<chip_y>`` will be considered local to
+          the board with this IP address.
 
-        :param downed_cores: String representation of zero or chips to ignore
-        :type downed_cores: str
-        :return:  Set (possibly empty) of IgnoreChips
+        The string ``None`` (case insensitive) is used to represent no ignores
+
+        An example::
+
+            4,7,3:6,5,-2,10.11.12.13
+
+        :param str downed_cores: representation of zero or chips to ignore
+        :return: Set (possibly empty) of IgnoreCores
+        :rtype: set(IgnoreCore)
         """
-        ignored_chips = set()
+        ignored_cores = set()
         if downed_cores is None:
-            return ignored_chips
+            return ignored_cores
         if downed_cores.lower() == "none":
-            return ignored_chips
+            return ignored_cores
         for downed_chip in downed_cores.split(":"):
-            ignored_chips.add(IgnoreCore.parse_single_string(downed_chip))
-        return ignored_chips
+            ignored_cores.add(IgnoreCore.parse_single_string(downed_chip))
+        return ignored_cores
