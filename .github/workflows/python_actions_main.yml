@@ -83,12 +83,13 @@ jobs:
         support/rat.sh download
         support/rat.sh run
 
-    - name: Build documentation with sphinx
-      run: |
-        cd doc/source
-        sphinx-build -W -T -E -b html -d _build/doctrees-readthedocsdirhtml -D language=en . _build/html
-        sphinx-build -W -T -b json -d _build/doctrees-json -D language=en . _build/json
-        sphinx-build -W -T -b singlehtml -d _build/doctrees-readthedocssinglehtmllocalmedia -D language=en . _build/localmedia
+    #- name: Build documentation with sphinx
+    #  run: |
+    #    cd doc/source
+    #    sphinx-build -W -T -E -b html -d _build/doctrees-readthedocsdirhtml -D language=en . _build/html
+    #    sphinx-build -W -T -b json -d _build/doctrees-json -D language=en . _build/json
+    #    sphinx-build -W -T -b singlehtml -d _build/doctrees-readthedocssinglehtmllocalmedia -D language=en . _build/localmedia
+
     - name: Run coveralls and report coverage
       env:
         COVERALLS_SERVICE_NAME: 'GitHub CI'
