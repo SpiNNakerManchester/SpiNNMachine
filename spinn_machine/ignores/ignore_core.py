@@ -50,7 +50,7 @@ class IgnoreCore(object):
 
     @property
     def virtual_p(self):
-        """ Get the virtual processor ID.
+        """ The virtual processor ID.
 
         When the processor is given as a physical processor, this is converted
         to a virtual core ID using the typical virtual/physical core map;
