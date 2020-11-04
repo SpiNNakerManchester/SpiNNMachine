@@ -1,4 +1,4 @@
-![Build Status](https://github.com/SpiNNakerManchester/SpiNNMachine/workflows/Python%20Actions/badge.svg)
+![Build Status](https://github.com/SpiNNakerManchester/SpiNNMachine/workflows/Python%20Actions/badge.svg)(https://github.com/SpiNNakerManchester/SpiNNMachine/actions)
 [![Documentation Status](https://readthedocs.org/projects/spinnmachine/badge/?version=latest)](https://spinnmachine.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/SpiNNakerManchester/SpiNNMachine/badge.svg?branch=master)](https://coveralls.io/github/SpiNNakerManchester/SpiNNMachine?branch=master)
 
