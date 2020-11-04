@@ -41,6 +41,10 @@ jobs:
       with:
         repository: SpiNNakerManchester/SupportScripts
         path: support
+    - name: Get BRANCH_NAME
+      uses: nelonoel/branch-name@v1
+    - name: Check BRANCH_NAME
+      run: echo ${BRANCH_NAME}
     - name: Checkout SpiNNUtils
       run: |
         support/gitclone2.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git
