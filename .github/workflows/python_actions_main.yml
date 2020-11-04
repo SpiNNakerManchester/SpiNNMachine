@@ -68,7 +68,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest unittests --cov spinnman
+        pytest unittests --cov spinn_machine
 
     - name: Lint with flake8
       run: |
