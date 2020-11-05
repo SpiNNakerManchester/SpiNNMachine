@@ -71,12 +71,11 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        # run flake8
         flake8 spinn_machine unittests
 
     - name: Lint with pylint
+      # Note that there's special conditioning of the return code of pylint
       run: |
-        # run pylint
         pylint --output-format=colorized --disable=R,C spinn_machine || exit $(($? & 35))
 
     - name: Run rat copyright enforcement
