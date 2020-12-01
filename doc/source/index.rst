@@ -13,7 +13,7 @@ SpiNNMachine
 
 .. automodule:: spinn_machine
   :no-undoc-members:
-  :special-members:
+  :noindex:
 
 Contents
 --------
@@ -30,4 +30,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
