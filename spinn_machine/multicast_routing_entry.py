@@ -191,6 +191,10 @@ class MulticastRoutingEntry(object):
             return False
         return (self._defaultable == other_entry.defaultable)
 
+    def __hash__(self):
+        return  self.routing_entry_key * 13 + self.mask * 19 + \
+                self._spinnaker_route * 29 * int(self._defaultable) * 131
+
     def __ne__(self, other):
         return not self.__eq__(other)
 
