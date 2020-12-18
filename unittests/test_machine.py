@@ -247,19 +247,46 @@ class SpinnMachineTestCase(unittest.TestCase):
         machine = machine_from_size(24, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, 23))
         self.assertEqual(machine.xy_over_link(23, 23, 1), (0, 0))
+        self.assertEquals(machine.wrap, "Wrapped")
         # no wrap around'
         machine = machine_from_size(16, 16)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, -1))
         self.assertEqual(machine.xy_over_link(15, 15, 1), (16, 16))
+        self.assertEquals(machine.wrap, "NoWrap")
         # Horizontal wrap arounds
         machine = machine_from_size(24, 16)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, -1))
         self.assertEqual(machine.xy_over_link(23, 15, 1), (0, 16))
+        self.assertEquals(machine.wrap, "HorWrap")
         # Vertical wrap arounds
         machine = machine_from_size(16, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, 23))
         self.assertEqual(machine.xy_over_link(15, 23, 1), (16, 0))
+        self.assertEquals(machine.wrap, "VerWrap")
 
+    def test_get_global_xy(self):
+        """
+        Test get_global_xy with each wrap around.
+
+        Notice that the function only does the math not validate the values.
+        :return:
+        """
+        # full wrap around
+        machine = machine_from_size(24, 24)
+        self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
+        self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (1, 4))
+        # no wrap around'
+        machine = machine_from_size(28, 28)
+        self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 24))
+        self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (25, 4))
+        # Horizontal wrap arounds
+        machine = machine_from_size(24, 28)
+        self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 24))
+        self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (1, 4))
+        # Vertical wrap arounds
+        machine = machine_from_size(28, 24)
+        self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
+        self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (25, 4))
 
 if __name__ == '__main__':
     unittest.main()
