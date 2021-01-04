@@ -856,6 +856,8 @@ class TestVirtualMachine(unittest.TestCase):
     def test_repair_with_local_orphan(self):
         down_chips = [(8, 6), (9, 7), (9, 8)]
         machine = virtual_machine(16, 16, down_chips=down_chips)
+        with self.assertRaises(SpinnMachineException):
+            repaired = machine_repair(machine, repair_machine=False)
         repaired = machine_repair(machine, repair_machine=True)
         self.assertTrue(machine.is_chip_at(8, 7))
         self.assertFalse(repaired.is_chip_at(8, 7))
@@ -867,17 +869,8 @@ class TestVirtualMachine(unittest.TestCase):
             (7, 7, 0), (7, 3, 1), (6, 7, 2), (4, 7, 3), (8, 6, 4), (8, 4, 5)]
         for (x, y, link) in down_links:
             del machine._chips[x, y].router._links[link]
-        new_machine = machine_repair(machine, True)
-        self.assertIsNotNone(new_machine)
-
-    def test_oneway_link_true(self):
-        machine = virtual_machine(8, 8)
-
-        # Delete links incoming to 3, 3
-        down_links = [
-            (3, 6, 0), (5, 4, 1), (3, 2, 5), (1, 3, 3)]
-        for (x, y, link) in down_links:
-            del machine._chips[x, y].router._links[link]
+        with self.assertRaises(SpinnMachineException):
+            new_machine = machine_repair(machine, False)
         new_machine = machine_repair(machine, True)
         self.assertIsNotNone(new_machine)
 
@@ -892,7 +885,8 @@ class TestVirtualMachine(unittest.TestCase):
                 del machine._chips[x, y].router._links[link]
         with self.assertRaises(SpinnMachineException):
             new_machine = machine_repair(machine, False)
-            self.assertIsNotNone(new_machine)
+        new_machine = machine_repair(machine, True)
+        self.assertIsNotNone(new_machine)
 
     def test_removed_chip_repair(self):
         machine = virtual_machine(8, 8)
