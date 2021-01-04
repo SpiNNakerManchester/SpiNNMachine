@@ -113,6 +113,20 @@ class TestingChip(unittest.TestCase):
         non_monitor = new_chip.get_first_none_monitor_processor()
         self.assertFalse(non_monitor.is_monitor)
 
+    def test_getitem_and_contains(self):
+        """ test the __getitem__ an __contains__ methods
+
+        NOTE: Not sure if method being tested is required.
+        """
+        new_chip = self._create_chip(self._x, self._y, self.n_processors,
+                                     self._router, self._sdram, self._ip)
+        new_chip[3]
+        with self.assertRaises(KeyError):
+            new_chip[self.n_processors]
+        self.assertTrue(3 in new_chip)
+        self.assertFalse(self.n_processors in new_chip)
+
+
     def test_0_down(self):
         with self.assertRaises(NotImplementedError):
             Chip(1, 1, self.n_processors, self._router, self._sdram, 0, 0,
