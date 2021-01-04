@@ -18,8 +18,9 @@ test for testing the python representation of a spinnaker machine
 """
 import unittest
 from spinn_machine import (
-    Link, SDRAM, Router, Chip, machine_from_chips, machine_from_size)
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+    Link, SDRAM, Router, Chip, Machine, machine_from_chips, machine_from_size)
+from spinn_machine.exceptions import (
+    SpinnMachineAlreadyExistsException, SpinnMachineException)
 
 
 class SpinnMachineTestCase(unittest.TestCase):
@@ -287,6 +288,107 @@ class SpinnMachineTestCase(unittest.TestCase):
         machine = machine_from_size(28, 24)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
         self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (25, 4))
+
+    def test_max_cores_per_chip(self):
+        """
+        Test set_max_cores_per_chip
+
+        Note: Method tested here may not be
+        :return:
+        """
+        Machine.set_max_cores_per_chip(10)
+        self.assertEqual(Machine.max_cores_per_chip(), 10)
+        with self.assertRaises(SpinnMachineException):
+            Machine.set_max_cores_per_chip(11)
+
+    def test_no_boot(self):
+        machine = machine_from_size(8, 8)
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_negative_x(self):
+        chips = self._create_chips()
+        chips[3]._x = -1
+        machine = machine_from_chips(chips)
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_negative_y(self):
+        chips = self._create_chips()
+        chips[3]._y = -1
+        machine = machine_from_chips(chips)
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_big_x(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        chips[3]._x = 9
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_big_y(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        chips[3]._y = 9
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_weird_ethernet1(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        # chips[8] = x;1 y3
+        chips[8]._ip_address = "1.2.3.4"
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_weird_ethernet2(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        #chips[1] = x:0 y:1
+        chips[1]._ip_address = "1.2.3.4"
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_bad_ethernet_chip2(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        # chips[1] = x:0 y:1
+        chips[1]._nearest_ethernet_x = 1
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_bad_ethernet_chip2(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        # chips[1] = x:0 y:1
+        chips[1]._nearest_ethernet_x = 12
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
+    def test_getitem(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        chip12 = machine[(1, 2)]
+        self.assertEqual(chip12.x, 1)
+        self.assertEqual(chip12.y, 2)
+        self.assertTrue((1, 2) in machine)
+        self.assertFalse((1, 9) in machine)
+
+    def test_virtual_chips(self):
+        machine = machine_from_size(8, 8)
+        v1 = Chip(
+            n_processors=128, sdram=SDRAM(size=0), x=6, y=6, virtual=True,
+            nearest_ethernet_x=None, nearest_ethernet_y=None, router=None)
+        v2 = Chip(
+            n_processors=128, sdram=SDRAM(size=0), x=6, y=7, virtual=True,
+            nearest_ethernet_x=None, nearest_ethernet_y=None, router=None)
+        machine.add_virtual_chip(v1)
+        machine.add_virtual_chip(v2)
+        virtuals = list(machine.virtual_chips)
+        self.assertIn(v1, virtuals)
+        self.assertIn(v2, virtuals)
+        self.assertEqual(len(virtuals), 2)
 
 if __name__ == '__main__':
     unittest.main()
