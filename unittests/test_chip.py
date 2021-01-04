@@ -136,5 +136,5 @@ class TestingChip(unittest.TestCase):
         new_chip = Chip(1, 1, 1, self._router, self._sdram, 0, 0, self._ip)
         self.assertIsNone(new_chip.get_first_none_monitor_processor())
 
-    if __name__ == '__main__':
-        unittest.main()
+if __name__ == '__main__':
+    unittest.main()
