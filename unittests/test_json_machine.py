@@ -45,17 +45,15 @@ class TestJsonMachine(unittest.TestCase):
         chip03 = vm.get_chip_at(0, 3)
         chip03._virtual = True
         jpath = mktemp("json")
-        jpath = "temp.json"
         to_json_path(vm, jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")
         self.assertEqual(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
-            print(vchip)
-            print(jchip)
             self.assertEqual(str(vchip), str(jchip))
-
+        vchip33 = jm.get_chip_at(3, 3)
+        self.assertEqual(vchip33.tag_ids, chip33.tag_ids)
 
 if __name__ == '__main__':
     unittest.main()
