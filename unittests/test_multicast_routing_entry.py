@@ -44,6 +44,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(
             a_multicast,
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
+        hash(a_multicast)
 
     def test_duplicate_processors_ids(self):
         link_ids = list()
