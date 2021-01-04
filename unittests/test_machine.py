@@ -300,6 +300,9 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(Machine.max_cores_per_chip(), 10)
         with self.assertRaises(SpinnMachineException):
             Machine.set_max_cores_per_chip(11)
+        # hack to set back to None to not break other tests
+        Machine._Machine__max_cores = None
+        self.assertEqual(Machine.max_cores_per_chip(), 18)
 
     def test_no_boot(self):
         machine = machine_from_size(8, 8)
