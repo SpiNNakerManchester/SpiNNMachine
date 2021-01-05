@@ -348,12 +348,12 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_weird_ethernet2(self):
         chips = self._create_chips()
         machine = machine_from_chips(chips)
-        #chips[1] = x:0 y:1
+        # chips[1] = x:0 y:1
         chips[1]._ip_address = "1.2.3.4"
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_bad_ethernet_chip2(self):
+    def test_bad_ethernet_chip_x(self):
         chips = self._create_chips()
         machine = machine_from_chips(chips)
         # chips[1] = x:0 y:1
@@ -361,7 +361,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_bad_ethernet_chip2(self):
+    def test_bad_ethernet_chip_no_chip(self):
         chips = self._create_chips()
         machine = machine_from_chips(chips)
         # chips[1] = x:0 y:1
@@ -392,6 +392,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertIn(v1, virtuals)
         self.assertIn(v2, virtuals)
         self.assertEqual(len(virtuals), 2)
+
 
 if __name__ == '__main__':
     unittest.main()

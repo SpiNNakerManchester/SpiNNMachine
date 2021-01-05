@@ -61,11 +61,11 @@ class TestJsonMachine(unittest.TestCase):
         # Hack in an extra monitor
         chip02._n_user_processors -= 1
         jpath = mktemp("json")
-        # Should still be able to write json
+        # Should still be able to write json even with more than one monitor
         to_json_path(vm, jpath)
-        # Not we dont need to support reading back with more than 1 monitor
+        # However we dont need to support reading back with more than 1 monitor
         with self.assertRaises(NotImplementedError):
-             machine_from_json(jpath)
+            machine_from_json(jpath)
 
     def test_ethernet_exceptions(self):
         vm = virtual_machine(width=16, height=16)
@@ -86,6 +86,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
         vchip48 = jm.get_chip_at(4, 8)
         self.assertEqual(vchip48.tag_ids, chip48.tag_ids)
+
 
 if __name__ == '__main__':
     unittest.main()

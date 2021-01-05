@@ -102,7 +102,6 @@ class TestingChip(unittest.TestCase):
         self.assertTrue(7 in new_chip)
         self.assertIsNone(new_chip.get_processor_with_id(-1))
 
-
     def test_get_first_none_monitor_processor(self):
         """ test the get_first_none_monitor_processor
 
@@ -126,7 +125,6 @@ class TestingChip(unittest.TestCase):
         self.assertTrue(3 in new_chip)
         self.assertFalse(self.n_processors in new_chip)
 
-
     def test_0_down(self):
         with self.assertRaises(NotImplementedError):
             Chip(1, 1, self.n_processors, self._router, self._sdram, 0, 0,
@@ -135,6 +133,7 @@ class TestingChip(unittest.TestCase):
     def test_1_chip(self):
         new_chip = Chip(1, 1, 1, self._router, self._sdram, 0, 0, self._ip)
         self.assertIsNone(new_chip.get_first_none_monitor_processor())
+
 
 if __name__ == '__main__':
     unittest.main()
