@@ -229,6 +229,18 @@ class TestVirtualMachine(unittest.TestCase):
         vm = virtual_machine(size_x, size_y, validate=True)
         self.assertEqual(size_x * size_y, vm.n_chips)
 
+    def test_bad_size(self):
+        size_x = 12 * 5
+        size_y = 12 * 7
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            vm = virtual_machine(size_x + 1, size_y, validate=True)
+
+    def test_none_size(self):
+        size_x = 12 * 5
+        size_y = 12 * 7
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            vm = virtual_machine(size_x, None, validate=True)
+
     def test_add__chip(self):
         vm = virtual_machine(2, 2)
 
@@ -934,6 +946,25 @@ class TestVirtualMachine(unittest.TestCase):
 
         router = machine.get_chip_at(5, 3).router
         self.assertTrue(router.is_link(3))
+
+    def test_bad_ignores(self):
+        try:
+            IgnoreChip.parse_string("4,4,3,4:6,6,ignored_ip")
+        except Exception as ex:
+            self.assertTrue("downed_chip" in str(ex))
+
+        try:
+            IgnoreCore.parse_string("3,3,3,4: 5,5,-5:7,7,7,ignored_ip")
+        except Exception as ex:
+            self.assertTrue("downed_core" in str(ex))
+
+        empty = IgnoreCore.parse_string(None)
+        self.assertEqual(len(empty), 0)
+
+        try:
+            IgnoreLink.parse_string("1,3:5,3,3,ignored_ip")
+        except Exception as ex:
+            self.assertTrue("downed_link" in str(ex))
 
     def test_n_cores_full_wrap(self):
         machine = virtual_machine(12, 12)

@@ -30,6 +30,8 @@ class TestingLinks(unittest.TestCase):
         self.assertEqual(ld.fpga_link_id, 1)
         self.assertEqual(ld, ld2)
         self.assertNotEqual(ld, ld3)
+        self.assertFalse(ld == "Foo")
+        self.assertNotEqual(ld, "Foo")
         d = dict()
         d[ld] = 1
         d[ld2] = 2
@@ -47,6 +49,8 @@ class TestingLinks(unittest.TestCase):
         self.assertEqual(ld.spinnaker_link_id, 2)
         self.assertEqual(ld, ld2)
         self.assertNotEqual(ld, ld3)
+        self.assertFalse(id == "Foo")
+        self.assertNotEqual(ld, "Foo")
         d = dict()
         d[ld] = 1
         d[ld2] = 2
