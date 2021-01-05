@@ -233,13 +233,13 @@ class TestVirtualMachine(unittest.TestCase):
         size_x = 12 * 5
         size_y = 12 * 7
         with self.assertRaises(SpinnMachineInvalidParameterException):
-            vm = virtual_machine(size_x + 1, size_y, validate=True)
+            virtual_machine(size_x + 1, size_y, validate=True)
 
     def test_none_size(self):
         size_x = 12 * 5
-        size_y = 12 * 7
+        size_y = None
         with self.assertRaises(SpinnMachineInvalidParameterException):
-            vm = virtual_machine(size_x, None, validate=True)
+            virtual_machine(size_x, size_y, validate=True)
 
     def test_add__chip(self):
         vm = virtual_machine(2, 2)

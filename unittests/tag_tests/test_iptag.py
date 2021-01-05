@@ -112,5 +112,6 @@ class TestingIptag(unittest.TestCase):
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertNotEqual(iptag, "foo")
 
+
 if __name__ == '__main__':
     unittest.main()
