@@ -16,6 +16,7 @@
 import logging
 import json
 from collections import defaultdict, namedtuple, OrderedDict
+from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .router import Router
 from .sdram import SDRAM
@@ -23,7 +24,7 @@ from .link import Link
 from .machine_factory import machine_from_size
 
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 # A description of a standard set of resources possessed by a chip
 _Desc = namedtuple("_Desc", [

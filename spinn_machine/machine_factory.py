@@ -15,6 +15,7 @@
 
 import logging
 from collections import defaultdict
+from spinn_utilities.log import FormatAdapter
 from spinn_machine import (Chip, Router)
 from .no_wrap_machine import NoWrapMachine
 from .horizontal_wrap_machine import HorizontalWrapMachine
@@ -22,7 +23,7 @@ from .vertical_wrap_machine import VerticalWrapMachine
 from .full_wrap_machine import FullWrapMachine
 from .exceptions import SpinnMachineException
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 BAD_MSG = (
     "Your machine has {} at {} on board {} which will cause algorithms to "
