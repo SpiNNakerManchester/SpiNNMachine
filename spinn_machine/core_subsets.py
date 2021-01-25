@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import OrderedDict
-from six import itervalues
 from .core_subset import CoreSubset
 
 
@@ -111,7 +110,7 @@ class CoreSubsets(object):
         :return: Iterable of core subsets
         :rtype: iterable(CoreSubset)
         """
-        return itervalues(self._core_subsets)
+        return iter(self._core_subsets.values())
 
     def get_core_subset_for_chip(self, x, y):
         """ Get the core subset for a chip.
@@ -131,12 +130,12 @@ class CoreSubsets(object):
     def __iter__(self):
         """ Iterable of core_subsets
         """
-        return itervalues(self._core_subsets)
+        return iter(self._core_subsets.values())
 
     def __len__(self):
         """ The total number of processors that are in these core subsets
         """
-        return sum(len(subset) for subset in itervalues(self._core_subsets))
+        return sum(len(subset) for subset in self._core_subsets.values())
 
     def __contains__(self, x_y_tuple):
         """ True if the given coordinates are in the set
