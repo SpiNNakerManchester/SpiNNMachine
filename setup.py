@@ -13,12 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-from collections import defaultdict
 import os
+from distutils.core import setup
+from collections import defaultdict
 
 __version__ = None
 exec(open("spinn_machine/_version.py").read())
