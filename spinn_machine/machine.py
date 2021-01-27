@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import OrderedDict
-from six import add_metaclass
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
@@ -22,8 +21,7 @@ from spinn_utilities.abstract_base import (
     AbstractBase, abstractproperty, abstractmethod)
 
 
-@add_metaclass(AbstractBase)
-class Machine(object):
+class Machine(object, metaclass=AbstractBase):
     """ A representation of a SpiNNaker Machine with a number of Chips.\
         Machine is also iterable, providing ``((x, y), chip)`` where:
 
