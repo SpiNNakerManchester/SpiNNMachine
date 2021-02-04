@@ -26,8 +26,8 @@ class CoreSubsets(object):
 
     def __init__(self, core_subsets=None):
         """
-        :param core_subsets: The cores for each desired chip
-        :type core_subsets: iterable(CoreSubset)
+        :param iterable(CoreSubset) core_subsets:
+            The cores for each desired chip
         """
         self._core_subsets = OrderedDict()
         if core_subsets is not None:
@@ -37,9 +37,7 @@ class CoreSubsets(object):
     def add_core_subset(self, core_subset):
         """ Add a core subset to the set
 
-        :param core_subset: The core subset to add
-        :type core_subset: CoreSubset
-        :rtype: None
+        :param CoreSubset core_subset: The core subset to add
         """
         x = core_subset.x
         y = core_subset.y
@@ -49,8 +47,7 @@ class CoreSubsets(object):
     def add_core_subsets(self, core_subsets):
         """ Merges a core subsets into this one.
 
-        :param core_subsets: the core subsets to add
-        :rtype: None
+        :param iterable(CoreSubset) core_subsets: the core subsets to add
         """
         for core_subset in core_subsets:
             self.add_core_subset(core_subset)
@@ -58,13 +55,9 @@ class CoreSubsets(object):
     def add_processor(self, x, y, processor_id):
         """ Add a processor on a given chip to the set.
 
-        :param x: The x-coordinate of the chip
-        :type x: int
-        :param y: The y-coordinate of the chip
-        :type y: int
-        :param processor_id: A processor ID
-        :type processor_id: int
-        :rtype: None
+        :param int x: The x-coordinate of the chip
+        :param int y: The y-coordinate of the chip
+        :param int processor_id: A processor ID
         """
         xy = (x, y)
         if xy not in self._core_subsets:
@@ -75,10 +68,8 @@ class CoreSubsets(object):
     def is_chip(self, x, y):
         """ Determine if the chip with coordinates (x, y) is in the subset
 
-        :param x: The x-coordinate of a chip
-        :type x: int
-        :param y: The y-coordinate of a chip
-        :type y: int
+        :param int x: The x-coordinate of a chip
+        :param int y: The y-coordinate of a chip
         :return: True if the chip with coordinates (x, y) is in the subset
         :rtype: bool
         """
@@ -88,12 +79,9 @@ class CoreSubsets(object):
         """ Determine if there is a chip with coordinates (x, y) in the\
             subset, which has a core with the given ID in the subset
 
-        :param x: The x-coordinate of a chip
-        :type x: int
-        :param y: The y-coordinate of a chip
-        :type y: int
-        :param processor_id: The ID of a core
-        :type processor_id: int
+        :param int x: The x-coordinate of a chip
+        :param int y: The y-coordinate of a chip
+        :param int processor_id: The ID of a core
         :return: Whether there is a chip with coordinates (x, y) in the\
             subset, which has a core with the given ID in the subset
         :rtype: bool
@@ -115,10 +103,8 @@ class CoreSubsets(object):
     def get_core_subset_for_chip(self, x, y):
         """ Get the core subset for a chip.
 
-        :param x: The x-coordinate of a chip
-        :type x: int
-        :param y: The y-coordinate of a chip
-        :type y: int
+        :param int x: The x-coordinate of a chip
+        :param int y: The y-coordinate of a chip
         :return: The core subset of a chip, which will be empty if not added
         :rtype: CoreSubset
         """
@@ -129,21 +115,26 @@ class CoreSubsets(object):
 
     def __iter__(self):
         """ Iterable of core_subsets
+
+        :rtype: iterable(CoreSubset)
         """
         return iter(self._core_subsets.values())
 
     def __len__(self):
         """ The total number of processors that are in these core subsets
+
+        :rtype: int
         """
         return sum(len(subset) for subset in self._core_subsets.values())
 
     def __contains__(self, x_y_tuple):
         """ True if the given coordinates are in the set
 
-        :param x_y_tuple:\
-            Either a 2-tuple of x, y coordinates or a 3-tuple or x, y,\
+        :param x_y_tuple:
+            Either a 2-tuple of x, y coordinates or a 3-tuple or x, y,
             processor_id coordinates
         :type x_y_tuple: tuple(int,int) or tuple(int,int,int)
+        :rtype: bool
         """
         if len(x_y_tuple) == 2:
             return self.is_chip(*x_y_tuple)
@@ -151,6 +142,9 @@ class CoreSubsets(object):
 
     def __getitem__(self, x_y_tuple):
         """ The core subset for the given x, y tuple
+
+        :param tuple(int,int) x_y_tuple:
+        :rtype: CoreSubset
         """
         return self._core_subsets[x_y_tuple]
 

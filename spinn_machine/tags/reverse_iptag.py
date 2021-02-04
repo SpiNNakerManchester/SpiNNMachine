@@ -31,25 +31,22 @@ class ReverseIPTag(AbstractTag):
     def __init__(self, board_address, tag, port, destination_x, destination_y,
                  destination_p, sdp_port=1):
         """
-        :param board_address: \
+        :param board_address:
             The IP address of the board on which the tag is allocated
         :type board_address: str or None
-        :param tag: The tag of the SDP packet
-        :type tag: int
-        :param port: The UDP port on which SpiNNaker will listen for packets
-        :type port: int
-        :param destination_x: The x-coordinate of the chip to send packets to
-        :type destination_x: int
-        :param destination_y: The y-coordinate of the chip to send packets to
-        :type destination_y: int
-        :param destination_p: The ID of the processor to send packets to
-        :type destination_p: int
-        :param sdp_port: The optional port number to use for SDP packets that\
+        :param int tag: The tag of the SDP packet
+        :param int port:
+            The UDP port on which SpiNNaker will listen for packets
+        :param int destination_x:
+            The x-coordinate of the chip to send packets to
+        :param int destination_y:
+            The y-coordinate of the chip to send packets to
+        :param int destination_p: The ID of the processor to send packets to
+        :param int sdp_port:
+            The optional port number to use for SDP packets that
             are formed on the machine (default is 1)
-        :type sdp_port: int
-        :raise None: No known exceptions are raised
         """
-        super(ReverseIPTag, self).__init__(board_address, tag, port)
+        super().__init__(board_address, tag, port)
         self._destination_x = destination_x
         self._destination_y = destination_y
         self._destination_p = destination_p

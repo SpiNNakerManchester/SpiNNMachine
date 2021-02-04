@@ -33,7 +33,7 @@ class FullWrapMachine(Machine):
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If any two chips have the same x and y coordinates
         """
-        super(FullWrapMachine, self).__init__(width, height, chips, origin)
+        super().__init__(width, height, chips, origin)
 
     @overrides(Machine.multiple_48_chip_boards)
     def multiple_48_chip_boards(self):
