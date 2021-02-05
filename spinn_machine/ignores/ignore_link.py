@@ -43,7 +43,7 @@ class IgnoreLink(object):
         self.ip_address = ip_address
 
     @staticmethod
-    def parse_single_string(downed_core):
+    def parse_single_string(downed_link):
         """ Converts a string into an :py:class:`IgnoreLink` object
 
         The format is::
@@ -59,11 +59,11 @@ class IgnoreLink(object):
           If provided, the ``<chip_x>,<chip_y>`` will be considered local to
           the board with this IP address.
 
-        :param str downed_core: representation of one link to ignore
+        :param str downed_link: representation of one link to ignore
         :return: An IgnoreLink object
         :rtype: IgnoreLink
         """
-        parts = downed_core.split(",")
+        parts = downed_link.split(",")
 
         if len(parts) == 3:
             return IgnoreLink(parts[0], parts[1], parts[2])
@@ -71,7 +71,7 @@ class IgnoreLink(object):
             return IgnoreLink(parts[0], parts[1], parts[2], parts[3])
         else:
             raise Exception(
-                "Unexpected downed_core: {}".format(downed_core))
+                "Unexpected downed_link: {}".format(downed_link))
 
     @staticmethod
     def parse_string(downed_links):

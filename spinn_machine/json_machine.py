@@ -210,7 +210,7 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
         if chip.virtual != eth.virtual:
             exceptions["virtual"] = chip.virtual
         if chip.tag_ids != eth.tags:
-            details["tags"] = list(chip.tag_ids)
+            exceptions["tags"] = list(chip.tag_ids)
     else:
         # Write the Resources ONLY if different from the s_values
         if (chip.n_processors - chip.n_user_processors) != std.monitors:
@@ -223,7 +223,7 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
         if chip.virtual != std.virtual:
             exceptions["virtual"] = chip.virtual
         if chip.tag_ids != std.tags:
-            details["tags"] = list(chip.tag_ids)
+            exceptions["tags"] = list(chip.tag_ids)
 
     if exceptions:
         return [chip.x, chip.y, details, exceptions]

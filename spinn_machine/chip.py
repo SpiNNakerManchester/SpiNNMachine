@@ -60,7 +60,7 @@ class Chip(object):
         :type sdram: :py:class:`~spinn_machine.SDRAM`
         :param ip_address: \
             the IP address of the chip or None if no Ethernet attached
-        :type ip_address: str
+        :type ip_address: str or None
         :param virtual: boolean which defines if this chip is a virtual one
         :type virtual: bool
         :param tag_ids: IDs to identify the chip for SDP can be empty to
@@ -72,7 +72,7 @@ class Chip(object):
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
         :type nearest_ethernet_y: int or None
         :param down_cores: Ids of cores that are down for this Chip
-        :type down_cores: collection of int
+        :type down_cores: iterable(int) or None
         :param parent_link: The link down which the parent chips is found in
             the tree of chips towards the root (boot) chip
         :type parent_link: int or None
