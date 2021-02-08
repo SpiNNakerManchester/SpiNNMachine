@@ -15,6 +15,7 @@
 
 from collections import defaultdict
 import logging
+from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
 from .router import Router
@@ -24,7 +25,7 @@ from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .machine_factory import machine_from_size
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 
 def _verify_width_height(width, height):

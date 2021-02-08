@@ -16,6 +16,7 @@
 import logging
 import json
 from collections import defaultdict, namedtuple, OrderedDict
+from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .router import Router
 from .sdram import SDRAM
@@ -23,7 +24,7 @@ from .link import Link
 from .machine_factory import machine_from_size
 
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 # A description of a standard set of resources possessed by a chip
 _Desc = namedtuple("_Desc", [
@@ -209,7 +210,7 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
         if chip.virtual != eth.virtual:
             exceptions["virtual"] = chip.virtual
         if chip.tag_ids != eth.tags:
-            details["tags"] = list(chip.tag_ids)
+            exceptions["tags"] = list(chip.tag_ids)
     else:
         # Write the Resources ONLY if different from the s_values
         if (chip.n_processors - chip.n_user_processors) != std.monitors:
@@ -222,7 +223,7 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
         if chip.virtual != std.virtual:
             exceptions["virtual"] = chip.virtual
         if chip.tag_ids != std.tags:
-            details["tags"] = list(chip.tag_ids)
+            exceptions["tags"] = list(chip.tag_ids)
 
     if exceptions:
         return [chip.x, chip.y, details, exceptions]

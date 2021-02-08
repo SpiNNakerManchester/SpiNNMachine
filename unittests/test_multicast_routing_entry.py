@@ -44,6 +44,21 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(
             a_multicast,
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
+        hash(a_multicast)
+
+    def test_bad_key_mask(self):
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            MulticastRoutingEntry(1, 2)
+
+    def test_spinnaker_route(self):
+        multicast1 = MulticastRoutingEntry(1, 1, [1, 3, 4, 16], [2, 3, 5])
+        self.assertEqual(4196012, multicast1.spinnaker_route)
+        multicast2 = MulticastRoutingEntry(1, 1, spinnaker_route=4196012)
+        self.assertEqual(multicast2.processor_ids, [1, 3, 4, 16])
+        # Third test getting the link_ids first
+        multicast3 = MulticastRoutingEntry(1, 1, spinnaker_route=4196012)
+        self.assertEqual(multicast3.link_ids, [2, 3, 5])
+        self.assertEqual(multicast3.processor_ids, [1, 3, 4, 16])
 
     def test_duplicate_processors_ids(self):
         link_ids = list()
@@ -201,12 +216,14 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             proc_ids.append(i)
         for i in range(9, 18):
             proc_ids2.append(i)
-        key = 1
-        mask = 1
+        key = 0
+        mask = 2
         a_multicast = MulticastRoutingEntry(
             key, mask, proc_ids, link_ids, True)
         b_multicast = MulticastRoutingEntry(
-            key + 1, mask + 1, proc_ids2, link_ids2, True)
+            key, 4, proc_ids2, link_ids2, True)
+        self.assertNotEqual(a_multicast, b_multicast)
+        self.assertNotEqual(a_multicast, "foo")
         with self.assertRaises(SpinnMachineInvalidParameterException):
             a_multicast.merge(b_multicast)
 

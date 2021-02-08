@@ -229,6 +229,18 @@ class TestVirtualMachine(unittest.TestCase):
         vm = virtual_machine(size_x, size_y, validate=True)
         self.assertEqual(size_x * size_y, vm.n_chips)
 
+    def test_bad_size(self):
+        size_x = 12 * 5
+        size_y = 12 * 7
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            virtual_machine(size_x + 1, size_y, validate=True)
+
+    def test_none_size(self):
+        size_x = 12 * 5
+        size_y = None
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            virtual_machine(size_x, size_y, validate=True)
+
     def test_add__chip(self):
         vm = virtual_machine(2, 2)
 
@@ -856,6 +868,8 @@ class TestVirtualMachine(unittest.TestCase):
     def test_repair_with_local_orphan(self):
         down_chips = [(8, 6), (9, 7), (9, 8)]
         machine = virtual_machine(16, 16, down_chips=down_chips)
+        with self.assertRaises(SpinnMachineException):
+            repaired = machine_repair(machine, repair_machine=False)
         repaired = machine_repair(machine, repair_machine=True)
         self.assertTrue(machine.is_chip_at(8, 7))
         self.assertFalse(repaired.is_chip_at(8, 7))
@@ -867,17 +881,8 @@ class TestVirtualMachine(unittest.TestCase):
             (7, 7, 0), (7, 3, 1), (6, 7, 2), (4, 7, 3), (8, 6, 4), (8, 4, 5)]
         for (x, y, link) in down_links:
             del machine._chips[x, y].router._links[link]
-        new_machine = machine_repair(machine, True)
-        self.assertIsNotNone(new_machine)
-
-    def test_oneway_link_true(self):
-        machine = virtual_machine(8, 8)
-
-        # Delete links incoming to 3, 3
-        down_links = [
-            (3, 6, 0), (5, 4, 1), (3, 2, 5), (1, 3, 3)]
-        for (x, y, link) in down_links:
-            del machine._chips[x, y].router._links[link]
+        with self.assertRaises(SpinnMachineException):
+            new_machine = machine_repair(machine, False)
         new_machine = machine_repair(machine, True)
         self.assertIsNotNone(new_machine)
 
@@ -892,7 +897,8 @@ class TestVirtualMachine(unittest.TestCase):
                 del machine._chips[x, y].router._links[link]
         with self.assertRaises(SpinnMachineException):
             new_machine = machine_repair(machine, False)
-            self.assertIsNotNone(new_machine)
+        new_machine = machine_repair(machine, True)
+        self.assertIsNotNone(new_machine)
 
     def test_removed_chip_repair(self):
         machine = virtual_machine(8, 8)
@@ -949,6 +955,25 @@ class TestVirtualMachine(unittest.TestCase):
 
         router = machine.get_chip_at(5, 3).router
         self.assertTrue(router.is_link(3))
+
+    def test_bad_ignores(self):
+        try:
+            IgnoreChip.parse_string("4,4,3,4:6,6,ignored_ip")
+        except Exception as ex:
+            self.assertTrue("downed_chip" in str(ex))
+
+        try:
+            IgnoreCore.parse_string("3,3,3,4: 5,5,-5:7,7,7,ignored_ip")
+        except Exception as ex:
+            self.assertTrue("downed_core" in str(ex))
+
+        empty = IgnoreCore.parse_string(None)
+        self.assertEqual(len(empty), 0)
+
+        try:
+            IgnoreLink.parse_string("1,3:5,3,3,ignored_ip")
+        except Exception as ex:
+            self.assertTrue("downed_link" in str(ex))
 
     def test_n_cores_full_wrap(self):
         machine = virtual_machine(12, 12)

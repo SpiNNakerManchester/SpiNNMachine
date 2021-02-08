@@ -31,20 +31,31 @@ class MulticastRoutingEntry(object):
     def __init__(self, routing_entry_key, mask, processor_ids=None,
                  link_ids=None, defaultable=False, spinnaker_route=None):
         """
+        Constructor for Multicast Route.
+
+        Note: The processor_ids and link_ids parameters are only optional if a
+        spinnaker_route is provided. If a spinnaker_route is provided
+        the processor_ids and link_ids parameters are ignored.
+
         :param routing_entry_key: The routing key_combo
         :type routing_entry_key: int
         :param mask: The route key_combo mask
         :type mask: int
         :param processor_ids: The destination processor IDs
-        :type processor_ids: iterable(int)
+        :type processor_ids: iterable(int) or None
         :param link_ids: The destination link IDs
-        :type link_ids: iterable(int)
+        :type link_ids: iterable(int) or None
         :param defaultable: if this entry is defaultable (it receives packets \
             from its directly opposite route position)
         :type defaultable: bool
+        :param spinnaker_route: the processor_ids and link_ids expressed as a
+            single int.
+        :type spinnaker_route: int or None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             * If processor_ids contains the same ID more than once
             * If link_ids contains the same ID more than once
+        :raise TypeError: if no spinnaker_route provided and either
+            processor_ids or link_ids is missing or None
         """
         self._routing_entry_key = routing_entry_key
         self._mask = mask
@@ -190,6 +201,10 @@ class MulticastRoutingEntry(object):
         if self._spinnaker_route != other_entry._spinnaker_route:
             return False
         return (self._defaultable == other_entry.defaultable)
+
+    def __hash__(self):
+        return (self.routing_entry_key * 13 + self.mask * 19 +
+                self._spinnaker_route * 29 * int(self._defaultable) * 131)
 
     def __ne__(self, other):
         return not self.__eq__(other)

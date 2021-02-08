@@ -30,7 +30,6 @@
 
 # import sys
 import os
-from sphinx import apidoc
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -49,7 +48,15 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
+    'sphinx.ext.intersphinx'
 ]
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3.6', None),
+    'numpy': ("https://numpy.org/doc/stable/", None),
+    'spinn_utilities': (
+        'https://spinnutils.readthedocs.io/en/latest/', None),
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -65,7 +72,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'SpiNNMachine'
-copyright = u'2014-2017'
+copyright = u'2014-2020'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -357,7 +364,35 @@ for f in os.listdir("."):
     if (os.path.isfile(f) and f.endswith(
             ".rst") and f != "index.rst" and f != "modules.rst"):
         os.remove(f)
-apidoc.main([None, '-o', ".", "../../spinn_machine",
-             # Exclusions...
-             "../../spinn_machine/[a-df-ikm-su-z]*.py",
-             "../../spinn_machine/link.py"])
+
+
+def filtered_files(base, excludes=None):
+    if not excludes:
+        excludes = []
+    for root, _dirs, files in os.walk(base):
+        for filename in files:
+            if filename.endswith(".py") and not filename.startswith("_"):
+                full = root + "/" + filename
+                if full not in excludes:
+                    yield full
+
+
+# UGH!
+output_dir = os.path.abspath(".")
+os.chdir("../..")
+
+# We only document __init__.py files... except for these special cases.
+# Use the unix full pathname from the root of the checked out repo
+explicit_wanted_files = [
+    "spinn_machine/json_machine.py",
+    "spinn_machine/exceptions.py"]
+options = ['-o', output_dir, "spinn_machine"]
+options.extend(filtered_files("spinn_machine", explicit_wanted_files))
+try:
+    # Old style API; Python 2.7
+    from sphinx import apidoc
+    options = [None] + options
+except ImportError:
+    # New style API; Python 3.6 onwards
+    from sphinx.ext import apidoc
+apidoc.main(options)
