@@ -63,19 +63,15 @@ def virtual_machine(
         down_chips=None, down_cores=None, down_links=None,
         router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
         validate=True):
-    """
-    :param width: the width of the virtual machine in chips
-    :type width: int
-    :param height: the height of the virtual machine in chips
-    :type height: int
-    :param n_cpus_per_chip: The number of CPUs to put on each chip
-    :type n_cpus_per_chip: int
+    """ Create a virtual SpiNNaker machine, used for planning execution.
+
+    :param int width: the width of the virtual machine in chips
+    :param int height: the height of the virtual machine in chips
+    :param int n_cpus_per_chip: The number of CPUs to put on each chip
     :param sdram_per_chip: The amount of SDRAM to give to each chip
     :type sdram_per_chip: int or None
-    :param router_entries_per_chip: the number of entries to each router
-    :type router_entries_per_chip: int
-    :param validate: if True will call the machine validate function
-    :type validate: bool
+    :param int router_entries_per_chip: the number of entries to each router
+    :param bool validate: if True will call the machine validate function
     :returns: a virtual machine (that cannot execute code)
     :rtype: Machine
     """

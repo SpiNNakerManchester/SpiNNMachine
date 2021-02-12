@@ -28,7 +28,7 @@ class FPGALinkData(AbstractLinkData):
     # pylint: disable=too-many-arguments
     def __init__(self, fpga_link_id, fpga_id, connected_chip_x,
                  connected_chip_y, connected_link, board_address):
-        super(FPGALinkData, self).__init__(
+        super().__init__(
             connected_chip_x, connected_chip_y, connected_link, board_address)
         self._fpga_link_id = fpga_link_id
         self._fpga_id = fpga_id
