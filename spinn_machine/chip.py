@@ -65,7 +65,7 @@ class Chip(object):
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
         :type nearest_ethernet_y: int or None
         :param down_cores: Ids of cores that are down for this Chip
-        :type down_cores: collection of int
+        :type down_cores: iterable(int) or None
         :param parent_link: The link down which the parent chips is found in
             the tree of chips towards the root (boot) chip
         :type parent_link: int or None

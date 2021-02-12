@@ -1122,7 +1122,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         :rtype: iterable(Chip)
         """
-        return iter(self._virtual_chips)
+        return self._virtual_chips
 
     @property
     def local_xys(self):

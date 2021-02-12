@@ -107,6 +107,10 @@ class TestingIptag(unittest.TestCase):
             tag.port = 2
         self.assertIn("Port cannot be set more than once", str(e.exception))
 
+    def test_no_equals(self):
+        iptag = IPTag("", 0, 0, 0, "", 1)
+        self.assertNotEqual(iptag, "foo")
+
 
 if __name__ == '__main__':
     unittest.main()
