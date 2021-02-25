@@ -359,34 +359,32 @@ epub_exclude_files = ['search.html']
 
 autoclass_content = 'both'
 
-# Do the rst generation
 
-for f in os.listdir("."):
-    if (os.path.isfile(f) and f.endswith(
-            ".rst") and f != "index.rst" and f != "modules.rst"):
-        os.remove(f)
-
-
-def filtered_files(base, excludes=None):
-    if not excludes:
-        excludes = []
+def filtered_files(base, unfiltered_files_filename):
+    with open(unfiltered_files_filename) as f:
+        lines = [line.rstrip() for line in f]
+    # Skip comments and empty lines to get list of files we DON'T want to
+    # filter out; this is definitely complicated
+    unfiltered = set(
+        line for line in lines if not line.startswith("#") and line != "")
     for root, _dirs, files in os.walk(base):
         for filename in files:
             if filename.endswith(".py") and not filename.startswith("_"):
                 full = root + "/" + filename
-                if full not in excludes:
+                if full not in unfiltered:
                     yield full
 
 
-# UGH!
-output_dir = os.path.abspath(".")
-os.chdir("../..")
+_output_dir = os.path.abspath(".")
+_unfiltered_files = os.path.abspath("../unfiltered-files.txt")
+_package_base = "spinn_machine"
 
-# We only document __init__.py files... except for these special cases.
-# Use the unix full pathname from the root of the checked out repo
-explicit_wanted_files = [
-    "spinn_machine/json_machine.py",
-    "spinn_machine/exceptions.py"]
-options = ['-o', output_dir, "spinn_machine"]
-options.extend(filtered_files("spinn_machine", explicit_wanted_files))
-apidoc.main(options)
+# Do the rst generation; remove files which aren't in git first!
+for fl in os.listdir("."):
+    if (os.path.isfile(fl) and fl.endswith(".rst") and
+            fl not in ("index.rst", "modules.rst")):
+        os.remove(fl)
+os.chdir("../..")  # WARNING! RELATIVE FILENAMES CHANGE MEANING HERE!
+apidoc.main([
+    '-o', _output_dir, _package_base,
+    *filtered_files(_package_base, _unfiltered_files)])
