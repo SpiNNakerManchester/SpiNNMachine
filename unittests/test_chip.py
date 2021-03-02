@@ -97,6 +97,10 @@ class TestingChip(unittest.TestCase):
             [True, False, False, False, False, False, False, False, False,
              False, False, False, False, False, False, False, False, False])
         self.assertTrue(new_chip.is_processor_with_id(3))
+        self.assertEqual(5, new_chip.get_processor_with_id(5).processor_id)
+        self.assertEqual(6, new_chip[6].processor_id)
+        self.assertTrue(7 in new_chip)
+        self.assertIsNone(new_chip.get_processor_with_id(-1))
 
     def test_get_first_none_monitor_processor(self):
         """ test the get_first_none_monitor_processor
@@ -108,5 +112,28 @@ class TestingChip(unittest.TestCase):
         non_monitor = new_chip.get_first_none_monitor_processor()
         self.assertFalse(non_monitor.is_monitor)
 
-    if __name__ == '__main__':
-        unittest.main()
+    def test_getitem_and_contains(self):
+        """ test the __getitem__ an __contains__ methods
+
+        NOTE: Not sure if method being tested is required.
+        """
+        new_chip = self._create_chip(self._x, self._y, self.n_processors,
+                                     self._router, self._sdram, self._ip)
+        new_chip[3]
+        with self.assertRaises(KeyError):
+            new_chip[self.n_processors]
+        self.assertTrue(3 in new_chip)
+        self.assertFalse(self.n_processors in new_chip)
+
+    def test_0_down(self):
+        with self.assertRaises(NotImplementedError):
+            Chip(1, 1, self.n_processors, self._router, self._sdram, 0, 0,
+                 self._ip, down_cores=[0])
+
+    def test_1_chip(self):
+        new_chip = Chip(1, 1, 1, self._router, self._sdram, 0, 0, self._ip)
+        self.assertIsNone(new_chip.get_first_none_monitor_processor())
+
+
+if __name__ == '__main__':
+    unittest.main()

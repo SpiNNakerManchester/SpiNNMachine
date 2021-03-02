@@ -34,32 +34,26 @@ class IPTag(AbstractTag):
             self, board_address, destination_x, destination_y, tag, ip_address,
             port=None, strip_sdp=False, traffic_identifier="DEFAULT"):
         """
-        :param board_address: \
+        :param board_address:
             The IP address of the board on which the tag is allocated
         :type board_address: str or None
-        :param destination_x: \
+        :param int destination_x:
             The x-coordinate where users of this tag should send packets to
-        :type destination_x: int
-        :param destination_y: \
+        :param int destination_y:
             The y-coordinate where users of this tag should send packets to
-        :type destination_y: int
-        :param tag: The tag of the SDP packet
-        :type tag: int
-        :param ip_address: \
+        :param int tag: The tag of the SDP packet
+        :param str ip_address:
             The IP address to which SDP packets with the tag will be sent
-        :type ip_address: str
-        :param port: \
-            The port to which the SDP packets with the tag will be sent, or\
-            None if not yet assigned
+        :param port:
+            The port to which the SDP packets with the tag will be sent, or
+            ``None`` if not yet assigned
         :type port: int or None
-        :param strip_sdp: Indicates whether the SDP header should be removed
-        :type strip_sdp: bool
-        :param traffic_identifier: \
+        :param bool strip_sdp:
+            Indicates whether the SDP header should be removed
+        :param str traffic_identifier:
             The identifier for traffic transmitted using this tag
-        :type traffic_identifier: str
-        :raise None: No known exceptions are raised
         """
-        super(IPTag, self).__init__(board_address, tag, port)
+        super().__init__(board_address, tag, port)
         self._ip_address = ip_address
         self._strip_sdp = strip_sdp
         self._traffic_identifier = traffic_identifier

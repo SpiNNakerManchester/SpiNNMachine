@@ -28,14 +28,11 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
 
     def __init__(self, item, value):
         """
-        :param item: The item of which there is already one of
-        :type item: str
-        :param value: The value of the item
-        :type value: str
+        :param str item: The item of which there is already one of
+        :param str value: The value of the item
         """
-        super(SpinnMachineAlreadyExistsException, self).__init__(
-            "There can only be one {} with a value of {}".format(
-                item, value))
+        super().__init__("There can only be one {} with a value of {}".format(
+            item, value))
         self._item = item
         self._value = value
 
@@ -62,16 +59,13 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
 
     def __init__(self, parameter, value, problem):
         """
-        :param parameter: The name of the parameter that has an invalid value
-        :type parameter: str
-        :param value: The value of the parameter that is invalid
-        :type value: str
-        :param problem: The reason for the exception
-        :type problem: str
+        :param str parameter:
+            The name of the parameter that has an invalid value
+        :param str value: The value of the parameter that is invalid
+        :param str problem: The reason for the exception
         """
-        super(SpinnMachineInvalidParameterException, self).__init__(
-            "It is invalid to set {} to {}: {}".format(
-                parameter, value, problem))
+        super().__init__("It is invalid to set {} to {}: {}".format(
+            parameter, value, problem))
         self._parameter = parameter
         self._value = value
         self._problem = problem

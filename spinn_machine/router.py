@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import OrderedDict
-from six import iteritems, itervalues
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 
@@ -24,8 +23,8 @@ class Router(object):
         The router is iterable over the links, providing (source_link_id,\
         link) where:
 
-            * source_link_id is the ID of a link
-            * link is the link with ID source_link_id
+            * ``source_link_id`` is the ID of a link
+            * ``link`` is the :py:class:`Link` with ID ``source_link_id``
     """
 
     ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
@@ -47,16 +46,13 @@ class Router(object):
             self, links, emergency_routing_enabled=False,
             n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
         """
-        :param links: iterable of links
-        :type links: iterable(:py:class:`~spinn_machine.Link`)
-        :param emergency_routing_enabled: \
+        :param iterable(~spinn_machine.Link) links: iterable of links
+        :param bool emergency_routing_enabled:
             Determines if the router emergency routing is operating
-        :type emergency_routing_enabled: bool
-        :param n_available_multicast_entries: \
+        :param int n_available_multicast_entries:
             The number of entries available in the routing table
-        :type n_available_multicast_entries: int
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
-            If any two links have the same source_link_id
+        :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
+            If any two links have the same ``source_link_id``
         """
         self._links = OrderedDict()
         for link in links:
@@ -68,12 +64,9 @@ class Router(object):
     def add_link(self, link):
         """ Add a link to the router of the chip
 
-        :param link: The link to be added
-        :type link: :py:class:`spinn_machine.Link`
-        :return: Nothing is returned
-        :rtype: None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
-            If another link already exists with the same source_link_id
+        :param Link link: The link to be added
+        :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
+            If another link already exists with the same ``source_link_id``
         """
         if link.source_link_id in self._links:
             raise SpinnMachineAlreadyExistsException(
@@ -82,10 +75,9 @@ class Router(object):
 
     def is_link(self, source_link_id):
         """ Determine if there is a link with ID source_link_id.\
-            Also implemented as `__contains__(source_link_id)`
+            Also implemented as ``__contains__(source_link_id)``
 
-        :param source_link_id: The ID of the link to find
-        :type source_link_id: int
+        :param int source_link_id: The ID of the link to find
         :return: True if there is a link with the given ID, False otherwise
         :rtype: bool
         :raise None: No known exceptions are raised
@@ -99,12 +91,11 @@ class Router(object):
 
     def get_link(self, source_link_id):
         """ Get the link with the given ID, or None if no such link.\
-            Also implemented as `__getitem__(source_link_id)`
+            Also implemented as ``__getitem__(source_link_id)``
 
-        :param source_link_id: The ID of the link to find
-        :type source_link_id: int
-        :return: The link, or None if no such link
-        :rtype: :py:class:`~spinn_machine.Link`
+        :param int source_link_id: The ID of the link to find
+        :return: The link, or ``None`` if no such link
+        :rtype: ~spinn_machine.Link or None
         :raise None: No known exceptions are raised
         """
         if source_link_id in self._links:
@@ -121,21 +112,21 @@ class Router(object):
         """ The available links of this router
 
         :return: an iterable of available links
-        :rtype: iterable(:py:class:`~spinn_machine.Link`)
+        :rtype: iterable(~spinn_machine.Link)
         :raise None: does not raise any known exceptions
         """
-        return itervalues(self._links)
+        return iter(self._links.values())
 
     def __iter__(self):
         """ Get an iterable of source link IDs and links in the router
 
-        :return: an iterable of tuples of (source_link_id, link) where:
-            * source_link_id is the ID of the link
-            * link is a router link
-        :rtype: iterable(int, :py:class:`~spinn_machine.Link`)
+        :return: an iterable of tuples of ``(source_link_id, link)`` where:
+            * ``source_link_id`` is the ID of the link
+            * ``link`` is a router link
+        :rtype: iterable(int, ~spinn_machine.Link)
         :raise None: does not raise any known exceptions
         """
-        return iteritems(self._links)
+        return iter(self._links.items())
 
     def __len__(self):
         """ Get the number of links in the router
@@ -151,7 +142,6 @@ class Router(object):
 
         :return: True if emergency routing is enabled, False otherwise
         :rtype: bool
-        :raise None: does not raise any known exceptions
         """
         return self._emergency_routing_enabled
 
@@ -161,7 +151,6 @@ class Router(object):
 
         :return: The number of available entries
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._n_available_multicast_entries
 
@@ -170,9 +159,8 @@ class Router(object):
         """ Convert a routing table entry represented in software to a\
             binary routing table entry usable on the machine
 
-        :param routing_table_entry: The entry to convert
-        :type routing_table_entry:\
-            :py:class:`~spinn_machine.MulticastRoutingEntry`
+        :param ~spinn_machine.MulticastRoutingEntry routing_table_entry:
+            The entry to convert
         :rtype: int
         """
         route_entry = 0
@@ -199,8 +187,7 @@ class Router(object):
             lists of route IDs usable in a routing table entry represented in \
             software.
 
-        :param route: The routing table entry
-        :type route: int
+        :param int route: The routing table entry
         :return: The list of processor IDs, and the list of link IDs.
         :rtype: tuple(list(int), list(int))
         """
@@ -215,7 +202,6 @@ class Router(object):
 
         :return: iterable list of destination coordinates in x and y dict
         :rtype: iterable(dict(str,int))
-
         """
         next_hop_chips_coords = list()
         for link in self.links:
@@ -242,8 +228,9 @@ class Router(object):
         GIGO: this method assumes the input is valid.
         No verfication is done
 
-        :param link_id: A valid link_id
+        :param int link_id: A valid link_id
         :return: The link_id for the opposite direction
+        :rtype: int
         """
         # Mod is faster than if
         return (link_id + Router.LINK_OPPOSITE) % Router.MAX_LINKS_PER_ROUTER

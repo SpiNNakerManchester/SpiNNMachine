@@ -15,7 +15,8 @@
 
 import unittest
 from spinn_machine import Router, Link, MulticastRoutingEntry
-from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
+from spinn_machine.exceptions import (
+    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 
 
 class TestingRouter(unittest.TestCase):
@@ -80,6 +81,16 @@ class TestingRouter(unittest.TestCase):
         e = MulticastRoutingEntry(28, 60, [4, 5, 7], [1, 3, 5], True)
         r = Router.convert_routing_table_entry_to_spinnaker_route(e)
         self.assertEqual(r, 11306)
+
+    def test_bad_processor(self):
+        e = MulticastRoutingEntry(28, 60, [4, 5, -1], [1, 3, 5], True)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            Router.convert_routing_table_entry_to_spinnaker_route(e)
+
+    def test_bad_link(self):
+        e = MulticastRoutingEntry(28, 60, [4, 5, 7], [1, 3, 15], True)
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            Router.convert_routing_table_entry_to_spinnaker_route(e)
 
 
 if __name__ == '__main__':

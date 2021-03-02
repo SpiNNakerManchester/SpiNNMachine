@@ -13,12 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+from collections import defaultdict
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-from collections import defaultdict
-import os
 
 __version__ = None
 exec(open("spinn_machine/_version.py").read())
@@ -65,15 +65,14 @@ setup(
         "Operating System :: MacOS",
 
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     packages=packages,
     package_data=package_data,
-    install_requires=['SpiNNUtilities >= 1!5.1.1, < 1!6.0.0',
-                      'six'],
+    install_requires=['SpiNNUtilities >= 1!5.1.1, < 1!6.0.0'],
     maintainer="SpiNNakerTeam",
     maintainer_email="spinnakerusers@googlegroups.com"
 

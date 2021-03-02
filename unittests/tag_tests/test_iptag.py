@@ -16,7 +16,6 @@
 """
 TestingIptag
 """
-from __future__ import absolute_import
 import unittest
 from spinn_machine.tags import IPTag
 
@@ -107,6 +106,10 @@ class TestingIptag(unittest.TestCase):
         with self.assertRaises(RuntimeError) as e:
             tag.port = 2
         self.assertIn("Port cannot be set more than once", str(e.exception))
+
+    def test_no_equals(self):
+        iptag = IPTag("", 0, 0, 0, "", 1)
+        self.assertNotEqual(iptag, "foo")
 
 
 if __name__ == '__main__':

@@ -45,16 +45,47 @@ class TestJsonMachine(unittest.TestCase):
         chip03 = vm.get_chip_at(0, 3)
         chip03._virtual = True
         jpath = mktemp("json")
-        jpath = "temp.json"
         to_json_path(vm, jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")
         self.assertEqual(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
-            print(vchip)
-            print(jchip)
             self.assertEqual(str(vchip), str(jchip))
+        vchip33 = jm.get_chip_at(3, 3)
+        self.assertEqual(vchip33.tag_ids, chip33.tag_ids)
+
+    def test_monitor_exceptions(self):
+        vm = virtual_machine(width=8, height=8)
+        chip02 = vm.get_chip_at(0, 2)
+        # Hack in an extra monitor
+        chip02._n_user_processors -= 1
+        jpath = mktemp("json")
+        # Should still be able to write json even with more than one monitor
+        to_json_path(vm, jpath)
+        # However we dont need to support reading back with more than 1 monitor
+        with self.assertRaises(NotImplementedError):
+            machine_from_json(jpath)
+
+    def test_ethernet_exceptions(self):
+        vm = virtual_machine(width=16, height=16)
+        chip48 = vm.get_chip_at(4, 8)
+        router48 = chip48.router
+        router48._n_available_multicast_entries =  \
+            router48._n_available_multicast_entries - 20
+        chip48._sdram = SDRAM(50000000)
+        chip48._tag_ids = [2, 3]
+        chip48._virtual = True
+        jpath = mktemp("json")
+        to_json_path(vm, jpath)
+        jm = machine_from_json(jpath)
+        vstr = str(vm).replace("Virtual", "")
+        jstr = str(jm).replace("Json", "")
+        self.assertEqual(vstr, jstr)
+        for vchip, jchip in zip(vm, jm):
+            self.assertEqual(str(vchip), str(jchip))
+        vchip48 = jm.get_chip_at(4, 8)
+        self.assertEqual(vchip48.tag_ids, chip48.tag_ids)
 
 
 if __name__ == '__main__':
