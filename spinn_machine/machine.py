@@ -179,7 +179,7 @@ class Machine(object, metaclass=AbstractBase):
         if chips is not None:
             self.add_chips(chips)
 
-        self._virtual_chips = list()
+        self._virtual_chips = OrderedDict()
 
         if origin is None:
             self._origin = ""
@@ -276,7 +276,6 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: iterable(tuple(int,int))
         """
 
-    @abstractmethod
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         """
         Yields the actual chips on the board with this ethernet.
@@ -293,6 +292,9 @@ class Machine(object, metaclass=AbstractBase):
         :return: Yields the chips on this board.
         :rtype: iterable(Chip)
         """
+        for chip_xy in self.get_existing_xys_by_ethernet(
+                ethernet_x, ethernet_y):
+            yield self._chips[chip_xy]
 
     @abstractmethod
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
@@ -559,7 +561,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         :param ~spinn_machine.Chip chip: The virtual chip to add
         """
-        self._virtual_chips.append(chip)
+        self._virtual_chips[(chip.x, chip.y)] = chip
         self.add_chip(chip)
 
     def add_chips(self, chips):
@@ -1122,7 +1124,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         :rtype: iterable(Chip)
         """
-        return self._virtual_chips
+        return self._virtual_chips.values()
 
     @property
     def local_xys(self):

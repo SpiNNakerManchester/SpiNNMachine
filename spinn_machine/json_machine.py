@@ -146,7 +146,7 @@ def _find_virtual_links(machine):
     :return: Map of Chip to list of virtual links
     """
     virtual_links_dict = defaultdict(list)
-    for chip in machine._virtual_chips:
+    for chip in machine.virtual_chips:
         # assume all links need special treatment
         for link in chip.router.links:
             virtual_links_dict[chip].append(link)
