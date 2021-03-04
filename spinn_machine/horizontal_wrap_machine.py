@@ -52,7 +52,7 @@ class HorizontalWrapMachine(Machine):
 
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
-         for (x, y) in self._local_xys:
+        for (x, y) in self._local_xys:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y))
             if chip_xy in self._chips and \
