@@ -179,7 +179,7 @@ class Machine(object, metaclass=AbstractBase):
         if chips is not None:
             self.add_chips(chips)
 
-        self._virtual_chips = list()
+        self._virtual_chips = OrderedDict()
 
         if origin is None:
             self._origin = ""
@@ -276,7 +276,6 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: iterable(tuple(int,int))
         """
 
-    @abstractmethod
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         """
         Yields the actual chips on the board with this ethernet.
@@ -293,6 +292,9 @@ class Machine(object, metaclass=AbstractBase):
         :return: Yields the chips on this board.
         :rtype: iterable(Chip)
         """
+        for chip_xy in self.get_existing_xys_by_ethernet(
+                ethernet_x, ethernet_y):
+            yield self._chips[chip_xy]
 
     @abstractmethod
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
@@ -559,7 +561,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         :param ~spinn_machine.Chip chip: The virtual chip to add
         """
-        self._virtual_chips.append(chip)
+        self._virtual_chips[(chip.x, chip.y)] = chip
         self.add_chip(chip)
 
     def add_chips(self, chips):
@@ -1122,7 +1124,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         :rtype: iterable(Chip)
         """
-        return self._virtual_chips
+        return self._virtual_chips.values()
 
     @property
     def local_xys(self):
@@ -1139,3 +1141,31 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: iterable(tuple(int,int))
         """
         return self._local_xys
+
+    def get_unused_xy(self):
+        """
+        Finds an unused xy on this machine.
+
+        This method will not return an xy of an existing chip
+
+        This method will not return an xy on any existing board even if that
+        chip does not exist. IE it will not return xy of a dead chip
+
+        It will however return the same unused_xy until a chip is added at
+        that location
+
+        :return: an unused xy
+        :rtype: (int, int)
+        """
+        # get a set of xys that could be connected to any existing ethernet
+        xys_by_ethernet = set()
+        for ethernet in self.ethernet_connected_chips:
+            xys_by_ethernet.update(
+                self.get_xys_by_ethernet(ethernet.x, ethernet.y))
+        x = 0
+        while(True):
+            for y in range(self.max_chip_y+1):
+                xy = (x, y)
+                if xy not in self._chips and xy not in xys_by_ethernet:
+                    return xy
+            x += 1

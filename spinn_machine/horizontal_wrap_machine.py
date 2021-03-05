@@ -50,20 +50,13 @@ class HorizontalWrapMachine(Machine):
         for (x, y), n_cores in self.CHIPS_PER_BOARD.items():
             yield(((x + ethernet_x) % self._width, (y + ethernet_y)), n_cores)
 
-    @overrides(Machine.get_chips_by_ethernet)
-    def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._local_xys:
-            chip_xy = ((x + ethernet_x) % self._width,
-                       (y + ethernet_y))
-            if (chip_xy) in self._chips:
-                yield self._chips[chip_xy]
-
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y))
-            if (chip_xy) in self._chips:
+            if chip_xy in self._chips and \
+                    chip_xy not in self._virtual_chips:
                 yield chip_xy
 
     @overrides(Machine.get_down_xys_by_ethernet)

@@ -111,6 +111,7 @@ class TestVirtualMachine(unittest.TestCase):
         for _chip in vm.get_existing_xys_on_board(vm.get_chip_at(1, 1)):
             count += 1
         self.assertEqual(4, count)
+        self.assertEqual((2, 0), vm.get_unused_xy())
 
     def test_version_5(self):
         vm = virtual_machine(width=8, height=8, validate=True)
@@ -122,6 +123,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertFalse(vm.is_chip_at(0, 4))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(240, count)
+        self.assertEqual((0, 4), vm.get_unused_xy())
 
     def test_8_by_8(self):
         vm = virtual_machine(width=8, height=8, validate=True)
@@ -147,6 +149,7 @@ class TestVirtualMachine(unittest.TestCase):
         for _chip in vm.get_existing_xys_on_board(vm.get_chip_at(1, 1)):
             count += 1
         self.assertEqual(48, count)
+        self.assertEqual((12, 0), vm.get_unused_xy())
 
     def test_version_5_guess_8x8(self):
         vm = virtual_machine(height=8, width=8, validate=True)
@@ -167,8 +170,24 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertFalse(vm.is_link_at(3, 3, 2))
         self.assertFalse(vm.is_link_at(3, 2, 2))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        # 240 - 6 * 2
         self.assertEqual(228, count)
         self.assertEqual(48, len(vm.local_xys))
+
+    def test_version_5_hole2(self):
+        hole = [(0, 3)]
+        vm = virtual_machine(height=8, width=8, down_chips=hole, validate=True)
+        self.assertEqual(vm.max_chip_x, 7)
+        self.assertEqual(vm.max_chip_y, 7)
+        self.assertEqual(47, vm.n_chips)
+        self.assertEqual(1, len(vm.ethernet_connected_chips))
+        self.assertFalse(vm.is_link_at(0, 2, 2))
+        self.assertFalse(vm.is_link_at(1, 3, 3))
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        # 240 - 3 * 2
+        self.assertEqual(234, count)
+        self.assertEqual(48, len(vm.local_xys))
+        self.assertEqual((0, 4), vm.get_unused_xy())
 
     def test_new_vm_with_monitor(self):
         n_cpus = 13
