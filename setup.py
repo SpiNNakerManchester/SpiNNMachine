@@ -1,10 +1,10 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2017-2021 The University of Manchester
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
+#y
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -51,7 +51,7 @@ setup(
     url="https://github.com/SpiNNakerManchester/SpiNNMachine",
     license="GNU GPLv3.0",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status ::  5 - Production/Stable",
 
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
@@ -72,7 +72,7 @@ setup(
     ],
     packages=packages,
     package_data=package_data,
-    install_requires=['SpiNNUtilities >= 1!5.1.1, < 1!6.0.0'],
+    install_requires=['SpiNNUtilities = 1!6.0.0'],
     maintainer="SpiNNakerTeam",
     maintainer_email="spinnakerusers@googlegroups.com"
 
