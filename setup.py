@@ -72,7 +72,7 @@ setup(
     ],
     packages=packages,
     package_data=package_data,
-    install_requires=['SpiNNUtilities = 1!6.0.0'],
+    install_requires=['SpiNNUtilities == 1!6.0.0'],
     maintainer="SpiNNakerTeam",
     maintainer_email="spinnakerusers@googlegroups.com"
 
