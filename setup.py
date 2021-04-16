@@ -51,7 +51,7 @@ setup(
     url="https://github.com/SpiNNakerManchester/SpiNNMachine",
     license="GNU GPLv3.0",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
 
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
@@ -72,7 +72,7 @@ setup(
     ],
     packages=packages,
     package_data=package_data,
-    install_requires=['SpiNNUtilities >= 1!5.1.1, < 1!6.0.0'],
+    install_requires=['SpiNNUtilities == 1!6.0.1'],
     maintainer="SpiNNakerTeam",
     maintainer_email="spinnakerusers@googlegroups.com"
 
