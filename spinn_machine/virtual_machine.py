@@ -62,7 +62,6 @@ def virtual_machine(
         width, height, n_cpus_per_chip=None,
         sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
         down_chips=None, down_cores=None, down_links=None,
-        router_entries_per_chip=Machine.ROUTER_ENTRIES,
         validate=True):
     """ Create a virtual SpiNNaker machine, used for planning execution.
 
@@ -71,7 +70,6 @@ def virtual_machine(
     :param int n_cpus_per_chip: The number of CPUs to put on each chip
     :param sdram_per_chip: The amount of SDRAM to give to each chip
     :type sdram_per_chip: int or None
-    :param int router_entries_per_chip: the number of entries to each router
     :param bool validate: if True will call the machine validate function
     :returns: a virtual machine (that cannot execute code)
     :rtype: Machine
@@ -79,8 +77,7 @@ def virtual_machine(
 
     factory = _VirtualMachine(
         width, height, n_cpus_per_chip,  sdram_per_chip,
-        down_chips, down_cores, down_links,
-        router_entries_per_chip, validate)
+        down_chips, down_cores, down_links, validate)
     return factory.machine
 
 
@@ -91,7 +88,6 @@ class _VirtualMachine(object):
     __slots__ = (
         "_unused_cores",
         "_unused_links",
-        "_n_router_entries_per_router",
         "_machine",
         "_sdram_per_chip",
         "_with_monitors")
@@ -108,10 +104,7 @@ class _VirtualMachine(object):
             self, width, height, n_cpus_per_chip=None,
             sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
             down_chips=None, down_cores=None, down_links=None,
-            router_entries_per_chip=Machine.ROUTER_ENTRIES,
             validate=True):
-
-        self._n_router_entries_per_router = router_entries_per_chip
 
         _verify_width_height(width, height)
         self._machine = machine_from_size(width, height, origin=self.ORIGIN)
@@ -201,8 +194,7 @@ class _VirtualMachine(object):
     def _create_chip(self, x, y, configured_chips, ip_address=None):
         chip_links = self._calculate_links(x, y, configured_chips)
         chip_router = Router(
-            chip_links,
-            n_available_multicast_entries=self._n_router_entries_per_router)
+            chip_links)
         if self._sdram_per_chip is None:
             sdram = SDRAM()
         else:
