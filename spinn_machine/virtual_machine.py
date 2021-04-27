@@ -22,7 +22,6 @@ from .router import Router
 from .sdram import SDRAM
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
-from .machine import Machine
 from .machine_factory import machine_from_size
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
