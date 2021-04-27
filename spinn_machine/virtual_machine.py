@@ -22,6 +22,7 @@ from .router import Router
 from .sdram import SDRAM
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
+from .machine import Machine
 from .machine_factory import machine_from_size
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
@@ -61,7 +62,7 @@ def virtual_machine(
         width, height, n_cpus_per_chip=None,
         sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
         down_chips=None, down_cores=None, down_links=None,
-        router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
+        router_entries_per_chip=Machine.ROUTER_ENTRIES,
         validate=True):
     """ Create a virtual SpiNNaker machine, used for planning execution.
 
@@ -107,7 +108,7 @@ class _VirtualMachine(object):
             self, width, height, n_cpus_per_chip=None,
             sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
             down_chips=None, down_cores=None, down_links=None,
-            router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
+            router_entries_per_chip=Machine.ROUTER_ENTRIES,
             validate=True):
 
         self._n_router_entries_per_router = router_entries_per_chip
