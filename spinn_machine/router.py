@@ -16,6 +16,7 @@
 from collections import OrderedDict
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from .machine import Machine
 
 
 class Router(object):
@@ -26,8 +27,6 @@ class Router(object):
             * ``source_link_id`` is the ID of a link
             * ``link`` is the :py:class:`Link` with ID ``source_link_id``
     """
-
-    ROUTER_DEFAULT_AVAILABLE_ENTRIES = 1024
 
     # The maximum number of links/directions a router can handle
     MAX_LINKS_PER_ROUTER = 6
@@ -44,7 +43,7 @@ class Router(object):
 
     def __init__(
             self, links, emergency_routing_enabled=False,
-            n_available_multicast_entries=ROUTER_DEFAULT_AVAILABLE_ENTRIES):
+            n_available_multicast_entries=Machine.ROUTER_ENTRIES):
         """
         :param iterable(~spinn_machine.Link) links: iterable of links
         :param bool emergency_routing_enabled:

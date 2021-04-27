@@ -61,6 +61,7 @@ class Machine(object, metaclass=AbstractBase):
         (6, 7): 18, (7, 3): 18, (7, 4): 18, (7, 5): 18, (7, 6): 18, (7, 7): 18
     }
     BOARD_48_CHIPS = list(CHIPS_PER_BOARD.keys())
+    ROUTER_ENTRIES = 1023
 
     __slots__ = (
         "_boot_ethernet_address",
