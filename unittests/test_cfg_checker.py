@@ -26,4 +26,6 @@ class TestCfgChecker(unittest.TestCase):
         reset_configs()
 
     def test_cfg_checker(self):
-        run_config_checks("spinn_machine")
+        unittests = os.path.dirname(__file__)
+        spinn_machine = os.path.dirname(unittests)
+        run_config_checks(spinn_machine)
