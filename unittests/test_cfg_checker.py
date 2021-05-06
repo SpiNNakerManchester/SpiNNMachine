@@ -27,5 +27,6 @@ class TestCfgChecker(unittest.TestCase):
 
     def test_cfg_checker(self):
         unittests = os.path.dirname(__file__)
-        spinn_machine = os.path.dirname(unittests)
-        run_config_checks(spinn_machine)
+        parent = os.path.dirname(unittests)
+        spinn_machine = os.path.join(parent, "spinn_machine")
+        run_config_checks(directories=[spinn_machine, unittests])
