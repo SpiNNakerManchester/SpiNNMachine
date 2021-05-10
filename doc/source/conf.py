@@ -410,5 +410,5 @@ for fl in os.listdir("."):
         os.remove(fl)
 os.chdir("../..")  # WARNING! RELATIVE FILENAMES CHANGE MEANING HERE!
 apidoc.main([
-    '-o', _output_dir, _package_base,
+    '-q', '-o', _output_dir, _package_base,
     *filtered_files(_package_base, _unfiltered_files)])
