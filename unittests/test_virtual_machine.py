@@ -169,7 +169,6 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(240, count)
 
     def test_version_5_hole(self):
-        hole = [(3, 3)]
         set_config("Machine", "down_chips", "3,3")
         vm = virtual_machine(height=8, width=8, validate=True)
         self.assertEqual(vm.max_chip_x, 7)
@@ -184,7 +183,6 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(48, len(vm.local_xys))
 
     def test_version_5_hole2(self):
-        hole = [(0, 3)]
         set_config("Machine", "down_chips", "0,3")
         vm = virtual_machine(height=8, width=8, validate=True)
         self.assertEqual(vm.max_chip_x, 7)
