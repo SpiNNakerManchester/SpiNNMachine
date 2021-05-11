@@ -373,7 +373,7 @@ _package_base = "spinn_machine"
 # Automatically called by sphinx at startup
 def setup(app):
     # NB: extra dot at end is deliberate!
-    trim = (_package_base + ".", "pacman.", "spinnman.", "spinn_machine.",
+    trim = (_package_base + ".", "pacman.", "spinnman.",
             "data_specification.", "spinn_utilities.")
 
     # Magic to shorten the names of our classes to their public versions
