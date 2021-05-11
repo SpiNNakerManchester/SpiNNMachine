@@ -14,9 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+from spinn_utilities.config_holder import load_config, set_config
+from spinn_machine.config_setup import reset_configs
 from spinn_machine import (Chip, Link, Machine, machine_from_size, Router,
                            SDRAM, virtual_machine)
-
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException,
     SpinnMachineInvalidParameterException)
@@ -29,6 +30,13 @@ from .geometry import (to_xyz, shortest_mesh_path_length,
 class TestVirtualMachine(unittest.TestCase):
 
     TYPICAL_N_CORES_PER_BOARD = sum(Machine.CHIPS_PER_BOARD.values())
+
+    def setUp(self):
+        reset_configs()
+        load_config()
+
+    def tearDown(self):
+        reset_configs()
 
     def _create_chip(self, x, y):
         # Create a list of processors.
@@ -888,8 +896,10 @@ class TestVirtualMachine(unittest.TestCase):
         down_chips = [(8, 6), (9, 7), (9, 8)]
         machine = virtual_machine(16, 16, down_chips=down_chips)
         with self.assertRaises(SpinnMachineException):
-            repaired = machine_repair(machine, repair_machine=False)
-        repaired = machine_repair(machine, repair_machine=True)
+            set_config("Machine", "repair_machine", False)
+            repaired = machine_repair(machine)
+        set_config("Machine", "repair_machine", True)
+        repaired = machine_repair(machine)
         self.assertTrue(machine.is_chip_at(8, 7))
         self.assertFalse(repaired.is_chip_at(8, 7))
 
@@ -901,8 +911,10 @@ class TestVirtualMachine(unittest.TestCase):
         for (x, y, link) in down_links:
             del machine._chips[x, y].router._links[link]
         with self.assertRaises(SpinnMachineException):
-            new_machine = machine_repair(machine, False)
-        new_machine = machine_repair(machine, True)
+            set_config("Machine", "repair_machine", False)
+            new_machine = machine_repair(machine)
+        set_config("Machine", "repair_machine", True)
+        new_machine = machine_repair(machine)
         self.assertIsNotNone(new_machine)
 
     def test_oneway_link_no_repair(self):
@@ -915,15 +927,18 @@ class TestVirtualMachine(unittest.TestCase):
             if machine.is_link_at(x, y, link):
                 del machine._chips[x, y].router._links[link]
         with self.assertRaises(SpinnMachineException):
-            new_machine = machine_repair(machine, False)
-        new_machine = machine_repair(machine, True)
+            set_config("Machine", "repair_machine", False)
+            new_machine = machine_repair(machine)
+        set_config("Machine", "repair_machine", True)
+        new_machine = machine_repair(machine)
         self.assertIsNotNone(new_machine)
 
     def test_removed_chip_repair(self):
         machine = virtual_machine(8, 8)
 
         del machine._chips[(3, 3)]
-        new_machine = machine_repair(machine, False, [(3, 3)])
+        set_config("Machine", "repair_machine", False)
+        new_machine = machine_repair(machine, [(3, 3)])
         self.assertIsNotNone(new_machine)
         self.assertFalse(new_machine.is_link_at(2, 2, 1))
 
