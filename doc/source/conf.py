@@ -361,13 +361,20 @@ epub_exclude_files = ['search.html']
 
 autoclass_content = 'both'
 
+# We want to document __call__ when encountered
+autodoc_default_options = {
+    "members": None,
+    "special-members": "__call__"
+}
+
 _package_base = "spinn_machine"
 
 
 # Automatically called by sphinx at startup
 def setup(app):
     # NB: extra dot at end is deliberate!
-    trim = (_package_base + ".", "spinn_utilities.")
+    trim = (_package_base + ".", "pacman.", "spinnman.", "spinn_machine.",
+            "data_specification.", "spinn_utilities.")
 
     # Magic to shorten the names of our classes to their public versions
     def skip_handler(_app, what, name, obj, skip, _options):
