@@ -15,7 +15,7 @@
 
 from collections import defaultdict
 import logging
-from spinn_utilities.config_holder import get_config_str
+from spinn_utilities.config_holder import get_config_int, get_config_str
 from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
@@ -59,23 +59,18 @@ def _verify_width_height(width, height):
 
 
 def virtual_machine(
-        width, height, n_cpus_per_chip=None,
-        sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
-        validate=True):
+        width, height, n_cpus_per_chip=None, validate=True):
     """ Create a virtual SpiNNaker machine, used for planning execution.
 
     :param int width: the width of the virtual machine in chips
     :param int height: the height of the virtual machine in chips
     :param int n_cpus_per_chip: The number of CPUs to put on each chip
-    :param sdram_per_chip: The amount of SDRAM to give to each chip
-    :type sdram_per_chip: int or None
     :param bool validate: if True will call the machine validate function
     :returns: a virtual machine (that cannot execute code)
     :rtype: Machine
     """
 
-    factory = _VirtualMachine(
-        width, height, n_cpus_per_chip,  sdram_per_chip, validate)
+    factory = _VirtualMachine(width, height, n_cpus_per_chip, validate)
     return factory.machine
 
 
@@ -99,14 +94,14 @@ class _VirtualMachine(object):
 
     # pylint: disable=too-many-arguments
     def __init__(
-            self, width, height, n_cpus_per_chip=None,
-            sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES, validate=True):
+            self, width, height, n_cpus_per_chip=None, validate=True):
 
         _verify_width_height(width, height)
         self._machine = machine_from_size(width, height, origin=self.ORIGIN)
 
         # Store the details
-        self._sdram_per_chip = sdram_per_chip
+        self._sdram_per_chip = get_config_int(
+            "Machine", "max_sdram_allowed_per_chip")
 
         # Store the down items
         unused_chips = []
