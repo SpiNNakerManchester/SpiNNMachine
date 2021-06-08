@@ -15,6 +15,7 @@
 
 import logging
 from collections import defaultdict
+from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
 from spinn_machine import (Chip, Router)
 from .no_wrap_machine import NoWrapMachine
@@ -196,7 +197,7 @@ def _generate_uni_direction_link_error(
             local_src_chip_x, local_src_chip_y)
 
 
-def machine_repair(original, repair_machine=False, removed_chips=tuple()):
+def machine_repair(original, removed_chips=tuple()):
     """ Remove chips that can't be reached or that can't reach other chips\
         due to missing links.
 
@@ -204,12 +205,6 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
 
     :param original: the original machine
     :type original: Machine
-    :param repair_machine: A flag to say if the machine requires unexpected
-        repairs.
-        It True the unexpected repairs are logged and then done
-        If false will raise an exception if the machine needs an unexpected
-        repair
-    :type repair_machine: bool
     :param removed_chips: List of chips (x and y coordinates) that have been
         removed while the machine was being created.
         Oneway links to these chip are expected repairs so always done and
@@ -220,6 +215,7 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
     :return: Either the original machine or a repaired replacement
     :rtype: Machine
     """
+    repair_machine = get_config_bool("Machine", "repair_machine")
     dead_chips = set()
     dead_links = set()
 
@@ -290,4 +286,4 @@ def machine_repair(original, repair_machine=False, removed_chips=tuple()):
         return original
 
     new_machine = _machine_ignore(original, dead_chips, dead_links)
-    return machine_repair(new_machine, repair_machine)
+    return machine_repair(new_machine)
