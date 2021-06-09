@@ -16,11 +16,13 @@
 import unittest
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Link, SDRAM, Router, Chip
+from spinn_machine.config_setup import unittest_setup
 
 
 class TestingChip(unittest.TestCase):
 
     def setUp(self):
+        unittest_setup()
         self._x = 0
         self._y = 1
 

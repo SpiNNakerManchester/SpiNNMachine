@@ -15,10 +15,15 @@
 
 import unittest
 from spinn_machine import SDRAM
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 
 
 class TestingSDRAM(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
     def test_creating_new_sdram_object(self):
         ram = SDRAM(128)
         self.assertEqual(ram.size, 128)

@@ -16,11 +16,16 @@
 import pickle
 import unittest
 from spinn_machine import MulticastRoutingEntry
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 
 
 class TestMulticastRoutingEntry(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
     def test_creating_new_multicast_routing_entry(self):
         link_ids = list()
         proc_ids = list()

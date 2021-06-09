@@ -15,9 +15,14 @@
 
 import unittest
 from spinn_machine import SpiNNakerTriadGeometry
+from spinn_machine.config_setup import unittest_setup
 
 
 class TestingGeometry(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
     def test_geom(self):
         # This table was produced using the code in Rig
         delta_table = [
