@@ -15,7 +15,7 @@
 
 from tempfile import mktemp
 import unittest
-from spinn_utilities.config_holder import load_config, set_config
+from spinn_utilities.config_holder import set_config
 from spinn_machine import (SDRAM, virtual_machine)
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
