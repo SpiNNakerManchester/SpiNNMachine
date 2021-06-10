@@ -14,14 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from spinn_machine.config_setup import unittest_setup
 import spinn_utilities.package_loader as package_loader
 
 
 class ImportAllModule(unittest.TestCase):
 
-    def setUp(self):
-        unittest_setup()
+    # no unittest_setup to check all imports work without it
 
     def test_import_all(self):
         package_loader.load_module("spinn_machine")
