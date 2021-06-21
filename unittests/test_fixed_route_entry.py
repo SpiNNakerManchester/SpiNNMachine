@@ -15,10 +15,15 @@
 
 import unittest
 from spinn_machine import FixedRouteEntry
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
 class TestingFixedRouteEntries(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
     def test_fixed_route_creation(self):
         fre = FixedRouteEntry([1, 2, 3], [2, 3, 4])
         self.assertEqual(fre.__repr__(), "{2, 3, 4}:{1, 2, 3}")

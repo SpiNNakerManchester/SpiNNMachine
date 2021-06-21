@@ -15,9 +15,14 @@
 
 import unittest
 from spinn_machine import Link
+from spinn_machine.config_setup import unittest_setup
 
 
 class TestingLinks(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
     def test_create_new_link(self):
         links = list()
         links.append(Link(0, 0, 0, 0, 1))

@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from spinn_utilities.config_holder import load_config, set_config
-from spinn_machine.config_setup import reset_configs
+from spinn_utilities.config_holder import set_config
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine import (Chip, Link, Machine, machine_from_size, Router,
                            SDRAM, virtual_machine)
 from spinn_machine.exceptions import (
@@ -32,11 +32,7 @@ class TestVirtualMachine(unittest.TestCase):
     TYPICAL_N_CORES_PER_BOARD = sum(Machine.CHIPS_PER_BOARD.values())
 
     def setUp(self):
-        reset_configs()
-        load_config()
-
-    def tearDown(self):
-        reset_configs()
+        unittest_setup()
 
     def _create_chip(self, x, y):
         # Create a list of processors.

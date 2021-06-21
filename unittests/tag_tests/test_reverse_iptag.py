@@ -18,11 +18,15 @@ TestingReverseIptag
 """
 import unittest
 from spinn_machine.tags import ReverseIPTag
+from spinn_machine.config_setup import unittest_setup
 
 
 class TestingReverseIptag(unittest.TestCase):
     """ Tests of ReverseIPTag
     """
+
+    def setUp(self):
+        unittest_setup()
 
     def test_create_valid_reverse_iptag(self):
         """ test if a reverse IP tag with valid inputs works

@@ -15,9 +15,11 @@
 
 import spinn_utilities
 import spinn_machine
+from spinn_machine.config_setup import unittest_setup
 
 
 def test_compare_versions():
+    unittest_setup()
     spinn_utilities_parts = spinn_utilities.__version__.split('.')
     spinn_machine_parts = spinn_machine.__version__.split('.')
 
