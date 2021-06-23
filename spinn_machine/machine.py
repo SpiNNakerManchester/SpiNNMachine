@@ -859,7 +859,7 @@ class Machine(object, metaclass=AbstractBase):
 
     # pylint: disable=too-many-arguments
     def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
-        if self.is_chip_at(x, y) and not self.is_link_at(x, y, link):
+        if self.is_chip_at(x, y):
             self._fpga_links[board_address, fpga_id, fpga_link] = \
                 FPGALinkData(
                     fpga_link_id=fpga_link, fpga_id=fpga_id,
