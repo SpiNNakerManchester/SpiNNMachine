@@ -156,9 +156,11 @@ def _find_virtual_links(machine):
             destination = machine.get_chip_at(
                 link.destination_x, link.destination_y)
             inverse_link = destination.router.get_link(inverse_id)
-            assert(inverse_link.destination_x == chip.x)
-            assert(inverse_link.destination_y == chip.y)
-            virtual_links_dict[destination].append(inverse_link)
+            # Because some virtual chips are branched at an FPGA, only do this
+            # if the destination chip is *only* linked to the virtual chip
+            if (inverse_link.destination_x == chip.x and
+                    inverse_link.destination_y == chip.y):
+                virtual_links_dict[destination].append(inverse_link)
     return virtual_links_dict
 
 
