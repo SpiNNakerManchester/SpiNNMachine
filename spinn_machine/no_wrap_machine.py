@@ -138,6 +138,13 @@ class NoWrapMachine(Machine):
         return self._minimize_vector(
             destination[0]-source[0], destination[1]-source[1])
 
+    @overrides(Machine.concentric_chips)
+    def concentric_chips(self, radius, start):
+        # Aliases for convenience
+        sx, sy = start
+        for (x, y) in self._basic_concentric_chips(radius):
+            yield (sx + x, sy + y)
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):

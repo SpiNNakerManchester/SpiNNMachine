@@ -147,6 +147,14 @@ class HorizontalWrapMachine(Machine):
         else:
             return self._minimize_vector(x_left, y)
 
+    @overrides(Machine.concentric_chips)
+    def concentric_chips(self, radius, start):
+        # Aliases for convenience
+        w = self._width
+        sx, sy = start
+        for (x, y) in self._basic_concentric_chips(radius):
+            yield ((sx + x) % w, sy + y)
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):

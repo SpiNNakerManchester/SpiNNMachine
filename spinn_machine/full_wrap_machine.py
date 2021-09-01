@@ -129,6 +129,7 @@ class FullWrapMachine(Machine):
         else:
             return length
 
+    @overrides(Machine.get_vector)
     def get_vector(self, source, destination):
         # Aliases for convenience
         w, h = self._width, self._height
@@ -165,6 +166,14 @@ class FullWrapMachine(Machine):
             return self._minimize_vector(x_down, y_left)
         else:
             return self._minimize_vector(dx, dy)
+
+    @overrides(Machine.concentric_chips)
+    def concentric_chips(self, radius, start):
+        # Aliases for convenience
+        w, h = self._width, self._height
+        sx, sy = start
+        for (x, y) in self._basic_concentric_chips(radius):
+            yield ((sx + x) % w, (sy + y) % h)
 
     @property
     @overrides(Machine.wrap)
