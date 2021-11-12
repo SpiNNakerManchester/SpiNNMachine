@@ -743,11 +743,14 @@ class Machine(object, metaclass=AbstractBase):
         :param int spinnaker_link_id: The ID of the link
         :param board_address:
             optional board address that this SpiNNaker link is associated with.
-            Overridden by  chip_coords if both are specified.
+            If both this and chip_coords are specified, chip_coords will be
+            used first, with board_address only used if this is unsuccessful.
         :type board_address: str or None
         :param chip_coords:
             optional chip coordinates that this SpiNNaker link is associated
-            with.  Overrides board_address is both are specified.
+            with.  If both this and board_address are specified, chip_coords
+            will be used first, with board_address only used if this is
+            unsuccessful.
         :type chip_coords: tuple(int, int) or None
         :return: The SpiNNaker link data or None if no link
         :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData or None
@@ -780,11 +783,13 @@ class Machine(object, metaclass=AbstractBase):
             https://drive.google.com/file/d/0B9312BuJXntlVWowQlJ3RE8wWVE
         :param board_address:
             optional board address that this FPGA link is associated with.
-            Overridden by chip_coords if both are specified.
+            If both this and chip_coords are specified, chip_coords will be
+            used first, with board_address only used if this is unsuccessful.
         :type board_address: str or None
         :param chip_coords:
             optional chip coordinates that this FPGA link is associated with.
-            Overrides board_address if both are specified.
+            If both this and board_address are specified, chip_coords will be
+            used first, with board_address only used if this is unsuccessful.
         :type chip_coords: tuple(int, int) or None
         :return: the given FPGA link object or ``None`` if no such link
         :rtype: ~spinn_machine.link_data_objects.FPGALinkData or None
