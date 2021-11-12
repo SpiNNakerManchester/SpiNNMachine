@@ -766,7 +766,7 @@ class Machine(object, metaclass=AbstractBase):
         if board_address is None:
             board_address = self._boot_ethernet_address
         key = (board_address, spinnaker_link_id)
-        return self.__spinnaker_links.get(key, None)
+        return self._spinnaker_links.get(key, None)
 
     def get_fpga_link_with_id(
             self, fpga_id, fpga_link_id, board_address=None, chip_coords=None):
