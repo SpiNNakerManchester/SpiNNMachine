@@ -737,22 +737,36 @@ class Machine(object, metaclass=AbstractBase):
         return iter(self._spinnaker_links.items())
 
     def get_spinnaker_link_with_id(
-            self, spinnaker_link_id, board_address=None):
+            self, spinnaker_link_id, board_address=None, chip_coords=None):
         """ Get a SpiNNaker link with a given ID
 
         :param int spinnaker_link_id: The ID of the link
         :param board_address:
-            the board address that this SpiNNaker link is associated with
+            optional board address that this SpiNNaker link is associated with.
+            Overridden by  chip_coords if both are specified.
         :type board_address: str or None
+        :param chip_coords:
+            optional chip coordinates that this SpiNNaker link is associated
+            with.  Overrides board_address is both are specified.
+        :type chip_coords: tuple(int, int) or None
         :return: The SpiNNaker link data or None if no link
         :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData or None
         """
+        # Try chip coordinates first
+        if chip_coords is not None:
+            key = (chip_coords, spinnaker_link_id)
+            link_data = self._spinnaker_links.get(key, None)
+            if link_data is not None:
+                return link_data
+
+        # Otherwise try board address
         if board_address is None:
             board_address = self._boot_ethernet_address
-        return self._spinnaker_links.get(
-            (board_address, spinnaker_link_id), None)
+        key = (board_address, spinnaker_link_id)
+        return self.__spinnaker_links.get(key, None)
 
-    def get_fpga_link_with_id(self, fpga_id, fpga_link_id, board_address=None):
+    def get_fpga_link_with_id(
+            self, fpga_id, fpga_link_id, board_address=None, chip_coords=None):
         """ Get an FPGA link data item that corresponds to the FPGA and FPGA\
             link for a given board address.
 
@@ -765,15 +779,28 @@ class Machine(object, metaclass=AbstractBase):
             for more detail:
             https://drive.google.com/file/d/0B9312BuJXntlVWowQlJ3RE8wWVE
         :param board_address:
-            the board address that this FPGA link is associated with
+            optional board address that this FPGA link is associated with.
+            Overridden by chip_coords if both are specified.
         :type board_address: str or None
+        :param chip_coords:
+            optional chip coordinates that this FPGA link is associated with.
+            Overrides board_address if both are specified.
+        :type chip_coords: tuple(int, int) or None
         :return: the given FPGA link object or ``None`` if no such link
         :rtype: ~spinn_machine.link_data_objects.FPGALinkData or None
         """
+        # Try chip coordinates first
+        if chip_coords is not None:
+            key = (chip_coords, fpga_id, fpga_link_id)
+            link_data = self._fpga_links.get(key, None)
+            if link_data is not None:
+                return link_data
+
+        # Otherwise try board address
         if board_address is None:
             board_address = self._boot_ethernet_address
-        return self._fpga_links.get(
-            (board_address, fpga_id, fpga_link_id), None)
+        key = (board_address, fpga_id, fpga_link_id)
+        return self._fpga_links.get(key, None)
 
     def add_spinnaker_links(self):
         """ Add SpiNNaker links that are on a given machine depending on the\
@@ -782,19 +809,23 @@ class Machine(object, metaclass=AbstractBase):
         if self._width == self._height == 2:
             chip_0_0 = self.get_chip_at(0, 0)
             if not chip_0_0.router.is_link(3):
-                self._spinnaker_links[chip_0_0.ip_address, 0] = \
-                    SpinnakerLinkData(0, 0, 0, 3, chip_0_0.ip_address)
+                self._add_spinnaker_link(0, 0, 0, 3, chip_0_0.ip_address)
             chip = self.get_chip_at(1, 0)
             if not chip.router.is_link(0):
-                self._spinnaker_links[chip_0_0.ip_address, 1] = \
-                    SpinnakerLinkData(1, 1, 0, 0, chip_0_0.ip_address)
+                self._add_spinnaker_link(1, 1, 0, 0, chip_0_0.ip_address)
         elif (self._width == self._height == 8) or \
                 self.multiple_48_chip_boards():
             for chip in self._ethernet_connected_chips:
                 if not chip.router.is_link(4):
-                    self._spinnaker_links[
-                        chip.ip_address, 0] = SpinnakerLinkData(
-                            0, chip.x, chip.y, 4, chip.ip_address)
+                    self._add_spinnaker_link(
+                        0, chip.x, chip.y, 4, chip.ip_address)
+
+    def _add_spinnaker_link(
+            self, spinnaker_link_id, x, y, link, board_address):
+        link_data = SpinnakerLinkData(
+            spinnaker_link_id, x, y, link, board_address)
+        self._spinnaker_links[board_address, spinnaker_link_id] = link_data
+        self._spinnaker_links[(x, y), spinnaker_link_id] = link_data
 
     def add_fpga_links(self):
         """ Add FPGA links that are on a given machine depending on the\
@@ -860,11 +891,12 @@ class Machine(object, metaclass=AbstractBase):
     # pylint: disable=too-many-arguments
     def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
         if self.is_chip_at(x, y):
-            self._fpga_links[board_address, fpga_id, fpga_link] = \
-                FPGALinkData(
-                    fpga_link_id=fpga_link, fpga_id=fpga_id,
-                    connected_chip_x=x, connected_chip_y=y,
-                    connected_link=link, board_address=board_address)
+            link_data = FPGALinkData(
+                fpga_link_id=fpga_link, fpga_id=fpga_id,
+                connected_chip_x=x, connected_chip_y=y,
+                connected_link=link, board_address=board_address)
+            self._fpga_links[board_address, fpga_id, fpga_link] = link_data
+            self._fpga_links[(x, y), fpga_id, fpga_link] = link_data
 
     @staticmethod
     def _next_fpga_link(fpga_id, fpga_link):
