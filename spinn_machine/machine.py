@@ -880,28 +880,32 @@ class Machine(object, metaclass=AbstractBase):
                     for _ in range(4):
                         fx = (x + ex) % (self._max_chip_x + 1)
                         fy = (y + ey) % (self._max_chip_y + 1)
-                        self._add_fpga_link(f, lk, fx, fy, l1, ip)
+                        self._add_fpga_link(f, lk, fx, fy, l1, ip, ex, ey)
                         f, lk = self._next_fpga_link(f, lk)
                         if i % 2 == 1:
                             x += dx
                             y += dy
                         fx = (x + ex) % (self._max_chip_x + 1)
                         fy = (y + ey) % (self._max_chip_y + 1)
-                        self._add_fpga_link(f, lk, fx, fy, l2, ip)
+                        self._add_fpga_link(f, lk, fx, fy, l2, ip, ex, ey)
                         f, lk = self._next_fpga_link(f, lk)
                         if i % 2 == 0:
                             x += dx
                             y += dy
 
     # pylint: disable=too-many-arguments
-    def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address):
+    def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address,
+                       ex, ey):
         if self.is_chip_at(x, y):
             link_data = FPGALinkData(
                 fpga_link_id=fpga_link, fpga_id=fpga_id,
                 connected_chip_x=x, connected_chip_y=y,
                 connected_link=link, board_address=board_address)
             self._fpga_links[board_address, fpga_id, fpga_link] = link_data
+            # Add for the exact chip coordinates
             self._fpga_links[(x, y), fpga_id, fpga_link] = link_data
+            # Add for the Ethernet chip coordinates to allow this to work too
+            self._fpga_links[(ex, ey), fpga_id, fpga_link] = link_data
 
     @staticmethod
     def _next_fpga_link(fpga_id, fpga_link):
