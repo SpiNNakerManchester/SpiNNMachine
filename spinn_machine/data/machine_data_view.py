@@ -101,11 +101,12 @@ class MachineDataView(UtilsDataView):
 
     def has_machine(self):
         """
-        Reports is a machine is currently set
+        Reports if a machine is currently set or can be mocked
 
         :rtype: bool
         """
-        return self.__data._machine is not None
+        return (self.__data._machine is not None or
+                self.status == Data_Status.MOCKED)
 
     @property
     def machine(self):
@@ -123,3 +124,21 @@ class MachineDataView(UtilsDataView):
                 return self.__data._machine
             raise self._exception("machine")
         return self.__data._machine
+
+    def get_chip_at(self, x, y):
+        """
+        Gets the chip at x and y
+
+        Semantic sugar for machine.get_chip_at
+
+        :param int x:
+        :param int y:
+        :rtype: Chip
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If the machine is currently unavailable
+        """
+        try:
+            return self.__data._machine.get_chip_at(x, y)
+        except AttributeError:
+            # Just in case first bad call or first during mock
+            return self.machine.get_chip_at(x, y)

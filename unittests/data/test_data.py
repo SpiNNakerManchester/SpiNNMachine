@@ -34,14 +34,15 @@ class TestSimulatorData(unittest.TestCase):
         writer.setup()
         with self.assertRaises(DataNotYetAvialable):
             view.machine
+        with self.assertRaises(DataNotYetAvialable):
+            view.get_chip_at(1, 1)
 
     def test_mock(self):
         view = MachineDataView()
         writer = MachineDataWriter()
         writer.mock()
-        # check there is a
-        #   value not what it is
-        view.machine
+        self.assertEqual(3, view.get_chip_at(3, 5).x)
+        self.assertEqual(48, view.machine.n_chips)
 
     def test_machine(self):
         view = MachineDataView()
@@ -52,6 +53,8 @@ class TestSimulatorData(unittest.TestCase):
         self.assertFalse(view.has_machine())
         writer.set_machine(virtual_machine(width=2, height=2))
         self.assertEqual(4, view.machine.n_chips)
+        self.assertEqual(1, view.get_chip_at(1, 0).x)
+        self.assertIsNone(view.get_chip_at(4, 4))
         with self.assertRaises(TypeError):
             writer.set_machine("bacon")
         self.assertTrue(view.has_machine())
