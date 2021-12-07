@@ -49,7 +49,9 @@ class TestSimulatorData(unittest.TestCase):
         writer.setup()
         with self.assertRaises(DataNotYetAvialable):
             view.machine
+        self.assertFalse(view.has_machine())
         writer.set_machine(virtual_machine(width=2, height=2))
         self.assertEqual(4, view.machine.n_chips)
         with self.assertRaises(TypeError):
             writer.set_machine("bacon")
+        self.assertTrue(view.has_machine())

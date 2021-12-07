@@ -99,6 +99,14 @@ class MachineDataView(UtilsDataView):
 
     # machine methods
 
+    def has_machine(self):
+        """
+        Reports is a machine is currently set
+
+        :rtype: bool
+        """
+        return self.__data._machine is not None
+
     @property
     def machine(self):
         """
