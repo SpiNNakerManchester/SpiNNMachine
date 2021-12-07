@@ -113,7 +113,7 @@ class MachineDataView(UtilsDataView):
         The machine description
 
         :rtype: Machine
-        :raises SpinnFrontEndException:
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
         """
         if self.__data._machine is None:
