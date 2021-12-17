@@ -17,6 +17,7 @@ from tempfile import mktemp
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_machine import (SDRAM, virtual_machine)
+from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
 
@@ -30,7 +31,8 @@ class TestJsonMachine(unittest.TestCase):
         set_config("Machine", "down_chips", "3,3")
         vm = virtual_machine(width=8, height=8)
         jpath = mktemp("json")
-        to_json_path(vm, jpath)
+        MachineDataWriter().set_machine(vm)
+        to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")
@@ -50,7 +52,8 @@ class TestJsonMachine(unittest.TestCase):
         chip03 = vm.get_chip_at(0, 3)
         chip03._virtual = True
         jpath = mktemp("json")
-        to_json_path(vm, jpath)
+        MachineDataWriter().set_machine(vm)
+        to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")
@@ -67,7 +70,8 @@ class TestJsonMachine(unittest.TestCase):
         chip02._n_user_processors -= 1
         jpath = mktemp("json")
         # Should still be able to write json even with more than one monitor
-        to_json_path(vm, jpath)
+        MachineDataWriter().set_machine(vm)
+        to_json_path(jpath)
         # However we dont need to support reading back with more than 1 monitor
         with self.assertRaises(NotImplementedError):
             machine_from_json(jpath)
@@ -82,7 +86,8 @@ class TestJsonMachine(unittest.TestCase):
         chip48._tag_ids = [2, 3]
         chip48._virtual = True
         jpath = mktemp("json")
-        to_json_path(vm, jpath)
+        MachineDataWriter().set_machine(vm)
+        to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")

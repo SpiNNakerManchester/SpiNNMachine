@@ -70,3 +70,6 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         if not isinstance(machine, Machine):
             raise TypeError("machine should be a Machine")
         self.__data._machine = machine
+
+    def clear_machine(self):
+        self.__data._machine = None
