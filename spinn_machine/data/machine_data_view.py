@@ -57,10 +57,12 @@ class _MachineDataModel(object):
 
     def _hard_reset(self):
         """
-        Clears out all data that should change after a reset and graaph change
+        Clears out all data that should change after a reset and graph change
+
+        This does NOT clear the machine as it may have been asked for before
         """
-        self._machine = None
         self._soft_reset()
+        self._machine = None
 
     def _soft_reset(self):
         """
