@@ -127,6 +127,17 @@ class MachineDataView(UtilsDataView):
             raise self._exception("machine")
         return self.__data._machine
 
+    @classmethod
+    def get_machine(cls):
+        if cls.__data._machine is None:
+            if cls.status == Data_Status.MOCKED:
+                cls.__data._machine = virtual_machine(
+                    width=8, height=8)
+                return cls.__data._machine
+            raise self._exception("machine")
+        return self.__data._machine
+
+
     def get_chip_at(self, x, y):
         """
         Gets the chip at x and y
