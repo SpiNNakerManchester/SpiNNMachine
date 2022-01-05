@@ -134,8 +134,8 @@ class MachineDataView(UtilsDataView):
                 cls.__data._machine = virtual_machine(
                     width=8, height=8)
                 return cls.__data._machine
-            raise self._exception("machine")
-        return self.__data._machine
+            raise cls._exception("machine")
+        return cls.__data._machine
 
 
     def get_chip_at(self, x, y):
