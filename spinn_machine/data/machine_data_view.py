@@ -137,7 +137,6 @@ class MachineDataView(UtilsDataView):
             raise cls._exception("machine")
         return cls.__data._machine
 
-
     def get_chip_at(self, x, y):
         """
         Gets the chip at x and y
