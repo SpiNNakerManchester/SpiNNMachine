@@ -30,8 +30,8 @@ class TestJsonMachine(unittest.TestCase):
     def test_json_version_5_hole(self):
         set_config("Machine", "down_chips", "3,3")
         vm = virtual_machine(width=8, height=8)
+        MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
-        MachineDataWriter().set_machine(vm)
         to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
@@ -42,6 +42,7 @@ class TestJsonMachine(unittest.TestCase):
 
     def test_exceptions(self):
         vm = virtual_machine(width=8, height=8)
+        MachineDataWriter.mock().set_machine(vm)
         chip22 = vm.get_chip_at(2, 2)
         router22 = chip22.router
         router22._n_available_multicast_entries =  \
@@ -52,7 +53,6 @@ class TestJsonMachine(unittest.TestCase):
         chip03 = vm.get_chip_at(0, 3)
         chip03._virtual = True
         jpath = mktemp("json")
-        MachineDataWriter().set_machine(vm)
         to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
@@ -65,12 +65,12 @@ class TestJsonMachine(unittest.TestCase):
 
     def test_monitor_exceptions(self):
         vm = virtual_machine(width=8, height=8)
+        MachineDataWriter.mock().set_machine(vm)
         chip02 = vm.get_chip_at(0, 2)
         # Hack in an extra monitor
         chip02._n_user_processors -= 1
         jpath = mktemp("json")
         # Should still be able to write json even with more than one monitor
-        MachineDataWriter().set_machine(vm)
         to_json_path(jpath)
         # However we dont need to support reading back with more than 1 monitor
         with self.assertRaises(NotImplementedError):
@@ -78,6 +78,7 @@ class TestJsonMachine(unittest.TestCase):
 
     def test_ethernet_exceptions(self):
         vm = virtual_machine(width=16, height=16)
+        MachineDataWriter.mock().set_machine(vm)
         chip48 = vm.get_chip_at(4, 8)
         router48 = chip48.router
         router48._n_available_multicast_entries =  \
@@ -86,7 +87,6 @@ class TestJsonMachine(unittest.TestCase):
         chip48._tag_ids = [2, 3]
         chip48._virtual = True
         jpath = mktemp("json")
-        MachineDataWriter().set_machine(vm)
         to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")

@@ -28,10 +28,9 @@ class TestSimulatorData(unittest.TestCase):
 
     def test_setup(self):
         view = MachineDataView()
-        writer = MachineDataWriter()
         # What happens before setup depends on the previous test
         # Use manual_check to verify this without dependency
-        writer.setup()
+        writer = MachineDataWriter.setup()
         with self.assertRaises(DataNotYetAvialable):
             view.machine
         with self.assertRaises(DataNotYetAvialable):
@@ -39,15 +38,13 @@ class TestSimulatorData(unittest.TestCase):
 
     def test_mock(self):
         view = MachineDataView()
-        writer = MachineDataWriter()
-        writer.mock()
+        MachineDataWriter.mock()
         self.assertEqual(3, view.get_chip_at(3, 5).x)
         self.assertEqual(48, view.machine.n_chips)
 
     def test_machine(self):
         view = MachineDataView()
-        writer = MachineDataWriter()
-        writer.setup()
+        writer = MachineDataWriter.setup()
         with self.assertRaises(DataNotYetAvialable):
             view.machine
         self.assertFalse(view.has_machine())
