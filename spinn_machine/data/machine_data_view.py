@@ -111,23 +111,6 @@ class MachineDataView(UtilsDataView):
         return (cls.__data._machine is not None or
                 cls.get_status() == Data_Status.MOCKED)
 
-    @property
-    def machine(self):
-        """
-        The machine description
-
-        :rtype: Machine
-        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
-            If the machine is currently unavailable
-        """
-        if self.__data._machine is None:
-            if self.get_status() == Data_Status.MOCKED:
-                self.__data._machine = virtual_machine(
-                    width=8, height=8)
-                return self.__data._machine
-            raise self._exception("machine")
-        return self.__data._machine
-
     @classmethod
     def get_machine(cls):
         if cls.__data._machine is None:
