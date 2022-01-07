@@ -108,7 +108,7 @@ class MachineDataView(UtilsDataView):
         :rtype: bool
         """
         return (self.__data._machine is not None or
-                self.status == Data_Status.MOCKED)
+                self.get_status() == Data_Status.MOCKED)
 
     @property
     def machine(self):
@@ -120,7 +120,7 @@ class MachineDataView(UtilsDataView):
             If the machine is currently unavailable
         """
         if self.__data._machine is None:
-            if self.status == Data_Status.MOCKED:
+            if self.get_status() == Data_Status.MOCKED:
                 self.__data._machine = virtual_machine(
                     width=8, height=8)
                 return self.__data._machine
@@ -130,7 +130,7 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_machine(cls):
         if cls.__data._machine is None:
-            if cls.status == Data_Status.MOCKED:
+            if cls.get_status() == Data_Status.MOCKED:
                 cls.__data._machine = virtual_machine(
                     width=8, height=8)
                 return cls.__data._machine
