@@ -29,7 +29,7 @@ class TestSimulatorData(unittest.TestCase):
     def test_setup(self):
         # What happens before setup depends on the previous test
         # Use manual_check to verify this without dependency
-        writer = MachineDataWriter.setup()
+        MachineDataWriter.setup()
         with self.assertRaises(DataNotYetAvialable):
             MachineDataView.get_machine()
         with self.assertRaises(DataNotYetAvialable):
@@ -53,4 +53,3 @@ class TestSimulatorData(unittest.TestCase):
         with self.assertRaises(TypeError):
             writer.set_machine("bacon")
         self.assertTrue(MachineDataView.has_machine())
-
