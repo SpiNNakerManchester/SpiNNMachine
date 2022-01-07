@@ -237,7 +237,7 @@ def to_json():
 
     :rtype: dict
     """
-    machine = MachineDataView().machine
+    machine = MachineDataView.get_machine()
     # Find the std values for one non-ethernet chip to use as standard
     std = None
     for chip in machine.chips:

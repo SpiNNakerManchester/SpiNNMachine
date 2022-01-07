@@ -27,31 +27,30 @@ class TestSimulatorData(unittest.TestCase):
         unittest_setup()
 
     def test_setup(self):
-        view = MachineDataView()
         # What happens before setup depends on the previous test
         # Use manual_check to verify this without dependency
         writer = MachineDataWriter.setup()
         with self.assertRaises(DataNotYetAvialable):
-            view.machine
+            MachineDataView.get_machine()
         with self.assertRaises(DataNotYetAvialable):
-            view.get_chip_at(1, 1)
+            MachineDataView.get_chip_at(1, 1)
 
     def test_mock(self):
-        view = MachineDataView()
         MachineDataWriter.mock()
-        self.assertEqual(3, view.get_chip_at(3, 5).x)
-        self.assertEqual(48, view.machine.n_chips)
+        self.assertEqual(3, MachineDataView.get_chip_at(3, 5).x)
+        self.assertEqual(48, MachineDataView.get_machine().n_chips)
 
     def test_machine(self):
-        view = MachineDataView()
         writer = MachineDataWriter.setup()
         with self.assertRaises(DataNotYetAvialable):
-            view.machine
-        self.assertFalse(view.has_machine())
+            MachineDataView.get_machine()
+        self.assertFalse(MachineDataWriter.has_machine())
         writer.set_machine(virtual_machine(width=2, height=2))
-        self.assertEqual(4, view.machine.n_chips)
-        self.assertEqual(1, view.get_chip_at(1, 0).x)
-        self.assertIsNone(view.get_chip_at(4, 4))
+        self.assertEqual(4, MachineDataView.get_machine().n_chips)
+        self.assertEqual(1, MachineDataView.get_chip_at(1, 0).x)
+        with self.assertRaises(KeyError):
+            MachineDataView.get_chip_at(4, 4)
         with self.assertRaises(TypeError):
             writer.set_machine("bacon")
-        self.assertTrue(view.has_machine())
+        self.assertTrue(MachineDataView.has_machine())
+

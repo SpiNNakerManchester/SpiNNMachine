@@ -101,14 +101,15 @@ class MachineDataView(UtilsDataView):
 
     # machine methods
 
-    def has_machine(self):
+    @classmethod
+    def has_machine(cls):
         """
         Reports if a machine is currently set or can be mocked
 
         :rtype: bool
         """
-        return (self.__data._machine is not None or
-                self.get_status() == Data_Status.MOCKED)
+        return (cls.__data._machine is not None or
+                cls.get_status() == Data_Status.MOCKED)
 
     @property
     def machine(self):
@@ -137,20 +138,26 @@ class MachineDataView(UtilsDataView):
             raise cls._exception("machine")
         return cls.__data._machine
 
-    def get_chip_at(self, x, y):
+    @classmethod
+    def get_chip_at(cls, x, y):
         """
         Gets the chip at x and y
 
-        Semantic sugar for machine.get_chip_at
+        Almost Semantic sugar for machine.get_chip_at
+
+        The method however does not return None but rather raises a KeyError
+        if the chip is not known
 
         :param int x:
         :param int y:
         :rtype: Chip
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
+        :raises KeyError: If the chip does not exist but the machine does
         """
         try:
-            return self.__data._machine.get_chip_at(x, y)
+            return cls.__data._machine._chips[(x, y)]
         except AttributeError:
-            # Just in case first bad call or first during mock
-            return self.machine.get_chip_at(x, y)
+            # In case cls.__data._machine is None raise better exception
+            # First during mock create the VirtualMachine
+            return cls.get_machine()._chips[(x, y)]
