@@ -17,8 +17,7 @@ import pickle
 import unittest
 from spinn_machine import MulticastRoutingEntry
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 
 
 class TestMulticastRoutingEntry(unittest.TestCase):
