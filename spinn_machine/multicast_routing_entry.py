@@ -13,8 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from .exceptions import SpinnMachineInvalidParameterException
 from spinn_machine.router import Router
 
 
@@ -71,19 +70,8 @@ class MulticastRoutingEntry(object):
 
         # Add processor IDs, checking that there is only one of each
         if spinnaker_route is None:
-            self._processor_ids = set()
-            for processor_id in processor_ids:
-                if processor_id in self._processor_ids:
-                    raise SpinnMachineAlreadyExistsException(
-                        "processor ID", str(processor_id))
-                self._processor_ids.add(processor_id)
-                # Add link IDs, checking that there is only one of each
-            self._link_ids = set()
-            for link_id in link_ids:
-                if link_id in self._link_ids:
-                    raise SpinnMachineAlreadyExistsException(
-                        "link ID", str(link_id))
-                self._link_ids.add(link_id)
+            self._processor_ids = set(processor_ids)
+            self._link_ids = set(link_ids)
             self._spinnaker_route = self._calc_spinnaker_route()
         else:
             self._spinnaker_route = spinnaker_route
@@ -235,12 +223,10 @@ class MulticastRoutingEntry(object):
 
         :rtype: int
         """
-        route_entry = 0
-        for processor_id in self.processor_ids:
-            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
-        for link_id in self.link_ids:
-            route_entry |= (1 << link_id)
-        return route_entry
+        proc_entry = sum(1 << (Router.MAX_LINKS_PER_ROUTER + p)
+                         for p in self._processor_ids)
+        link_entry = sum(1 << link_id for link_id in self._link_ids)
+        proc_entry + link_entry
 
     def _calc_routing_ids(self):
         """ Convert a binary routing table entry usable on the machine to \
