@@ -65,48 +65,6 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(multicast3.link_ids, [2, 3, 5])
         self.assertEqual(multicast3.processor_ids, [1, 3, 4, 16])
 
-    def test_duplicate_processors_ids(self):
-        link_ids = list()
-        proc_ids = list()
-        for i in range(6):
-            link_ids.append(i)
-        for i in range(18):
-            proc_ids.append(i)
-        proc_ids.append(0)
-        key = 1
-        mask = 1
-        with self.assertRaises(SpinnMachineAlreadyExistsException) as e:
-            MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
-        self.assertEqual(e.exception.item, "processor ID")
-        self.assertEqual(e.exception.value, "0")
-
-    def test_duplicate_link_ids(self):
-        link_ids = list()
-        proc_ids = list()
-        for i in range(6):
-            link_ids.append(i)
-        link_ids.append(3)
-        for i in range(18):
-            proc_ids.append(i)
-        key = 1
-        mask = 1
-        with self.assertRaises(SpinnMachineAlreadyExistsException):
-            MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
-
-    def test_duplicate_link_ids_and_proc_ids(self):
-        link_ids = list()
-        proc_ids = list()
-        for i in range(6):
-            link_ids.append(i)
-        link_ids.append(3)
-        for i in range(18):
-            proc_ids.append(i)
-        proc_ids.append(0)
-        key = 1
-        mask = 1
-        with self.assertRaises(SpinnMachineAlreadyExistsException):
-            MulticastRoutingEntry(key, mask, proc_ids, link_ids, True)
-
     def test_merger(self):
         link_ids = list()
         link_ids2 = list()
