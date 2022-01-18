@@ -52,7 +52,7 @@ def machine_from_json(j_machine):
     :rtype: Machine
     """
     if isinstance(j_machine, str):
-        with open(j_machine) as j_file:
+        with open(j_machine, encoding="utf-8") as j_file:
             j_machine = json.load(j_file)
 
     # get the default values
@@ -310,5 +310,5 @@ def to_json_path(file_path):
     json_obj = to_json()
 
     # dump to json file
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         json.dump(json_obj, f)
