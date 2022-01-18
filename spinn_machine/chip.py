@@ -91,7 +91,6 @@ class Chip(object):
         self._parent_link = parent_link
 
     def __generate_processors(self, n_processors, down_cores):
-        global standard_processors
         if down_cores is None:
             if n_processors not in standard_processors:
                 processors = OrderedDict()
