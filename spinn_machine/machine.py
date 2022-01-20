@@ -376,7 +376,7 @@ class Machine(object, metaclass=AbstractBase):
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
         (localx, localy) = self.get_local_xy(chip)
         return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
-                f"is chip {localx}, {local00.y} on {local00.ip_address}")
+                f"is chip {localx}, {localy} on {local00.ip_address}")
 
     def where_is_xy(self, x, y):
         """
