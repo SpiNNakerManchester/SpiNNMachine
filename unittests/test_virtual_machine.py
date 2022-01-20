@@ -1021,6 +1021,20 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
+        chip11 = machine.get_chip_at(1, 1)
+        where = machine.where_is_chip(chip11)
+        self.assertEqual(
+            where, 'global chip 1, 1 on 127.0.0.0 is chip 1, 0 on 127.0.0.0')
+        chip1112 = machine.get_chip_at(11, 12)
+        where = machine.where_is_chip(chip1112)
+        self.assertEqual(
+            where, 'global chip 11, 12 on 127.0.0.0 is chip 7, 8 on 127.0.4.8')
+        where = machine.where_is_xy(10, 5)
+        self.assertEqual(
+            where, 'global chip 10, 5 on 127.0.0.0 is chip 2, 4 on 127.0.8.4')
+        where = machine.where_is_xy(15, 15)
+        self.assertEqual(where, 'No chip 15, 15 found')
+
 
     def test_n_cores_horizontal_wrap(self):
         machine = virtual_machine(12, 16)
