@@ -144,3 +144,27 @@ class MachineDataView(UtilsDataView):
             # In case cls.__data._machine is None raise better exception
             # First during mock create the VirtualMachine
             return cls.get_machine()._chips[(x, y)]
+
+    @classmethod
+    def where_is_xy(cls, x, y):
+        """
+        Gets a string saying where chip at x and y is if possible
+
+        Almost Semantic sugar for machine.where_is_xy
+
+        The method does not raise an exception rather returns a String of the
+        exception
+
+        :param int x:
+        :param int y:
+        :rtype: str
+        """
+        try:
+            return cls.__data._machine.where_is_xy(x, y)
+        except Exception as original:
+            try:
+                # In case cls.__data._machine is None raise better exception
+                # First during mock create the VirtualMachine
+                return cls.get_machine().where_is_xy(x, y)
+            except Exception:
+                return str(original)
