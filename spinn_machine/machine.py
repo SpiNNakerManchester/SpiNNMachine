@@ -361,6 +361,36 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: tuple(int,int)
         """
 
+    def where_is_chip(self, chip):
+        """
+        Returns global and local location for this chip
+
+        This method assumes that chip is on the machine or is a copy of a
+        chip on the machine
+
+        :param Chip chip: A Chip in the machine
+        :rtype: str
+        """
+        chip00 = self.get_chip_at(0, 0)
+        local00 = self.get_chip_at(
+            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        (localx, localy) = self.get_local_xy(chip)
+        return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
+                f"is chip {localx}, {localy} on {local00.ip_address}")
+
+    def where_is_xy(self, x, y):
+        """
+        Returns global and local location for this chip
+
+        :param int x:
+        :param int y:
+        :rtype: str
+        """
+        chip = self.get_chip_at(x, y)
+        if chip:
+            return self.where_is_chip(chip)
+        return f"No chip {x}, {y} found"
+
     @abstractmethod
     def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
         """
