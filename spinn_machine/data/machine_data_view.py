@@ -160,11 +160,11 @@ class MachineDataView(UtilsDataView):
         :rtype: str
         """
         try:
-            return cls.__data._machine.where_is_xy(x, y)
-        except Exception as original:
             try:
-                # In case cls.__data._machine is None raise better exception
+                return cls.__data._machine.where_is_xy(x, y)
+            except AttributeError:
+                # get_machine() raises better exception
                 # First during mock create the VirtualMachine
                 return cls.get_machine().where_is_xy(x, y)
-            except Exception:
-                return str(original)
+        except Exception as ex:  # pylint: disable=broad-except
+            return str(ex)

@@ -70,9 +70,12 @@ class TestSimulatorData(unittest.TestCase):
     def test_where_is_setup(self):
         writer = MachineDataWriter.setup()
         self.assertEqual(
-            "'NoneType' object has no attribute 'where_is_xy'",
+            "machine has not yet been created.",
             MachineDataView.where_is_xy(1, 0))
         writer.set_machine(virtual_machine(width=12, height=12))
         self.assertEqual(
             "global chip 11, 11 on 127.0.0.0 is chip 7, 3 on 127.0.4.8",
             MachineDataView.where_is_xy(11, 11))
+        self.assertEqual(
+            "No chip -1, 11 found",
+            MachineDataView.where_is_xy(-1, 11))
