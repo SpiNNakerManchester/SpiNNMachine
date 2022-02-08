@@ -969,8 +969,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: total
         :rtype: int
         """
-        # pylint: disable=protected-access
-        return sum(chip._n_user_processors for chip in self.chips)
+        return sum(chip.n_user_processors for chip in self.chips)
 
     @property
     def total_cores(self):
