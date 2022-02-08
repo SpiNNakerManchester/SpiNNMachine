@@ -41,8 +41,12 @@ class CoreSubsets(object):
         """
         x = core_subset.x
         y = core_subset.y
-        for processor_id in core_subset.processor_ids:
-            self.add_processor(x, y, processor_id)
+        xy = (x, y)
+        if xy in self._core_subsets:
+            for processor_id in core_subset.processor_ids:
+                self.add_processor(x, y, processor_id)
+        else:
+            self._core_subsets[xy] = core_subset
 
     def add_core_subsets(self, core_subsets):
         """ Merges a core subsets into this one.
@@ -169,11 +173,11 @@ class CoreSubsets(object):
         """
         result = CoreSubsets()
         for xy in self._core_subsets:
-            if xy in other.core_subsets:
+            if xy in other:
                 subset = self._core_subsets[xy].intersect(
-                    other.core_subsets[xy])
+                    other[xy])
                 if subset:
-                    result.core_subsets[xy] = subset
+                    result.add_core_subset(subset)
         return result
 
     def values(self):
