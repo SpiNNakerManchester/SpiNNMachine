@@ -105,6 +105,6 @@ class CoreSubset(object):
         """
         result = CoreSubset(self._x, self._y, [])
         for processor_id in self._processor_ids:
-            if processor_id in other._processor_ids:
+            if processor_id in other.processor_ids:
                 result.add_processor(processor_id)
         return result

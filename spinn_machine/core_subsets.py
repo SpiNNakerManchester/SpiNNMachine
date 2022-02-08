@@ -169,11 +169,11 @@ class CoreSubsets(object):
         """
         result = CoreSubsets()
         for xy in self._core_subsets:
-            if xy in other._core_subsets:
+            if xy in other.core_subsets:
                 subset = self._core_subsets[xy].intersect(
-                    other._core_subsets[xy])
+                    other.core_subsets[xy])
                 if subset:
-                    result._core_subsets[xy] = subset
+                    result.core_subsets[xy] = subset
         return result
 
     def values(self):
