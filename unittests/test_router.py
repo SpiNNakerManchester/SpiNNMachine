@@ -15,11 +15,16 @@
 
 import unittest
 from spinn_machine import Router, Link, MulticastRoutingEntry
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 
 
 class TestingRouter(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
     def test_creating_new_router(self):
         links = list()
         links.append(Link(0, 0, 0, 1, 1))

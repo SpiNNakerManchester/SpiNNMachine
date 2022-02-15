@@ -14,10 +14,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 
 
 class TestingLinks(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
     def test_fpga_link_data(self):
         ld = FPGALinkData(1, 2, 3, 4, 5, "somehost")
         ld2 = FPGALinkData(1, 2, 3, 4, 5, "somehost")

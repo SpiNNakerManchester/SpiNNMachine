@@ -14,9 +14,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from spinn_machine import CoreSubsets, CoreSubset
+from spinn_machine.config_setup import unittest_setup
 
 
 def test_coresubsets():
+    unittest_setup()
     core_subsets = CoreSubsets()
     assert len(core_subsets) == 0
 
@@ -36,6 +38,7 @@ def test_coresubsets():
 
 
 def test_multiple():
+    unittest_setup()
     cs1 = CoreSubset(0, 0, [1, 2, 3])
     cs2 = CoreSubset(0, 0, [4, 5, 6])
     cs3 = CoreSubset(0, 1, [1, 2, 3])
@@ -49,6 +52,7 @@ def test_multiple():
 
 
 def test_iter():
+    unittest_setup()
     cs1 = CoreSubset(0, 0, [1, 2, 3])
     cs2 = CoreSubset(0, 0, [4, 5, 6])
     cs3 = CoreSubset(0, 1, [1, 2, 3])
@@ -65,6 +69,7 @@ def test_iter():
 
 
 def test_interest():
+    unittest_setup()
     cs11 = CoreSubset(0, 0, [1, 2, 3])
     cs12 = CoreSubset(0, 1, [1, 2, 3])
     cs13 = CoreSubset(1, 1, [1])
@@ -86,6 +91,7 @@ def test_interest():
 
 
 def test_values():
+    unittest_setup()
     cs1 = CoreSubset(0, 0, [1, 2, 3])
     cs2 = CoreSubset(0, 0, [4, 5, 6])
     cs3 = CoreSubset(0, 1, [1, 2, 3])

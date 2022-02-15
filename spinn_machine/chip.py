@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import OrderedDict
-from six import iteritems, itervalues
 from spinn_utilities.ordered_set import OrderedSet
 from .processor import Processor
 
@@ -25,10 +24,10 @@ class Chip(object):
     """ Represents a SpiNNaker chip with a number of cores, an amount of\
         SDRAM shared between the cores, and a router.\
         The chip is iterable over the processors, yielding\
-        (processor_id, processor) where:
+        ``(processor_id, processor)`` where:
 
-            * processor_id is the ID of a processor
-            * processor is the processor with processor_id
+            * ``processor_id`` is the ID of a processor
+            * ``processor`` is the :py:class:`Processor` with ``processor_id``
     """
 
     # tag 0 is reserved for stuff like IO STD
@@ -45,24 +44,18 @@ class Chip(object):
                  nearest_ethernet_y, ip_address=None, virtual=False,
                  tag_ids=None, down_cores=None, parent_link=None):
         """
-        :param x: the x-coordinate of the chip's position in the\
+        :param int x: the x-coordinate of the chip's position in the
             two-dimensional grid of chips
-        :type x: int
-        :param y: the y-coordinate of the chip's position in the\
+        :param int y: the y-coordinate of the chip's position in the
             two-dimensional grid of chips
-        :type y: int
-        :param n_processors: the number of processors including monitor\
-            processors.
-        :type n_processors: int
-        :param router: a router for the chip
-        :type router: :py:class:`~spinn_machine.Router`
-        :param sdram: an SDRAM for the chip
-        :type sdram: :py:class:`~spinn_machine.SDRAM`
-        :param ip_address: \
-            the IP address of the chip or None if no Ethernet attached
+        :param int n_processors:
+            the number of processors including monitor processors.
+        :param ~spinn_machine.Router router: a router for the chip
+        :param ~spinn_machine.SDRAM sdram: an SDRAM for the chip
+        :param ip_address:
+            the IP address of the chip, or ``None`` if no Ethernet attached
         :type ip_address: str or None
-        :param virtual: boolean which defines if this chip is a virtual one
-        :type virtual: bool
+        :param bool virtual: whether this chip is a virtual one
         :param tag_ids: IDs to identify the chip for SDP can be empty to
             define no tags or None to allocate tag automatically
             based on if there is an ip_address
@@ -76,9 +69,9 @@ class Chip(object):
         :param parent_link: The link down which the parent chips is found in
             the tree of chips towards the root (boot) chip
         :type parent_link: int or None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
-            If processors contains any two processors with the same\
-            processor_id
+        :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
+            If processors contains any two processors with the same
+            ``processor_id``
         """
         self._x = x
         self._y = y
@@ -98,7 +91,6 @@ class Chip(object):
         self._parent_link = parent_link
 
     def __generate_processors(self, n_processors, down_cores):
-        global standard_processors
         if down_cores is None:
             if n_processors not in standard_processors:
                 processors = OrderedDict()
@@ -122,26 +114,23 @@ class Chip(object):
 
     def is_processor_with_id(self, processor_id):
         """ Determines if a processor with the given ID exists in the chip.\
-            Also implemented as __contains__(processor_id)
+            Also implemented as ``__contains__(processor_id)``
 
-        :param processor_id: the processor ID to check for
-        :type processor_id: int
+        :param int processor_id: the processor ID to check for
         :return: Whether the processor with the given ID exists
         :rtype: bool
-        :raise None: does not raise any known exceptions
         """
         return processor_id in self._p
 
     def get_processor_with_id(self, processor_id):
-        """ Return the processor with the specified ID or None if the\
+        """ Return the processor with the specified ID, or ``None`` if the\
             processor does not exist.
 
-        :param processor_id: the ID of the processor to return
-        :type processor_id: int
-        :return: \
-            the processor with the specified ID, or None if no such processor
-        :rtype: Processor
-        :raise None: does not raise any known exceptions
+        :param int processor_id: the ID of the processor to return
+        :return:
+            the processor with the specified ID,
+            or ``None`` if no such processor
+        :rtype: Processor or None
         """
         if processor_id in self._p:
             return self._p[processor_id]
@@ -153,7 +142,6 @@ class Chip(object):
 
         :return: the x-coordinate of the chip
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._x
 
@@ -163,7 +151,6 @@ class Chip(object):
 
         :return: the y-coordinate of the chip
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._y
 
@@ -172,9 +159,8 @@ class Chip(object):
         """ An iterable of available processors
 
         :rtype: iterable(Processor)
-        :raise None: does not raise any known exceptions
         """
-        return itervalues(self._p)
+        return iter(self._p.values())
 
     @property
     def n_processors(self):
@@ -194,11 +180,10 @@ class Chip(object):
 
     @property
     def virtual(self):
-        """ Boolean which defines if the chip is virtual or not
+        """ Whether the chip is virtual or not
 
         :return: if the chip is virtual
-        :rtype: boolean
-        :raise None: this method does not raise any known exceptions
+        :rtype: bool
         """
         return self._virtual
 
@@ -208,7 +193,6 @@ class Chip(object):
 
         :return: router associated with the chip
         :rtype: Router
-        :raise None: does not raise any known exceptions
         """
         return self._router
 
@@ -218,7 +202,6 @@ class Chip(object):
 
         :return: SDRAM associated with the chip
         :rtype: SDRAM
-        :raise None: does not raise any known exceptions
         """
         return self._sdram
 
@@ -226,10 +209,9 @@ class Chip(object):
     def ip_address(self):
         """ The IP address of the chip
 
-        :return: IP address of the chip, or None if there is no Ethernet\
+        :return: IP address of the chip, or ``None`` if there is no Ethernet
             connected to the chip
-        :rtype: str
-        :raise None: does not raise any known exceptions
+        :rtype: str or None
         """
         return self._ip_address
 
@@ -239,7 +221,6 @@ class Chip(object):
 
         :return: the x coordinate of the nearest Ethernet chip
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._nearest_ethernet_x
 
@@ -249,7 +230,6 @@ class Chip(object):
 
         :return: the y coordinate of the nearest Ethernet chip
         :rtype: int
-        :raise None: does not raise any known exceptions
         """
         return self._nearest_ethernet_y
 
@@ -259,7 +239,6 @@ class Chip(object):
 
         :return: the set of IDs.
         :rtype: iterable(int)
-        :raise None: this method does not raise any exception
         """
         return self._tag_ids
 
@@ -278,7 +257,7 @@ class Chip(object):
     def parent_link(self):
         """ The link down which the parent is found in the tree of chips rooted
             at the machine root chip (probably 0, 0 in most cases).  This will
-            be None if the chip information didn't contain this value.
+            be ``None`` if the chip information didn't contain this value.
 
         :rtype: int or None
         """
@@ -287,13 +266,12 @@ class Chip(object):
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors
 
-        :return: An iterable of (processor_id, processor) where:
-            * processor_id is the ID of a processor
-            * processor is the processor with the ID
-        :rtype: iterable(int,Processor)
-        :raise None: does not raise any known exceptions
+        :return: An iterable of ``(processor_id, processor)`` where:
+            * ``processor_id`` is the ID of a processor
+            * ``processor`` is the processor with the ID
+        :rtype: iterable(tuple(int,Processor))
         """
-        return iteritems(self._p)
+        return iter(self._p.items())
 
     def __len__(self):
         """ The number of processors associated with this chip.

@@ -51,7 +51,7 @@ def machine_from_json(j_machine):
     :rtype: Machine
     """
     if isinstance(j_machine, str):
-        with open(j_machine) as j_file:
+        with open(j_machine, encoding="utf-8") as j_file:
             j_machine = json.load(j_file)
 
     # get the default values
@@ -146,7 +146,7 @@ def _find_virtual_links(machine):
     :return: Map of Chip to list of virtual links
     """
     virtual_links_dict = defaultdict(list)
-    for chip in machine._virtual_chips:
+    for chip in machine.virtual_chips:
         # assume all links need special treatment
         for link in chip.router.links:
             virtual_links_dict[chip].append(link)
@@ -313,5 +313,5 @@ def to_json_path(machine, file_path):
     json_obj = to_json(machine)
 
     # dump to json file
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         json.dump(json_obj, f)

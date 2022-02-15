@@ -23,16 +23,17 @@ class FullWrapMachine(Machine):
     def __init__(self, width, height, chips=None, origin=None):
         """ Creates a fully wrapped machine.
 
-        :param width: The width of the machine excluding any virtual chips
-        :param height: The height of the machine excluding any virtual chips
+        :param int width: The width of the machine excluding any virtual chips
+        :param int height:
+            The height of the machine excluding any virtual chips
         :param chips: An iterable of chips in the machine
-        :type chips: iterable of :py:class:`~spinn_machine.Chip`
-        :param origin: Extra information about how this mnachine was created \
-            to be used in the str method. Example "Virtual" or "Json"
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException: \
+        :type chips: iterable(~spinn_machine.Chip)
+        :param str origin: Extra information about how this machine was
+            created to be used in the str method. Example "Virtual" or "Json"
+        :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If any two chips have the same x and y coordinates
         """
-        super(FullWrapMachine, self).__init__(width, height, chips, origin)
+        super().__init__(width, height, chips, origin)
 
     @overrides(Machine.multiple_48_chip_boards)
     def multiple_48_chip_boards(self):
@@ -57,20 +58,13 @@ class FullWrapMachine(Machine):
                 yield(((x + ethernet_x) % self._width,
                       (y + ethernet_y) % self._height), n_cores)
 
-    @overrides(Machine.get_chips_by_ethernet)
-    def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._local_xys:
-            chip_xy = ((x + ethernet_x) % self._width,
-                       (y + ethernet_y) % self._height)
-            if (chip_xy) in self._chips:
-                yield self._chips[chip_xy]
-
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
         for (x, y) in self._local_xys:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y) % self._height)
-            if (chip_xy) in self._chips:
+            if chip_xy in self._chips and\
+                    chip_xy not in self._virtual_chips:
                 yield chip_xy
 
     @overrides(Machine.get_down_xys_by_ethernet)

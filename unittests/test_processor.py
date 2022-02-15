@@ -15,9 +15,14 @@
 
 import unittest
 from spinn_machine import Processor
+from spinn_machine.config_setup import unittest_setup
 
 
 class TestingProcessor(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
     def test_creating_processors(self):
         processors = list()
         flops = 1000

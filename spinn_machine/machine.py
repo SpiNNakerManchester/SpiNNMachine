@@ -13,24 +13,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import division
 from collections import OrderedDict
-from six import iteritems, iterkeys, itervalues, add_metaclass
-from .exceptions import (SpinnMachineAlreadyExistsException,
-                         SpinnMachineException)
+from .exceptions import (
+    SpinnMachineAlreadyExistsException, SpinnMachineException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 from spinn_utilities.abstract_base import (
     AbstractBase, abstractproperty, abstractmethod)
 
 
-@add_metaclass(AbstractBase)
-class Machine(object):
+class Machine(object, metaclass=AbstractBase):
     """ A representation of a SpiNNaker Machine with a number of Chips.\
-        Machine is also iterable, providing ((x, y), chip) where:
+        Machine is also iterable, providing ``((x, y), chip)`` where:
 
-            * x is the x-coordinate of a chip
-            * y is the y-coordinate of a chip
-            * chip is the chip with the given x, y coordinates
+            * ``x`` is the x-coordinate of a chip
+            * ``y`` is the y-coordinate of a chip
+            * ``chip`` is the chip with the given ``(x, y)`` coordinates
     """
 
     # current opinions is that the Ethernet connected chip can handle 10
@@ -64,6 +61,7 @@ class Machine(object):
         (6, 7): 18, (7, 3): 18, (7, 4): 18, (7, 5): 18, (7, 6): 18, (7, 7): 18
     }
     BOARD_48_CHIPS = list(CHIPS_PER_BOARD.keys())
+    ROUTER_ENTRIES = 1023
 
     __slots__ = (
         "_boot_ethernet_address",
@@ -116,10 +114,10 @@ class Machine(object):
         Real machines can only be capped never increased beyond what they
         actually have.
 
-        :param new_max: New value to use for the max
-        :raises: SpinnMachineException if max_cores_per_chip has already been\
-            used and is now being changed.\
-            The Exception also happens if the value is set twice to difference\
+        :param int new_max: New value to use for the max
+        :raises: SpinnMachineException if max_cores_per_chip has already been
+            used and is now being changed.
+            The Exception also happens if the value is set twice to difference
             values. For example in the script and in the config.
         """
         if Machine.__max_cores is None:
@@ -135,16 +133,13 @@ class Machine(object):
 
         Use machine_factory methods to determine the correct machine class
 
-        :param width: The width of the machine excluding any virtual chips
-        :type width: int
-        :param height: The height of the machine excluding any virtual chips
-        :type height: int
-        :param chips: An iterable of chips in the machine
-        :type chips: iterable(Chip)
-        :param origin: Extra information about how this machine was created \
+        :param int width: The width of the machine excluding any virtual chips
+        :param int height:
+            The height of the machine excluding any virtual chips
+        :param iterable(Chip) chips: An iterable of chips in the machine
+        :param str origin: Extra information about how this machine was created
             to be used in the str method. Example "Virtual" or "Json"
-        :type origin: str
-        :raise SpinnMachineAlreadyExistsException: \
+        :raise SpinnMachineAlreadyExistsException:
             If any two chips have the same x and y coordinates
         """
         self._width = width
@@ -185,7 +180,7 @@ class Machine(object):
         if chips is not None:
             self.add_chips(chips)
 
-        self._virtual_chips = list()
+        self._virtual_chips = OrderedDict()
 
         if origin is None:
             self._origin = ""
@@ -221,11 +216,11 @@ class Machine(object):
         the local 0,0 of an existing board, within the width and height of the
         machine.
 
-        :param ethernet_x: \
+        :param int ethernet_x:
             The x coordinate of a (local 0,0) legal ethernet chip
-        :param ethernet_y: \
+        :param int ethernet_y:
             The y coordinate of a (local 0,0) legal ethernet chip
-        :return: Yields the (x, y) coordinates of all the potential chips on \
+        :return: Yields the (x, y) coordinates of all the potential chips on
             this board.
         :rtype: iterable(tuple(int,int))
         """
@@ -252,13 +247,13 @@ class Machine(object):
         the local 0,0 of an existing board, within the width and height of the
         machine.
 
-        :param ethernet_x: \
+        :param int ethernet_x:
             The x coordinate of a (local 0,0) legal ethernet chip
-        :param ethernet_y: \
+        :param int ethernet_y:
             The y coordinate of a (local 0,0) legal ethernet chip
-        :return: Yields (x, y, n_cores) where x , y are coordinates of all \
-            the potential chips on this board, and n_cores is the typcial \
-            number of cores for a chip in that possition.
+        :return: Yields (x, y, n_cores) where x , y are coordinates of all
+            the potential chips on this board, and n_cores is the typical
+            number of cores for a chip in that position.
         :rtype: iterable(tuple(int,int))
         """
 
@@ -274,15 +269,14 @@ class Machine(object):
 
         This method does check if the chip actually exists.
 
-        :param ethernet_x: \
+        :param int ethernet_x:
             The x coordinate of a (local 0,0) legal ethernet chip
-        :param ethernet_y: \
+        :param int ethernet_y:
             The y coordinate of a (local 0,0) legal ethernet chip
         :return: Yields the (x, y) of the down chips on this board.
         :rtype: iterable(tuple(int,int))
         """
 
-    @abstractmethod
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         """
         Yields the actual chips on the board with this ethernet.
@@ -292,13 +286,16 @@ class Machine(object):
 
         This method does check if the chip actually exists.
 
-        :param ethernet_x: \
+        :param int ethernet_x:
             The x coordinate of a (local 0,0) legal ethernet chip
-        :param ethernet_y: \
+        :param int ethernet_y:
             The y coordinate of a (local 0,0) legal ethernet chip
         :return: Yields the chips on this board.
         :rtype: iterable(Chip)
         """
+        for chip_xy in self.get_existing_xys_by_ethernet(
+                ethernet_x, ethernet_y):
+            yield self._chips[chip_xy]
 
     @abstractmethod
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
@@ -310,9 +307,9 @@ class Machine(object):
 
         This method does check if the chip actually exists.
 
-        :param ethernet_x: \
+        :param int ethernet_x:
             The x coordinate of a (local 0,0) legal ethernet chip
-        :param ethernet_y: \
+        :param int ethernet_y:
             The y coordinate of a (local 0,0) legal ethernet chip
         :return: Yields the (x,y)s of chips on this board.
         :rtype: iterable(tuple(int,int))
@@ -339,10 +336,11 @@ class Machine(object):
         generates x,y values that fall outside of the legal values including
         negative values, x = width or y = height.
 
-        :param x: The x coordinate of a chip that will exist on the machine
-        :param y: The y coordinate of a chip that will exist on the machine
-        :param link: The link to another chip that could exist on the machine
-        :return: x and y coordinates of the chip over that link if it is \
+        :param int x: The x coordinate of a chip that will exist on the machine
+        :param int y: The y coordinate of a chip that will exist on the machine
+        :param int link:
+            The link to another chip that could exist on the machine
+        :return: x and y coordinates of the chip over that link if it is
             valid or some fictional x,y if not.
         :rtype: tuple(int,int)
         """
@@ -358,10 +356,40 @@ class Machine(object):
         This method assumes that chip is on the machine or is a copy of a
         chip on the machine
 
-        :param chip: A Chip in the machine
+        :param Chip chip: A Chip in the machine
         :return: Local (x, y) coordinates.
         :rtype: tuple(int,int)
         """
+
+    def where_is_chip(self, chip):
+        """
+        Returns global and local location for this chip
+
+        This method assumes that chip is on the machine or is a copy of a
+        chip on the machine
+
+        :param Chip chip: A Chip in the machine
+        :rtype: str
+        """
+        chip00 = self.get_chip_at(0, 0)
+        local00 = self.get_chip_at(
+            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        (localx, localy) = self.get_local_xy(chip)
+        return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
+                f"is chip {localx}, {localy} on {local00.ip_address}")
+
+    def where_is_xy(self, x, y):
+        """
+        Returns global and local location for this chip
+
+        :param int x:
+        :param int y:
+        :rtype: str
+        """
+        chip = self.get_chip_at(x, y)
+        if chip:
+            return self.where_is_chip(chip)
+        return f"No chip {x}, {y} found"
 
     @abstractmethod
     def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
@@ -375,10 +403,12 @@ class Machine(object):
         GIGO: This method does not check if input parameters make sense,
         nor does it check if there is a chip at the resulting global x,y
 
-        :param local_x: A valid local x coordinate for a chip
-        :param local_y: A valid local y coordinate for a chip
-        :param ethernet_x: The global ethernet x for the board the chip is on
-        :param ethernet_y: The global ethernet y for the board the chip is on
+        :param int local_x: A valid local x coordinate for a chip
+        :param int local_y: A valid local y coordinate for a chip
+        :param int ethernet_x:
+            The global ethernet x for the board the chip is on
+        :param int ethernet_y:
+            The global ethernet y for the board the chip is on
         :return: global (x,y) coordinates of the chip
         :rtype: tuple(int,int)
         """
@@ -420,9 +450,9 @@ class Machine(object):
         GIGO: This method does not check if input parameters make sense,
 
         :param source: (x,y) coordinates of the source chip
-        :type source: (int, int)
+        :type source: tuple(int, int)
         :param destination:  (x,y) coordinates of the destination chip
-        :type destination: (int, int)
+        :type destination: tuple(int, int)
         :return: The distance in steps
         :rtype: int
         """
@@ -446,8 +476,9 @@ class Machine(object):
         using the best x, y pair as minimize(x, y, 0)
 
         :param source: (x,y) coordinates of the source chip
-        :type source: (int, int)
-        :param destination:  (x,y) coordinates of the destination chip
+        :type source: tuple(int, int)
+        :param destination: (x,y) coordinates of the destination chip
+        :type destination: tuple(int, int)
         :return:
         """
 
@@ -460,15 +491,17 @@ class Machine(object):
         This allows the checks to be avoided when creating a virtual machine
         (Except of course in testing)
 
-        An Error is raised if there is a chip with a x outside of the
-        range 0 to width -1 (except for virtual ones)
-        An Error is raised if there is a chip with a y outside of the
-        range 0 to height -1 (except for virtual ones)
-        An Error is raise if there is no chip at the declared ethernet x and y
-        An Error is raised if an ethernet chip is not at a local 0,0
-        An Error is raised if there is no ethernet chip is at 0,0
-        An Error is raised if this is a unexpected multiple board situation
-        :rtype: None
+        :raises SpinnMachineException:
+            An Error is raised if there is a chip with a x outside of the
+            range 0 to width -1 (except for virtual ones).
+            An Error is raised if there is a chip with a y outside of the
+            range 0 to height -1 (except for virtual ones).
+            An Error is raise if there is no chip at the declared ethernet
+            x and y.
+            An Error is raised if an ethernet chip is not at a local 0,0.
+            An Error is raised if there is no ethernet chip is at 0,0.
+            An Error is raised if this is a unexpected multiple board
+            situation.
         """
         if self._boot_ethernet_address is None:
             raise SpinnMachineException(
@@ -525,16 +558,14 @@ class Machine(object):
         """ String to represent the type of wrap.
 
         :return: Short string for type of wrap
+        :rtype: str
         """
 
     def add_chip(self, chip):
         """ Add a chip to the machine
 
-        :param chip: The chip to add to the machine
-        :type chip: :py:class:`~spinn_machine.Chip`
-        :return: Nothing is returned
-        :rtype: None
-        :raise SpinnMachineAlreadyExistsException: \
+        :param ~spinn_machine.Chip chip: The chip to add to the machine
+        :raise SpinnMachineAlreadyExistsException:
             If a chip with the same x and y coordinates already exists
         """
         chip_id = (chip.x, chip.y)
@@ -559,20 +590,17 @@ class Machine(object):
 
     def add_virtual_chip(self, chip):
         """
-        :rtype: None
+        :param ~spinn_machine.Chip chip: The virtual chip to add
         """
-        self._virtual_chips.append(chip)
+        self._virtual_chips[(chip.x, chip.y)] = chip
         self.add_chip(chip)
 
     def add_chips(self, chips):
         """ Add some chips to the machine
 
-        :param chips: an iterable of chips
-        :type chips: iterable(:py:class:`~spinn_machine.Chip`)
-        :return: Nothing is returned
-        :rtype: None
-        :raise SpinnMachineAlreadyExistsException: \
-            If a chip with the same x and y coordinates as one being added \
+        :param iterable(~spinn_machine.Chip) chips: an iterable of chips
+        :raise SpinnMachineAlreadyExistsException:
+            If a chip with the same x and y coordinates as one being added
             already exists
         """
         for next_chip in chips:
@@ -586,16 +614,16 @@ class Machine(object):
         :rtype: iterable(:py:class:`~spinn_machine.Chip`)
         :raise None: does not raise any known exceptions
         """
-        return itervalues(self._chips)
+        return iter(self._chips.values())
 
     @property
     def chip_coordinates(self):
         """ An iterable of chip coordinates in the machine
 
         :return: An iterable of chip coordinates
-        :rtype: iterable(int,int)
+        :rtype: iterable(tuple(int,int))
         """
-        return iterkeys(self._chips)
+        return iter(self._chips.keys())
 
     def __iter__(self):
         """ Get an iterable of the chip coordinates and chips
@@ -605,10 +633,9 @@ class Machine(object):
                 * x is the x-coordinate of a chip
                 * y is the y-coordinate of a chip
             * chip is a chip
-        :rtype: iterable((int, int), :py:class:`~spinn_machine.Chip`)
-        :raise None: does not raise any known exceptions
+        :rtype: iterable(tuple(tuple(int, int), ~spinn_machine.Chip))
         """
-        return iteritems(self._chips)
+        return iter(self._chips.items())
 
     def __len__(self):
         """ Get the total number of chips.
@@ -620,15 +647,13 @@ class Machine(object):
 
     def get_chip_at(self, x, y):
         """ Get the chip at a specific (x, y) location.\
-            Also implemented as __getitem__((x, y))
+            Also implemented as ``__getitem__((x, y))``
 
-        :param x: the x-coordinate of the requested chip
-        :type x: int
-        :param y: the y-coordinate of the requested chip
-        :type y: int
-        :return: the chip at the specified location, or None if no such chip
-        :rtype: :py:class:`~spinn_machine.Chip`
-        :raise None: does not raise any known exceptions
+        :param int x: the x-coordinate of the requested chip
+        :param int y: the y-coordinate of the requested chip
+        :return: the chip at the specified location,
+            or ``None`` if no such chip
+        :rtype: ~spinn_machine.Chip or None
         """
         chip_id = (x, y)
         if chip_id in self._chips:
@@ -638,13 +663,11 @@ class Machine(object):
     def __getitem__(self, x_y_tuple):
         """ Get the chip at a specific (x, y) location
 
-        :param x_y_tuple: A tuple of (x, y) where:
+        :param tuple(int,int) x_y_tuple: A tuple of (x, y) where:
             * x is the x-coordinate of the chip to retrieve
             * y is the y-coordinate of the chip to retrieve
-        :type x_y_tuple: (int, int)
         :return: the chip at the specified location, or None if no such chip
-        :rtype: :py:class:`~spinn_machine.Chip`
-        :raise None: does not raise any known exceptions
+        :rtype: ~spinn_machine.Chip or None
         """
         x, y = x_y_tuple
         return self.get_chip_at(x, y)
@@ -653,25 +676,19 @@ class Machine(object):
         """ Determine if a chip exists at the given coordinates.\
             Also implemented as __contains__((x, y))
 
-        :param x: x location of the chip to test for existence
-        :type x: int
-        :param y: y location of the chip to test for existence
-        :type y: int
+        :param int x: x location of the chip to test for existence
+        :param int y: y location of the chip to test for existence
         :return: True if the chip exists, False otherwise
         :rtype: bool
-        :raise None: does not raise any known exceptions
         """
         return (x, y) in self._chips
 
     def is_link_at(self, x, y, link):
         """ Determine if a link exists at the given coordinates
 
-        :param x: The x location of the chip to test the link of
-        :type x: int
-        :param y: The y location of the chip to test the link of
-        :type y: int
-        :param link: The link to test the existence of
-        :type link: int
+        :param int x: The x location of the chip to test the link of
+        :param int y: The y location of the chip to test the link of
+        :param int link: The link to test the existence of
         """
         return (x, y) in self._chips and self._chips[x, y].router.is_link(link)
 
@@ -684,7 +701,6 @@ class Machine(object):
         :type x_y_tuple: tuple(int, int)
         :return: True if the chip exists, False otherwise
         :rtype: bool
-        :raise None: does not raise any known exceptions
         """
         x, y = x_y_tuple
         return self.is_chip_at(x, y)
@@ -745,22 +761,21 @@ class Machine(object):
     def spinnaker_links(self):
         """ The set of SpiNNaker links in the machine
 
-        :rtype: iterable(~spinn_machine.link_data_objects.SpinnakerLinkData)
+        :rtype: iterable(tuple(tuple(str,int),
+            ~spinn_machine.link_data_objects.SpinnakerLinkData))
         """
-        return iteritems(self._spinnaker_links)
+        return iter(self._spinnaker_links.items())
 
     def get_spinnaker_link_with_id(
             self, spinnaker_link_id, board_address=None):
         """ Get a SpiNNaker link with a given ID
 
-        :param spinnaker_link_id: The ID of the link
-        :type spinnaker_link_id: int
-        :param board_address:\
+        :param int spinnaker_link_id: The ID of the link
+        :param board_address:
             the board address that this SpiNNaker link is associated with
         :type board_address: str or None
         :return: The SpiNNaker link data or None if no link
-        :rtype:\
-            :py:class:`~spinn_machine.link_data_objects.SpinnakerLinkData`
+        :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData or None
         """
         if board_address is None:
             board_address = self._boot_ethernet_address
@@ -771,22 +786,19 @@ class Machine(object):
         """ Get an FPGA link data item that corresponds to the FPGA and FPGA\
             link for a given board address.
 
-        :param fpga_id:\
-            the ID of the FPGA that the data is going through.  Refer to \
+        :param int fpga_id:
+            the ID of the FPGA that the data is going through.  Refer to
             technical document located here for more detail:
             https://drive.google.com/file/d/0B9312BuJXntlVWowQlJ3RE8wWVE
-        :type fpga_link_id: int
-        :param fpga_link_id:\
-            the link ID of the FPGA. Refer to technical document located here\
+        :param int fpga_link_id:
+            the link ID of the FPGA. Refer to technical document located here
             for more detail:
             https://drive.google.com/file/d/0B9312BuJXntlVWowQlJ3RE8wWVE
-        :type fpga_id: int
-        :param board_address:\
+        :param board_address:
             the board address that this FPGA link is associated with
-        :type board_address: str
-        :rtype:\
-            :py:class:`~spinn_machine.link_data_objects.FPGALinkData`
-        :return: the given FPGA link object or None if no such link
+        :type board_address: str or None
+        :return: the given FPGA link object or ``None`` if no such link
+        :rtype: ~spinn_machine.link_data_objects.FPGALinkData or None
         """
         if board_address is None:
             board_address = self._boot_ethernet_address
@@ -976,8 +988,9 @@ class Machine(object):
 
         Current implementation does NOT deal with group of unreachable chips
 
-        :return: List (hopefully empty) if the (x,y) cooridinates of
+        :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
+        :rtype: list(tuple(int,int))
         """
         removable_coords = list()
         for (x, y) in self.chip_coordinates:
@@ -997,8 +1010,9 @@ class Machine(object):
 
         Current implementation does NOT deal with group of unreachable chips
 
-        :return: List (hopefully empty) if the (x,y) cooridinates of
+        :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
+        :rtype: list(tuple(int,int))
         """
         removable_coords = list()
         for (x, y) in self.chip_coordinates:
@@ -1022,8 +1036,9 @@ class Machine(object):
 
         Current implementation does NOT deal with group of unreachable chips
 
-        :return: List (hopefully empty) if the (x,y) cooridinates of
+        :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
+        :rtype: list(tuple(int,int))
         """
         removable_coords = list()
         for chip in self._chips.values():
@@ -1055,8 +1070,9 @@ class Machine(object):
 
         Current implementation does NOT deal with group of unreachable chips
 
-        :return: List (hopefully empty) if the (x,y) cooridinates of
+        :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
+        :rtype: list(tuple(int,int))
         """
         removable_coords = list()
         for chip in self._chips.values():
@@ -1108,8 +1124,8 @@ class Machine(object):
 
         This can be farther optimised with then knowledge that z is always 0
 
-        :param x:
-        :param y:
+        :param int x:
+        :param int y:
         :return: (x, y, z) vector
         :rtype: tuple(int,int,int)
         """
@@ -1139,7 +1155,7 @@ class Machine(object):
         """
         :rtype: iterable(Chip)
         """
-        return self._virtual_chips
+        return self._virtual_chips.values()
 
     @property
     def local_xys(self):
@@ -1156,3 +1172,31 @@ class Machine(object):
         :rtype: iterable(tuple(int,int))
         """
         return self._local_xys
+
+    def get_unused_xy(self):
+        """
+        Finds an unused xy on this machine.
+
+        This method will not return an xy of an existing chip
+
+        This method will not return an xy on any existing board even if that
+        chip does not exist. IE it will not return xy of a dead chip
+
+        It will however return the same unused_xy until a chip is added at
+        that location
+
+        :return: an unused xy
+        :rtype: (int, int)
+        """
+        # get a set of xys that could be connected to any existing ethernet
+        xys_by_ethernet = set()
+        for ethernet in self.ethernet_connected_chips:
+            xys_by_ethernet.update(
+                self.get_xys_by_ethernet(ethernet.x, ethernet.y))
+        x = 0
+        while(True):
+            for y in range(self.max_chip_y+1):
+                xy = (x, y)
+                if xy not in self._chips and xy not in xys_by_ethernet:
+                    return xy
+            x += 1

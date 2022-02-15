@@ -15,15 +15,20 @@
 
 from tempfile import mktemp
 import unittest
+from spinn_utilities.config_holder import set_config
 from spinn_machine import (SDRAM, virtual_machine)
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
 
 
 class TestJsonMachine(unittest.TestCase):
 
+    def setUp(self):
+        unittest_setup()
+
     def test_json_version_5_hole(self):
-        hole = [(3, 3)]
-        vm = virtual_machine(width=8, height=8, down_chips=hole)
+        set_config("Machine", "down_chips", "3,3")
+        vm = virtual_machine(width=8, height=8)
         jpath = mktemp("json")
         to_json_path(vm, jpath)
         jm = machine_from_json(jpath)

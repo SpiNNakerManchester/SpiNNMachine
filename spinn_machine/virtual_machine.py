@@ -15,6 +15,7 @@
 
 from collections import defaultdict
 import logging
+from spinn_utilities.config_holder import get_config_int, get_config_str
 from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
@@ -34,11 +35,11 @@ def _verify_width_height(width, height):
             raise SpinnMachineInvalidParameterException(
                 "width or height", "{} and {}".format(width, height),
                 "Negative dimensions are not supported")
-    except TypeError:
+    except TypeError as original:
         if width is None or height is None:
             raise SpinnMachineInvalidParameterException(
                 "width or height", "{} and {}".format(width, height),
-                "parameter required")
+                "parameter required") from original
         raise
 
     if width == height == 2:
@@ -58,32 +59,18 @@ def _verify_width_height(width, height):
 
 
 def virtual_machine(
-        width, height, n_cpus_per_chip=None,
-        sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
-        down_chips=None, down_cores=None, down_links=None,
-        router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
-        validate=True):
-    """
-    :param width: the width of the virtual machine in chips
-    :type width: int
-    :param height: the height of the virtual machine in chips
-    :type height: int
-    :param n_cpus_per_chip: The number of CPUs to put on each chip
-    :type n_cpus_per_chip: int
-    :param sdram_per_chip: The amount of SDRAM to give to each chip
-    :type sdram_per_chip: int or None
-    :param router_entries_per_chip: the number of entries to each router
-    :type router_entries_per_chip: int
-    :param validate: if True will call the machine validate function
-    :type validate: bool
+        width, height, n_cpus_per_chip=None, validate=True):
+    """ Create a virtual SpiNNaker machine, used for planning execution.
+
+    :param int width: the width of the virtual machine in chips
+    :param int height: the height of the virtual machine in chips
+    :param int n_cpus_per_chip: The number of CPUs to put on each chip
+    :param bool validate: if True will call the machine validate function
     :returns: a virtual machine (that cannot execute code)
     :rtype: Machine
     """
 
-    factory = _VirtualMachine(
-        width, height, n_cpus_per_chip,  sdram_per_chip,
-        down_chips, down_cores, down_links,
-        router_entries_per_chip, validate)
+    factory = _VirtualMachine(width, height, n_cpus_per_chip, validate)
     return factory.machine
 
 
@@ -94,7 +81,6 @@ class _VirtualMachine(object):
     __slots__ = (
         "_unused_cores",
         "_unused_links",
-        "_n_router_entries_per_router",
         "_machine",
         "_sdram_per_chip",
         "_with_monitors")
@@ -108,51 +94,46 @@ class _VirtualMachine(object):
 
     # pylint: disable=too-many-arguments
     def __init__(
-            self, width, height, n_cpus_per_chip=None,
-            sdram_per_chip=SDRAM.DEFAULT_SDRAM_BYTES,
-            down_chips=None, down_cores=None, down_links=None,
-            router_entries_per_chip=Router.ROUTER_DEFAULT_AVAILABLE_ENTRIES,
-            validate=True):
-
-        self._n_router_entries_per_router = router_entries_per_chip
+            self, width, height, n_cpus_per_chip=None, validate=True):
 
         _verify_width_height(width, height)
         self._machine = machine_from_size(width, height, origin=self.ORIGIN)
 
         # Store the details
-        self._sdram_per_chip = sdram_per_chip
+        self._sdram_per_chip = get_config_int(
+            "Machine", "max_sdram_allowed_per_chip")
 
         # Store the down items
         unused_chips = []
-        if down_chips is not None:
-            for down_chip in down_chips:
-                if isinstance(down_chip, IgnoreChip):
-                    if down_chip.ip_address is None:
-                        unused_chips.append((down_chip.x, down_chip.y))
-                else:
-                    unused_chips.append((down_chip[0], down_chip[1]))
+        for down_chip in IgnoreChip.parse_string(get_config_str(
+                "Machine", "down_chips")):
+            if isinstance(down_chip, IgnoreChip):
+                if down_chip.ip_address is None:
+                    unused_chips.append((down_chip.x, down_chip.y))
+            else:
+                unused_chips.append((down_chip[0], down_chip[1]))
 
         self._unused_cores = defaultdict(set)
-        if down_cores is not None:
-            for down_core in down_cores:
-                if isinstance(down_core, IgnoreCore):
-                    if down_core.ip_address is None:
-                        self._unused_cores[(down_core.x, down_core.y)].add(
-                            down_core.virtual_p)
-                else:
-                    self._unused_cores[(down_core[0], down_core[1])].add(
-                        down_core[2])
+        for down_core in IgnoreCore.parse_string(get_config_str(
+                "Machine", "down_cores")):
+            if isinstance(down_core, IgnoreCore):
+                if down_core.ip_address is None:
+                    self._unused_cores[(down_core.x, down_core.y)].add(
+                        down_core.virtual_p)
+            else:
+                self._unused_cores[(down_core[0], down_core[1])].add(
+                    down_core[2])
 
         self._unused_links = set()
-        if down_links is not None:
-            for down_link in down_links:
-                if isinstance(down_link, IgnoreLink):
-                    if down_link.ip_address is None:
-                        self._unused_links.add(
-                            (down_link.x, down_link.y, down_link.link))
-                else:
+        for down_link in IgnoreLink.parse_string(get_config_str(
+                "Machine", "down_links")):
+            if isinstance(down_link, IgnoreLink):
+                if down_link.ip_address is None:
                     self._unused_links.add(
-                        (down_link[0], down_link[1], down_link[2]))
+                        (down_link.x, down_link.y, down_link.link))
+            else:
+                self._unused_links.add(
+                    (down_link[0], down_link[1], down_link[2]))
 
         if width == 2:  # Already checked height is now also 2
             self._unused_links.update(_VirtualMachine._4_chip_down_links)
@@ -204,8 +185,7 @@ class _VirtualMachine(object):
     def _create_chip(self, x, y, configured_chips, ip_address=None):
         chip_links = self._calculate_links(x, y, configured_chips)
         chip_router = Router(
-            chip_links,
-            n_available_multicast_entries=self._n_router_entries_per_router)
+            chip_links)
         if self._sdram_per_chip is None:
             sdram = SDRAM()
         else:

@@ -13,4 +13,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SpiNNUtilities == 1!6.0.1
+import os
+import unittest
+from spinn_utilities.config_holder import run_config_checks
+from spinn_machine.config_setup import unittest_setup
+
+
+class TestCfgChecker(unittest.TestCase):
+
+    def setUp(self):
+        unittest_setup()
+
+    def test_cfg_checker(self):
+        unittests = os.path.dirname(__file__)
+        parent = os.path.dirname(unittests)
+        spinn_machine = os.path.join(parent, "spinn_machine")
+        run_config_checks(directories=[spinn_machine, unittests])

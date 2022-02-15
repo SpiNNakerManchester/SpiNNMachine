@@ -16,14 +16,16 @@
 """
 TestingIptag
 """
-from __future__ import absolute_import
 import unittest
 from spinn_machine.tags import IPTag
+from spinn_machine.config_setup import unittest_setup
 
 
 class TestingIptag(unittest.TestCase):
     """ Tests of IPTag
     """
+    def setUp(self):
+        unittest_setup()
 
     def test_create_valid_iptag(self):
         """ test if an IP tag with valid inputs works
