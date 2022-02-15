@@ -954,8 +954,8 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_ignores(self):
         set_config("Machine", "down_chips", "2,2:4,4:6,6,ignored_ip")
-        set_config(
-            "Machine", "down_cores", "1,1,1:3,3,3: 5,5,-5:7,7,7,ignored_ip")
+        set_config("Machine", "down_cores",
+                   "1,1,1:3,3,3: 5,5,-5:7,7,7,ignored_ip:0,0,5-10")
         set_config("Machine", "down_links", "1,3,3:3,5,3:5,3,3,ignored_ip")
 
         machine = virtual_machine(8, 8)
@@ -963,6 +963,7 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertFalse(machine.is_chip_at(4, 4))
         self.assertFalse(machine.is_chip_at(2, 2))
         self.assertTrue(machine.is_chip_at(6, 6))
+        self.assertTrue(machine.is_chip_at(0, 0))
 
         chip = machine.get_chip_at(3, 3)
         self.assertFalse(chip.is_processor_with_id(3))
@@ -984,6 +985,14 @@ class TestVirtualMachine(unittest.TestCase):
 
         router = machine.get_chip_at(5, 3).router
         self.assertTrue(router.is_link(3))
+
+        chip = machine.get_chip_at(0, 0)
+        for i in range(0, 5):
+            self.assertTrue(chip.is_processor_with_id(i))
+        for i in range(5, 11):
+            self.assertFalse(chip.is_processor_with_id(i))
+        for i in range(12, 18):
+            self.assertTrue(chip.is_processor_with_id(i))
 
     def test_bad_ignores(self):
         try:

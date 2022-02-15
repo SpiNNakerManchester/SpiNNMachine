@@ -12,10 +12,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import re
 
 TYPICAL_PHYSICAL_VIRTUAL_MAP = {
     0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 0, 11: 12,
     12: 13, 13: 14, 14: 15, 15: 16, 16: 17, 17: 18}
+
+CORE_RANGE = re.compile("(\d+)-(\d+)")
 
 
 class IgnoreCore(object):
@@ -70,12 +73,9 @@ class IgnoreCore(object):
         :return: A list of cores, which might be just one
         :rtype: list(int)
         """
-        if core_string.contains('-'):
-            parts = core_string.split("-")
-            if len(parts) == 2:
-                return range(int(parts[0]), int(parts[1] + 1))
-            raise Exception("Unexpected down core range: {}".format(
-                core_string))
+        result = CORE_RANGE.fullmatch(core_string)
+        if result is not None:
+            return range(int(result.group(1)), int(result.group(2)) + 1)
         return [int(core_string)]
 
     @staticmethod
@@ -110,10 +110,10 @@ class IgnoreCore(object):
 
         if len(parts) == 3:
             return [IgnoreCore(parts[0], parts[1], core)
-                    for core in IgnoreCore.parse_core(parts[2])]
+                    for core in IgnoreCore.parse_cores(parts[2])]
         elif len(parts) == 4:
             return [IgnoreCore(parts[0], parts[1], core, parts[3])
-                    for core in IgnoreCore.parse_core(parts[2])]
+                    for core in IgnoreCore.parse_cores(parts[2])]
         else:
             raise Exception(
                 "Unexpected downed_core: {}".format(downed_core))
