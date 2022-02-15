@@ -62,10 +62,14 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(
             "No chip 11, 11 found",
             MachineDataView.where_is_xy(11, 11))
-        writer.set_machine(virtual_machine(width=12, height=12))
+        machine = virtual_machine(width=12, height=12)
+        writer.set_machine(machine)
         self.assertEqual(
             "global chip 11, 11 on 127.0.0.0 is chip 7, 3 on 127.0.4.8",
             MachineDataView.where_is_xy(11, 11))
+        self.assertEqual(
+            "global chip 2, 8 on 127.0.0.0 is chip 6, 4 on 127.0.8.4",
+            MachineDataView.where_is_chip(machine.get_chip_at(2, 8)))
 
     def test_where_is_setup(self):
         writer = MachineDataWriter.setup()

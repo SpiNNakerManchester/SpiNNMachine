@@ -150,7 +150,7 @@ class MachineDataView(UtilsDataView):
         """
         Gets a string saying where chip at x and y is if possible
 
-        Almost Semantic sugar for machine.where_is_xy
+        Almost Semantic sugar for get_machine.where_is_xy
 
         The method does not raise an exception rather returns a String of the
         exception
@@ -166,5 +166,29 @@ class MachineDataView(UtilsDataView):
                 # get_machine() raises better exception
                 # First during mock create the VirtualMachine
                 return cls.get_machine().where_is_xy(x, y)
+        except Exception as ex:  # pylint: disable=broad-except
+            return str(ex)
+
+    @classmethod
+    def where_is_chip(cls, chip):
+        """
+        Gets a string saying where chip is if possible
+
+        Almost Semantic sugar for get_machine.where_is_xy
+
+        The method does not raise an exception rather returns a String of the
+        exception
+
+        :param int x:
+        :param int y:
+        :rtype: str
+        """
+        try:
+            try:
+                return cls.__data._machine.where_is_chip(chip)
+            except AttributeError:
+                # get_machine() raises better exception
+                # First during mock create the VirtualMachine
+                return cls.get_machine().where_is_chip(chip)
         except Exception as ex:  # pylint: disable=broad-except
             return str(ex)
