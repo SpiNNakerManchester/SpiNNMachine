@@ -62,12 +62,30 @@ class IgnoreCore(object):
             return TYPICAL_PHYSICAL_VIRTUAL_MAP[0-self.p]
 
     @staticmethod
+    def parse_cores(core_string):
+        """ Parses the "core" part of a string, which might be a single core,
+            or otherwise is a range of cores
+
+        :param str: A string to parse
+        :return: A list of cores, which might be just one
+        :rtype: list(int)
+        """
+        if core_string.contains('-'):
+            parts = core_string.split("-")
+            if len(parts) == 2:
+                return range(int(parts[0]), int(parts[1] + 1))
+            raise Exception("Unexpected down core range: {}".format(
+                core_string))
+        return [int(core_string)]
+
+    @staticmethod
     def parse_single_string(downed_core):
         """ Converts a string into an :py:class:`IgnoreCore` object
 
         The format is::
 
-            <down_core> = <chip_x>,<chip_y>,<core_id>[,<ip>]
+            <down_core_id> = <chip_x>,<chip_y>,(<core_id>|<core_range>)[,<ip>]
+            <core_range> = <core_id>-<core_id>
 
         where:
 
@@ -85,15 +103,17 @@ class IgnoreCore(object):
             6,5,-2,10.11.12.13
 
         :param str downed_core: representation of one chip to ignore
-        :return: An IgnoreCore object
-        :rtype: IgnoreCore
+        :return: A list of IgnoreCore objects
+        :rtype: list(IgnoreCore)
         """
         parts = downed_core.split(",")
 
         if len(parts) == 3:
-            return IgnoreCore(parts[0], parts[1], parts[2])
+            return [IgnoreCore(parts[0], parts[1], core)
+                    for core in IgnoreCore.parse_core(parts[2])]
         elif len(parts) == 4:
-            return IgnoreCore(parts[0], parts[1], parts[2], parts[3])
+            return [IgnoreCore(parts[0], parts[1], core, parts[3])
+                    for core in IgnoreCore.parse_core(parts[2])]
         else:
             raise Exception(
                 "Unexpected downed_core: {}".format(downed_core))
@@ -106,7 +126,8 @@ class IgnoreCore(object):
         The format is:
 
             down_cores = <down_core_id>[:<down_core_id]*
-            <down_core_id> = <chip_x>,<chip_y>[,<ip>]
+            <down_core_id> = <chip_x>,<chip_y>,(<core_id>|<core_range>)[,<ip>]
+            <core_range> = <core_id>-<core_id>
 
         where:
 
@@ -122,7 +143,7 @@ class IgnoreCore(object):
 
         An example::
 
-            4,7,3:6,5,-2,10.11.12.13
+            4,7,3:6,5,-2,10.11.12.13,2,3,2-17
 
         :param str downed_cores: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreCores
@@ -134,5 +155,5 @@ class IgnoreCore(object):
         if downed_cores.lower() == "none":
             return ignored_cores
         for downed_chip in downed_cores.split(":"):
-            ignored_cores.add(IgnoreCore.parse_single_string(downed_chip))
+            ignored_cores.update(IgnoreCore.parse_single_string(downed_chip))
         return ignored_cores
