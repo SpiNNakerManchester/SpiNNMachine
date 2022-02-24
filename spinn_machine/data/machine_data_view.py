@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2021-2022 The University of Manchester
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -113,6 +113,16 @@ class MachineDataView(UtilsDataView):
 
     @classmethod
     def get_machine(cls):
+        """
+        Returns the Machine if it has been set
+
+        In Mock mode will create and return a virtual 8 * 8 board if needed
+
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If the machine is currently unavailable
+        :rtype: ~spinn_machine.Machine
+        :
+        """
         if cls.__data._machine is None:
             if cls.get_status() == Data_Status.MOCKED:
                 cls.__data._machine = virtual_machine(

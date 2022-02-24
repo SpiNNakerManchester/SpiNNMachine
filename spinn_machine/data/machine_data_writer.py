@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2021-2022 The University of Manchester
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,9 +55,18 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         self.__data._soft_reset()
 
     def set_machine(self, machine):
+        """
+        Sets the machine
+
+        :param Machine machine:
+        :raises TypeError: it the machine is not a Machine
+        """
         if not isinstance(machine, Machine):
             raise TypeError("machine should be a Machine")
         self.__data._machine = machine
 
     def clear_machine(self):
+        """
+        Clears any previously set machine
+        """
         self.__data._machine = None
