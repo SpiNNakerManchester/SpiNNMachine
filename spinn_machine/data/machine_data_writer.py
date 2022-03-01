@@ -17,9 +17,8 @@ import logging
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
-from spinn_machine import Machine
+from spinn_machine import Machine, virtual_machine
 from .machine_data_view import MachineDataView, _MachineDataModel
-
 logger = FormatAdapter(logging.getLogger(__name__))
 __temp_dir = None
 
@@ -38,6 +37,8 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
     def _mock(self):
         UtilsDataWriter._mock(self)
         self.__data._clear()
+        self.__data._machine_generator = lambda: virtual_machine(
+                    width=8, height=8)
 
     @overrides(UtilsDataWriter._setup)
     def _setup(self):
@@ -70,3 +71,14 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         Clears any previously set machine
         """
         self.__data._machine = None
+
+    def set_machine_generator(self, machine_generator):
+        """
+        Registers a function that can be called to give a machine
+
+        :param function machine_generator:
+        :return:
+        """
+        if not callable(machine_generator):
+            raise TypeError("machine_generator must be callable")
+        self.__data._machine_generator = machine_generator

@@ -15,7 +15,6 @@
 
 from spinn_utilities.data.data_status import Data_Status
 from spinn_utilities.data import UtilsDataView
-from spinn_machine import virtual_machine
 
 
 class _MachineDataModel(object):
@@ -38,6 +37,7 @@ class _MachineDataModel(object):
     __slots__ = [
         # Data values cached
         "_machine",
+        "_machine_generator"
     ]
 
     def __new__(cls):
@@ -54,6 +54,7 @@ class _MachineDataModel(object):
         Clears out all data
         """
         self._hard_reset()
+        self._machine_generator = None
 
     def _hard_reset(self):
         """
@@ -124,9 +125,8 @@ class MachineDataView(UtilsDataView):
         :
         """
         if cls.__data._machine is None:
-            if cls.get_status() == Data_Status.MOCKED:
-                cls.__data._machine = virtual_machine(
-                    width=8, height=8)
+            if cls.__data._machine_generator:
+                cls.__data._machine = cls.__data._machine_generator()
                 return cls.__data._machine
             raise cls._exception("machine")
         return cls.__data._machine
