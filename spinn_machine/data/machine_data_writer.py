@@ -37,8 +37,10 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
     def _mock(self):
         UtilsDataWriter._mock(self)
         self.__data._clear()
-        self.__data._machine_generator = lambda: virtual_machine(
-                    width=8, height=8)
+        self.__data._machine_generator = self._mock_machine
+
+    def _mock_machine(self, _):
+        self.set_machine(virtual_machine(width=8, height=8))
 
     @overrides(UtilsDataWriter._setup)
     def _setup(self):

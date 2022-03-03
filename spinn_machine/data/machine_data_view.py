@@ -37,7 +37,8 @@ class _MachineDataModel(object):
     __slots__ = [
         # Data values cached
         "_machine",
-        "_machine_generator"
+        "_machine_generator",
+        "_user_accessed_machine"
     ]
 
     def __new__(cls):
@@ -64,6 +65,7 @@ class _MachineDataModel(object):
         """
         self._soft_reset()
         self._machine = None
+        self._user_accessed_machine = False
 
     def _soft_reset(self):
         """
@@ -124,9 +126,13 @@ class MachineDataView(UtilsDataView):
         :rtype: ~spinn_machine.Machine
         :
         """
+        if cls.get_status() not in [
+            Data_Status.IN_RUN, Data_Status.STOPPING]:
+            cls.__data._user_accessed_machine = True
         if cls.__data._machine is None:
             if cls.__data._machine_generator:
-                cls.__data._machine = cls.__data._machine_generator()
+                cls.__data._machine_generator(
+                    cls.__data._user_accessed_machine)
                 return cls.__data._machine
             raise cls._exception("machine")
         return cls.__data._machine
@@ -148,12 +154,8 @@ class MachineDataView(UtilsDataView):
             If the machine is currently unavailable
         :raises KeyError: If the chip does not exist but the machine does
         """
-        try:
-            return cls.__data._machine._chips[(x, y)]
-        except AttributeError:
-            # In case cls.__data._machine is None raise better exception
-            # First during mock create the VirtualMachine
-            return cls.get_machine()._chips[(x, y)]
+        a = cls.get_machine()
+        return cls.get_machine()._chips[(x, y)]
 
     @classmethod
     def where_is_xy(cls, x, y):
@@ -202,3 +204,7 @@ class MachineDataView(UtilsDataView):
                 return cls.get_machine().where_is_chip(chip)
         except Exception as ex:  # pylint: disable=broad-except
             return str(ex)
+
+    @classmethod
+    def get_user_accessed_machine(cls):
+        return cls.__data._user_accessed_machine
