@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from spinn_utilities.data.data_status import Data_Status
 from spinn_utilities.data import UtilsDataView
 
 
@@ -112,7 +111,7 @@ class MachineDataView(UtilsDataView):
         :rtype: bool
         """
         return (cls.__data._machine is not None or
-                cls.get_status() == Data_Status.MOCKED)
+                cls._is_mocked())
 
     @classmethod
     def get_machine(cls):
@@ -126,8 +125,7 @@ class MachineDataView(UtilsDataView):
         :rtype: ~spinn_machine.Machine
         :
         """
-        if cls.get_status() not in [
-            Data_Status.IN_RUN, Data_Status.STOPPING]:
+        if not cls._is_running():
             cls.__data._user_accessed_machine = True
         if cls.__data._machine is None:
             if cls.__data._machine_generator:
