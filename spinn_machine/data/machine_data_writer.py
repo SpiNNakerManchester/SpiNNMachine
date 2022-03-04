@@ -47,14 +47,14 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         UtilsDataWriter._setup(self)
         self.__data._clear()
 
-    @overrides(UtilsDataWriter.hard_reset)
-    def hard_reset(self):
-        UtilsDataWriter.hard_reset(self)
+    @overrides(UtilsDataWriter._hard_reset)
+    def _hard_reset(self):
+        UtilsDataWriter._hard_reset(self)
         self.__data._hard_reset()
 
-    @overrides(UtilsDataWriter.soft_reset)
-    def soft_reset(self):
-        UtilsDataWriter.soft_reset(self)
+    @overrides(UtilsDataWriter._soft_reset)
+    def _soft_reset(self):
+        UtilsDataWriter._soft_reset(self)
         self.__data._soft_reset()
 
     def set_machine(self, machine):
