@@ -152,8 +152,33 @@ class MachineDataView(UtilsDataView):
             If the machine is currently unavailable
         :raises KeyError: If the chip does not exist but the machine does
         """
-        a = cls.get_machine()
         return cls.get_machine()._chips[(x, y)]
+
+    @classmethod
+    def get_nearest_ethernet(cls, x, y):
+        """
+        Gets the nearest ethernet x and y for the chip at x, y if it exists
+
+        If there is no machine or no chip at (x, y) this method,
+        or any other issue will just return x,y
+
+        .. Note:
+            This method will never request a new machine.
+            Therefore a call to this method will not trigger a hard reset
+
+        :param int x:
+        :param int y:
+        :return: Chip(x,y)'s nearest_ethernet info
+            or if that is not available just x, and y
+        :trype: tuple(int, int)
+        """
+        try:
+            chip = cls.__data._machine._chips[(x, y)]
+            return chip.nearest_ethernet_x, chip.nearest_ethernet_y
+        except Exception as ex:  # pylint: disable=broad-except
+            if cls.__data._machine is None:
+                return x, y
+            return x, y
 
     @classmethod
     def where_is_xy(cls, x, y):
@@ -165,18 +190,19 @@ class MachineDataView(UtilsDataView):
         The method does not raise an exception rather returns a String of the
         exception
 
+        .. Note:
+            This method will never request a new machine.
+            Therefore a call to this method will trigger a hard reset
+
         :param int x:
         :param int y:
         :rtype: str
         """
         try:
-            try:
-                return cls.__data._machine.where_is_xy(x, y)
-            except AttributeError:
-                # get_machine() raises better exception
-                # First during mock create the VirtualMachine
-                return cls.get_machine().where_is_xy(x, y)
+            return cls.__data._machine.where_is_xy(x, y)
         except Exception as ex:  # pylint: disable=broad-except
+            if cls.__data._machine is None:
+                return "No Machine created yet"
             return str(ex)
 
     @classmethod
@@ -189,18 +215,19 @@ class MachineDataView(UtilsDataView):
         The method does not raise an exception rather returns a String of the
         exception
 
+        .. Note:
+            This method will never request a new machine.
+            Therefore a call to this method will trigger a hard reset
+
         :param int x:
         :param int y:
         :rtype: str
         """
         try:
-            try:
-                return cls.__data._machine.where_is_chip(chip)
-            except AttributeError:
-                # get_machine() raises better exception
-                # First during mock create the VirtualMachine
-                return cls.get_machine().where_is_chip(chip)
+            return cls.__data._machine.where_is_chip(chip)
         except Exception as ex:  # pylint: disable=broad-except
+            if cls.__data._machine is None:
+                return "Chip is from a previous machine"
             return str(ex)
 
     @classmethod
