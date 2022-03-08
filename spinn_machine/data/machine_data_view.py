@@ -125,12 +125,13 @@ class MachineDataView(UtilsDataView):
         :rtype: ~spinn_machine.Machine
         :
         """
-        if not cls._is_running():
+        if cls.is_user_mode():
+            if cls.is_soft_reset():
+                cls.__data._machine = None
             cls.__data._user_accessed_machine = True
         if cls.__data._machine is None:
             if cls.__data._machine_generator:
-                cls.__data._machine_generator(
-                    cls.__data._user_accessed_machine)
+                cls.__data._machine_generator()
                 return cls.__data._machine
             raise cls._exception("machine")
         return cls.__data._machine

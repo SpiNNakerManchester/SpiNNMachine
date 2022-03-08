@@ -57,10 +57,10 @@ class TestSimulatorData(unittest.TestCase):
     def test_where_is_mocked(self):
         writer = MachineDataWriter.mock()
         self.assertEqual(
-            "global chip 1, 0 on 127.0.0.0 is chip 1, 0 on 127.0.0.0",
+            "No Machine created yet",
             MachineDataView.where_is_xy(1, 0))
         self.assertEqual(
-            "No chip 11, 11 found",
+            "No Machine created yet",
             MachineDataView.where_is_xy(11, 11))
         machine = virtual_machine(width=12, height=12)
         writer.set_machine(machine)
@@ -74,7 +74,7 @@ class TestSimulatorData(unittest.TestCase):
     def test_where_is_setup(self):
         writer = MachineDataWriter.setup()
         self.assertEqual(
-            "machine has not yet been created.",
+            "No Machine created yet",
             MachineDataView.where_is_xy(1, 0))
         writer.set_machine(virtual_machine(width=12, height=12))
         self.assertEqual(
