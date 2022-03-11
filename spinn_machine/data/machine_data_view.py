@@ -176,7 +176,7 @@ class MachineDataView(UtilsDataView):
         try:
             chip = cls.__data._machine._chips[(x, y)]
             return chip.nearest_ethernet_x, chip.nearest_ethernet_y
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             if cls.__data._machine is None:
                 return x, y
             return x, y
