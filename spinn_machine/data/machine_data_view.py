@@ -131,6 +131,7 @@ class MachineDataView(UtilsDataView):
             cls.__data._user_accessed_machine = True
         if cls.__data._machine is None:
             if cls.__data._machine_generator:
+                # pylint: disable=not-callable
                 cls.__data._machine_generator()
                 return cls.__data._machine
             raise cls._exception("machine")
