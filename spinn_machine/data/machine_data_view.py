@@ -123,7 +123,6 @@ class MachineDataView(UtilsDataView):
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
         :rtype: ~spinn_machine.Machine
-        :
         """
         if cls.is_user_mode():
             if cls.is_soft_reset():
