@@ -27,8 +27,10 @@ REPORTS_DIRNAME = "reports"
 
 class MachineDataWriter(UtilsDataWriter, MachineDataView):
     """
-    Writer class for the Fec Data
+    See UtilsDataWriter
 
+    This class is designed to only be used directly within the SpiNNMachine
+    repository unittests as all methods are available to subclasses
     """
     __data = _MachineDataModel()
     __slots__ = []
@@ -40,6 +42,10 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         self.__data._machine_generator = self._mock_machine
 
     def _mock_machine(self):
+        """
+        Method to create a virtual machine in mock mode
+        :return:
+        """
         self.set_machine(virtual_machine(width=8, height=8))
 
     @overrides(UtilsDataWriter._setup)
@@ -57,6 +63,14 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         UtilsDataWriter._soft_reset(self)
         self.__data._soft_reset()
 
+    def get_user_accessed_machine(self):
+        """
+        Reports if ...View.get_machine has been called outside of sim.run
+
+        Designed to only be used from ASB. Any other use is not supported
+        """
+        return self.__data._user_accessed_machine
+
     def set_machine(self, machine):
         """
         Sets the machine
@@ -71,6 +85,10 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
     def clear_machine(self):
         """
         Clears any previously set machine
+
+        Designed to only be used by ASB to remove a max machine before
+        allocating an actual one.  Any other use is not supported.
+        Will be removed without notice if max_machine is no longer done.
         """
         self.__data._machine = None
 

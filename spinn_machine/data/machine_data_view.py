@@ -103,7 +103,7 @@ class MachineDataView(UtilsDataView):
         """
         Returns the Machine if it has been set
 
-        In Mock mode will create and return a virtual 8 * 8 board if needed
+        In Mock mode will create and return a virtual 8 * 8 board
 
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
@@ -178,7 +178,7 @@ class MachineDataView(UtilsDataView):
 
         .. Note:
             This method will never request a new machine.
-            Therefore a call to this method will trigger a hard reset
+            Therefore a call to this method will not trigger a hard reset
 
         :param int x:
         :param int y:
@@ -203,7 +203,7 @@ class MachineDataView(UtilsDataView):
 
         .. Note:
             This method will never request a new machine.
-            Therefore a call to this method will trigger a hard reset
+            Therefore a call to this method will not trigger a hard reset
 
         :param int x:
         :param int y:
@@ -215,7 +215,3 @@ class MachineDataView(UtilsDataView):
             if cls.__data._machine is None:
                 return "Chip is from a previous machine"
             return str(ex)
-
-    @classmethod
-    def get_user_accessed_machine(cls):
-        return cls.__data._user_accessed_machine
