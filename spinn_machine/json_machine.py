@@ -15,7 +15,7 @@
 
 import logging
 import json
-from collections import defaultdict, namedtuple, OrderedDict
+from collections import defaultdict, namedtuple
 from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .router import Router
