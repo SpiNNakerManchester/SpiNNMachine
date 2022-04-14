@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
@@ -176,11 +175,11 @@ class Machine(object, metaclass=AbstractBase):
         self._boot_ethernet_address = None
 
         # The dictionary of chips
-        self._chips = OrderedDict()
+        self._chips = dict()
         if chips is not None:
             self.add_chips(chips)
 
-        self._virtual_chips = OrderedDict()
+        self._virtual_chips = dict()
 
         if origin is None:
             self._origin = ""
