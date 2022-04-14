@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
 from .core_subset import CoreSubset
 
 
@@ -29,7 +28,7 @@ class CoreSubsets(object):
         :param iterable(CoreSubset) core_subsets:
             The cores for each desired chip
         """
-        self._core_subsets = OrderedDict()
+        self._core_subsets = dict()
         if core_subsets is not None:
             for core_subset in core_subsets:
                 self.add_core_subset(core_subset)

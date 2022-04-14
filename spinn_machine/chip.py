@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from collections import OrderedDict
 from spinn_utilities.ordered_set import OrderedSet
 from .processor import Processor
 
@@ -93,7 +92,7 @@ class Chip(object):
     def __generate_processors(self, n_processors, down_cores):
         if down_cores is None:
             if n_processors not in standard_processors:
-                processors = OrderedDict()
+                processors = dict()
                 processors[0] = Processor.factory(0, True)
                 for i in range(1, n_processors):
                     processors[i] = Processor.factory(i)
