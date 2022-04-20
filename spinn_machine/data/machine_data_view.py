@@ -156,7 +156,7 @@ class MachineDataView(UtilsDataView):
         :param int y:
         :return: Chip(x,y)'s nearest_ethernet info
             or if that is not available just x, and y
-        :trype: tuple(int, int)
+        :rtype: tuple(int, int)
         """
         try:
             chip = cls.__data._machine._chips[(x, y)]
