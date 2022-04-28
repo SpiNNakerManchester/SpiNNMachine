@@ -15,7 +15,7 @@
 
 import logging
 import json
-from collections import defaultdict, namedtuple, OrderedDict
+from collections import defaultdict, namedtuple
 from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .router import Router
@@ -173,7 +173,7 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
     :param virtual_links_dict: Where the virtual links are.
     :return: Description of chip that is trivial to serialize as JSON.
     """
-    details = OrderedDict()
+    details = dict()
     details["cores"] = chip.n_processors
     if chip.nearest_ethernet_x is not None:
         details["ethernet"] =\
@@ -189,14 +189,14 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
     if chip in virtual_links_dict:
         links = []
         for link in virtual_links_dict[chip]:
-            link_details = OrderedDict()
+            link_details = dict()
             link_details["sourceLinkId"] = link.source_link_id
             link_details["destinationX"] = link.destination_x
             link_details["destinationY"] = link.destination_y
             links.append(link_details)
         details["links"] = links
 
-    exceptions = OrderedDict()
+    exceptions = dict()
     router_entries = _int_value(
         chip.router.n_available_multicast_entries)
     if chip.ip_address is not None:
@@ -268,7 +268,7 @@ def to_json(machine):
         tags=chip.tag_ids)
 
     # Save the standard data to be used as defaults to none ethernet chips
-    standard_resources = OrderedDict()
+    standard_resources = dict()
     standard_resources["monitors"] = std.monitors
     standard_resources["routerEntries"] = std.router_entries
     standard_resources["sdram"] = std.sdram
@@ -276,7 +276,7 @@ def to_json(machine):
     standard_resources["tags"] = list(std.tags)
 
     # Save the standard data to be used as defaults to none ethernet chips
-    ethernet_resources = OrderedDict()
+    ethernet_resources = dict()
     ethernet_resources["monitors"] = eth.monitors
     ethernet_resources["routerEntries"] = eth.router_entries
     ethernet_resources["sdram"] = eth.sdram
@@ -284,7 +284,7 @@ def to_json(machine):
     ethernet_resources["tags"] = list(eth.tags)
 
     # write basic stuff
-    json_obj = OrderedDict()
+    json_obj = dict()
     json_obj["height"] = machine.height
     json_obj["width"] = machine.width
     # Could be removed but need to check all use case
