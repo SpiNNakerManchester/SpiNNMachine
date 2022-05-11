@@ -223,10 +223,12 @@ class MulticastRoutingEntry(object):
 
         :rtype: int
         """
-        proc_entry = sum(1 << (Router.MAX_LINKS_PER_ROUTER + p)
-                         for p in self._processor_ids)
-        link_entry = sum(1 << link_id for link_id in self._link_ids)
-        return proc_entry + link_entry
+        route_entry = 0
+        for processor_id in self.processor_ids:
+            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
+        for link_id in self.link_ids:
+            route_entry |= (1 << link_id)
+        return route_entry
 
     def _calc_routing_ids(self):
         """ Convert a binary routing table entry usable on the machine to \
