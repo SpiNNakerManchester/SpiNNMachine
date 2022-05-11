@@ -224,9 +224,9 @@ class MulticastRoutingEntry(object):
         :rtype: int
         """
         route_entry = 0
-        for processor_id in self.processor_ids:
+        for processor_id in self._processor_ids:
             route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
-        for link_id in self.link_ids:
+        for link_id in self._link_ids:
             route_entry |= (1 << link_id)
         return route_entry
 
