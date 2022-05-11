@@ -487,7 +487,7 @@ class Machine(object, metaclass=AbstractBase):
             based on the links of the chips.
 
             Mostly copied from:
-            https://github.com/project-rig/blob/master/rig/geometry.py
+            https://github.com/project-rig/rig/blob/master/rig/geometry.py
 
         :param int radius: The radius of rings to produce (0 = start only)
         :param tuple(int,int) start: The start coordinate
