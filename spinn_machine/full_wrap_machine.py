@@ -18,22 +18,6 @@ from .machine import Machine
 
 
 class FullWrapMachine(Machine):
-    # pylint: disable=useless-super-delegation
-
-    def __init__(self, width, height, chips=None, origin=None):
-        """ Creates a fully wrapped machine.
-
-        :param int width: The width of the machine excluding any virtual chips
-        :param int height:
-            The height of the machine excluding any virtual chips
-        :param chips: An iterable of chips in the machine
-        :type chips: iterable(~spinn_machine.Chip)
-        :param str origin: Extra information about how this machine was
-            created to be used in the str method. Example "Virtual" or "Json"
-        :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
-            If any two chips have the same x and y coordinates
-        """
-        super().__init__(width, height, chips, origin)
 
     @overrides(Machine.multiple_48_chip_boards)
     def multiple_48_chip_boards(self):
