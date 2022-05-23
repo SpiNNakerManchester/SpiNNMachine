@@ -92,7 +92,6 @@ class _VirtualMachine(object):
 
     ORIGIN = "Virtual"
 
-    # pylint: disable=too-many-arguments
     def __init__(
             self, width, height, n_cpus_per_chip=None, validate=True):
 
