@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from spinn_utilities.data import UtilsDataView
-# pylint:  protected-access
+# pylint: disable=protected-access
 
 
 class _MachineDataModel(object):

@@ -23,7 +23,7 @@ logger = FormatAdapter(logging.getLogger(__name__))
 __temp_dir = None
 
 REPORTS_DIRNAME = "reports"
-# pylint:  protected-access
+# pylint: disable=protected-access
 
 
 class MachineDataWriter(UtilsDataWriter, MachineDataView):
