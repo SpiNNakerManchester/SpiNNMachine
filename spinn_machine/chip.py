@@ -35,13 +35,14 @@ class Chip(object):
     __slots__ = (
         "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
-        "_n_user_processors", "_parent_link"
+        "_n_user_processors", "_parent_link", "_v_to_p_map"
     )
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
                  nearest_ethernet_y, ip_address=None, virtual=False,
-                 tag_ids=None, down_cores=None, parent_link=None):
+                 tag_ids=None, down_cores=None, parent_link=None,
+                 v_to_p_map=None):
         """
         :param int x: the x-coordinate of the chip's position in the
             two-dimensional grid of chips
@@ -68,6 +69,9 @@ class Chip(object):
         :param parent_link: The link down which the parent chips is found in
             the tree of chips towards the root (boot) chip
         :type parent_link: int or None
+        :param v_to_p_map: An array indexed by virtual core which gives the
+            physical core number or 0xFF if no entry for the core
+        :type v_to_p_map: bytearray or None
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If processors contains any two processors with the same
             ``processor_id``
@@ -88,6 +92,7 @@ class Chip(object):
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
         self._parent_link = parent_link
+        self._v_to_p_map = v_to_p_map
 
     def __generate_processors(self, n_processors, down_cores):
         if down_cores is None:
@@ -261,6 +266,29 @@ class Chip(object):
         :rtype: int or None
         """
         return self._parent_link
+
+    def get_physical_core_id(self, virtual_p):
+        """ Get the physical core ID from a virtual core ID
+
+        :param int virtual_p: The virtual core ID
+        :rtype: int or None if core not in map
+        """
+        if (self._v_to_p_map is None or virtual_p >= len(self._v_to_p_map) or
+                self._v_to_p_map[virtual_p] == 0xFF):
+            return None
+        return self._v_to_p_map[virtual_p]
+
+    def get_physical_core_string(self, virtual_p):
+        """ Get a string that can be appended to a core to show the physical
+            core, or an empty string if not possible
+
+        :param int virtual_p: The virtual core ID
+        :rtype: str
+        """
+        physical_p = self.get_physical_core_id(virtual_p)
+        if physical_p is None:
+            return ""
+        return f" (ph: {physical_p})"
 
     def __iter__(self):
         """ Get an iterable of processor identifiers and processors
