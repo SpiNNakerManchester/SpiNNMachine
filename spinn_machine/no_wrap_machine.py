@@ -127,7 +127,7 @@ class NoWrapMachine(Machine):
     def concentric_xys(self, radius, start):
         # Aliases for convenience
         sx, sy = start
-        return self._basic_concentric_chips(radius, start)
+        return self._basic_concentric_xys(radius, start)
 
     @property
     @overrides(Machine.wrap)

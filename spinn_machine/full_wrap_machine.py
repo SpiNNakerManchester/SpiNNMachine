@@ -155,7 +155,7 @@ class FullWrapMachine(Machine):
     def concentric_xys(self, radius, start):
         # Aliases for convenience
         w, h = self._width, self._height
-        for (x, y) in self._basic_concentric_chips(radius, start):
+        for (x, y) in self._basic_concentric_xys(radius, start):
             yield (x % w, y % h)
 
     @property
