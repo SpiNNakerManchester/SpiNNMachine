@@ -1212,11 +1212,11 @@ class Machine(object, metaclass=AbstractBase):
                     return xy
             x += 1
 
-    def _basic_concentric_chips(self, radius):
+    def _basic_concentric_chips(self, radius, start):
         """ Generates concentric chips from 0, 0 without accounting for wrap
             around
         """
-        x, y = (0, 0)
+        x, y = start
         yield (x, y)
         for r in range(1, radius + 1):
             # Move to the next layer

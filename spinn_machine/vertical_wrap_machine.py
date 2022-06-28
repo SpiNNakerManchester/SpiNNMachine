@@ -136,9 +136,8 @@ class VerticalWrapMachine(Machine):
     def concentric_chips(self, radius, start):
         # Aliases for convenience
         h = self._height
-        sx, sy = start
-        for (x, y) in self._basic_concentric_chips(radius):
-            yield (sx + x, (sy + y) % h)
+        for (x, y) in self._basic_concentric_chips(radius, start):
+            yield (x, y % h)
 
     @property
     @overrides(Machine.wrap)

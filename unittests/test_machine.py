@@ -395,6 +395,17 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertIn(v2, virtuals)
         self.assertEqual(len(virtuals), 2)
 
+    def test_concentric_chips(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        found = list(machine.concentric_chips(2, (2, 2)))
+        expected = [
+            (2, 2),
+            (2, 1), (3, 2), (3, 3), (2, 3), (1, 2), (1, 1),
+            (2, 0), (3, 1), (4, 2), (4, 3), (4, 4), (3, 4),
+            (2, 4), (1, 3), (0, 2), (0, 1), (0, 0), (1, 0)]
+        self.assertListEqual(expected, found)
+
 
 if __name__ == '__main__':
     unittest.main()
