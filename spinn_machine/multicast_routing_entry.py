@@ -68,7 +68,7 @@ class MulticastRoutingEntry(object):
                 " is determined to be an error in the tool chain. Please "
                 "correct this and try again.")
 
-        # Add processor IDs, checking that there is only one of each
+        # Add processor IDs, ignore duplicates
         if spinnaker_route is None:
             self._processor_ids = set(processor_ids)
             self._link_ids = set(link_ids)
