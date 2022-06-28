@@ -395,10 +395,10 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertIn(v2, virtuals)
         self.assertEqual(len(virtuals), 2)
 
-    def test_concentric_chips(self):
+    def test_concentric_xys(self):
         chips = self._create_chips()
         machine = machine_from_chips(chips)
-        found = list(machine.concentric_chips(2, (2, 2)))
+        found = list(machine.concentric_xys(2, (2, 2)))
         expected = [
             (2, 2),
             (2, 1), (3, 2), (3, 3), (2, 3), (1, 2), (1, 1),

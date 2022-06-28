@@ -482,12 +482,16 @@ class Machine(object, metaclass=AbstractBase):
         """
 
     @abstractmethod
-    def concentric_chips(self, radius, start):
-        """ A generator that produces coordinates for concentric rings of chips
-            based on the links of the chips.
+    def concentric_xys(self, radius, start):
+        """
+        A generator that produces coordinates for concentric rings of
+            possible chips based on the links of the chips.
 
-            Mostly copied from:
-            https://github.com/project-rig/rig/blob/master/rig/geometry.py
+        No check is done to see if the chip exists.
+        This may even produce coordinates with negative numbers
+
+        Mostly copied from:
+        https://github.com/project-rig/rig/blob/master/rig/geometry.py
 
         :param int radius: The radius of rings to produce (0 = start only)
         :param tuple(int,int) start: The start coordinate
@@ -1212,9 +1216,14 @@ class Machine(object, metaclass=AbstractBase):
                     return xy
             x += 1
 
-    def _basic_concentric_chips(self, radius, start):
-        """ Generates concentric chips from 0, 0 without accounting for wrap
-            around
+    def _basic_concentric_xys(self, radius, start):
+        """ Generates concentric xys from start without accounting for wrap
+            around or checking if the chip exists
+
+        :param int radius: The radius of rings to produce (0 = start only)
+        :param tuple(int,int) start: The start coordinate
+        :rtype: tuple(int,int)
+
         """
         x, y = start
         yield (x, y)
