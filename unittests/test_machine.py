@@ -17,6 +17,7 @@
 test for testing the python representation of a spinnaker machine
 """
 import unittest
+from unittest import SkipTest
 from spinn_machine import (
     Link, SDRAM, Router, Chip, Machine, machine_from_chips, machine_from_size)
 from spinn_machine.config_setup import unittest_setup
@@ -381,6 +382,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertFalse((1, 9) in machine)
 
     def test_virtual_chips(self):
+        raise SkipTest("virtual chips to be removed")
         machine = machine_from_size(8, 8)
         v1 = Chip(
             n_processors=128, sdram=SDRAM(size=0), x=6, y=6, virtual=True,
