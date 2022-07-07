@@ -76,6 +76,8 @@ class Chip(object):
             If processors contains any two processors with the same
             ``processor_id``
         """
+        if virtual:
+            raise NotImplementedError("Unexpected use of virtual chip")
         self._x = x
         self._y = y
         self._p = self.__generate_processors(n_processors, down_cores)

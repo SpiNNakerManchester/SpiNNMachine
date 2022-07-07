@@ -132,6 +132,13 @@ class VerticalWrapMachine(Machine):
         else:
             return self._minimize_vector(x, y_down)
 
+    @overrides(Machine.concentric_xys)
+    def concentric_xys(self, radius, start):
+        # Aliases for convenience
+        h = self._height
+        for (x, y) in self._basic_concentric_xys(radius, start):
+            yield (x, y % h)
+
     @property
     @overrides(Machine.wrap)
     def wrap(self):

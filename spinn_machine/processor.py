@@ -107,20 +107,6 @@ class Processor(object):
         """
         return self._is_monitor
 
-    # is_monitor setter no longer available
-    # use Machine.set_reinjection_processors instead
-
-    def clone_as_system_processor(self):
-        """ Creates a clone of this processor but changing it to a system\
-            processor.
-
-        :return: A new Processor with the same properties INCLUDING the ID\
-            except now set as a System processor
-        :rtype: :py:class:`~spinn_machine.Processor`
-        """
-        return Processor(self._processor_id, self._clock_speed,
-                         is_monitor=True, dtcm_available=self._dtcm_available)
-
     def __str__(self):
         return "[CPU: id={}, clock_speed={} MHz, monitor={}]".format(
             self._processor_id, (self._clock_speed // 1000000),
