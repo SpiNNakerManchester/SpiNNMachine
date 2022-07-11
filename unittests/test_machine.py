@@ -17,6 +17,7 @@
 test for testing the python representation of a spinnaker machine
 """
 import unittest
+from unittest import SkipTest
 from spinn_machine import (
     Link, SDRAM, Router, Chip, Machine, machine_from_chips, machine_from_size)
 from spinn_machine.config_setup import unittest_setup
@@ -381,6 +382,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertFalse((1, 9) in machine)
 
     def test_virtual_chips(self):
+        raise SkipTest("virtual chips to be removed")
         machine = machine_from_size(8, 8)
         v1 = Chip(
             n_processors=128, sdram=SDRAM(size=0), x=6, y=6, virtual=True,
@@ -394,6 +396,17 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertIn(v1, virtuals)
         self.assertIn(v2, virtuals)
         self.assertEqual(len(virtuals), 2)
+
+    def test_concentric_xys(self):
+        chips = self._create_chips()
+        machine = machine_from_chips(chips)
+        found = list(machine.concentric_xys(2, (2, 2)))
+        expected = [
+            (2, 2),
+            (2, 1), (3, 2), (3, 3), (2, 3), (1, 2), (1, 1),
+            (2, 0), (3, 1), (4, 2), (4, 3), (4, 4), (3, 4),
+            (2, 4), (1, 3), (0, 2), (0, 1), (0, 0), (1, 0)]
+        self.assertListEqual(expected, found)
 
 
 if __name__ == '__main__':
