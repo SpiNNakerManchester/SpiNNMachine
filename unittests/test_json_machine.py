@@ -17,6 +17,7 @@ from tempfile import mktemp
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_machine import (SDRAM, virtual_machine)
+from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
 
@@ -29,8 +30,9 @@ class TestJsonMachine(unittest.TestCase):
     def test_json_version_5_hole(self):
         set_config("Machine", "down_chips", "3,3")
         vm = virtual_machine(width=8, height=8)
+        MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
-        to_json_path(vm, jpath)
+        to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")
@@ -40,6 +42,7 @@ class TestJsonMachine(unittest.TestCase):
 
     def test_exceptions(self):
         vm = virtual_machine(width=8, height=8)
+        MachineDataWriter.mock().set_machine(vm)
         chip22 = vm.get_chip_at(2, 2)
         router22 = chip22.router
         router22._n_available_multicast_entries =  \
@@ -50,7 +53,7 @@ class TestJsonMachine(unittest.TestCase):
         chip03 = vm.get_chip_at(0, 3)
         chip03._virtual = True
         jpath = mktemp("json")
-        to_json_path(vm, jpath)
+        to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")
@@ -62,18 +65,20 @@ class TestJsonMachine(unittest.TestCase):
 
     def test_monitor_exceptions(self):
         vm = virtual_machine(width=8, height=8)
+        MachineDataWriter.mock().set_machine(vm)
         chip02 = vm.get_chip_at(0, 2)
         # Hack in an extra monitor
         chip02._n_user_processors -= 1
         jpath = mktemp("json")
         # Should still be able to write json even with more than one monitor
-        to_json_path(vm, jpath)
+        to_json_path(jpath)
         # However we dont need to support reading back with more than 1 monitor
         with self.assertRaises(NotImplementedError):
             machine_from_json(jpath)
 
     def test_ethernet_exceptions(self):
         vm = virtual_machine(width=16, height=16)
+        MachineDataWriter.mock().set_machine(vm)
         chip48 = vm.get_chip_at(4, 8)
         router48 = chip48.router
         router48._n_available_multicast_entries =  \
@@ -82,7 +87,7 @@ class TestJsonMachine(unittest.TestCase):
         chip48._tag_ids = [2, 3]
         chip48._virtual = True
         jpath = mktemp("json")
-        to_json_path(vm, jpath)
+        to_json_path(jpath)
         jm = machine_from_json(jpath)
         vstr = str(vm).replace("Virtual", "")
         jstr = str(jm).replace("Json", "")

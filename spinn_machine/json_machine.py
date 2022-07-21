@@ -17,6 +17,7 @@ import logging
 import json
 from collections import defaultdict, namedtuple
 from spinn_utilities.log import FormatAdapter
+from spinn_machine.data import MachineDataView
 from .chip import Chip
 from .router import Router
 from .sdram import SDRAM
@@ -231,14 +232,12 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
         return [chip.x, chip.y, details]
 
 
-def to_json(machine):
+def to_json():
     """ Runs the code to write the machine in Java readable JSON.
 
-    :param machine: Machine to convert
-    :type machine: Machine
     :rtype: dict
     """
-
+    machine = MachineDataView.get_machine()
     # Find the std values for one non-ethernet chip to use as standard
     std = None
     for chip in machine.chips:
@@ -301,16 +300,14 @@ def to_json(machine):
     return json_obj
 
 
-def to_json_path(machine, file_path):
+def to_json_path(file_path):
     """ Runs the code to write the machine in Java readable JSON.
 
-    :param machine: Machine to convert
-    :type machine: Machine
     :param file_path: Location to write file to. Warning will overwrite!
     :type file_path: str
     :rtype: None
     """
-    json_obj = to_json(machine)
+    json_obj = to_json()
 
     # dump to json file
     with open(file_path, "w", encoding="utf-8") as f:
