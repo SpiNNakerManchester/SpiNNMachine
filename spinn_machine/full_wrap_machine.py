@@ -39,8 +39,8 @@ class FullWrapMachine(Machine):
                 yield (x, y), n_cores
         else:
             for (x, y), n_cores in self.CHIPS_PER_BOARD.items():
-                yield(((x + ethernet_x) % self._width,
-                      (y + ethernet_y) % self._height), n_cores)
+                yield (((x + ethernet_x) % self._width,
+                       (y + ethernet_y) % self._height), n_cores)
 
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
