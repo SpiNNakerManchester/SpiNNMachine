@@ -1209,7 +1209,7 @@ class Machine(object, metaclass=AbstractBase):
             xys_by_ethernet.update(
                 self.get_xys_by_ethernet(ethernet.x, ethernet.y))
         x = 0
-        while(True):
+        while (True):
             for y in range(self.max_chip_y+1):
                 xy = (x, y)
                 if xy not in self._chips and xy not in xys_by_ethernet:

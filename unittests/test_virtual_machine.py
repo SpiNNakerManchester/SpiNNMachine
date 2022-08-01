@@ -386,9 +386,9 @@ class TestVirtualMachine(unittest.TestCase):
     @staticmethod
     def _assert_fpga_link(machine, fpga, fpga_link, x, y, link_id, ip=None):
         link = machine.get_fpga_link_with_id(fpga, fpga_link, ip)
-        assert(link.connected_chip_x == x)
-        assert(link.connected_chip_y == y)
-        assert(link.connected_link == link_id)
+        assert link.connected_chip_x == x
+        assert link.connected_chip_y == y
+        assert link.connected_link == link_id
 
     def test_fpga_links_single_board(self):
         machine = virtual_machine(width=8, height=8)

@@ -39,7 +39,7 @@ class NoWrapMachine(Machine):
             # covers weird sizes
             n_cores = Machine.max_cores_per_chip()
             for (x, y) in self._local_xys:
-                yield((x, y), n_cores)
+                yield ((x, y), n_cores)
 
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
