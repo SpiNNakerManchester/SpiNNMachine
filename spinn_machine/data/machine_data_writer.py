@@ -55,6 +55,9 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
     def _soft_reset(self):
         if (self.__data._user_accessed_machine and
                 not self.__data._fixed_machine):
+            logger.warning(
+                "The previously obtained machine is no longer valid "
+                "after a reset")
             self.hard_reset()
         else:
             UtilsDataWriter._soft_reset(self)
