@@ -17,7 +17,7 @@ import logging
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
-from spinn_machine import Machine, virtual_machine
+from spinn_machine import Machine
 from .machine_data_view import MachineDataView, _MachineDataModel
 logger = FormatAdapter(logging.getLogger(__name__))
 __temp_dir = None
