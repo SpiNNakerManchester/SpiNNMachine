@@ -14,7 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from spinn_utilities.exceptions import (DataNotYetAvialable)
+from spinn_utilities.exceptions import (
+    DataNotYetAvialable, UnexpectedStateChange)
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
@@ -44,6 +45,7 @@ class TestSimulatorData(unittest.TestCase):
         writer = MachineDataWriter.setup()
         writer.set_machine(virtual_machine(2, 2), True)
         machine1 = MachineDataView.get_machine()
+        self.assertFalse(writer.get_user_accessed_machine())
         writer.start_run()
         writer.finish_run()
         # Without a reset the machine starts the same
@@ -58,15 +60,19 @@ class TestSimulatorData(unittest.TestCase):
     def test_reset_not_fixed(self):
         writer = MachineDataWriter.setup()
         writer.set_machine(virtual_machine(2, 2), False)
+        self.assertFalse(writer.get_user_accessed_machine())
         machine1 = MachineDataView.get_machine()
+        self.assertTrue(writer.get_user_accessed_machine())
         writer.start_run()
         writer.finish_run()
         # Without a reset the machine starts the same
         machine2 = MachineDataView.get_machine()
         self.assertEqual(id(machine1), id(machine2))
-        # After get machine the reset is hard
-        writer.soft_reset()
-        self.assertTrue(MachineDataView.is_hard_reset())
+        # After get machine soft reset not allowed
+        with self.assertRaises(UnexpectedStateChange):
+            writer.soft_reset()
+        # A hard reset is. ASB picks the right one
+        writer.hard_reset()
         with self.assertRaises(DataNotYetAvialable):
             MachineDataView.get_machine()
 
@@ -75,6 +81,8 @@ class TestSimulatorData(unittest.TestCase):
         writer.set_machine(virtual_machine(2, 2), False)
         # hack to get machine without it being known it was accessed
         machine1 = writer._MachineDataWriter__data._machine
+        # Due to hack access to machine this is still False
+        self.assertFalse(writer.get_user_accessed_machine())
         writer.start_run()
         writer.finish_run()
         # Without a reset the machine starts the same

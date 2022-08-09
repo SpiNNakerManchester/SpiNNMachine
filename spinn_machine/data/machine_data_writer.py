@@ -15,6 +15,7 @@
 
 import logging
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
+from spinn_utilities.exceptions import UnexpectedStateChange
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
 from spinn_machine import Machine
@@ -53,15 +54,21 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
     @overrides(UtilsDataWriter._soft_reset)
     def _soft_reset(self):
-        if (self.__data._user_accessed_machine and
-                not self.__data._fixed_machine):
-            logger.warning(
-                "The previously obtained machine is no longer valid "
-                "after a reset")
-            self.hard_reset()
-        else:
-            UtilsDataWriter._soft_reset(self)
-            self.__data._soft_reset()
+        if self.__data._user_accessed_machine:
+            raise UnexpectedStateChange(
+                "Soft reset not allowed after user accessed "
+                "a flexible machine")
+        UtilsDataWriter._soft_reset(self)
+        self.__data._soft_reset()
+
+    def get_user_accessed_machine(self):
+        """
+        Reports if ...View.get_machine has been called outside of sim.run
+        and the machine is not a fixed size
+
+        Designed to only be used from ASB. Any other use is not supported
+        """
+        return self.__data._user_accessed_machine
 
     def set_machine(self, machine, fixed=False):
         """

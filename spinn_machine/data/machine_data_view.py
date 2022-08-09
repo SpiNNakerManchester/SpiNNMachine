@@ -120,11 +120,12 @@ class MachineDataView(UtilsDataView):
             else:
                 raise cls._exception("machine")
         if cls.is_user_mode():
-            if not cls.__data._fixed_machine and cls.is_reset_last():
-                cls.__data._machine = None
-                # After a reset user may not access none fixed machine!
-                raise cls._exception("machine")
-            cls.__data._user_accessed_machine = True
+            if not cls.__data._fixed_machine:
+                if cls.is_reset_last():
+                    cls.__data._machine = None
+                    # After a reset user may not access none fixed machine!
+                    raise cls._exception("machine")
+                cls.__data._user_accessed_machine = True
         return cls.__data._machine
 
     @classmethod
