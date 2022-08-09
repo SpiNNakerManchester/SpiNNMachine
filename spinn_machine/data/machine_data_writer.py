@@ -40,14 +40,6 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
     def _mock(self):
         UtilsDataWriter._mock(self)
         self.__data._clear()
-        self.__data._machine_generator = self._mock_machine
-
-    def _mock_machine(self):
-        """
-        Method to create a virtual machine in mock mode
-        :return:
-        """
-        self.set_machine(virtual_machine(width=8, height=8))
 
     @overrides(UtilsDataWriter._setup)
     def _setup(self):
@@ -61,45 +53,23 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
     @overrides(UtilsDataWriter._soft_reset)
     def _soft_reset(self):
-        UtilsDataWriter._soft_reset(self)
-        self.__data._soft_reset()
+        if (self.__data._user_accessed_machine and
+                not self.__data._fixed_machine):
+            self.hard_reset()
+        else:
+            UtilsDataWriter._soft_reset(self)
+            self.__data._soft_reset()
 
-    def get_user_accessed_machine(self):
-        """
-        Reports if ...View.get_machine has been called outside of sim.run
-
-        Designed to only be used from ASB. Any other use is not supported
-        """
-        return self.__data._user_accessed_machine
-
-    def set_machine(self, machine):
+    def set_machine(self, machine, fixed=False):
         """
         Sets the machine
 
         :param Machine machine:
+        :param bool fixed: Flag to say if machine is a fixed size.
         :raises TypeError: it the machine is not a Machine
         """
         if not isinstance(machine, Machine):
             raise TypeError("machine should be a Machine")
         self.__data._machine = machine
-
-    def clear_machine(self):
-        """
-        Clears any previously set machine
-
-        Designed to only be used by ASB to remove a max machine before
-        allocating an actual one.  Any other use is not supported.
-        Will be removed without notice if max_machine is no longer done.
-        """
-        self.__data._machine = None
-
-    def set_machine_generator(self, machine_generator):
-        """
-        Registers a function that can be called to give a machine
-
-        :param function machine_generator:
-        :return:
-        """
-        if not callable(machine_generator):
-            raise TypeError("machine_generator must be callable")
-        self.__data._machine_generator = machine_generator
+        self.__data._fixed_machine = fixed
+        self.__data._user_accessed_machine = False

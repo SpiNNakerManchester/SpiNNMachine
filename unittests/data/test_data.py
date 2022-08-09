@@ -40,6 +40,54 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(3, MachineDataView.get_chip_at(3, 5).x)
         self.assertEqual(48, MachineDataView.get_machine().n_chips)
 
+    def test_reset_fixed(self):
+        writer = MachineDataWriter.setup()
+        writer.set_machine(virtual_machine(2, 2), True)
+        machine1 = MachineDataView.get_machine()
+        writer.start_run()
+        writer.finish_run()
+        # Without a reset the machine starts the same
+        machine2 = MachineDataView.get_machine()
+        self.assertEqual(id(machine1), id(machine2))
+        # After get machine the reset is hard
+        writer.soft_reset()
+        self.assertTrue(MachineDataView.is_soft_reset())
+        machine3 = MachineDataView.get_machine()
+        self.assertEqual(id(machine1), id(machine3))
+
+    def test_reset_not_fixed(self):
+        writer = MachineDataWriter.setup()
+        writer.set_machine(virtual_machine(2, 2), False)
+        machine1 = MachineDataView.get_machine()
+        writer.start_run()
+        writer.finish_run()
+        # Without a reset the machine starts the same
+        machine2 = MachineDataView.get_machine()
+        self.assertEqual(id(machine1), id(machine2))
+        # After get machine the reset is hard
+        writer.soft_reset()
+        self.assertTrue(MachineDataView.is_hard_reset())
+        with self.assertRaises(DataNotYetAvialable):
+            MachineDataView.get_machine()
+
+    def test_reset_not_fixed_hacked(self):
+        writer = MachineDataWriter.setup()
+        writer.set_machine(virtual_machine(2, 2), False)
+        # hack to get machine without it being known it was accessed
+        machine1 = writer._MachineDataWriter__data._machine
+        writer.start_run()
+        writer.finish_run()
+        # Without a reset the machine starts the same
+        machine2 = writer._MachineDataWriter__data._machine
+        self.assertEqual(id(machine1), id(machine2))
+        # user has not access machine so can be soft
+        writer.soft_reset()
+        self.assertTrue(MachineDataView.is_soft_reset())
+        machine3 = writer._MachineDataWriter__data._machine
+        self.assertEqual(id(machine1), id(machine3))
+        with self.assertRaises(DataNotYetAvialable):
+            MachineDataView.get_machine()
+
     def test_machine(self):
         writer = MachineDataWriter.setup()
         with self.assertRaises(DataNotYetAvialable):

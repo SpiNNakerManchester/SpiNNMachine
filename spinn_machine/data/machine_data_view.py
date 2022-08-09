@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from spinn_utilities.data import UtilsDataView
+from spinn_machine import virtual_machine
 # pylint: disable=protected-access
 
 
@@ -36,8 +37,8 @@ class _MachineDataModel(object):
 
     __slots__ = [
         # Data values cached
+        "_fixed_machine",
         "_machine",
-        "_machine_generator",
         "_user_accessed_machine"
     ]
 
@@ -54,8 +55,9 @@ class _MachineDataModel(object):
         """
         Clears out all data
         """
+        self._fixed_machine = False
         self._hard_reset()
-        self._machine_generator = None
+        self._machine = None
 
     def _hard_reset(self):
         """
@@ -64,7 +66,8 @@ class _MachineDataModel(object):
         This does NOT clear the machine as it may have been asked for before
         """
         self._soft_reset()
-        self._machine = None
+        if not self._fixed_machine:
+            self._machine = None
         self._user_accessed_machine = False
 
     def _soft_reset(self):
@@ -110,16 +113,18 @@ class MachineDataView(UtilsDataView):
             If the machine is currently unavailable
         :rtype: ~spinn_machine.Machine
         """
-        if cls.is_user_mode():
-            if cls.is_soft_reset():
-                cls.__data._machine = None
-            cls.__data._user_accessed_machine = True
         if cls.__data._machine is None:
-            if cls.__data._machine_generator:
-                # pylint: disable=not-callable
-                cls.__data._machine_generator()
-                return cls.__data._machine
-            raise cls._exception("machine")
+            if cls._is_mocked():
+                cls.__data._machine = virtual_machine(width=8, height=8)
+                cls.__data._fixed_machine = True
+            else:
+                raise cls._exception("machine")
+        if cls.is_user_mode():
+            if not cls.__data._fixed_machine and cls.is_reset_last():
+                cls.__data._machine = None
+                # After a reset user may not access none fixed machine!
+                raise cls._exception("machine")
+            cls.__data._user_accessed_machine = True
         return cls.__data._machine
 
     @classmethod
@@ -139,7 +144,9 @@ class MachineDataView(UtilsDataView):
             If the machine is currently unavailable
         :raises KeyError: If the chip does not exist but the machine does
         """
-        return cls.get_machine()._chips[(x, y)]
+        if cls.__data._machine is None:
+            cls.get_machine()
+        return cls.__data._machine._chips[(x, y)]
 
     @classmethod
     def get_nearest_ethernet(cls, x, y):
