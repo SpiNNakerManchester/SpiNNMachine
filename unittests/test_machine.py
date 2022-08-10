@@ -69,8 +69,8 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         new_machine = machine_from_chips(chips)
 
-        self.assertEqual(new_machine.max_chip_x, 4)
-        self.assertEqual(new_machine.max_chip_y, 4)
+        self.assertEqual(new_machine.width, 5)
+        self.assertEqual(new_machine.height, 5)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):
@@ -116,8 +116,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         new_machine = machine_from_size(6, 5, self._create_chips())
         extra_chip = self._create_chip(5, 0)
         new_machine.add_chip(extra_chip)
-        self.assertEqual(new_machine.max_chip_x, 5)
-        self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):
@@ -154,8 +152,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         extra_chips.append(self._create_chip(5, 3))
 
         new_machine.add_chips(extra_chips)
-        self.assertEqual(new_machine.max_chip_x, 5)
-        self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):

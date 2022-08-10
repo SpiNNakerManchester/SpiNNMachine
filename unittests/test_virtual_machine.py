@@ -69,8 +69,6 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_version_2(self):
         vm = virtual_machine(width=2, height=2)
-        self.assertEqual(vm.max_chip_x, 1)
-        self.assertEqual(vm.max_chip_y, 1)
         self.assertEqual(4, vm.n_chips)
         self.assertTrue(vm.is_chip_at(0, 0))
         self.assertTrue(vm.is_chip_at(0, 1))
@@ -119,8 +117,6 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_version_5(self):
         vm = virtual_machine(width=8, height=8, validate=True)
-        self.assertEqual(vm.max_chip_x, 7)
-        self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
         self.assertTrue(vm.is_chip_at(4, 4))
@@ -131,8 +127,6 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_8_by_8(self):
         vm = virtual_machine(width=8, height=8, validate=True)
-        self.assertEqual(vm.max_chip_x, 7)
-        self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
         self.assertTrue(vm.is_chip_at(4, 4))
@@ -143,8 +137,6 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_version_5_guess_12x12(self):
         vm = virtual_machine(height=12, width=12, validate=True)
-        self.assertEqual(vm.max_chip_x, 11)
-        self.assertEqual(vm.max_chip_y, 11)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
@@ -157,8 +149,6 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_version_5_guess_8x8(self):
         vm = virtual_machine(height=8, width=8, validate=True)
-        self.assertEqual(vm.max_chip_x, 7)
-        self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
@@ -167,8 +157,6 @@ class TestVirtualMachine(unittest.TestCase):
     def test_version_5_hole(self):
         set_config("Machine", "down_chips", "3,3")
         vm = virtual_machine(height=8, width=8, validate=True)
-        self.assertEqual(vm.max_chip_x, 7)
-        self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(47, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
         self.assertFalse(vm.is_link_at(3, 3, 2))
@@ -181,8 +169,6 @@ class TestVirtualMachine(unittest.TestCase):
     def test_version_5_hole2(self):
         set_config("Machine", "down_chips", "0,3")
         vm = virtual_machine(height=8, width=8, validate=True)
-        self.assertEqual(vm.max_chip_x, 7)
-        self.assertEqual(vm.max_chip_y, 7)
         self.assertEqual(47, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
         self.assertFalse(vm.is_link_at(0, 2, 2))
@@ -196,8 +182,6 @@ class TestVirtualMachine(unittest.TestCase):
     def test_new_vm_with_monitor(self):
         n_cpus = 13
         vm = virtual_machine(2, 2, n_cpus_per_chip=n_cpus, validate=True)
-        self.assertEqual(vm.max_chip_x, 1)
-        self.assertEqual(vm.max_chip_y, 1)
         self.assertEqual(n_cpus - 1, vm.maximum_user_cores_on_chip)
         _chip = vm.get_chip_at(1, 1)
         self.assertEqual(n_cpus, _chip.n_processors)
@@ -271,8 +255,6 @@ class TestVirtualMachine(unittest.TestCase):
         _chip = self._create_chip(2, 2)
         _chip._virtual = True
         vm.add_chip(_chip)
-        self.assertEqual(vm.max_chip_x, 2)
-        self.assertEqual(vm.max_chip_y, 2)
         self.assertEqual(5, vm.n_chips)
 
         self.assertTrue(vm.is_chip_at(2, 2))
@@ -295,8 +277,6 @@ class TestVirtualMachine(unittest.TestCase):
         _chip = self._create_chip(2, 2)
         _chip._virtual = True
         vm.add_chip(_chip)
-        self.assertEqual(vm.max_chip_x, 2)
-        self.assertEqual(vm.max_chip_y, 2)
         self.assertEqual(4, vm.n_chips)
 
         self.assertTrue(vm.is_chip_at(2, 2))
@@ -322,8 +302,6 @@ class TestVirtualMachine(unittest.TestCase):
 
         _chip = self._create_chip(1, 1)
         vm.add_chip(_chip)
-        self.assertEqual(vm.max_chip_x, 1)
-        self.assertEqual(vm.max_chip_y, 1)
         self.assertEqual(4, vm.n_chips)
 
         self.assertTrue(vm.is_chip_at(1, 1))
