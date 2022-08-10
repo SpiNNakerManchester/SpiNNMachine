@@ -51,7 +51,7 @@ class TestSimulatorData(unittest.TestCase):
         # Without a reset the machine starts the same
         machine2 = MachineDataView.get_machine()
         self.assertEqual(id(machine1), id(machine2))
-        # After get machine the reset is hard
+        # After get machine the reset is hard on if not fixed
         writer.soft_reset()
         self.assertTrue(MachineDataView.is_soft_reset())
         machine3 = MachineDataView.get_machine()
