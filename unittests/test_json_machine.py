@@ -50,7 +50,6 @@ class TestJsonMachine(unittest.TestCase):
         chip33 = vm.get_chip_at(3, 3)
         chip33._sdram = SDRAM(50000000)
         chip33._tag_ids = [2, 3]
-        chip03 = vm.get_chip_at(0, 3)
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)

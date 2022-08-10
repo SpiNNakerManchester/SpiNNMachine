@@ -15,7 +15,7 @@
 
 import logging
 import json
-from collections import defaultdict, namedtuple
+from collections import namedtuple
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.data import MachineDataView
 from .chip import Chip
