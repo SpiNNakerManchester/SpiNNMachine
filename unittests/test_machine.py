@@ -381,22 +381,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertTrue((1, 2) in machine)
         self.assertFalse((1, 9) in machine)
 
-    def test_virtual_chips(self):
-        raise SkipTest("virtual chips to be removed")
-        machine = machine_from_size(8, 8)
-        v1 = Chip(
-            n_processors=128, sdram=SDRAM(size=0), x=6, y=6, virtual=True,
-            nearest_ethernet_x=None, nearest_ethernet_y=None, router=None)
-        v2 = Chip(
-            n_processors=128, sdram=SDRAM(size=0), x=6, y=7, virtual=True,
-            nearest_ethernet_x=None, nearest_ethernet_y=None, router=None)
-        machine.add_virtual_chip(v1)
-        machine.add_virtual_chip(v2)
-        virtuals = list(machine.virtual_chips)
-        self.assertIn(v1, virtuals)
-        self.assertIn(v2, virtuals)
-        self.assertEqual(len(virtuals), 2)
-
     def test_concentric_xys(self):
         chips = self._create_chips()
         machine = machine_from_chips(chips)

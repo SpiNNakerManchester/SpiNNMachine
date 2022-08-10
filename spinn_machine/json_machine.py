@@ -135,31 +135,6 @@ def _int_value(value):
         return JAVA_MAX_INT
 
 
-def _find_virtual_links(machine):
-    """ Find all the virtual links and their inverse.
-
-    As these may well go to an unexpected source
-
-    :param machine: Machine to convert
-    :return: Map of Chip to list of virtual links
-    """
-    virtual_links_dict = defaultdict(list)
-    for chip in machine.virtual_chips:
-        # assume all links need special treatment
-        for link in chip.router.links:
-            virtual_links_dict[chip].append(link)
-            # Find and save inverse link as well
-            inverse_id = ((link.source_link_id + OPPOSITE_LINK_OFFSET) %
-                          Router.MAX_LINKS_PER_ROUTER)
-            destination = machine.get_chip_at(
-                link.destination_x, link.destination_y)
-            inverse_link = destination.router.get_link(inverse_id)
-            assert inverse_link.destination_x == chip.x
-            assert inverse_link.destination_y == chip.y
-            virtual_links_dict[destination].append(inverse_link)
-    return virtual_links_dict
-
-
 def _describe_chip(chip, std, eth):
     """ Produce a JSON-suitable description of a single chip.
 

@@ -51,13 +51,9 @@ class TestJsonMachine(unittest.TestCase):
         chip33._sdram = SDRAM(50000000)
         chip33._tag_ids = [2, 3]
         chip03 = vm.get_chip_at(0, 3)
-        chip03._virtual = True
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)
-        vstr = str(vm).replace("Virtual", "")
-        jstr = str(jm).replace("Json", "")
-        self.assertEqual(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
         vchip33 = jm.get_chip_at(3, 3)
@@ -85,13 +81,9 @@ class TestJsonMachine(unittest.TestCase):
             router48._n_available_multicast_entries - 20
         chip48._sdram = SDRAM(50000000)
         chip48._tag_ids = [2, 3]
-        chip48._virtual = True
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)
-        vstr = str(vm).replace("Virtual", "")
-        jstr = str(jm).replace("Json", "")
-        self.assertEqual(vstr, jstr)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
         vchip48 = jm.get_chip_at(4, 8)

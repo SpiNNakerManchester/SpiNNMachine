@@ -67,15 +67,15 @@ class Machine(object, metaclass=AbstractBase):
         "_chips",
         "_ethernet_connected_chips",
         "_fpga_links",
-        # Declared height of the machine excluding virtual chips
+        # Declared height of the machine
         # This can not be changed
         "_height",
         # List of the possible chips (x,y) on each board of the machine
         "_local_xys",
-        # Max x value of any chip including virtual chips
+        # Max x value of any chip
         # This could change as new chips are added
         "_max_chip_x",
-        # Max y value of any chip including virtual chips
+        # Max y value of any chip
         # This could change as new chips are added
         "_max_chip_y",
         # Extra information about how this machine was created
@@ -83,8 +83,7 @@ class Machine(object, metaclass=AbstractBase):
         "_origin",
         "_spinnaker_links",
         "_maximum_user_cores_on_chip",
-        "_virtual_chips",
-        # Declared width of the machine excluding virtual chips
+        # Declared width of the machine
         # This can not be changed
         "_width"
     )
@@ -132,9 +131,9 @@ class Machine(object, metaclass=AbstractBase):
 
         Use machine_factory methods to determine the correct machine class
 
-        :param int width: The width of the machine excluding any virtual chips
+        :param int width: The width of the machine excluding
         :param int height:
-            The height of the machine excluding any virtual chips
+            The height of the machine
         :param iterable(Chip) chips: An iterable of chips in the machine
         :param str origin: Extra information about how this machine was created
             to be used in the str method. Example "Virtual" or "Json"
@@ -178,8 +177,6 @@ class Machine(object, metaclass=AbstractBase):
         self._chips = dict()
         if chips is not None:
             self.add_chips(chips)
-
-        self._virtual_chips = dict()
 
         if origin is None:
             self._origin = ""
@@ -509,9 +506,9 @@ class Machine(object, metaclass=AbstractBase):
 
         :raises SpinnMachineException:
             An Error is raised if there is a chip with a x outside of the
-            range 0 to width -1 (except for virtual ones).
+            range 0 to width -1
             An Error is raised if there is a chip with a y outside of the
-            range 0 to height -1 (except for virtual ones).
+            range 0 to height -1.
             An Error is raise if there is no chip at the declared ethernet
             x and y.
             An Error is raised if an ethernet chip is not at a local 0,0.
@@ -602,13 +599,6 @@ class Machine(object, metaclass=AbstractBase):
 
         if chip.n_user_processors > self._maximum_user_cores_on_chip:
             self._maximum_user_cores_on_chip = chip.n_user_processors
-
-    def add_virtual_chip(self, chip):
-        """
-        :param ~spinn_machine.Chip chip: The virtual chip to add
-        """
-        self._virtual_chips[(chip.x, chip.y)] = chip
-        self.add_chip(chip)
 
     def add_chips(self, chips):
         """ Add some chips to the machine
@@ -740,18 +730,18 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def width(self):
-        """ The width to the machine ignoring virtual chips
+        """ The width to the machine
 
-        :return: The width to the machine ignoring virtual chips
+        :return: The width to the machine
         :rtype: int
         """
         return self._width
 
     @property
     def height(self):
-        """ The height to the machine ignoring virtual chips
+        """ The height to the machine
 
-        :return: The height to the machine ignoring virtual chips
+        :return: The height to the machine
         :rtype: int
         """
         return self._height
@@ -1163,13 +1153,6 @@ class Machine(object, metaclass=AbstractBase):
                     return (0, y - x, -x)
                 else:
                     return (x - y, 0, -y)
-
-    @property
-    def virtual_chips(self):
-        """
-        :rtype: iterable(Chip)
-        """
-        return self._virtual_chips.values()
 
     @property
     def local_xys(self):
