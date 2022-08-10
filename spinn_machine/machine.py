@@ -72,14 +72,6 @@ class Machine(object, metaclass=AbstractBase):
         "_height",
         # List of the possible chips (x,y) on each board of the machine
         "_local_xys",
-        # Extra information about how this machine was created
-        # to be used in the str method
-        "_origin",
-        "_spinnaker_links",
-        "_maximum_user_cores_on_chip",
-        # Declared width of the machine
-        # This can not be changed
-        "_width"
     )
 
     @staticmethod
@@ -873,8 +865,8 @@ class Machine(object, metaclass=AbstractBase):
         return fpga_id, fpga_link + 1
 
     def __str__(self):
-        return (f"[{self._origin}{self._wrap}Machine: width{self._width}, "
-               f"height{self._height}, n_chips={len(self._chips)}]")
+        return (f"[{self._origin}{self.wrap}Machine: width={self._width}, "
+               f"height={self._height}, n_chips={len(self._chips)}]")
 
     def __repr__(self):
         return self.__str__()

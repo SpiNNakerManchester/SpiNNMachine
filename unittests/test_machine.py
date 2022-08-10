@@ -17,7 +17,6 @@
 test for testing the python representation of a spinnaker machine
 """
 import unittest
-from unittest import SkipTest
 from spinn_machine import (
     Link, SDRAM, Router, Chip, Machine, machine_from_chips, machine_from_size)
 from spinn_machine.config_setup import unittest_setup
@@ -89,8 +88,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
         self.assertEqual(new_machine.cores_and_link_output_string(),
                          "450 cores and 50.0 links")
-        self.assertEqual(new_machine.__repr__(),
-                         "[NoWrapMachine: max_x=4, max_y=4, n_chips=25]")
+        self.assertEqual("[NoWrapMachine: width=5, height=5, n_chips=25]",
+                         new_machine.__repr__())
         self.assertEqual(list(new_machine.spinnaker_links), [])
 
     def test_create_new_machine_with_invalid_chips(self):
@@ -187,6 +186,40 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = self._create_chips()
         new_machine = machine_from_chips(chips)
         self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
+
+    def test_machine_big_x(self):
+        """
+        test the add_chips method of the machine chips outside size
+        should produce an error
+
+        :rtype: None
+        """
+        new_machine = machine_from_size(8, 8)
+        new_machine.add_chip(self._create_chip(0, 0))
+        # the add does not have the safety code
+        new_machine.add_chip(self._create_chip(10, 2))
+        # however the validate does
+        try:
+            new_machine.validate()
+        except SpinnMachineException as ex:
+            self.assertIn("has an x large than width 8", str(ex))
+
+    def test_machine_big_y(self):
+        """
+        test the add_chips method of the machine chips outside size
+        should produce an error
+
+        :rtype: None
+        """
+        new_machine = machine_from_size(8, 8)
+        new_machine.add_chip(self._create_chip(0, 0))
+        # the add does not have the safety code
+        new_machine.add_chip(self._create_chip(2, 10))
+        # however the validate does
+        try:
+            new_machine.validate()
+        except SpinnMachineException as ex:
+            self.assertIn("has an y large than heigth 8", str(ex))
 
     def test_machine_get_chip_at_invalid_location(self):
         """
@@ -376,22 +409,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(chip12.y, 2)
         self.assertTrue((1, 2) in machine)
         self.assertFalse((1, 9) in machine)
-
-    def test_virtual_chips(self):
-        raise SkipTest("virtual chips to be removed")
-        machine = machine_from_size(8, 8)
-        v1 = Chip(
-            n_processors=128, sdram=SDRAM(size=0), x=6, y=6, virtual=True,
-            nearest_ethernet_x=None, nearest_ethernet_y=None, router=None)
-        v2 = Chip(
-            n_processors=128, sdram=SDRAM(size=0), x=6, y=7, virtual=True,
-            nearest_ethernet_x=None, nearest_ethernet_y=None, router=None)
-        machine.add_virtual_chip(v1)
-        machine.add_virtual_chip(v2)
-        virtuals = list(machine.virtual_chips)
-        self.assertIn(v1, virtuals)
-        self.assertIn(v2, virtuals)
-        self.assertEqual(len(virtuals), 2)
 
     def test_concentric_xys(self):
         chips = self._create_chips()

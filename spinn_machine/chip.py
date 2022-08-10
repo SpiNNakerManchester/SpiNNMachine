@@ -33,14 +33,14 @@ class Chip(object):
     _IPTAG_IDS = OrderedSet(range(1, 8))
 
     __slots__ = (
-        "_x", "_y", "_p", "_router", "_sdram", "_ip_address", "_virtual",
+        "_x", "_y", "_p", "_router", "_sdram", "_ip_address",
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
         "_n_user_processors", "_parent_link", "_v_to_p_map"
     )
 
     # pylint: disable=too-many-arguments
     def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
-                 nearest_ethernet_y, ip_address=None, virtual=False,
+                 nearest_ethernet_y, ip_address=None,
                  tag_ids=None, down_cores=None, parent_link=None,
                  v_to_p_map=None):
         """
@@ -55,7 +55,6 @@ class Chip(object):
         :param ip_address:
             the IP address of the chip, or ``None`` if no Ethernet attached
         :type ip_address: str or None
-        :param bool virtual: whether this chip is a virtual one
         :param tag_ids: IDs to identify the chip for SDP can be empty to
             define no tags or None to allocate tag automatically
             based on if there is an ip_address
@@ -76,8 +75,6 @@ class Chip(object):
             If processors contains any two processors with the same
             ``processor_id``
         """
-        if virtual:
-            raise NotImplementedError("Unexpected use of virtual chip")
         self._x = x
         self._y = y
         self._p = self.__generate_processors(n_processors, down_cores)
@@ -90,7 +87,6 @@ class Chip(object):
             self._tag_ids = []
         else:
             self._tag_ids = self._IPTAG_IDS
-        self._virtual = virtual
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
         self._parent_link = parent_link
@@ -183,15 +179,6 @@ class Chip(object):
         :rtype: int
         """
         return self._n_user_processors
-
-    @property
-    def virtual(self):
-        """ Whether the chip is virtual or not
-
-        :return: if the chip is virtual
-        :rtype: bool
-        """
-        return self._virtual
 
     @property
     def router(self):

@@ -253,7 +253,6 @@ class TestVirtualMachine(unittest.TestCase):
         vm = virtual_machine(2, 2)
 
         _chip = self._create_chip(2, 2)
-        _chip._virtual = True
         vm.add_chip(_chip)
         self.assertEqual(5, vm.n_chips)
 
@@ -275,7 +274,6 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(3, vm.n_chips)
 
         _chip = self._create_chip(2, 2)
-        _chip._virtual = True
         vm.add_chip(_chip)
         self.assertEqual(4, vm.n_chips)
 
