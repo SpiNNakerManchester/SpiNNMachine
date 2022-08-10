@@ -132,6 +132,9 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(
             "No Machine created yet",
             MachineDataView.where_is_xy(1, 0))
+        self.assertEqual(
+            "Chip is from a previous machine",
+            MachineDataView.where_is_chip(None))
         writer.set_machine(virtual_machine(width=12, height=12))
         self.assertEqual(
             "global chip 11, 11 on 127.0.0.0 is chip 7, 3 on 127.0.4.8",
