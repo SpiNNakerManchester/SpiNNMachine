@@ -192,6 +192,40 @@ class SpinnMachineTestCase(unittest.TestCase):
         new_machine = machine_from_chips(chips)
         self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
 
+    def test_machine_big_x(self):
+        """
+        test the add_chips method of the machine chips outside size
+        should produce an error
+
+        :rtype: None
+        """
+        new_machine = machine_from_size(8, 8)
+        new_machine.add_chip(self._create_chip(0, 0))
+        # the add does not have the safety code
+        new_machine.add_chip(self._create_chip(10, 2))
+        # however the validate does
+        try:
+            new_machine.validate()
+        except SpinnMachineException as ex:
+            self.assertIn("has an x large than width 8", str(ex))
+
+    def test_machine_big_y(self):
+        """
+        test the add_chips method of the machine chips outside size
+        should produce an error
+
+        :rtype: None
+        """
+        new_machine = machine_from_size(8, 8)
+        new_machine.add_chip(self._create_chip(0, 0))
+        # the add does not have the safety code
+        new_machine.add_chip(self._create_chip(2, 10))
+        # however the validate does
+        try:
+            new_machine.validate()
+        except SpinnMachineException as ex:
+            self.assertIn("has an y large than heigth 8", str(ex))
+
     def test_machine_get_chip_at_invalid_location(self):
         """
         test the machines get_chip_at function with a location thats invalid,
