@@ -15,7 +15,7 @@
 
 import unittest
 from spinn_utilities.exceptions import (DataNotYetAvialable)
-from spinn_machine import virtual_machine
+from spinn_machine import virtual_machine, Chip
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
@@ -76,10 +76,18 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(
             "No Machine created yet",
             MachineDataView.where_is_xy(1, 0))
-        writer.set_machine(virtual_machine(width=12, height=12))
+        machine = virtual_machine(width=12, height=12)
+        writer.set_machine(machine)
         self.assertEqual(
             "global chip 11, 11 on 127.0.0.0 is chip 7, 3 on 127.0.4.8",
             MachineDataView.where_is_xy(11, 11))
         self.assertEqual(
             "No chip -1, 11 found",
             MachineDataView.where_is_xy(-1, 11))
+        self.assertEqual(
+            "global chip 2, 8 on 127.0.0.0 is chip 6, 4 on 127.0.8.4",
+            MachineDataView.where_is_chip(machine.get_chip_at(2, 8)))
+        self.assertEqual(
+            "'NoneType' object has no attribute 'nearest_ethernet_x'",
+            MachineDataView.where_is_chip(None)
+        )
