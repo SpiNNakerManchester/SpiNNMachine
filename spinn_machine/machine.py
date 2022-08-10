@@ -538,15 +538,14 @@ class Machine(object, metaclass=AbstractBase):
             if chip.y < 0:
                 raise SpinnMachineException(
                     "{} has a negative y".format(chip))
-            if not chip.virtual:
-                if chip.x >= self._width:
-                    raise SpinnMachineException(
-                        "{} has an x large than width {}".format(
-                            chip, self._width))
-                if chip.y >= self._height:
-                    raise SpinnMachineException(
-                        "{} has an y large than heigth {}".format(
-                            chip, self._width))
+            if chip.x >= self._width:
+                raise SpinnMachineException(
+                    "{} has an x large than width {}".format(
+                        chip, self._width))
+            if chip.y >= self._height:
+                raise SpinnMachineException(
+                    "{} has an y large than heigth {}".format(
+                        chip, self._width))
             if chip.ip_address:
                 # Ethernet Chip checks
                 if chip.x % 4 != 0:
@@ -557,7 +556,7 @@ class Machine(object, metaclass=AbstractBase):
                     raise SpinnMachineException(
                         "Ethernet {} has a x y pair that do not add up to 12"
                         "".format(chip))
-            elif not chip.virtual:
+            else:
                 # None Ethernet chip checks
                 if not self.is_chip_at(
                         chip.nearest_ethernet_x, chip.nearest_ethernet_y):

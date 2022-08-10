@@ -35,8 +35,6 @@ _Desc = namedtuple("_Desc", [
     "router_entries",
     # The amount of SDRAM on the chip
     "sdram",
-    # Whether this is a virtual chip
-    "virtual",
     # What tags this chip has
     "tags"])
 
@@ -121,8 +119,7 @@ def machine_from_json(j_machine):
         # Create and add a chip with this router
         chip = Chip(
             source_x, source_y, details["cores"], router, sdram,
-            nearest_ethernet[0], nearest_ethernet[1], ip_address, False,
-            tag_ids)
+            nearest_ethernet[0], nearest_ethernet[1], ip_address, tag_ids)
         machine.add_chip(chip)
 
     machine.add_spinnaker_links()
@@ -163,13 +160,12 @@ def _find_virtual_links(machine):
     return virtual_links_dict
 
 
-def _describe_chip(chip, std, eth, virtual_links_dict):
+def _describe_chip(chip, std, eth):
     """ Produce a JSON-suitable description of a single chip.
 
     :param chip: The chip to describe.
     :param std: The standard chip resources.
     :param eth: The standard ethernet chip resources.
-    :param virtual_links_dict: Where the virtual links are.
     :return: Description of chip that is trivial to serialize as JSON.
     """
     details = dict()
@@ -185,16 +181,6 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
     if dead_links:
         details["deadLinks"] = dead_links
 
-    if chip in virtual_links_dict:
-        links = []
-        for link in virtual_links_dict[chip]:
-            link_details = dict()
-            link_details["sourceLinkId"] = link.source_link_id
-            link_details["destinationX"] = link.destination_x
-            link_details["destinationY"] = link.destination_y
-            links.append(link_details)
-        details["links"] = links
-
     exceptions = dict()
     router_entries = _int_value(
         chip.router.n_available_multicast_entries)
@@ -208,8 +194,6 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
             exceptions["routerEntries"] = router_entries
         if chip.sdram.size != eth.sdram:
             exceptions["sdram"] = chip.sdram.size
-        if chip.virtual != eth.virtual:
-            exceptions["virtual"] = chip.virtual
         if chip.tag_ids != eth.tags:
             exceptions["tags"] = list(chip.tag_ids)
     else:
@@ -221,8 +205,6 @@ def _describe_chip(chip, std, eth, virtual_links_dict):
             exceptions["routerEntries"] = router_entries
         if chip.sdram.size != std.sdram:
             exceptions["sdram"] = chip.sdram.size
-        if chip.virtual != std.virtual:
-            exceptions["virtual"] = chip.virtual
         if chip.tag_ids != std.tags:
             exceptions["tags"] = list(chip.tag_ids)
 
@@ -247,7 +229,6 @@ def to_json():
                 router_entries=_int_value(
                     chip.router.n_available_multicast_entries),
                 sdram=chip.sdram.size,
-                virtual=chip.virtual,
                 tags=chip.tag_ids)
             break
     else:
@@ -261,7 +242,6 @@ def to_json():
         router_entries=_int_value(
             chip.router.n_available_multicast_entries),
         sdram=chip.sdram.size,
-        virtual=chip.virtual,
         tags=chip.tag_ids)
 
     # Save the standard data to be used as defaults to none ethernet chips
@@ -269,7 +249,6 @@ def to_json():
     standard_resources["monitors"] = std.monitors
     standard_resources["routerEntries"] = std.router_entries
     standard_resources["sdram"] = std.sdram
-    standard_resources["virtual"] = std.virtual
     standard_resources["tags"] = list(std.tags)
 
     # Save the standard data to be used as defaults to none ethernet chips
@@ -277,7 +256,6 @@ def to_json():
     ethernet_resources["monitors"] = eth.monitors
     ethernet_resources["routerEntries"] = eth.router_entries
     ethernet_resources["sdram"] = eth.sdram
-    ethernet_resources["virtual"] = eth.virtual
     ethernet_resources["tags"] = list(eth.tags)
 
     # write basic stuff
@@ -290,12 +268,9 @@ def to_json():
     json_obj["ethernetResources"] = ethernet_resources
     json_obj["chips"] = []
 
-    virtual_links_dict = _find_virtual_links(machine)
-
     # handle chips
     for chip in machine.chips:
-        json_obj["chips"].append(_describe_chip(
-            chip, std, eth, virtual_links_dict))
+        json_obj["chips"].append(_describe_chip(chip, std, eth))
 
     return json_obj
 
