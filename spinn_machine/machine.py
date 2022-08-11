@@ -72,6 +72,14 @@ class Machine(object, metaclass=AbstractBase):
         "_height",
         # List of the possible chips (x,y) on each board of the machine
         "_local_xys",
+        # Extra information about how this machine was created
+        # to be used in the str method
+        "_origin",
+        "_spinnaker_links",
+        "_maximum_user_cores_on_chip",
+        # Declared width of the machine excluding virtual chips
+        # This can not be changed
+        "_width"
     )
 
     @staticmethod
