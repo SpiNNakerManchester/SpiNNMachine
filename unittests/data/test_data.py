@@ -15,7 +15,7 @@
 
 import unittest
 from spinn_utilities.exceptions import (DataNotYetAvialable)
-from spinn_machine import virtual_machine, Chip
+from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
