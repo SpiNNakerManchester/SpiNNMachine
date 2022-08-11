@@ -122,7 +122,6 @@ class MachineDataView(UtilsDataView):
         if cls.is_user_mode():
             if not cls.__data._fixed_machine:
                 if cls.is_reset_last():
-                    cls.__data._machine = None
                     # After a reset user may not access none fixed machine!
                     raise cls._exception("machine")
                 cls.__data._user_accessed_machine = True
@@ -224,3 +223,12 @@ class MachineDataView(UtilsDataView):
             if cls.__data._machine is None:
                 return "Chip is from a previous machine"
             return str(ex)
+
+    @classmethod
+    def has_fixed_machine(cls):
+        """
+        Detects if a fixed machine has been registered
+
+        :return: If and only if there is a Machine AND it has been set fixed
+        """
+        return cls.__data._fixed_machine

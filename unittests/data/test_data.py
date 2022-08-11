@@ -43,7 +43,9 @@ class TestSimulatorData(unittest.TestCase):
 
     def test_reset_fixed(self):
         writer = MachineDataWriter.setup()
+        self.assertFalse(MachineDataView.has_fixed_machine())
         writer.set_machine(virtual_machine(2, 2), True)
+        self.assertTrue(MachineDataView.has_fixed_machine())
         machine1 = MachineDataView.get_machine()
         self.assertFalse(writer.get_user_accessed_machine())
         writer.start_run()
@@ -59,7 +61,9 @@ class TestSimulatorData(unittest.TestCase):
 
     def test_reset_not_fixed(self):
         writer = MachineDataWriter.setup()
+        self.assertFalse(MachineDataView.has_fixed_machine())
         writer.set_machine(virtual_machine(2, 2), False)
+        self.assertFalse(MachineDataView.has_fixed_machine())
         self.assertFalse(writer.get_user_accessed_machine())
         machine1 = MachineDataView.get_machine()
         self.assertTrue(writer.get_user_accessed_machine())
