@@ -237,8 +237,10 @@ class SpinnMachineTestCase(unittest.TestCase):
             # but (0,4) is not on a standard 48-node board
             self.assertEqual(len(chips), 25)
             self.assertEqual(len(chips_in_machine), 24)
-        self.assertIsNone(new_machine.get_spinnaker_link_with_id(1))
-        self.assertIsNone(new_machine.get_fpga_link_with_id(1, 0))
+        with self.assertRaises(KeyError):
+            new_machine.get_spinnaker_link_with_id(1)
+        with self.assertRaises(KeyError):
+            self.assertIsNone(new_machine.get_fpga_link_with_id(1, 0))
 
     def test_x_y_over_link(self):
         """
