@@ -799,7 +799,7 @@ class Machine(object, metaclass=AbstractBase):
             unsuccessful.
         :type chip_coords: tuple(int, int) or None
         :return: The SpiNNaker link data or None if no link
-        :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData or None
+        :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData
         """
         # Try chip coordinates first
         if chip_coords is not None:
@@ -812,7 +812,11 @@ class Machine(object, metaclass=AbstractBase):
         if board_address is None:
             board_address = self._boot_ethernet_address
         key = (board_address, spinnaker_link_id)
-        return self._spinnaker_links.get(key, None)
+        if key not in self._spinnaker_links:
+            raise KeyError(
+                f"SpiNNaker Link {spinnaker_link_id} does not exist on board"
+                f" {board_address}")
+        return self._spinnaker_links[key]
 
     def get_fpga_link_with_id(
             self, fpga_id, fpga_link_id, board_address=None, chip_coords=None):
@@ -838,7 +842,7 @@ class Machine(object, metaclass=AbstractBase):
             used first, with board_address only used if this is unsuccessful.
         :type chip_coords: tuple(int, int) or None
         :return: the given FPGA link object or ``None`` if no such link
-        :rtype: ~spinn_machine.link_data_objects.FPGALinkData or None
+        :rtype: ~spinn_machine.link_data_objects.FPGALinkData
         """
         # Try chip coordinates first
         if chip_coords is not None:
@@ -851,7 +855,11 @@ class Machine(object, metaclass=AbstractBase):
         if board_address is None:
             board_address = self._boot_ethernet_address
         key = (board_address, fpga_id, fpga_link_id)
-        return self._fpga_links.get(key, None)
+        if key not in self._fpga_links:
+            raise KeyError(
+                f"FPGA Link {fpga_id}:{fpga_link_id} does not exist on board"
+                f" {board_address}")
+        return self._fpga_links[key]
 
     def add_spinnaker_links(self):
         """ Add SpiNNaker links that are on a given machine depending on the\
