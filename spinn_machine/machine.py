@@ -803,10 +803,16 @@ class Machine(object, metaclass=AbstractBase):
         """
         # Try chip coordinates first
         if chip_coords is not None:
+            if chip_coords not in self._chips:
+                raise KeyError(f"No chip {chip_coords} found!")
             key = (chip_coords, spinnaker_link_id)
             link_data = self._spinnaker_links.get(key, None)
             if link_data is not None:
                 return link_data
+            if board_address is None:
+                raise KeyError(
+                    f"SpiNNaker link {spinnaker_link_id} not found"
+                    f" on chip {chip_coords}")
 
         # Otherwise try board address
         if board_address is None:
