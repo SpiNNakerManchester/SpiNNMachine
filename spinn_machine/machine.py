@@ -18,6 +18,9 @@ from .exceptions import (
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 from spinn_utilities.abstract_base import (
     AbstractBase, abstractproperty, abstractmethod)
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Machine(object, metaclass=AbstractBase):
@@ -779,32 +782,34 @@ class Machine(object, metaclass=AbstractBase):
         :param int spinnaker_link_id: The ID of the link
         :param board_address:
             optional board address that this SpiNNaker link is associated with.
-            If both this and chip_coords are specified, chip_coords will be
-            used first, with board_address only used if this is unsuccessful.
+            This is ignored if chip_coords is not None.  If this is None and
+            chip_coords is None, the boot board will be assumed.
         :type board_address: str or None
         :param chip_coords:
             optional chip coordinates that this SpiNNaker link is associated
-            with.  If both this and board_address are specified, chip_coords
-            will be used first, with board_address only used if this is
-            unsuccessful.
+            with. If this is None and board_address is None, the boot board
+            will be assumed.
         :type chip_coords: tuple(int, int) or None
         :return: The SpiNNaker link data or None if no link
         :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData
         """
         # Try chip coordinates first
         if chip_coords is not None:
+            if board_address is not None:
+                logger.warning(
+                    "Board address will be ignored because chip coordinates"
+                    " are specified")
             if chip_coords not in self._chips:
                 raise KeyError(f"No chip {chip_coords} found!")
             key = (chip_coords, spinnaker_link_id)
             link_data = self._spinnaker_links.get(key, None)
             if link_data is not None:
                 return link_data
-            if board_address is None:
-                raise KeyError(
-                    f"SpiNNaker link {spinnaker_link_id} not found"
-                    f" on chip {chip_coords}")
+            raise KeyError(
+                f"SpiNNaker link {spinnaker_link_id} not found"
+                f" on chip {chip_coords}")
 
-        # Otherwise try board address
+        # Otherwise try board address.
         if board_address is None:
             board_address = self._boot_ethernet_address
         key = (board_address, spinnaker_link_id)
@@ -829,29 +834,32 @@ class Machine(object, metaclass=AbstractBase):
             https://drive.google.com/file/d/0B9312BuJXntlVWowQlJ3RE8wWVE
         :param board_address:
             optional board address that this FPGA link is associated with.
-            If both this and chip_coords are specified, chip_coords will be
-            used first, with board_address only used if this is unsuccessful.
+            This is ignored if chip_coords is not None.  If this is None and
+            chip_coords is None, the boot board will be assumed.
         :type board_address: str or None
         :param chip_coords:
             optional chip coordinates that this FPGA link is associated with.
-            If both this and board_address are specified, chip_coords will be
-            used first, with board_address only used if this is unsuccessful.
+            If this is None and board_address is None, the boot board
+            will be assumed.
         :type chip_coords: tuple(int, int) or None
         :return: the given FPGA link object or ``None`` if no such link
         :rtype: ~spinn_machine.link_data_objects.FPGALinkData
         """
         # Try chip coordinates first
         if chip_coords is not None:
+            if board_address is not None:
+                logger.warning(
+                    "Board address will be ignored because chip coordinates"
+                    " are specified")
             if chip_coords not in self._chips:
                 raise KeyError(f"No chip {chip_coords} found!")
             key = (chip_coords, fpga_id, fpga_link_id)
             link_data = self._fpga_links.get(key, None)
             if link_data is not None:
                 return link_data
-            if board_address is None:
-                raise KeyError(
-                    f"FPGA {fpga_id}, link {fpga_link_id} not found"
-                    f" on chip {chip_coords}")
+            raise KeyError(
+                f"FPGA {fpga_id}, link {fpga_link_id} not found"
+                f" on chip {chip_coords}")
 
         # Otherwise try board address
         if board_address is None:
