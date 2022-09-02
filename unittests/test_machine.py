@@ -17,7 +17,6 @@
 test for testing the python representation of a spinnaker machine
 """
 import unittest
-from unittest import SkipTest
 from spinn_machine import (
     Link, SDRAM, Router, Chip, Machine, machine_from_chips, machine_from_size)
 from spinn_machine.config_setup import unittest_setup
