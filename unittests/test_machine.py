@@ -68,8 +68,8 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         new_machine = machine_from_chips(chips)
 
-        self.assertEqual(new_machine.max_chip_x, 4)
-        self.assertEqual(new_machine.max_chip_y, 4)
+        self.assertEqual(new_machine.width, 5)
+        self.assertEqual(new_machine.height, 5)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):
@@ -88,8 +88,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
         self.assertEqual(new_machine.cores_and_link_output_string(),
                          "450 cores and 50.0 links")
-        self.assertEqual(new_machine.__repr__(),
-                         "[NoWrapMachine: max_x=4, max_y=4, n_chips=25]")
+        self.assertEqual("[NoWrapMachine: width=5, height=5, n_chips=25]",
+                         new_machine.__repr__())
         self.assertEqual(list(new_machine.spinnaker_links), [])
 
     def test_create_new_machine_with_invalid_chips(self):
@@ -115,8 +115,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         new_machine = machine_from_size(6, 5, self._create_chips())
         extra_chip = self._create_chip(5, 0)
         new_machine.add_chip(extra_chip)
-        self.assertEqual(new_machine.max_chip_x, 5)
-        self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):
@@ -153,8 +151,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         extra_chips.append(self._create_chip(5, 3))
 
         new_machine.add_chips(extra_chips)
-        self.assertEqual(new_machine.max_chip_x, 5)
-        self.assertEqual(new_machine.max_chip_y, 4)
 
         for c in new_machine.chips:
             if (c.x == c.y == 0):
@@ -190,6 +186,40 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = self._create_chips()
         new_machine = machine_from_chips(chips)
         self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
+
+    def test_machine_big_x(self):
+        """
+        test the add_chips method of the machine chips outside size
+        should produce an error
+
+        :rtype: None
+        """
+        new_machine = machine_from_size(8, 8)
+        new_machine.add_chip(self._create_chip(0, 0))
+        # the add does not have the safety code
+        new_machine.add_chip(self._create_chip(10, 2))
+        # however the validate does
+        try:
+            new_machine.validate()
+        except SpinnMachineException as ex:
+            self.assertIn("has an x large than width 8", str(ex))
+
+    def test_machine_big_y(self):
+        """
+        test the add_chips method of the machine chips outside size
+        should produce an error
+
+        :rtype: None
+        """
+        new_machine = machine_from_size(8, 8)
+        new_machine.add_chip(self._create_chip(0, 0))
+        # the add does not have the safety code
+        new_machine.add_chip(self._create_chip(2, 10))
+        # however the validate does
+        try:
+            new_machine.validate()
+        except SpinnMachineException as ex:
+            self.assertIn("has an y large than heigth 8", str(ex))
 
     def test_machine_get_chip_at_invalid_location(self):
         """
