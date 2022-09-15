@@ -75,12 +75,6 @@ class Machine(object, metaclass=AbstractBase):
         "_height",
         # List of the possible chips (x,y) on each board of the machine
         "_local_xys",
-        # Max x value of any chip including virtual chips
-        # This could change as new chips are added
-        "_max_chip_x",
-        # Max y value of any chip including virtual chips
-        # This could change as new chips are added
-        "_max_chip_y",
         # Extra information about how this machine was created
         # to be used in the str method
         "_origin",
@@ -134,9 +128,9 @@ class Machine(object, metaclass=AbstractBase):
 
         Use machine_factory methods to determine the correct machine class
 
-        :param int width: The width of the machine excluding any virtual chips
+        :param int width: The width of the machine excluding
         :param int height:
-            The height of the machine excluding any virtual chips
+            The height of the machine
         :param iterable(Chip) chips: An iterable of chips in the machine
         :param str origin: Extra information about how this machine was created
             to be used in the str method. Example "Virtual" or "Json"
@@ -154,12 +148,6 @@ class Machine(object, metaclass=AbstractBase):
             for x in range(width):
                 for y in range(height):
                     self._local_xys.append((x, y))
-
-        # The current maximum chip x coordinate
-        self._max_chip_x = 0
-
-        # The current maximum chip y coordinate
-        self._max_chip_y = 0
 
         # The maximum number of user cores on any chip
         self._maximum_user_cores_on_chip = 0
@@ -509,9 +497,9 @@ class Machine(object, metaclass=AbstractBase):
 
         :raises SpinnMachineException:
             An Error is raised if there is a chip with a x outside of the
-            range 0 to width -1 (except for virtual ones).
+            range 0 to width -1
             An Error is raised if there is a chip with a y outside of the
-            range 0 to height -1 (except for virtual ones).
+            range 0 to height -1.
             An Error is raise if there is no chip at the declared ethernet
             x and y.
             An Error is raised if an ethernet chip is not at a local 0,0.
@@ -538,15 +526,14 @@ class Machine(object, metaclass=AbstractBase):
             if chip.y < 0:
                 raise SpinnMachineException(
                     "{} has a negative y".format(chip))
-            if not chip.virtual:
-                if chip.x >= self._width:
-                    raise SpinnMachineException(
-                        "{} has an x large than width {}".format(
-                            chip, self._width))
-                if chip.y >= self._height:
-                    raise SpinnMachineException(
-                        "{} has an y large than heigth {}".format(
-                            chip, self._width))
+            if chip.x >= self._width:
+                raise SpinnMachineException(
+                    "{} has an x large than width {}".format(
+                        chip, self._width))
+            if chip.y >= self._height:
+                raise SpinnMachineException(
+                    "{} has an y large than heigth {}".format(
+                        chip, self._width))
             if chip.ip_address:
                 # Ethernet Chip checks
                 if chip.x % 4 != 0:
@@ -557,7 +544,7 @@ class Machine(object, metaclass=AbstractBase):
                     raise SpinnMachineException(
                         "Ethernet {} has a x y pair that do not add up to 12"
                         "".format(chip))
-            elif not chip.virtual:
+            else:
                 # None Ethernet chip checks
                 if not self.is_chip_at(
                         chip.nearest_ethernet_x, chip.nearest_ethernet_y):
@@ -590,11 +577,6 @@ class Machine(object, metaclass=AbstractBase):
                 "chip", "{}, {}".format(chip.x, chip.y))
 
         self._chips[chip_id] = chip
-
-        if chip.x > self._max_chip_x:
-            self._max_chip_x = chip.x
-        if chip.y > self._max_chip_y:
-            self._max_chip_y = chip.y
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
@@ -715,37 +697,19 @@ class Machine(object, metaclass=AbstractBase):
         return self.is_chip_at(x, y)
 
     @property
-    def max_chip_x(self):
-        """ The maximum x-coordinate of any chip in the board
-
-        :return: The maximum x-coordinate
-        :rtype: int
-        """
-        return self._max_chip_x
-
-    @property
-    def max_chip_y(self):
-        """ The maximum y-coordinate of any chip in the board
-
-        :return: The maximum y-coordinate
-        :rtype: int
-        """
-        return self._max_chip_y
-
-    @property
     def width(self):
-        """ The width to the machine ignoring virtual chips
+        """ The width to the machine
 
-        :return: The width to the machine ignoring virtual chips
+        :return: The width to the machine
         :rtype: int
         """
         return self._width
 
     @property
     def height(self):
-        """ The height to the machine ignoring virtual chips
+        """ The height to the machine
 
-        :return: The height to the machine ignoring virtual chips
+        :return: The height to the machine
         :rtype: int
         """
         return self._height
@@ -942,15 +906,15 @@ class Machine(object, metaclass=AbstractBase):
                 lk = 0
                 for i, (x, y, l1, l2, dx, dy) in enumerate(chip_links):
                     for _ in range(4):
-                        fx = (x + ex) % (self._max_chip_x + 1)
-                        fy = (y + ey) % (self._max_chip_y + 1)
+                        fx = (x + ex) % (self._width)
+                        fy = (y + ey) % (self._height)
                         self._add_fpga_link(f, lk, fx, fy, l1, ip, ex, ey)
                         f, lk = self._next_fpga_link(f, lk)
                         if i % 2 == 1:
                             x += dx
                             y += dy
-                        fx = (x + ex) % (self._max_chip_x + 1)
-                        fy = (y + ey) % (self._max_chip_y + 1)
+                        fx = (x + ex) % (self._width)
+                        fy = (y + ey) % (self._height)
                         self._add_fpga_link(f, lk, fx, fy, l2, ip, ex, ey)
                         f, lk = self._next_fpga_link(f, lk)
                         if i % 2 == 0:
@@ -978,9 +942,8 @@ class Machine(object, metaclass=AbstractBase):
         return fpga_id, fpga_link + 1
 
     def __str__(self):
-        return "[{}{}Machine: max_x={}, max_y={}, n_chips={}]".format(
-            self._origin, self.wrap, self._max_chip_x, self._max_chip_y,
-            self.n_chips)
+        return (f"[{self._origin}{self.wrap}Machine: width={self._width}, "
+                f"height={self._height}, n_chips={len(self._chips)}]")
 
     def __repr__(self):
         return self.__str__()
@@ -1262,7 +1225,7 @@ class Machine(object, metaclass=AbstractBase):
                 self.get_xys_by_ethernet(ethernet.x, ethernet.y))
         x = 0
         while (True):
-            for y in range(self.max_chip_y+1):
+            for y in range(self.height):
                 xy = (x, y)
                 if xy not in self._chips and xy not in xys_by_ethernet:
                     return xy

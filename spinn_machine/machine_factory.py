@@ -153,7 +153,7 @@ def _machine_ignore(original, dead_chips, dead_links):
             chip = Chip(
                 chip.x, chip.y, chip.n_processors, router, chip.sdram,
                 chip.nearest_ethernet_x, chip.nearest_ethernet_y,
-                chip.ip_address, chip.virtual, chip.tag_ids)
+                chip.ip_address, chip.tag_ids)
         new_machine.add_chip(chip)
     new_machine.add_spinnaker_links()
     new_machine.add_fpga_links()

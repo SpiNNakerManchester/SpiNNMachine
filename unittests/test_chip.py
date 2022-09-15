@@ -90,7 +90,6 @@ class TestingChip(unittest.TestCase):
             "[CPU: id=17, clock_speed=200 MHz, monitor=False]], "
             "nearest_ethernet=0:0]")
         self.assertEqual(new_chip.tag_ids, OrderedSet([1, 2, 3, 4, 5, 6, 7]))
-        self.assertFalse(new_chip.virtual)
         self.assertEqual(
             [p[0] for p in new_chip],
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
