@@ -282,22 +282,22 @@ class SpinnMachineTestCase(unittest.TestCase):
         machine = machine_from_size(24, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, 23))
         self.assertEqual(machine.xy_over_link(23, 23, 1), (0, 0))
-        self.assertEquals(machine.wrap, "Wrapped")
+        self.assertEqual(machine.wrap, "Wrapped")
         # no wrap around'
         machine = machine_from_size(16, 16)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, -1))
         self.assertEqual(machine.xy_over_link(15, 15, 1), (16, 16))
-        self.assertEquals(machine.wrap, "NoWrap")
+        self.assertEqual(machine.wrap, "NoWrap")
         # Horizontal wrap arounds
         machine = machine_from_size(24, 16)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, -1))
         self.assertEqual(machine.xy_over_link(23, 15, 1), (0, 16))
-        self.assertEquals(machine.wrap, "HorWrap")
+        self.assertEqual(machine.wrap, "HorWrap")
         # Vertical wrap arounds
         machine = machine_from_size(16, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, 23))
         self.assertEqual(machine.xy_over_link(15, 23, 1), (16, 0))
-        self.assertEquals(machine.wrap, "VerWrap")
+        self.assertEqual(machine.wrap, "VerWrap")
 
     def test_get_global_xy(self):
         """
