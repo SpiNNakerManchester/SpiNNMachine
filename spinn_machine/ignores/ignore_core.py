@@ -115,8 +115,7 @@ class IgnoreCore(object):
             return [IgnoreCore(parts[0], parts[1], core, parts[3])
                     for core in IgnoreCore.parse_cores(parts[2])]
         else:
-            raise Exception(
-                "Unexpected downed_core: {}".format(downed_core))
+            raise ValueError(f"Unexpected downed_core: {downed_core}")
 
     @staticmethod
     def parse_string(downed_cores):
