@@ -70,8 +70,8 @@ class IgnoreLink(object):
         elif len(parts) == 4:
             return IgnoreLink(parts[0], parts[1], parts[2], parts[3])
         else:
-            raise Exception(
-                "Unexpected downed_link: {}".format(downed_link))
+            raise ValueError(
+                f"Unexpected downed_link: {downed_link}")
 
     @staticmethod
     def parse_string(downed_links):

@@ -71,8 +71,8 @@ class IgnoreChip(object):
         elif len(parts) == 3:
             return IgnoreChip(parts[0], parts[1], parts[2])
         else:
-            raise Exception(
-                "Unexpected downed_chip: {}".format(downed_chip))
+            raise ValueError(
+                f"Unexpected downed_chip: {downed_chip}")
 
     @staticmethod
     def parse_string(downed_chips):
