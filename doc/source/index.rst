@@ -4,9 +4,9 @@ which is part of the SpiNNaker_ Project
 This code depends on SpiNNUtils_. (Combined_documentation_).
 
 .. _SpiNNMachine: https://github.com/SpiNNakerManchester/SpiNNMachine
-.. _SpiNNaker: http://apt.cs.manchester.ac.uk/projects/SpiNNaker/
-.. _SpiNNUtils: http://spinnutils.readthedocs.io
-.. _Combined_documentation: http://spinnakermanchester.readthedocs.io
+.. _SpiNNaker: https://apt.cs.manchester.ac.uk/projects/SpiNNaker/
+.. _SpiNNUtils: https://spinnutils.readthedocs.io
+.. _Combined_documentation: https://spinnakermanchester.readthedocs.io
 
 SpiNNMachine
 ============
