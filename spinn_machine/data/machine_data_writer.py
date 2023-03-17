@@ -43,8 +43,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
     def _mock_machine(self):
         """
-        Method to create a virtual machine in mock mode
-        :return:
+        Method to create a virtual machine in mock mode.
         """
         self.set_machine(virtual_machine(width=8, height=8))
 
@@ -97,7 +96,6 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         Registers a function that can be called to give a machine
 
         :param function machine_generator:
-        :return:
         """
         if not callable(machine_generator):
             raise TypeError("machine_generator must be callable")

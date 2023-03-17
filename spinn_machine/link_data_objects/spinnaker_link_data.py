@@ -16,7 +16,8 @@ from .abstract_link_data import AbstractLinkData
 
 
 class SpinnakerLinkData(AbstractLinkData):
-    """ Data object for SpiNNaker links
+    """
+    Data object for SpiNNaker links.
     """
 
     __slots__ = [
@@ -31,7 +32,8 @@ class SpinnakerLinkData(AbstractLinkData):
 
     @property
     def spinnaker_link_id(self):
-        """ The ID of the SpiNNaker link.
+        """
+        The ID of the SpiNNaker link.
         """
         return self._spinnaker_link_id
 

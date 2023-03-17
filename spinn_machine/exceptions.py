@@ -14,12 +14,14 @@
 
 
 class SpinnMachineException(Exception):
-    """ A generic exception which all other exceptions extend
+    """
+    A generic exception which all other exceptions in this package extend.
     """
 
 
 class SpinnMachineAlreadyExistsException(SpinnMachineException):
-    """ Indicates that something already exists of which there can only be one
+    """
+    Indicates that something already exists of which there can only be one.
     """
     __slots__ = [
         "_item",
@@ -37,19 +39,22 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
 
     @property
     def item(self):
-        """ The item of which there is already one
+        """
+        The item of which there is already one.
         """
         return self._item
 
     @property
     def value(self):
-        """ The value of the item
+        """
+        The value of the item.
         """
         return self._value
 
 
 class SpinnMachineInvalidParameterException(SpinnMachineException):
-    """ Indicates that there is a problem with a parameter value
+    """
+    Indicates that there is a problem with a parameter value.
     """
     __slots__ = [
         "_parameter",
@@ -71,18 +76,21 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
 
     @property
     def parameter(self):
-        """ The name of the parameter
+        """
+        The name of the parameter.
         """
         return self._parameter
 
     @property
     def value(self):
-        """ The value of the parameter
+        """
+        The value of the parameter.
         """
         return self._value
 
     @property
     def problem(self):
-        """ The problem with the setting of the parameter
+        """
+        The problem with the setting of the parameter.
         """
         return self._problem

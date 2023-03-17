@@ -23,12 +23,13 @@ logger = logging.getLogger(__name__)
 
 
 class Machine(object, metaclass=AbstractBase):
-    """ A representation of a SpiNNaker Machine with a number of Chips.\
-        Machine is also iterable, providing ``((x, y), chip)`` where:
+    """
+    A representation of a SpiNNaker Machine with a number of Chips.
+    Machine is also iterable, providing ``((x, y), chip)`` where:
 
-            * ``x`` is the x-coordinate of a chip
-            * ``y`` is the y-coordinate of a chip
-            * ``chip`` is the chip with the given ``(x, y)`` coordinates
+        * ``x`` is the x-coordinate of a chip
+        * ``y`` is the y-coordinate of a chip
+        * ``chip`` is the chip with the given ``(x, y)`` coordinates
     """
 
     # current opinions is that the Ethernet connected chip can handle 10
@@ -89,7 +90,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         Gets the max core per chip for the while system.
 
-        There is no guarantee that there will be any Chips with this many\
+        There is no guarantee that there will be any Chips with this many
         cores, only that there will be no cores with more.
 
         :return: the default cores per chip unless overridden by set
@@ -450,7 +451,7 @@ class Machine(object, metaclass=AbstractBase):
 
         This method does not check if the chips and links it assumes to take
         actually exist.
-        For example long paths along a none wrapping edge may well travel
+        For example long paths along a non-wrapping edge may well travel
         through the missing area.
 
         This method does take wrap-arounds into consideration as applicable.
@@ -465,14 +466,14 @@ class Machine(object, metaclass=AbstractBase):
         :type source: tuple(int, int)
         :param destination: (x,y) coordinates of the destination chip
         :type destination: tuple(int, int)
-        :return:
+        :return: The vector
         """
 
     @abstractmethod
     def concentric_xys(self, radius, start):
         """
         A generator that produces coordinates for concentric rings of
-            possible chips based on the links of the chips.
+        possible chips based on the links of the chips.
 
         No check is done to see if the chip exists.
         This may even produce coordinates with negative numbers
@@ -557,14 +558,16 @@ class Machine(object, metaclass=AbstractBase):
 
     @abstractproperty
     def wrap(self):
-        """ String to represent the type of wrap.
+        """
+        String to represent the type of wrap.
 
         :return: Short string for type of wrap
         :rtype: str
         """
 
     def add_chip(self, chip):
-        """ Add a chip to the machine
+        """
+        Add a chip to the machine.
 
         :param ~spinn_machine.Chip chip: The chip to add to the machine
         :raise SpinnMachineAlreadyExistsException:
@@ -586,7 +589,8 @@ class Machine(object, metaclass=AbstractBase):
             self._maximum_user_cores_on_chip = chip.n_user_processors
 
     def add_chips(self, chips):
-        """ Add some chips to the machine
+        """
+        Add some chips to the machine.
 
         :param iterable(~spinn_machine.Chip) chips: an iterable of chips
         :raise SpinnMachineAlreadyExistsException:
@@ -598,7 +602,8 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def chips(self):
-        """ An iterable of chips in the machine
+        """
+        An iterable of chips in the machine.
 
         :return: An iterable of chips
         :rtype: iterable(:py:class:`~spinn_machine.Chip`)
@@ -608,7 +613,8 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def chip_coordinates(self):
-        """ An iterable of chip coordinates in the machine
+        """
+        An iterable of chip coordinates in the machine.
 
         :return: An iterable of chip coordinates
         :rtype: iterable(tuple(int,int))
@@ -616,7 +622,8 @@ class Machine(object, metaclass=AbstractBase):
         return iter(self._chips.keys())
 
     def __iter__(self):
-        """ Get an iterable of the chip coordinates and chips
+        """
+        Get an iterable of the chip coordinates and chips.
 
         :return: An iterable of tuples of ((x, y), chip) where:
             * (x, y) is a tuple where:
@@ -628,7 +635,8 @@ class Machine(object, metaclass=AbstractBase):
         return iter(self._chips.items())
 
     def __len__(self):
-        """ Get the total number of chips.
+        """
+        Get the total number of chips.
 
         :return: The number of items in the underlying iterable
         :rtype: int
@@ -636,8 +644,9 @@ class Machine(object, metaclass=AbstractBase):
         return len(self._chips)
 
     def get_chip_at(self, x, y):
-        """ Get the chip at a specific (x, y) location.\
-            Also implemented as ``__getitem__((x, y))``
+        """
+        Get the chip at a specific (x, y) location.
+        Also implemented as ``__getitem__((x, y))``
 
         :param int x: the x-coordinate of the requested chip
         :param int y: the y-coordinate of the requested chip
@@ -651,7 +660,8 @@ class Machine(object, metaclass=AbstractBase):
         return None
 
     def __getitem__(self, x_y_tuple):
-        """ Get the chip at a specific (x, y) location
+        """
+        Get the chip at a specific (x, y) location.
 
         :param tuple(int,int) x_y_tuple: A tuple of (x, y) where:
             * x is the x-coordinate of the chip to retrieve
@@ -663,8 +673,9 @@ class Machine(object, metaclass=AbstractBase):
         return self.get_chip_at(x, y)
 
     def is_chip_at(self, x, y):
-        """ Determine if a chip exists at the given coordinates.\
-            Also implemented as __contains__((x, y))
+        """
+        Determine if a chip exists at the given coordinates.
+        Also implemented as __contains__((x, y))
 
         :param int x: x location of the chip to test for existence
         :param int y: y location of the chip to test for existence
@@ -674,7 +685,8 @@ class Machine(object, metaclass=AbstractBase):
         return (x, y) in self._chips
 
     def is_link_at(self, x, y, link):
-        """ Determine if a link exists at the given coordinates
+        """
+        Determine if a link exists at the given coordinates.
 
         :param int x: The x location of the chip to test the link of
         :param int y: The y location of the chip to test the link of
@@ -683,7 +695,8 @@ class Machine(object, metaclass=AbstractBase):
         return (x, y) in self._chips and self._chips[x, y].router.is_link(link)
 
     def __contains__(self, x_y_tuple):
-        """ Determine if a chip exists at the given coordinates
+        """
+        Determine if a chip exists at the given coordinates.
 
         :param x_y_tuple: A tuple of (x, y) where:
             * x is the x-coordinate of the chip to retrieve
@@ -697,7 +710,8 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def width(self):
-        """ The width to the machine
+        """
+        The width to the machine.
 
         :return: The width to the machine
         :rtype: int
@@ -706,7 +720,8 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def height(self):
-        """ The height to the machine
+        """
+        The height to the machine.
 
         :return: The height to the machine
         :rtype: int
@@ -715,7 +730,8 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def n_chips(self):
-        """ The number of chips in the machine.
+        """
+        The number of chips in the machine.
 
         :rtype: int
         """
@@ -723,7 +739,8 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def ethernet_connected_chips(self):
-        """ The chips in the machine that have an Ethernet connection
+        """
+        The chips in the machine that have an Ethernet connection.
 
         :rtype: iterable(Chip)
         """
@@ -731,7 +748,8 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def spinnaker_links(self):
-        """ The set of SpiNNaker links in the machine
+        """
+        The set of SpiNNaker links in the machine.
 
         :rtype: iterable(tuple(tuple(str,int),
             ~spinn_machine.link_data_objects.SpinnakerLinkData))
@@ -740,7 +758,8 @@ class Machine(object, metaclass=AbstractBase):
 
     def get_spinnaker_link_with_id(
             self, spinnaker_link_id, board_address=None, chip_coords=None):
-        """ Get a SpiNNaker link with a given ID
+        """
+        Get a SpiNNaker link with a given ID.
 
         :param int spinnaker_link_id: The ID of the link
         :param board_address:
@@ -784,8 +803,9 @@ class Machine(object, metaclass=AbstractBase):
 
     def get_fpga_link_with_id(
             self, fpga_id, fpga_link_id, board_address=None, chip_coords=None):
-        """ Get an FPGA link data item that corresponds to the FPGA and FPGA\
-            link for a given board address.
+        """
+        Get an FPGA link data item that corresponds to the FPGA and FPGA
+        link for a given board address.
 
         :param int fpga_id:
             the ID of the FPGA that the data is going through.  Refer to
@@ -835,8 +855,9 @@ class Machine(object, metaclass=AbstractBase):
         return self._fpga_links[key]
 
     def add_spinnaker_links(self):
-        """ Add SpiNNaker links that are on a given machine depending on the\
-            version of the board.
+        """
+        Add SpiNNaker links that are on a given machine depending on the
+        version of the board.
         """
         if self._width == self._height == 2:
             chip_0_0 = self.get_chip_at(0, 0)
@@ -860,8 +881,9 @@ class Machine(object, metaclass=AbstractBase):
         self._spinnaker_links[(x, y), spinnaker_link_id] = link_data
 
     def add_fpga_links(self):
-        """ Add FPGA links that are on a given machine depending on the\
-            version of the board.
+        """
+        Add FPGA links that are on a given machine depending on the
+        version of the board.
         """
         if self._width == self._height == 8 or self.multiple_48_chip_boards():
 
@@ -948,7 +970,8 @@ class Machine(object, metaclass=AbstractBase):
         return self.__str__()
 
     def get_cores_and_link_count(self):
-        """ Get the number of cores and links from the machine
+        """
+        Get the number of cores and links from the machine.
 
         Links are assumed to be bidirectional so the total links counted is
         half of the unidirectional links found.
@@ -967,7 +990,8 @@ class Machine(object, metaclass=AbstractBase):
         return cores, total_links / 2
 
     def cores_and_link_output_string(self):
-        """ Get a string detailing the number of cores and links
+        """
+        Get a string detailing the number of cores and links.
 
         :rtype: str
         """
@@ -976,14 +1000,16 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def boot_chip(self):
-        """ The chip used to boot the machine
+        """
+        The chip used to boot the machine.
 
         :rtype: Chip
         """
         return self._chips[0, 0]
 
     def get_existing_xys_on_board(self, chip):
-        """ Get the chips that are on the same board as the given chip
+        """
+        Get the chips that are on the same board as the given chip.
 
         :param chip: The chip to find other chips on the same board as
         :return: An iterable of (x, y) coordinates of chips on the same board
@@ -994,14 +1020,18 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def maximum_user_cores_on_chip(self):
-        """ The maximum number of user cores on any chip
+        """
+        The maximum number of user cores on any chip.
+
+        :rtype: int
         """
         return self._maximum_user_cores_on_chip
 
     @property
     def total_available_user_cores(self):
-        """ The total number of cores on the machine which are not \
-            monitor cores
+        """
+        The total number of cores on the machine which are not
+        monitor cores.
 
         :return: total
         :rtype: int
@@ -1010,7 +1040,8 @@ class Machine(object, metaclass=AbstractBase):
 
     @property
     def total_cores(self):
-        """ The total number of cores on the machine, including monitors
+        """
+        The total number of cores on the machine, including monitors.
 
         :return: total
         :rtype: int
@@ -1020,7 +1051,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def unreachable_outgoing_chips(self):
         """
-        Detects chips that can not reach any of their neighbours
+        Detects chips that can not reach any of their neighbours.
 
         Current implementation does NOT deal with group of unreachable chips
 
@@ -1042,7 +1073,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def unreachable_incoming_chips(self):
         """
-        Detects chips that are not reachable from any of their neighbours
+        Detects chips that are not reachable from any of their neighbours.
 
         Current implementation does NOT deal with group of unreachable chips
 
@@ -1068,7 +1099,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def unreachable_outgoing_local_chips(self):
         """
-        Detects chips that can not reach any of their LOCAL neighbours
+        Detects chips that can not reach any of their LOCAL neighbours.
 
         Current implementation does NOT deal with group of unreachable chips
 
@@ -1102,7 +1133,8 @@ class Machine(object, metaclass=AbstractBase):
 
     def unreachable_incoming_local_chips(self):
         """
-        Detects chips that are not reachable from any of their LOCAL neighbours
+        Detects chips that are not reachable from any of their LOCAL
+        neighbours.
 
         Current implementation does NOT deal with group of unreachable chips
 
@@ -1231,8 +1263,9 @@ class Machine(object, metaclass=AbstractBase):
             x += 1
 
     def _basic_concentric_xys(self, radius, start):
-        """ Generates concentric xys from start without accounting for wrap
-            around or checking if the chip exists
+        """
+        Generates concentric xys from start without accounting for wrap
+        around or checking if the chip exists.
 
         :param int radius: The radius of rings to produce (0 = start only)
         :param tuple(int,int) start: The start coordinate

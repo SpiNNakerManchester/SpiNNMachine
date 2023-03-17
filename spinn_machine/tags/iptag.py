@@ -16,7 +16,8 @@ from .abstract_tag import AbstractTag
 
 
 class IPTag(AbstractTag):
-    """ Used to hold data that is contained within an IP tag
+    """
+    Used to hold data that is contained within an IP tag.
     """
 
     __slots__ = [
@@ -61,31 +62,36 @@ class IPTag(AbstractTag):
 
     @property
     def ip_address(self):
-        """ The IP address to which SDP packets with this tag will be sent.
+        """
+        The IP address to which SDP packets with this tag will be sent.
         """
         return self._ip_address
 
     @property
     def strip_sdp(self):
-        """ Return if the SDP header is to be stripped
+        """
+        Return if the SDP header is to be stripped.
         """
         return self._strip_sdp
 
     @property
     def traffic_identifier(self):
-        """ The identifier of traffic using this tag
+        """
+        The identifier of traffic using this tag.
         """
         return self._traffic_identifier
 
     @property
     def destination_x(self):
-        """ The x-coordinate where users of this tag should send packets to
+        """
+        The x-coordinate where users of this tag should send packets to.
         """
         return self._destination_x
 
     @property
     def destination_y(self):
-        """ The y-coordinate where users of this tag should send packets to
+        """
+        The y-coordinate where users of this tag should send packets to.
         """
         return self._destination_y
 

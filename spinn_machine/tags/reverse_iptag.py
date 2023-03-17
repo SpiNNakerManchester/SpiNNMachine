@@ -16,7 +16,8 @@ from .abstract_tag import AbstractTag
 
 
 class ReverseIPTag(AbstractTag):
-    """ Used to hold data that is contained within a Reverse IP tag
+    """
+    Used to hold data that is contained within a Reverse IP tag.
     """
 
     __slots__ = [
@@ -53,29 +54,33 @@ class ReverseIPTag(AbstractTag):
 
     @property
     def sdp_port(self):
-        """ The SDP port number of the tag that these packets are to be\
-            received on for the processor.
+        """
+        The SDP port number of the tag that these packets are to be
+        received on for the processor.
         """
         return self._sdp_port
 
     @property
     def destination_x(self):
-        """ The destination x coordinate of a chip in the SpiNNaker machine\
-            that packets should be sent to for this reverse IP tag.
+        """
+        The destination x coordinate of a chip in the SpiNNaker machine
+        that packets should be sent to for this reverse IP tag.
         """
         return self._destination_x
 
     @property
     def destination_y(self):
-        """ The destination y coordinate of a chip in the SpiNNaker machine\
-            that packets should be sent to for this reverse IP tag.
+        """
+        The destination y coordinate of a chip in the SpiNNaker machine
+        that packets should be sent to for this reverse IP tag.
         """
         return self._destination_y
 
     @property
     def destination_p(self):
-        """ The destination processor ID for the chip at (x,y) that packets\
-            should be send to for this reverse IP tag
+        """
+        The destination processor ID for the chip at (x,y) that packets
+        should be send to for this reverse IP tag.
         """
         return self._destination_p
 

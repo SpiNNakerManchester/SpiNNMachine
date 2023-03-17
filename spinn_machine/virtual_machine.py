@@ -59,7 +59,8 @@ def _verify_width_height(width, height):
 
 def virtual_machine(
         width, height, n_cpus_per_chip=None, validate=True):
-    """ Create a virtual SpiNNaker machine, used for planning execution.
+    """
+    Create a virtual SpiNNaker machine, used for planning execution.
 
     :param int width: the width of the virtual machine in chips
     :param int height: the height of the virtual machine in chips
@@ -74,7 +75,8 @@ def virtual_machine(
 
 
 class _VirtualMachine(object):
-    """ A Virtual SpiNNaker machine factory
+    """
+    A Virtual SpiNNaker machine factory
     """
 
     __slots__ = (
@@ -197,7 +199,8 @@ class _VirtualMachine(object):
             ip_address, down_cores=down_cores)
 
     def _calculate_links(self, x, y, configured_chips):
-        """ Calculate the links needed for a machine structure
+        """
+        Calculate the links needed for a machine structure
         """
         links = list()
         for link_id in range(6):

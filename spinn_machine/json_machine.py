@@ -135,7 +135,8 @@ def _int_value(value):
 
 
 def _describe_chip(chip, std, eth):
-    """ Produce a JSON-suitable description of a single chip.
+    """
+    Produce a JSON-suitable description of a single chip.
 
     :param chip: The chip to describe.
     :param std: The standard chip resources.
@@ -189,7 +190,8 @@ def _describe_chip(chip, std, eth):
 
 
 def to_json():
-    """ Runs the code to write the machine in Java readable JSON.
+    """
+    Runs the code to write the machine in Java readable JSON.
 
     :rtype: dict
     """
@@ -250,7 +252,8 @@ def to_json():
 
 
 def to_json_path(file_path):
-    """ Runs the code to write the machine in Java readable JSON.
+    """
+    Runs the code to write the machine in Java readable JSON.
 
     :param file_path: Location to write file to. Warning will overwrite!
     :type file_path: str
