@@ -38,7 +38,7 @@ class Machine(object, metaclass=AbstractBase):
     __max_cores = None
     MAX_CHIPS_PER_48_BOARD = 48
     MAX_CHIPS_PER_4_CHIP_BOARD = 4
-    BOARD_VERSION_FOR_48_CHIPS = [4,5]
+    BOARD_VERSION_FOR_48_CHIPS = [4, 5]
     BOARD_VERSION_FOR_4_CHIPS = [2, 3]
 
     # other useful magic numbers for machines
