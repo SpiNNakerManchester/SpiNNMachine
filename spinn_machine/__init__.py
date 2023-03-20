@@ -94,7 +94,8 @@ from spinn_machine._version import __version_name__  # NOQA
 from spinn_machine._version import __version_month__  # NOQA
 from spinn_machine._version import __version_year__  # NOQA
 
-__all__ = ["Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
+__all__ = ["__version__",
+           "Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
            "Link", "Machine", "MulticastRoutingEntry",
            "Processor", "Router", "SDRAM", "SpiNNakerTriadGeometry",
            "virtual_machine", "machine_from_chips", "machine_from_size"]
