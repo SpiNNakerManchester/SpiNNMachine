@@ -89,6 +89,7 @@ from .virtual_machine import virtual_machine
 from .fixed_route_entry import FixedRouteEntry
 from .machine_factory import machine_from_chips, machine_from_size
 
+
 __all__ = ["Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
            "Link", "Machine", "MulticastRoutingEntry",
            "Processor", "Router", "SDRAM", "SpiNNakerTriadGeometry",
