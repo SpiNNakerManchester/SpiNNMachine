@@ -196,12 +196,14 @@ class Machine(object, metaclass=AbstractBase):
 
         Wrap-arounds are handled as appropriate.
 
-        Note: This method does not check if the chip actually exists as is
-        intended to be called to create the chips.
+        .. note::
+            This method does not check if the chip actually exists as is
+            intended to be called to create the chips.
 
-        Warning: GIGO! This methods assumes that ethernet_x and ethernet_y are
-        the local 0,0 of an existing board, within the width and height of the
-        machine.
+        .. warning::
+            GIGO! This methods assumes that ethernet_x and ethernet_y are the
+            local 0,0 of an existing board, within the width and height of the
+            machine.
 
         :param int ethernet_x:
             The x coordinate of a (local 0,0) legal ethernet chip
@@ -222,17 +224,19 @@ class Machine(object, metaclass=AbstractBase):
 
         Wrap-arounds are handled as appropriate.
 
-        Note: This method does not check if the chip actually exists,
-        nor report the actual number of cores on this chip, as is
-        intended to be called to create the chips.
+        .. note::
+            This method does not check if the chip actually exists,
+            nor report the actual number of cores on this chip, as is
+            intended to be called to create the chips.
 
         The number of cores is based on the 1,000,000 core machine where the
         board where built with the the 17 core chips placed in the same
         location on nearly every board.
 
-        Warning: GIGO! This methods assumes that ethernet_x and ethernet_y are
-        the local 0,0 of an existing board, within the width and height of the
-        machine.
+        .. warning::
+            GIGO! This methods assumes that ethernet_x and ethernet_y are the
+            local 0,0 of an existing board, within the width and height of the
+            machine.
 
         :param int ethernet_x:
             The x coordinate of a (local 0,0) legal ethernet chip
@@ -250,7 +254,8 @@ class Machine(object, metaclass=AbstractBase):
         Yields the (x,y) coordinates of the down chips on the board with this
         ethernet.
 
-        Note the Ethernet chip itself can not be missing if validated
+        .. note::
+            The Ethernet chip itself can not be missing if validated.
 
         Wrap-arounds are handled as appropriate.
 
@@ -309,15 +314,17 @@ class Machine(object, metaclass=AbstractBase):
 
         Wrap-arounds are handled as appropriate.
 
-        Note: This method does not check if either chip source or destination
-        actually exists as is intended to be called to create the links.
+        .. note::
+            This method does not check if either chip source or destination
+            actually exists as is intended to be called to create the links.
 
-        It is the callers responsibility to check the validity of this call
-        before making it or the validity of the result.
+            It is the callers responsibility to check the validity of this call
+            before making it or the validity of the result.
 
-        Warning: GIGO! This methods assumes that x and y are within the
-        width and height of the machine, and that the link goes to another
-        chip on the machine.
+        .. warning::
+            GIGO! This methods assumes that x and y are within the width and
+            height of the machine, and that the link goes to another chip on
+            the machine.
 
         On machine without full wrap-around it is possible that this method
         generates x,y values that fall outside of the legal values including
@@ -411,7 +418,7 @@ class Machine(object, metaclass=AbstractBase):
 
         This method does not check if the chips and links it assumes to take
         actually exist.
-        For example long paths along a none wrapping edge may well travel
+        For example long paths along a non-wrapping edge may well travel
         through the missing area.
 
         This method does take wrap-arounds into consideration as applicable.
@@ -545,7 +552,7 @@ class Machine(object, metaclass=AbstractBase):
                         "Ethernet {} has a x y pair that do not add up to 12"
                         "".format(chip))
             else:
-                # None Ethernet chip checks
+                # Non-Ethernet chip checks
                 if not self.is_chip_at(
                         chip.nearest_ethernet_x, chip.nearest_ethernet_y):
                     raise SpinnMachineException(
@@ -607,7 +614,6 @@ class Machine(object, metaclass=AbstractBase):
 
         :return: An iterable of chips
         :rtype: iterable(:py:class:`~spinn_machine.Chip`)
-        :raise None: does not raise any known exceptions
         """
         return iter(self._chips.values())
 
@@ -666,7 +672,7 @@ class Machine(object, metaclass=AbstractBase):
         :param tuple(int,int) x_y_tuple: A tuple of (x, y) where:
             * x is the x-coordinate of the chip to retrieve
             * y is the y-coordinate of the chip to retrieve
-        :return: the chip at the specified location, or None if no such chip
+        :return: the chip at the specified location, or `None` if no such chip
         :rtype: ~spinn_machine.Chip or None
         """
         x, y = x_y_tuple
@@ -764,15 +770,16 @@ class Machine(object, metaclass=AbstractBase):
         :param int spinnaker_link_id: The ID of the link
         :param board_address:
             optional board address that this SpiNNaker link is associated with.
-            This is ignored if chip_coords is not None.  If this is None and
-            chip_coords is None, the boot board will be assumed.
+            This is ignored if chip_coords is not `None`.
+            If this is `None` and chip_coords is `None`,
+            the boot board will be assumed.
         :type board_address: str or None
         :param chip_coords:
             optional chip coordinates that this SpiNNaker link is associated
-            with. If this is None and board_address is None, the boot board
+            with. If this is `None` and board_address is `None`, the boot board
             will be assumed.
         :type chip_coords: tuple(int, int) or None
-        :return: The SpiNNaker link data or None if no link
+        :return: The SpiNNaker link data or `None` if no link
         :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData
         """
         # Try chip coordinates first
@@ -817,12 +824,13 @@ class Machine(object, metaclass=AbstractBase):
             https://drive.google.com/file/d/0B9312BuJXntlVWowQlJ3RE8wWVE
         :param board_address:
             optional board address that this FPGA link is associated with.
-            This is ignored if chip_coords is not None.  If this is None and
-            chip_coords is None, the boot board will be assumed.
+            This is ignored if chip_coords is not `None`.
+            If this is `None` and chip_coords is `None`, the boot board will be
+            assumed.
         :type board_address: str or None
         :param chip_coords:
             optional chip coordinates that this FPGA link is associated with.
-            If this is None and board_address is None, the boot board
+            If this is `None` and board_address is `None`, the boot board
             will be assumed.
         :type chip_coords: tuple(int, int) or None
         :return: the given FPGA link object or ``None`` if no such link
@@ -1226,8 +1234,9 @@ class Machine(object, metaclass=AbstractBase):
 
         Local (x,y)s never include wrap-arounds.
 
-        Note: no check is done to see if any board in the machine actually
-        has a chip with this local x, y
+        .. note::
+            No check is done to see if any board in the machine actually
+            has a chip with this local x, y.
 
         :return: a list of (x,y) coordinates
         :rtype: iterable(tuple(int,int))

@@ -22,9 +22,10 @@ class SpiNNakerTriadGeometry(object):
     The geometry is defined by the arguments to the constructor; the
     standard arrangement can be obtained from get_spinn5_geometry.
 
-    Note that the geometry defines what a Triad is in terms of the
-    dimensions of a triad and where the Ethernet chips occur in the
-    triad.
+    .. note::
+        The geometry defines what a Triad is in terms of the
+        dimensions of a triad and where the Ethernet chips occur in the
+        triad.
     """
     __slots__ = (
         "_ethernet_offset",
@@ -105,11 +106,15 @@ class SpiNNakerTriadGeometry(object):
         :param int x: The x-coordinate of the chip to get the distance for
         :param int y: The y-coordinate of the chip to get the distance for
         :param float x_centre:
-            The x-coordinate of the centre of the hexagon.  Note that this is
-            the theoretical centre, it might not be an actual chip
+            The x-coordinate of the centre of the hexagon.
+
+            .. note::
+                This is the theoretical centre, it might not be an actual chip
         :param float y_centre:
-            The y-coordinate of the centre of the hexagon.  Note that this is
-            the theoretical centre, it might not be an actual chip
+            The y-coordinate of the centre of the hexagon.
+
+            .. note::
+                This is the theoretical centre, it might not be an actual chip
         :return: how far the chip is away from the centre of the hexagon
         :rtype: float
         """

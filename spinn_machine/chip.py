@@ -56,7 +56,7 @@ class Chip(object):
             the IP address of the chip, or ``None`` if no Ethernet attached
         :type ip_address: str or None
         :param tag_ids: IDs to identify the chip for SDP can be empty to
-            define no tags or None to allocate tag automatically
+            define no tags or `None` to allocate tag automatically
             based on if there is an ip_address
         :type tag_ids: iterable(int) or None
         :param nearest_ethernet_x: the nearest Ethernet x coordinate

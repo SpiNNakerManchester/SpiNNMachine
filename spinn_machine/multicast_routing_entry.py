@@ -30,11 +30,10 @@ class MulticastRoutingEntry(object):
     def __init__(self, routing_entry_key, mask, processor_ids=None,
                  link_ids=None, defaultable=False, spinnaker_route=None):
         """
-        Constructor for Multicast Route.
-
-        Note: The processor_ids and link_ids parameters are only optional if a
-        spinnaker_route is provided. If a spinnaker_route is provided
-        the processor_ids and link_ids parameters are ignored.
+        .. note::
+            The processor_ids and link_ids parameters are only optional if a
+            spinnaker_route is provided. If a spinnaker_route is provided
+            the processor_ids and link_ids parameters are ignored.
 
         :param int routing_entry_key: The routing key_combo
         :param int mask: The route key_combo mask
@@ -52,7 +51,7 @@ class MulticastRoutingEntry(object):
             * If processor_ids contains the same ID more than once
             * If link_ids contains the same ID more than once
         :raise TypeError: if no spinnaker_route provided and either
-            processor_ids or link_ids is missing or None
+            processor_ids or link_ids is missing or `None`
         """
         self._routing_entry_key = routing_entry_key
         self._mask = mask
