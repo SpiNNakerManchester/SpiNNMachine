@@ -143,9 +143,8 @@ class Chip(object):
     @property
     def x(self):
         """
-        The x-coordinate of the chip in the two-dimensional grid of chips
+        The X-coordinate of the chip in the two-dimensional grid of chips.
 
-        :return: the x-coordinate of the chip
         :rtype: int
         """
         return self._x
@@ -153,9 +152,8 @@ class Chip(object):
     @property
     def y(self):
         """
-        The y-coordinate of the chip in the two-dimensional grid of chips
+        The Y-coordinate of the chip in the two-dimensional grid of chips.
 
-        :return: the y-coordinate of the chip
         :rtype: int
         """
         return self._y
@@ -163,7 +161,7 @@ class Chip(object):
     @property
     def processors(self):
         """
-        An iterable of available processors
+        An iterable of available processors.
 
         :rtype: iterable(Processor)
         """
@@ -172,7 +170,7 @@ class Chip(object):
     @property
     def n_processors(self):
         """
-        The total number of processors
+        The total number of processors.
 
         :rtype: int
         """
@@ -181,7 +179,7 @@ class Chip(object):
     @property
     def n_user_processors(self):
         """
-        The total number of processors that are not monitors
+        The total number of processors that are not monitors.
 
         :rtype: int
         """
@@ -192,7 +190,6 @@ class Chip(object):
         """
         The router object associated with the chip.
 
-        :return: router associated with the chip
         :rtype: Router
         """
         return self._router
@@ -202,7 +199,6 @@ class Chip(object):
         """
         The SDRAM associated with the chip.
 
-        :return: SDRAM associated with the chip
         :rtype: SDRAM
         """
         return self._sdram
@@ -210,10 +206,9 @@ class Chip(object):
     @property
     def ip_address(self):
         """
-        The IP address of the chip.
+        The IP address of the chip, or ``None`` if there is no Ethernet
+        connected to the chip.
 
-        :return: IP address of the chip, or ``None`` if there is no Ethernet
-            connected to the chip
         :rtype: str or None
         """
         return self._ip_address
@@ -221,9 +216,8 @@ class Chip(object):
     @property
     def nearest_ethernet_x(self):
         """
-        The x coordinate of the nearest Ethernet chip.
+        The X-coordinate of the nearest Ethernet chip.
 
-        :return: the x coordinate of the nearest Ethernet chip
         :rtype: int
         """
         return self._nearest_ethernet_x
@@ -231,9 +225,8 @@ class Chip(object):
     @property
     def nearest_ethernet_y(self):
         """
-        The y coordinate of the nearest Ethernet chip.
+        The Y-coordinate of the nearest Ethernet chip.
 
-        :return: the y coordinate of the nearest Ethernet chip
         :rtype: int
         """
         return self._nearest_ethernet_y
@@ -243,7 +236,6 @@ class Chip(object):
         """
         The tag IDs supported by this chip.
 
-        :return: the set of IDs.
         :rtype: iterable(int)
         """
         return self._tag_ids
@@ -252,7 +244,6 @@ class Chip(object):
         """
         Get the first processor in the list which is not a monitor core.
 
-        :return: a processor, if any non-monitor processors exist
         :rtype: Processor or None
         """
         for processor in self.processors:

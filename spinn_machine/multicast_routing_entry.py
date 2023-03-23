@@ -80,7 +80,6 @@ class MulticastRoutingEntry(object):
         """
         The routing key.
 
-        :return: The routing key
         :rtype: int
         """
         return self._routing_entry_key
@@ -90,7 +89,6 @@ class MulticastRoutingEntry(object):
         """
         The routing mask.
 
-        :return: The routing mask
         :rtype: int
         """
         return self._mask
@@ -100,7 +98,6 @@ class MulticastRoutingEntry(object):
         """
         The destination processor IDs.
 
-        :return: An iterable of processor IDs
         :rtype: iterable(int)
         """
         if self._processor_ids is None:
@@ -112,7 +109,6 @@ class MulticastRoutingEntry(object):
         """
         The destination link IDs.
 
-        :return: An iterable of link IDs
         :rtype: iterable(int)
         """
         if self._link_ids is None:
@@ -122,9 +118,12 @@ class MulticastRoutingEntry(object):
     @property
     def defaultable(self):
         """
-        Whether this entry is a defaultable entry.
+        Whether this entry is a defaultable entry. An entry is defaultable if
+        it is duplicating the default behaviour of the SpiNNaker router (to
+        pass a message out on the link opposite from where it was received,
+        without routing it to any processors; source and destination chips for
+        a message cannot be defaultable).
 
-        :return: the bool that represents if a entry is defaultable or not
         :rtype: bool
         """
         return self._defaultable

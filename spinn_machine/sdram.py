@@ -39,9 +39,8 @@ class SDRAM(object):
     @property
     def size(self):
         """
-        The SDRAM available for user applications.
+        The SDRAM available for user applications, in bytes.
 
-        :return: The space available in bytes
         :rtype: int
         """
         return self._size

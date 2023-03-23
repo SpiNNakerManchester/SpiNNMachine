@@ -48,9 +48,8 @@ class Link(object):
     @property
     def source_x(self):
         """
-        The x-coordinate of the source chip of this link.
+        The X-coordinate of the source chip of this link.
 
-        :return: The x-coordinate
         :rtype: int
         """
         return self._source_x
@@ -58,9 +57,8 @@ class Link(object):
     @property
     def source_y(self):
         """
-        The y-coordinate of the source chip of this link.
+        The Y-coordinate of the source chip of this link.
 
-        :return: The y-coordinate
         :rtype: int
         """
         return self._source_y
@@ -70,7 +68,6 @@ class Link(object):
         """
         The ID of the link on the source chip.
 
-        :return: The link ID
         :rtype: int
         """
         return self._source_link_id
@@ -78,9 +75,8 @@ class Link(object):
     @property
     def destination_x(self):
         """
-        The x-coordinate of the destination chip of this link.
+        The X-coordinate of the destination chip of this link.
 
-        :return: The x-coordinate
         :rtype: int
         """
         return self._destination_x
@@ -88,9 +84,8 @@ class Link(object):
     @property
     def destination_y(self):
         """
-        The y-coordinate of the destination chip of this link.
+        The Y-coordinate of the destination chip of this link.
 
-        :return: The y-coordinate
         :rtype: int
         """
         return self._destination_y

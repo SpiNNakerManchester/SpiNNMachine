@@ -50,9 +50,8 @@ class CoreSubset(object):
     @property
     def x(self):
         """
-        The x-coordinate of the chip
+        The X-coordinate of the chip
 
-        :return: The x-coordinate
         :rtype: int
         """
         return self._x
@@ -60,9 +59,8 @@ class CoreSubset(object):
     @property
     def y(self):
         """
-        The y-coordinate of the chip
+        The Y-coordinate of the chip
 
-        :return: The y-coordinate
         :rtype: int
         """
         return self._y
@@ -70,15 +68,14 @@ class CoreSubset(object):
     @property
     def processor_ids(self):
         """
-        The subset of processor IDs on the chip.
+        The processor IDs on the chip that in the subset.
 
-        :return: An iterable of processor IDs
         :rtype: iterable(int)
         """
         return iter(self._processor_ids)
 
     def __repr__(self):
-        return "{}:{}:{}".format(self._x, self._y, self._processor_ids)
+        return f"{self._x}:{self._y}:{self._processor_ids}"
 
     def __eq__(self, other):
         if not isinstance(other, CoreSubset):
@@ -95,7 +92,7 @@ class CoreSubset(object):
 
     def __len__(self):
         """
-        The number of processors in this core subset
+        The number of processors in this core subset.
         """
         return len(self._processor_ids)
 

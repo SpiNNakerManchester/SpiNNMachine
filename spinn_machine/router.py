@@ -113,7 +113,6 @@ class Router(object):
         """
         The available links of this router.
 
-        :return: an iterable of available links
         :rtype: iterable(~spinn_machine.Link)
         """
         return iter(self._links.values())
@@ -141,9 +140,8 @@ class Router(object):
     @property
     def emergency_routing_enabled(self):
         """
-        Indicator of whether emergency routing is enabled.
+        Whether emergency routing is enabled.
 
-        :return: True if emergency routing is enabled, False otherwise
         :rtype: bool
         """
         return self._emergency_routing_enabled
@@ -153,7 +151,6 @@ class Router(object):
         """
         The number of available multicast entries in the routing tables.
 
-        :return: The number of available entries
         :rtype: int
         """
         return self._n_available_multicast_entries

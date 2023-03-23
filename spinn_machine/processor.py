@@ -61,7 +61,6 @@ class Processor(object):
         """
         The ID of the processor.
 
-        :return: ID of the processor
         :rtype: int
         """
         return self._processor_id
@@ -71,9 +70,7 @@ class Processor(object):
         """
         The amount of DTCM available on this processor.
 
-        :return: the amount of DTCM available on this processor
         :rtype: int
-
         """
         return self._dtcm_available
 
@@ -82,7 +79,6 @@ class Processor(object):
         """
         The number of CPU cycles available from this processor per ms.
 
-        :return: the number of CPU cycles available on this processor
         :rtype: int
         """
         return self._clock_speed // 1000
@@ -92,7 +88,6 @@ class Processor(object):
         """
         The clock speed of the processor in cycles per second.
 
-        :return: The clock speed in cycles per second
         :rtype: int
         """
         return self._clock_speed
@@ -106,7 +101,6 @@ class Processor(object):
         .. warning::
             Currently rejection processors are also marked as monitors.
 
-        :return: True if the processor is the monitor, False otherwise
         :rtype: bool
         """
         return self._is_monitor

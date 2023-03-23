@@ -520,48 +520,41 @@ class Machine(object, metaclass=AbstractBase):
         if len(self._ethernet_connected_chips) > 1:
             if not self.multiple_48_chip_boards():
                 raise SpinnMachineException(
-                    "A {} machine of size {}, {} can not handle multiple "
-                    "ethernet chips".format(
-                        self.wrap, self._width, self._height))
+                    f"A {self.wrap} machine of size {self._width}, "
+                    f"{self._height} can not handle multiple ethernet chips")
         # The fact that self._boot_ethernet_address is set means there is an
         # ethernet chip and it is at 0,0 so no need to check that
 
         for chip in self.chips:
             if chip.x < 0:
-                raise SpinnMachineException(
-                    "{} has a negative x".format(chip))
+                raise SpinnMachineException(f"{chip} has a negative x")
             if chip.y < 0:
-                raise SpinnMachineException(
-                    "{} has a negative y".format(chip))
+                raise SpinnMachineException(f"{chip} has a negative y")
             if chip.x >= self._width:
                 raise SpinnMachineException(
-                    "{} has an x large than width {}".format(
-                        chip, self._width))
+                    f"{chip} has an x larger than width {self._width}")
             if chip.y >= self._height:
                 raise SpinnMachineException(
-                    "{} has an y large than heigth {}".format(
-                        chip, self._width))
+                    f"{chip} has a y larger than height {self._height}")
             if chip.ip_address:
                 # Ethernet Chip checks
                 if chip.x % 4 != 0:
                     raise SpinnMachineException(
-                        "Ethernet {} has a x which is not divisible by 4"
-                        "".format(chip))
+                        f"Ethernet {chip} has a x which is not divisible by 4")
                 if (chip.x + chip.y) % 12 != 0:
                     raise SpinnMachineException(
-                        "Ethernet {} has a x y pair that do not add up to 12"
-                        "".format(chip))
+                        f"Ethernet {chip} has an x,y pair that "
+                        "does not add up to 12")
             else:
                 # Non-Ethernet chip checks
                 if not self.is_chip_at(
                         chip.nearest_ethernet_x, chip.nearest_ethernet_y):
                     raise SpinnMachineException(
-                        "{} has an invalid ethernet chip".format(chip))
+                        f"{chip} has an invalid ethernet chip")
                 local_xy = self.get_local_xy(chip)
                 if local_xy not in self._local_xys:
                     raise SpinnMachineException(
-                        "{} has an unexpected local xy of {}".format(
-                            chip, local_xy))
+                        f"{chip} has an unexpected local xy of {local_xy}")
 
     @abstractproperty
     def wrap(self):
@@ -583,7 +576,7 @@ class Machine(object, metaclass=AbstractBase):
         chip_id = (chip.x, chip.y)
         if chip_id in self._chips:
             raise SpinnMachineAlreadyExistsException(
-                "chip", "{}, {}".format(chip.x, chip.y))
+                "chip", f"{chip.x}, {chip.y}")
 
         self._chips[chip_id] = chip
 
@@ -612,7 +605,6 @@ class Machine(object, metaclass=AbstractBase):
         """
         An iterable of chips in the machine.
 
-        :return: An iterable of chips
         :rtype: iterable(:py:class:`~spinn_machine.Chip`)
         """
         return iter(self._chips.values())
@@ -622,7 +614,6 @@ class Machine(object, metaclass=AbstractBase):
         """
         An iterable of chip coordinates in the machine.
 
-        :return: An iterable of chip coordinates
         :rtype: iterable(tuple(int,int))
         """
         return iter(self._chips.keys())
@@ -717,9 +708,8 @@ class Machine(object, metaclass=AbstractBase):
     @property
     def width(self):
         """
-        The width to the machine.
+        The width of the machine, in chips.
 
-        :return: The width to the machine
         :rtype: int
         """
         return self._width
@@ -727,9 +717,8 @@ class Machine(object, metaclass=AbstractBase):
     @property
     def height(self):
         """
-        The height to the machine.
+        The height of the machine, in chips.
 
-        :return: The height to the machine
         :rtype: int
         """
         return self._height
@@ -1004,7 +993,7 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: str
         """
         cores, links = self.get_cores_and_link_count()
-        return "{} cores and {} links".format(cores, links)
+        return f"{cores} cores and {links} links"
 
     @property
     def boot_chip(self):
@@ -1041,7 +1030,6 @@ class Machine(object, metaclass=AbstractBase):
         The total number of cores on the machine which are not
         monitor cores.
 
-        :return: total
         :rtype: int
         """
         return sum(chip.n_user_processors for chip in self.chips)
@@ -1051,7 +1039,6 @@ class Machine(object, metaclass=AbstractBase):
         """
         The total number of cores on the machine, including monitors.
 
-        :return: total
         :rtype: int
         """
         return sum(
@@ -1229,7 +1216,7 @@ class Machine(object, metaclass=AbstractBase):
     @property
     def local_xys(self):
         """
-        Provides a list of local (x,y) values for a perfect board on this
+        Provides a list of local (x,y) coordinates for a perfect board on this
         machine.
 
         Local (x,y)s never include wrap-arounds.
@@ -1238,19 +1225,18 @@ class Machine(object, metaclass=AbstractBase):
             No check is done to see if any board in the machine actually
             has a chip with this local x, y.
 
-        :return: a list of (x,y) coordinates
         :rtype: iterable(tuple(int,int))
         """
         return self._local_xys
 
     def get_unused_xy(self):
         """
-        Finds an unused xy on this machine.
+        Finds an unused (x,y) coordinate on this machine.
 
-        This method will not return an xy of an existing chip
+        This method will not return an (x,y) of an existing chip
 
-        This method will not return an xy on any existing board even if that
-        chip does not exist. IE it will not return xy of a dead chip
+        This method will not return an (x,y) on any existing board even if that
+        chip does not exist. IE it will not return (x,y) of a known dead chip
 
         It will however return the same unused_xy until a chip is added at
         that location
@@ -1279,7 +1265,6 @@ class Machine(object, metaclass=AbstractBase):
         :param int radius: The radius of rings to produce (0 = start only)
         :param tuple(int,int) start: The start coordinate
         :rtype: tuple(int,int)
-
         """
         x, y = start
         yield (x, y)

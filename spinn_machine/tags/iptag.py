@@ -70,7 +70,7 @@ class IPTag(AbstractTag):
     @property
     def strip_sdp(self):
         """
-        Return if the SDP header is to be stripped.
+        Whether the SDP header is to be stripped.
         """
         return self._strip_sdp
 
@@ -84,14 +84,14 @@ class IPTag(AbstractTag):
     @property
     def destination_x(self):
         """
-        The x-coordinate where users of this tag should send packets to.
+        The X-coordinate where users of this tag should send packets to.
         """
         return self._destination_x
 
     @property
     def destination_y(self):
         """
-        The y-coordinate where users of this tag should send packets to.
+        The Y-coordinate where users of this tag should send packets to.
         """
         return self._destination_y
 

@@ -32,8 +32,8 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
         :param str item: The item of which there is already one of
         :param str value: The value of the item
         """
-        super().__init__("There can only be one {} with a value of {}".format(
-            item, value))
+        super().__init__(
+            f"There can only be one {item} with a value of {value}")
         self._item = item
         self._value = value
 
@@ -68,8 +68,8 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         :param str value: The value of the parameter that is invalid
         :param str problem: The reason for the exception
         """
-        super().__init__("It is invalid to set {} to {}: {}".format(
-            parameter, value, problem))
+        super().__init__(
+            f"It is invalid to set {parameter} to {value}: {problem}")
         self._parameter = parameter
         self._value = value
         self._problem = problem

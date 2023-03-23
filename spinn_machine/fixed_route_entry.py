@@ -49,9 +49,8 @@ class FixedRouteEntry(object):
     @property
     def processor_ids(self):
         """
-        The destination processor IDs
+        The destination processor IDs.
 
-        :return: An iterable of processor IDs
         :rtype: iterable(int)
         """
         return self._processor_ids
@@ -59,9 +58,8 @@ class FixedRouteEntry(object):
     @property
     def link_ids(self):
         """
-        The destination link IDs
+        The destination link IDs.
 
-        :return: An iterable of link IDs
         :rtype: iterable(int)
         """
         return self._link_ids

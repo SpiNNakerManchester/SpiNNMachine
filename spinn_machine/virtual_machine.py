@@ -32,12 +32,12 @@ def _verify_width_height(width, height):
     try:
         if width < 0 or height < 0:
             raise SpinnMachineInvalidParameterException(
-                "width or height", "{} and {}".format(width, height),
+                "width or height", f"{width} and {height}",
                 "Negative dimensions are not supported")
     except TypeError as original:
         if width is None or height is None:
             raise SpinnMachineInvalidParameterException(
-                "width or height", "{} and {}".format(width, height),
+                "width or height", f"{width} and {height}",
                 "parameter required") from original
         raise
 
