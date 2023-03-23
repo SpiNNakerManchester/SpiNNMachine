@@ -218,7 +218,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         try:
             new_machine.validate()
         except SpinnMachineException as ex:
-            self.assertIn("has an y larger than height 8", str(ex))
+            self.assertIn("has a y larger than height 8", str(ex))
 
     def test_machine_get_chip_at_invalid_location(self):
         """
