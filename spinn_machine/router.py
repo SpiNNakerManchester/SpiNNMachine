@@ -214,11 +214,9 @@ class Router(object):
 
     def __str__(self):
         return (
-            "[Router: emergency_routing={}, "
-            "available_entries={}, links={}]".format(
-                self._emergency_routing_enabled,
-                self._n_available_multicast_entries,
-                list(self._links.values())))
+            f"[Router: emergency_routing={self._emergency_routing_enabled}, "
+            f"available_entries={self._n_available_multicast_entries}, "
+            f"links={list(self._links.values())}]")
 
     def __repr__(self):
         return self.__str__()

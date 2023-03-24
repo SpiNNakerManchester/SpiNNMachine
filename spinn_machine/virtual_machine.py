@@ -168,7 +168,7 @@ class _VirtualMachine(object):
             x, y = x_y
             if x_y in ethernet_chips:
                 new_chip = self._create_chip(
-                    x, y, configured_chips, "127.0.{}.{}".format(x, y))
+                    x, y, configured_chips, f"127.0.{x}.{y}")
             else:
                 new_chip = self._create_chip(x, y, configured_chips)
             self._machine.add_chip(new_chip)

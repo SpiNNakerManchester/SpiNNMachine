@@ -106,9 +106,10 @@ class Processor(object):
         return self._is_monitor
 
     def __str__(self):
-        return "[CPU: id={}, clock_speed={} MHz, monitor={}]".format(
-            self._processor_id, (self._clock_speed // 1000000),
-            self._is_monitor)
+        return (
+            f"[CPU: id={self._processor_id}, "
+            f"clock_speed={self._clock_speed // 1000000} MHz, "
+            f"monitor={self._is_monitor}]")
 
     def __repr__(self):
         return self.__str__()

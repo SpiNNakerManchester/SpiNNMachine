@@ -90,13 +90,12 @@ class Link(object):
         """
         return self._destination_y
 
-    __REPR_TEMPLATE = ("[Link: source_x={}, source_y={}, source_link_id={}, "
-                       "destination_x={}, destination_y={}]")
-
     def __str__(self):
-        return self.__REPR_TEMPLATE.format(
-            self._source_x, self._source_y, self._source_link_id,
-            self._destination_x, self._destination_y)
+        return (
+            f"[Link: source_x={self._source_x}, source_y={self._source_y}, "
+            f"source_link_id={self._source_link_id}, "
+            f"destination_x={self._destination_x}, "
+            f"destination_y={self._destination_y}]")
 
     def __repr__(self):
         return self.__str__()

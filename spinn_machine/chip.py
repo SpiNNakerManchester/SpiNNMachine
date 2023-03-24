@@ -317,14 +317,13 @@ class Chip(object):
     def __contains__(self, processor_id):
         return self.is_processor_with_id(processor_id)
 
-    __REPR_TEMPLATE = ("[Chip: x={}, y={}, sdram={}, ip_address={}, "
-                       "router={}, processors={}, nearest_ethernet={}:{}]")
-
     def __str__(self):
-        return self.__REPR_TEMPLATE.format(
-            self._x, self._y, self.sdram, self.ip_address,
-            self.router, list(self._p.values()),
-            self._nearest_ethernet_x, self._nearest_ethernet_y)
+        return (
+            f"[Chip: x={self._x}, y={self._y}, sdram={self.sdram}, "
+            f"ip_address={self.ip_address}, router={self.router}, "
+            f"processors={list(self._p.values())}, "
+            f"nearest_ethernet={self._nearest_ethernet_x}:"
+            f"{self._nearest_ethernet_y}]")
 
     def __repr__(self):
         return self.__str__()

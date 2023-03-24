@@ -86,8 +86,8 @@ class ReverseIPTag(AbstractTag):
 
     def __repr__(self):
         return (
-            "ReverseIPTag(board_address={}, tag={}, port={}, destination_x={},"
-            " destination_y={}, destination_p={}, sdp_port={})".format(
-                self._board_address, self._tag, self._port,
-                self._destination_x, self._destination_y,
-                self._destination_p, self._sdp_port))
+            f"ReverseIPTag(board_address={self._board_address}, "
+            f"tag={self._tag}, port={self._port}, "
+            f"destination_x={self._destination_x}, "
+            f"destination_y={self._destination_y}, "
+            f"destination_p={self._destination_p}, sdp_port={self._sdp_port})")

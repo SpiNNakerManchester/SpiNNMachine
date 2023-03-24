@@ -97,12 +97,12 @@ class IPTag(AbstractTag):
 
     def __repr__(self):
         return (
-            "IPTag(board_address={}, destination_x={}, destination_y={},"
-            " tag={}, port={}, ip_address={}, strip_sdp={},"
-            " traffic_identifier={})".format(
-                self.board_address, self.destination_x, self.destination_y,
-                self.tag, self.port, self.ip_address, self.strip_sdp,
-                self.traffic_identifier))
+            f"IPTag(board_address={self.board_address}, "
+            f"destination_x={self.destination_x}, "
+            f"destination_y={self.destination_y},"
+            f" tag={self.tag}, port={self.port}, "
+            f"ip_address={self.ip_address}, strip_sdp={self.strip_sdp}, "
+            f"traffic_identifier={self.traffic_identifier})")
 
     def __eq__(self, other):
         if not isinstance(other, IPTag):
