@@ -146,7 +146,7 @@ def _describe_chip(chip, std, eth):
     details = dict()
     details["cores"] = chip.n_processors
     if chip.nearest_ethernet_x is not None:
-        details["ethernet"] =\
+        details["ethernet"] = \
             [chip.nearest_ethernet_x, chip.nearest_ethernet_y]
 
     dead_links = []

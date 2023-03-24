@@ -43,7 +43,6 @@ class SpiNNakerTriadGeometry(object):
 
         :return: a :py:class:`SpiNNakerTriadGeometry` object.
         """
-
         # Note the centres are slightly offset so as to force which edges are
         # included where
         if SpiNNakerTriadGeometry.spinn5_triad_geometry is None:
@@ -62,7 +61,6 @@ class SpiNNakerTriadGeometry(object):
             the distance from each Ethernet chip to the centre of the hexagon
         :type centre: tuple(float, float)
         """
-
         self._triad_width = triad_width
         self._triad_height = triad_height
         self._roots = roots
