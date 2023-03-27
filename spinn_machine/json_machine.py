@@ -43,9 +43,12 @@ OPPOSITE_LINK_OFFSET = 3
 
 def machine_from_json(j_machine):
     """
+    Generate a model of a machine from a JSON description of that machine.
+
     :param j_machine: JSON description of the machine
     :type j_machine: dict in format returned by json.load or a
         str representing a path to the JSON file
+    :return: The machine model.
     :rtype: Machine
     """
     if isinstance(j_machine, str):

@@ -27,10 +27,10 @@ REPORTS_DIRNAME = "reports"
 
 class MachineDataWriter(UtilsDataWriter, MachineDataView):
     """
-    See UtilsDataWriter
+    See UtilsDataWriter.
 
     This class is designed to only be used directly within the SpiNNMachine
-    repository unittests as all methods are available to subclasses
+    repository unit tests as all methods are available to subclasses.
     """
     __data = _MachineDataModel()
     __slots__ = []
@@ -64,7 +64,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
     def get_user_accessed_machine(self):
         """
-        Reports if ...View.get_machine has been called outside of sim.run
+        Reports if `...View.get_machine` has been called outside of `sim.run`.
 
         Designed to only be used from ASB. Any other use is not supported
         """
@@ -72,7 +72,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
     def set_machine(self, machine):
         """
-        Sets the machine
+        Sets the machine.
 
         :param Machine machine:
         :raises TypeError: it the machine is not a Machine
@@ -83,17 +83,18 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
     def clear_machine(self):
         """
-        Clears any previously set machine
+        Clears any previously set machine.
 
-        Designed to only be used by ASB to remove a max machine before
-        allocating an actual one.  Any other use is not supported.
-        Will be removed without notice if max_machine is no longer done.
+        .. warning::
+            Designed to only be used by ASB to remove a max machine before
+            allocating an actual one.  Any other use is not supported.
+            Will be removed without notice if `max_machine` is no longer done.
         """
         self.__data._machine = None
 
     def set_machine_generator(self, machine_generator):
         """
-        Registers a function that can be called to give a machine
+        Registers a function that can be called to give a machine.
 
         :param function machine_generator:
         """

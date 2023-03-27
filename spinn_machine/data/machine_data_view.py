@@ -18,7 +18,7 @@ from spinn_utilities.data import UtilsDataView
 
 class _MachineDataModel(object):
     """
-    Singleton data model
+    Singleton data model.
 
     This class should not be accessed directly please use the DataView and
     DataWriter classes.
@@ -126,7 +126,7 @@ class MachineDataView(UtilsDataView):
         """
         Gets the chip at x and y.
 
-        Almost Semantic sugar for machine.get_chip_at
+        Almost Semantic sugar for `get_machine().get_chip_at()`
 
         The method however does not return `None` but rather raises a KeyError
         if the chip is not known
@@ -171,7 +171,7 @@ class MachineDataView(UtilsDataView):
         """
         Gets a string saying where chip at x and y is if possible.
 
-        Almost Semantic sugar for get_machine.where_is_xy
+        Almost Semantic sugar for `get_machine().where_is_xy()`
 
         The method does not raise an exception rather returns a String of the
         exception
@@ -196,7 +196,7 @@ class MachineDataView(UtilsDataView):
         """
         Gets a string saying where chip is if possible.
 
-        Almost Semantic sugar for get_machine.where_is_xy
+        Almost Semantic sugar for `get_machine().where_is_chip()`
 
         The method does not raise an exception rather returns a String of the
         exception

@@ -27,9 +27,15 @@ class Machine(object, metaclass=AbstractBase):
     A representation of a SpiNNaker Machine with a number of Chips.
     Machine is also iterable, providing ``((x, y), chip)`` where:
 
-        * ``x`` is the x-coordinate of a chip
-        * ``y`` is the y-coordinate of a chip
-        * ``chip`` is the chip with the given ``(x, y)`` coordinates
+        * ``x`` is the x-coordinate of a chip,
+        * ``y`` is the y-coordinate of a chip,
+        * ``chip`` is the chip with the given ``(x, y)`` coordinates.
+
+    Use
+    :py:func:`~spinn_machine.machine_from_chips`
+    and
+    :py:func:`~spinn_machine.machine_from_size`
+    to determine the correct machine class.
     """
 
     # current opinions is that the Ethernet connected chip can handle 10
@@ -124,10 +130,6 @@ class Machine(object, metaclass=AbstractBase):
 
     def __init__(self, width, height, chips=None, origin=None):
         """
-        Creates an abstract machine that must be superclassed by wrap type.
-
-        Use machine_factory methods to determine the correct machine class
-
         :param int width: The width of the machine excluding
         :param int height:
             The height of the machine
@@ -343,7 +345,7 @@ class Machine(object, metaclass=AbstractBase):
     def get_local_xy(self, chip):
         """
         Converts the x and y coordinates into the local coordinates on the
-        board as if the ethernet was at position 0,0
+        board as if the ethernet was at position 0,0.
 
         This method does take wrap-arounds into consideration.
 
@@ -357,10 +359,10 @@ class Machine(object, metaclass=AbstractBase):
 
     def where_is_chip(self, chip):
         """
-        Returns global and local location for this chip
+        Returns global and local location for this chip.
 
         This method assumes that chip is on the machine or is a copy of a
-        chip on the machine
+        chip on the machine.
 
         :param Chip chip: A Chip in the machine
         :rtype: str
@@ -390,7 +392,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         Converts the local x and y coordinates into global x,y coordinates,
         under the assumption that they are on the board with local 0,0 at
-        ethernet_x, ethernet_y
+        ethernet_x, ethernet_y.
 
         This method does take wrap-arounds into consideration.
 
@@ -411,7 +413,7 @@ class Machine(object, metaclass=AbstractBase):
     def get_vector_length(self, source, destination):
         """
         Get the mathematical length of the shortest vector (x, y, z) from
-        source to destination
+        source to destination.
 
         Use the same algorithm as vector to find the best x, y pair but then
         is optimised to directly calculate length
@@ -445,7 +447,7 @@ class Machine(object, metaclass=AbstractBase):
 
         :param source: (x,y) coordinates of the source chip
         :type source: tuple(int, int)
-        :param destination:  (x,y) coordinates of the destination chip
+        :param destination: (x,y) coordinates of the destination chip
         :type destination: tuple(int, int)
         :return: The distance in steps
         :rtype: int
@@ -454,7 +456,7 @@ class Machine(object, metaclass=AbstractBase):
     @abstractmethod
     def get_vector(self, source, destination):
         """
-        Get mathematical shortest vector (x, y, z) from source to destination
+        Get mathematical shortest vector (x, y, z) from source to destination.
 
         This method does not check if the chips and links it assumes to take
         actually exist.
@@ -467,7 +469,7 @@ class Machine(object, metaclass=AbstractBase):
         Described in http://jhnet.co.uk/articles/torus_paths
 
         Use the same algorithm as vector_length
-        using the best x, y pair as minimize(x, y, 0)
+        using the best x, y pair as `minimize(x, y, 0)`
 
         :param source: (x,y) coordinates of the source chip
         :type source: tuple(int, int)
@@ -503,16 +505,16 @@ class Machine(object, metaclass=AbstractBase):
         (Except of course in testing)
 
         :raises SpinnMachineException:
-            An Error is raised if there is a chip with a x outside of the
-            range 0 to width -1
-            An Error is raised if there is a chip with a y outside of the
-            range 0 to height -1.
-            An Error is raise if there is no chip at the declared ethernet
-            x and y.
-            An Error is raised if an ethernet chip is not at a local 0,0.
-            An Error is raised if there is no ethernet chip is at 0,0.
-            An Error is raised if this is a unexpected multiple board
-            situation.
+            * An Error is raised if there is a chip with a x outside of the
+              range 0 to width -1.
+            * An Error is raised if there is a chip with a y outside of the
+              range 0 to height -1.
+            * An Error is raise if there is no chip at the declared ethernet
+              x and y.
+            * An Error is raised if an ethernet chip is not at a local 0,0.
+            * An Error is raised if there is no ethernet chip is at 0,0.
+            * An Error is raised if this is a unexpected multiple board
+              situation.
         """
         if self._boot_ethernet_address is None:
             raise SpinnMachineException(
