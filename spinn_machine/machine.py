@@ -116,9 +116,9 @@ class Machine(object, metaclass=AbstractBase):
         actually have.
 
         :param int new_max: New value to use for the max
-        :raises: SpinnMachineException if max_cores_per_chip has already been
+        :raises SpinnMachineException: if `max_cores_per_chip` has already been
             used and is now being changed.
-            The Exception also happens if the value is set twice to difference
+            The Exception also happens if the value is set twice to different
             values. For example in the script and in the config.
         """
         if Machine.__max_cores is None:
@@ -312,7 +312,7 @@ class Machine(object, metaclass=AbstractBase):
     @abstractmethod
     def xy_over_link(self, x, y, link):
         """
-        Get the potential x,y location of the chip reached over this link.
+        Get the potential (x,y) location of the chip reached over this link.
 
         Wrap-arounds are handled as appropriate.
 
@@ -329,7 +329,7 @@ class Machine(object, metaclass=AbstractBase):
             the machine.
 
         On machine without full wrap-around it is possible that this method
-        generates x,y values that fall outside of the legal values including
+        generates (x,y) values that fall outside of the legal values including
         negative values, x = width or y = height.
 
         :param int x: The x coordinate of a chip that will exist on the machine
@@ -337,7 +337,7 @@ class Machine(object, metaclass=AbstractBase):
         :param int link:
             The link to another chip that could exist on the machine
         :return: x and y coordinates of the chip over that link if it is
-            valid or some fictional x,y if not.
+            valid or some fictional (x,y) if not.
         :rtype: tuple(int,int)
         """
 
@@ -365,6 +365,7 @@ class Machine(object, metaclass=AbstractBase):
         chip on the machine.
 
         :param Chip chip: A Chip in the machine
+        :return: A human-readable description of the location of a chip.
         :rtype: str
         """
         chip00 = self.get_chip_at(0, 0)
@@ -376,10 +377,11 @@ class Machine(object, metaclass=AbstractBase):
 
     def where_is_xy(self, x, y):
         """
-        Returns global and local location for this chip
+        Returns global and local location for this chip.
 
-        :param int x:
-        :param int y:
+        :param int x: X coordinate
+        :param int y: Y coordinate
+        :return: A human-readable description of the location of a chip.
         :rtype: str
         """
         chip = self.get_chip_at(x, y)
@@ -390,14 +392,15 @@ class Machine(object, metaclass=AbstractBase):
     @abstractmethod
     def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
         """
-        Converts the local x and y coordinates into global x,y coordinates,
+        Converts the local x and y coordinates into global (x,y) coordinates,
         under the assumption that they are on the board with local 0,0 at
-        ethernet_x, ethernet_y.
+        global coordinates (ethernet_x, ethernet_y).
 
         This method does take wrap-arounds into consideration.
 
-        GIGO: This method does not check if input parameters make sense,
-        nor does it check if there is a chip at the resulting global x,y
+        .. warning::
+            GIGO: This method does not check if input parameters make sense,
+            nor does it check if there is a chip at the resulting global (x,y)
 
         :param int local_x: A valid local x coordinate for a chip
         :param int local_y: A valid local y coordinate for a chip
@@ -443,7 +446,8 @@ class Machine(object, metaclass=AbstractBase):
         The length of vectors where x and y have opposite signs will be
         `abs(x)` and `abs(y)` as these are already minimum so z is not used.
 
-        GIGO: This method does not check if input parameters make sense,
+        .. warning::
+            GIGO: This method does not check if input parameters make sense.
 
         :param source: (x,y) coordinates of the source chip
         :type source: tuple(int, int)
@@ -674,7 +678,7 @@ class Machine(object, metaclass=AbstractBase):
     def is_chip_at(self, x, y):
         """
         Determine if a chip exists at the given coordinates.
-        Also implemented as __contains__((x, y))
+        Also implemented as ``__contains__((x, y))``
 
         :param int x: x location of the chip to test for existence
         :param int y: y location of the chip to test for existence
@@ -1050,7 +1054,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         Detects chips that can not reach any of their neighbours.
 
-        Current implementation does NOT deal with group of unreachable chips
+        Current implementation does *not* deal with group of unreachable chips.
 
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
@@ -1072,7 +1076,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         Detects chips that are not reachable from any of their neighbours.
 
-        Current implementation does NOT deal with group of unreachable chips
+        Current implementation does *not* deal with group of unreachable chips.
 
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
@@ -1096,9 +1100,9 @@ class Machine(object, metaclass=AbstractBase):
 
     def unreachable_outgoing_local_chips(self):
         """
-        Detects chips that can not reach any of their LOCAL neighbours.
+        Detects chips that can not reach any of their *local* neighbours.
 
-        Current implementation does NOT deal with group of unreachable chips
+        Current implementation does *not* deal with group of unreachable chips.
 
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
@@ -1130,10 +1134,10 @@ class Machine(object, metaclass=AbstractBase):
 
     def unreachable_incoming_local_chips(self):
         """
-        Detects chips that are not reachable from any of their LOCAL
+        Detects chips that are not reachable from any of their *local*
         neighbours.
 
-        Current implementation does NOT deal with group of unreachable chips
+        Current implementation does *not* deal with group of unreachable chips.
 
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
@@ -1178,7 +1182,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def _minimize_vector(self, x, y):
         """
-        Minimizes an x, y, 0 vector.
+        Minimizes an (x, y, 0) vector.
 
         When vectors are minimised, (1,1,1) is added or subtracted from them.
         This process does not change the range of numbers in the vector.
@@ -1225,7 +1229,7 @@ class Machine(object, metaclass=AbstractBase):
 
         .. note::
             No check is done to see if any board in the machine actually
-            has a chip with this local x, y.
+            has a chip with this local (x, y).
 
         :rtype: iterable(tuple(int,int))
         """
@@ -1238,10 +1242,11 @@ class Machine(object, metaclass=AbstractBase):
         This method will not return an (x,y) of an existing chip
 
         This method will not return an (x,y) on any existing board even if that
-        chip does not exist. IE it will not return (x,y) of a known dead chip
+        chip does not exist, i.e., it will not return (x,y) of a known dead
+        chip.
 
-        It will however return the same unused_xy until a chip is added at
-        that location
+        It will however return the same `unused_xy` until a chip is added at
+        that location.
 
         :return: an unused xy
         :rtype: (int, int)
@@ -1261,7 +1266,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def _basic_concentric_xys(self, radius, start):
         """
-        Generates concentric xys from start without accounting for wrap
+        Generates concentric (x,y)s from start without accounting for wrap
         around or checking if the chip exists.
 
         :param int radius: The radius of rings to produce (0 = start only)
