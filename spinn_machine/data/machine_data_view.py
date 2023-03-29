@@ -77,7 +77,8 @@ class MachineDataView(UtilsDataView):
     """
     Adds the extra Methods to the View for Machine level.
 
-    See UtilsDataView for a more detailed description.
+    See :py:class:`~spinn_utilities.data.UtilsDataView` for a more detailed
+    description.
 
     This class is designed to only be used directly within the SpiNNMachine
     repository as all methods are available to subclasses
