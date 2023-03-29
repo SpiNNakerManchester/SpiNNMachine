@@ -565,9 +565,8 @@ class Machine(object, metaclass=AbstractBase):
     @abstractproperty
     def wrap(self):
         """
-        String to represent the type of wrap.
+        A short string representing the type of wrap.
 
-        :return: Short string for type of wrap
         :rtype: str
         """
 
