@@ -18,12 +18,13 @@ from .machine import Machine
 
 
 class Router(object):
-    """ Represents a router of a chip, with a set of available links.\
-        The router is iterable over the links, providing (source_link_id,\
-        link) where:
+    """
+    Represents a router of a chip, with a set of available links.
+    The router is iterable over the links, providing (source_link_id,
+    link) where:
 
-            * ``source_link_id`` is the ID of a link
-            * ``link`` is the :py:class:`Link` with ID ``source_link_id``
+        * ``source_link_id`` is the ID of a link
+        * ``link`` is the :py:class:`Link` with ID ``source_link_id``
     """
 
     # The maximum number of links/directions a router can handle
@@ -59,7 +60,8 @@ class Router(object):
         self._n_available_multicast_entries = n_available_multicast_entries
 
     def add_link(self, link):
-        """ Add a link to the router of the chip
+        """
+        Add a link to the router of the chip.
 
         :param Link link: The link to be added
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
@@ -71,62 +73,64 @@ class Router(object):
         self._links[link.source_link_id] = link
 
     def is_link(self, source_link_id):
-        """ Determine if there is a link with ID source_link_id.\
-            Also implemented as ``__contains__(source_link_id)``
+        """
+        Determine if there is a link with ID source_link_id.
+        Also implemented as ``__contains__(source_link_id)``
 
         :param int source_link_id: The ID of the link to find
         :return: True if there is a link with the given ID, False otherwise
         :rtype: bool
-        :raise None: No known exceptions are raised
         """
         return source_link_id in self._links
 
     def __contains__(self, source_link_id):
-        """ See :py:meth:`is_link`
+        """
+        See :py:meth:`is_link`
         """
         return self.is_link(source_link_id)
 
     def get_link(self, source_link_id):
-        """ Get the link with the given ID, or None if no such link.\
-            Also implemented as ``__getitem__(source_link_id)``
+        """
+        Get the link with the given ID, or `None` if no such link.
+        Also implemented as ``__getitem__(source_link_id)``
 
         :param int source_link_id: The ID of the link to find
         :return: The link, or ``None`` if no such link
         :rtype: ~spinn_machine.Link or None
-        :raise None: No known exceptions are raised
         """
         if source_link_id in self._links:
             return self._links[source_link_id]
         return None
 
     def __getitem__(self, source_link_id):
-        """ See :py:meth:`get_link`
+        """
+        See :py:meth:`get_link`
         """
         return self.get_link(source_link_id)
 
     @property
     def links(self):
-        """ The available links of this router
+        """
+        The available links of this router.
 
-        :return: an iterable of available links
         :rtype: iterable(~spinn_machine.Link)
-        :raise None: does not raise any known exceptions
         """
         return iter(self._links.values())
 
     def __iter__(self):
-        """ Get an iterable of source link IDs and links in the router
+        """
+        Get an iterable of source link IDs and links in the router.
 
         :return: an iterable of tuples of ``(source_link_id, link)`` where:
             * ``source_link_id`` is the ID of the link
             * ``link`` is a router link
         :rtype: iterable(int, ~spinn_machine.Link)
-        :raise None: does not raise any known exceptions
         """
         return iter(self._links.items())
 
     def __len__(self):
-        """ Get the number of links in the router
+        """
+        Get the number of links in the router.
 
         :return: The length of the underlying iterable
         :rtype: int
@@ -135,26 +139,27 @@ class Router(object):
 
     @property
     def emergency_routing_enabled(self):
-        """ Indicator of whether emergency routing is enabled
+        """
+        Whether emergency routing is enabled.
 
-        :return: True if emergency routing is enabled, False otherwise
         :rtype: bool
         """
         return self._emergency_routing_enabled
 
     @property
     def n_available_multicast_entries(self):
-        """ The number of available multicast entries in the routing tables
+        """
+        The number of available multicast entries in the routing tables.
 
-        :return: The number of available entries
         :rtype: int
         """
         return self._n_available_multicast_entries
 
     @staticmethod
     def convert_routing_table_entry_to_spinnaker_route(routing_table_entry):
-        """ Convert a routing table entry represented in software to a\
-            binary routing table entry usable on the machine
+        """
+        Convert a routing table entry represented in software to a
+        binary routing table entry usable on the machine.
 
         :param ~spinn_machine.MulticastRoutingEntry routing_table_entry:
             The entry to convert
@@ -180,9 +185,9 @@ class Router(object):
 
     @staticmethod
     def convert_spinnaker_route_to_routing_ids(route):
-        """ Convert a binary routing table entry usable on the machine to \
-            lists of route IDs usable in a routing table entry represented in \
-            software.
+        """
+        Convert a binary routing table entry usable on the machine to lists of
+        route IDs usable in a routing table entry represented in software.
 
         :param int route: The routing table entry
         :return: The list of processor IDs, and the list of link IDs.
@@ -195,7 +200,8 @@ class Router(object):
         return processor_ids, link_ids
 
     def get_neighbouring_chips_coords(self):
-        """ Utility method to convert links into x and y coordinates
+        """
+        Utility method to convert links into x and y coordinates.
 
         :return: iterable list of destination coordinates in x and y dict
         :rtype: iterable(dict(str,int))
@@ -208,11 +214,9 @@ class Router(object):
 
     def __str__(self):
         return (
-            "[Router: emergency_routing={}, "
-            "available_entries={}, links={}]".format(
-                self._emergency_routing_enabled,
-                self._n_available_multicast_entries,
-                list(self._links.values())))
+            f"[Router: emergency_routing={self._emergency_routing_enabled}, "
+            f"available_entries={self._n_available_multicast_entries}, "
+            f"links={list(self._links.values())}]")
 
     def __repr__(self):
         return self.__str__()
@@ -223,7 +227,7 @@ class Router(object):
         Given a valid link_id this method returns its opposite.
 
         GIGO: this method assumes the input is valid.
-        No verfication is done
+        No verification is done
 
         :param int link_id: A valid link_id
         :return: The link_id for the opposite direction

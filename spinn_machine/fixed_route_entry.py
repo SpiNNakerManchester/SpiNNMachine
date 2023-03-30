@@ -16,7 +16,8 @@ from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class FixedRouteEntry(object):
-    """ Describes an entry in a SpiNNaker chip's fixed route routing table.
+    """
+    Describes an entry in a SpiNNaker chip's fixed route routing table.
     """
 
     __slots__ = (
@@ -47,18 +48,18 @@ class FixedRouteEntry(object):
 
     @property
     def processor_ids(self):
-        """ The destination processor IDs
+        """
+        The destination processor IDs.
 
-        :return: An iterable of processor IDs
         :rtype: iterable(int)
         """
         return self._processor_ids
 
     @property
     def link_ids(self):
-        """ The destination link IDs
+        """
+        The destination link IDs.
 
-        :return: An iterable of link IDs
         :rtype: iterable(int)
         """
         return self._link_ids

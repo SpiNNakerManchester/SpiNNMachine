@@ -14,8 +14,9 @@
 
 
 class IgnoreChip(object):
-    """ Represents a chip to be ignored when building a machine. This is \
-        typically because it has a fault in the SpiNNaker router.
+    """
+    Represents a chip to be ignored when building a machine. This is
+    typically because it has a fault in the SpiNNaker router.
     """
 
     __slots__ = ["x", "y", "ip_address"]
@@ -40,7 +41,8 @@ class IgnoreChip(object):
 
     @staticmethod
     def parse_single_string(downed_chip):
-        """ Converts a string into an :py:class:`IgnoreChip` object
+        """
+        Converts a string into an :py:class:`IgnoreChip` object.
 
         The supported format is::
 
@@ -75,8 +77,9 @@ class IgnoreChip(object):
 
     @staticmethod
     def parse_string(downed_chips):
-        """ Converts a string into a (possibly empty) set of \
-            :py:class:`IgnoreChip` objects
+        """
+        Converts a string into a (possibly empty) set of
+        :py:class:`IgnoreChip` objects.
 
         format is::
 

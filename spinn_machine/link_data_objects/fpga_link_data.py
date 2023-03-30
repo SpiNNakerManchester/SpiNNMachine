@@ -16,7 +16,8 @@ from .abstract_link_data import AbstractLinkData
 
 
 class FPGALinkData(AbstractLinkData):
-    """ Data object for FPGA links
+    """
+    Data object for FPGA links.
     """
 
     __slots__ = (
@@ -34,13 +35,15 @@ class FPGALinkData(AbstractLinkData):
 
     @property
     def fpga_link_id(self):
-        """ The ID of the link out of the SpiNNaker FPGA.
+        """
+        The ID of the link out of the SpiNNaker FPGA.
         """
         return self._fpga_link_id
 
     @property
     def fpga_id(self):
-        """ The ID of the SpiNNaker FPGA.
+        """
+        The ID of the SpiNNaker FPGA.
         """
         return self._fpga_id
 

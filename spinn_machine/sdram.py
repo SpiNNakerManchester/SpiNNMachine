@@ -16,7 +16,8 @@ from .exceptions import SpinnMachineInvalidParameterException
 
 
 class SDRAM(object):
-    """ Represents the properties of the SDRAM of a chip in the machine
+    """
+    Represents the properties of the SDRAM of a chip in the machine.
     """
 
     DEFAULT_SDRAM_BYTES = 117 * 1024 * 1024
@@ -37,15 +38,15 @@ class SDRAM(object):
 
     @property
     def size(self):
-        """ The SDRAM available for user applications
+        """
+        The SDRAM available for user applications, in bytes.
 
-        :return: The space available in bytes
         :rtype: int
         """
         return self._size
 
     def __str__(self):
-        return "{} MB".format(self._size // (1024 * 1024))
+        return f"{self._size // (1024 * 1024)} MB"
 
     def __repr__(self):
         return self.__str__()

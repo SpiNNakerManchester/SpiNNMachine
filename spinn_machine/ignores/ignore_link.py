@@ -14,7 +14,8 @@
 
 
 class IgnoreLink(object):
-    """ Represents a link that should be ignored when building a machine.
+    """
+    Represents a link that should be ignored when building a machine.
     """
 
     __slots__ = ["x", "y", "link", "ip_address"]
@@ -43,7 +44,8 @@ class IgnoreLink(object):
 
     @staticmethod
     def parse_single_string(downed_link):
-        """ Converts a string into an :py:class:`IgnoreLink` object
+        """
+        Converts a string into an :py:class:`IgnoreLink` object.
 
         The format is::
 
@@ -74,8 +76,9 @@ class IgnoreLink(object):
 
     @staticmethod
     def parse_string(downed_links):
-        """ Converts a string into a (possibly empty) set of \
-            :py:class:`IgnoreLink` objects
+        """
+        Converts a string into a (possibly empty) set of
+        :py:class:`IgnoreLink` objects
 
         The format is::
 

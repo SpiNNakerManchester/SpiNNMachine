@@ -58,13 +58,12 @@ def machine_from_size(width, height, chips=None, origin=None):
     This could include a machine with no wrap-arounds, only vertical ones,
     only horizontal ones or both.
 
-    Note: If the sizes do not match the ones for a known wrap-around machine,
-    no wrap-arounds is assumed.
+    .. note::
+        If the sizes do not match the ones for a known wrap-around machine,
+        a machine with no wrap-arounds is assumed.
 
-    :param width: The width of the machine excluding any virtual chips
-    :type width: int
-    :param height: The height of the machine excluding any virtual chips
-    :type height: int
+    :param int width: The width of the machine excluding any virtual chips
+    :param int height: The height of the machine excluding any virtual chips
     :param chips: Any chips to be added.
     :type chips: list(Chip) or None
     :param origin: Extra information about how this machine was created
@@ -113,16 +112,17 @@ def machine_from_chips(chips):
 
 
 def _machine_ignore(original, dead_chips, dead_links):
-    """ Creates a near copy of the machine without the dead bits.
+    """
+    Creates a near copy of the machine without the dead bits.
 
     Creates a new Machine with the the Chips that where in the original
-        machine but are not listed as dead.
+    machine but are not listed as dead.
 
     Each Chip will only have the links that already existed and are not listed
-        as dead.
+    as dead.
 
     Spinnaker_links and fpga_links are re-added so removing a wrap around link
-        could results in and extra spinnaker or fpga link.
+    could results in and extra spinnaker or fpga link.
 
     Dead Chips or links not in the original machine are ignored.
 
@@ -161,17 +161,17 @@ def _machine_ignore(original, dead_chips, dead_links):
 
 
 def _generate_uni_direction_link_error(
-        dest_x, dest_y, src_x, srx_y, back, original):
+        dest_x, dest_y, src_x, src_y, back, original):
     # get the chips so we can find ethernet's and local ids
     dest_chip = original.get_chip_at(dest_x, dest_y)
-    src_chip = original.get_chip_at(src_x, srx_y)
+    src_chip = original.get_chip_at(src_x, src_y)
     src_ethernet = original.get_chip_at(
         src_chip.nearest_ethernet_x, src_chip.nearest_ethernet_y).ip_address
 
     # if the dest chip is dead. Only report src chip ip address.
     if dest_chip is None:
         return ONE_LINK_DEAD_CHIP.format(
-            back, dest_x, dest_y, src_x, srx_y, src_x, srx_y, src_ethernet,
+            back, dest_x, dest_y, src_x, src_y, src_x, src_y, src_ethernet,
             dest_x, dest_y)
 
     # got working chips, so get the separate ethernet's
@@ -186,27 +186,28 @@ def _generate_uni_direction_link_error(
     # board.
     if src_ethernet == dest_ethernet:
         return ONE_LINK_SAME_BOARD_MSG.format(
-            back, dest_x, dest_y, src_x, srx_y, src_ethernet,
+            back, dest_x, dest_y, src_x, src_y, src_ethernet,
             local_dest_chip_x, local_dest_chip_y, local_src_chip_x,
             local_src_chip_y)
     else:
         return ONE_LINK_DIFFERENT_BOARDS_MSG.format(
-            back, dest_x, dest_y, src_x, srx_y, dest_x, dest_y, dest_ethernet,
-            local_dest_chip_x, local_dest_chip_y, src_x, srx_y, src_ethernet,
+            back, dest_x, dest_y, src_x, src_y, dest_x, dest_y, dest_ethernet,
+            local_dest_chip_x, local_dest_chip_y, src_x, src_y, src_ethernet,
             local_src_chip_x, local_src_chip_y)
 
 
 def machine_repair(original, removed_chips=tuple()):
-    """ Remove chips that can't be reached or that can't reach other chips\
-        due to missing links.
+    """
+    Remove chips that can't be reached or that can't reach other chips
+    due to missing links.
 
-        Also remove any one way links.
+    Also remove any one way links.
 
     :param original: the original machine
     :type original: Machine
     :param removed_chips: List of chips (x and y coordinates) that have been
         removed while the machine was being created.
-        Oneway links to these chip are expected repairs so always done and
+        One-way links to these chip are expected repairs so always done and
         never logged
     :type removed_chips: list(tuple(int,int))
     :raises SpinnMachineException: if repair_machine is false and an unexpected
