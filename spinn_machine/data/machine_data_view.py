@@ -18,7 +18,7 @@ from spinn_utilities.data import UtilsDataView
 
 class _MachineDataModel(object):
     """
-    Singleton data model
+    Singleton data model.
 
     This class should not be accessed directly please use the DataView and
     DataWriter classes.
@@ -77,7 +77,8 @@ class MachineDataView(UtilsDataView):
     """
     Adds the extra Methods to the View for Machine level.
 
-    See UtilsDataView for a more detailed description.
+    See :py:class:`~spinn_utilities.data.UtilsDataView` for a more detailed
+    description.
 
     This class is designed to only be used directly within the SpiNNMachine
     repository as all methods are available to subclasses
@@ -91,7 +92,7 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def has_machine(cls):
         """
-        Reports if a machine is currently set or can be mocked
+        Reports if a machine is currently set or can be mocked.
 
         :rtype: bool
         """
@@ -101,7 +102,7 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_machine(cls):
         """
-        Returns the Machine if it has been set
+        Returns the Machine if it has been set.
 
         In Mock mode will create and return a virtual 8 * 8 board
 
@@ -124,11 +125,11 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_chip_at(cls, x, y):
         """
-        Gets the chip at x and y
+        Gets the chip at x and y.
 
-        Almost Semantic sugar for machine.get_chip_at
+        Almost Semantic sugar for `get_machine().get_chip_at()`
 
-        The method however does not return None but rather raises a KeyError
+        The method however does not return `None` but rather raises a KeyError
         if the chip is not known
 
         :param int x:
@@ -143,12 +144,12 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_nearest_ethernet(cls, x, y):
         """
-        Gets the nearest ethernet x and y for the chip at x, y if it exists
+        Gets the nearest ethernet x and y for the chip at x, y if it exists.
 
         If there is no machine or no chip at (x, y) this method,
         or any other issue will just return x,y
 
-        .. Note:
+        .. note::
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
@@ -169,14 +170,14 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def where_is_xy(cls, x, y):
         """
-        Gets a string saying where chip at x and y is if possible
+        Gets a string saying where chip at x and y is if possible.
 
-        Almost Semantic sugar for get_machine.where_is_xy
+        Almost Semantic sugar for `get_machine().where_is_xy()`
 
         The method does not raise an exception rather returns a String of the
         exception
 
-        .. Note:
+        .. note::
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
@@ -194,14 +195,14 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def where_is_chip(cls, chip):
         """
-        Gets a string saying where chip is if possible
+        Gets a string saying where chip is if possible.
 
-        Almost Semantic sugar for get_machine.where_is_xy
+        Almost Semantic sugar for `get_machine().where_is_chip()`
 
         The method does not raise an exception rather returns a String of the
         exception
 
-        .. Note:
+        .. note::
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 

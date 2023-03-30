@@ -16,7 +16,8 @@ from spinn_utilities.ordered_set import OrderedSet
 
 
 class CoreSubset(object):
-    """ Represents a subset of the cores on a SpiNNaker chip.
+    """
+    Represents a subset of the cores on a SpiNNaker chip.
     """
 
     __slots__ = (
@@ -36,7 +37,8 @@ class CoreSubset(object):
             self.add_processor(processor_id)
 
     def add_processor(self, processor_id):
-        """ Adds a processor ID to this subset
+        """
+        Adds a processor ID to this subset
 
         :param int processor_id: A processor ID
         """
@@ -47,33 +49,33 @@ class CoreSubset(object):
 
     @property
     def x(self):
-        """ The x-coordinate of the chip
+        """
+        The X-coordinate of the chip
 
-        :return: The x-coordinate
         :rtype: int
         """
         return self._x
 
     @property
     def y(self):
-        """ The y-coordinate of the chip
+        """
+        The Y-coordinate of the chip
 
-        :return: The y-coordinate
         :rtype: int
         """
         return self._y
 
     @property
     def processor_ids(self):
-        """ The subset of processor IDs on the chip
+        """
+        The processor IDs on the chip that in the subset.
 
-        :return: An iterable of processor IDs
         :rtype: iterable(int)
         """
         return iter(self._processor_ids)
 
     def __repr__(self):
-        return "{}:{}:{}".format(self._x, self._y, self._processor_ids)
+        return f"{self._x}:{self._y}:{self._processor_ids}"
 
     def __eq__(self, other):
         if not isinstance(other, CoreSubset):
@@ -89,13 +91,14 @@ class CoreSubset(object):
         return (self._x, self._y, processors).__hash__()
 
     def __len__(self):
-        """ The number of processors in this core subset
+        """
+        The number of processors in this core subset.
         """
         return len(self._processor_ids)
 
     def intersect(self, other):
-        """ Returns a new CoreSubset which is an intersect of this and the\
-            other.
+        """
+        Returns a new CoreSubset which is an intersect of this and the other.
 
         :param CoreSubset other:
             A second CoreSubset with possibly overlapping cores

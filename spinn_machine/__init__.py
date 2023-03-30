@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-""" An abstraction of a SpiNNaker Machine.  The main functionality is\
+"""
+An abstraction of a SpiNNaker Machine.  The main functionality is
 provided by :py:class:`spinn_machine.Machine`.
 
 Functional Requirements

@@ -43,9 +43,12 @@ OPPOSITE_LINK_OFFSET = 3
 
 def machine_from_json(j_machine):
     """
+    Generate a model of a machine from a JSON description of that machine.
+
     :param j_machine: JSON description of the machine
     :type j_machine: dict in format returned by json.load or a
         str representing a path to the JSON file
+    :return: The machine model.
     :rtype: Machine
     """
     if isinstance(j_machine, str):
@@ -135,7 +138,8 @@ def _int_value(value):
 
 
 def _describe_chip(chip, std, eth):
-    """ Produce a JSON-suitable description of a single chip.
+    """
+    Produce a JSON-suitable description of a single chip.
 
     :param chip: The chip to describe.
     :param std: The standard chip resources.
@@ -145,7 +149,7 @@ def _describe_chip(chip, std, eth):
     details = dict()
     details["cores"] = chip.n_processors
     if chip.nearest_ethernet_x is not None:
-        details["ethernet"] =\
+        details["ethernet"] = \
             [chip.nearest_ethernet_x, chip.nearest_ethernet_y]
 
     dead_links = []
@@ -189,7 +193,8 @@ def _describe_chip(chip, std, eth):
 
 
 def to_json():
-    """ Runs the code to write the machine in Java readable JSON.
+    """
+    Runs the code to write the machine in Java readable JSON.
 
     :rtype: dict
     """
@@ -250,7 +255,8 @@ def to_json():
 
 
 def to_json_path(file_path):
-    """ Runs the code to write the machine in Java readable JSON.
+    """
+    Runs the code to write the machine in Java readable JSON.
 
     :param file_path: Location to write file to. Warning will overwrite!
     :type file_path: str

@@ -21,7 +21,8 @@ CORE_RANGE = re.compile(r"(\d+)-(\d+)")
 
 
 class IgnoreCore(object):
-    """ Represents a core to be ignored when building a machine.
+    """
+    Represents a core to be ignored when building a machine.
     """
 
     __slots__ = ["x", "y", "p", "ip_address"]
@@ -32,7 +33,7 @@ class IgnoreCore(object):
         :type x: int or str
         :param y: Y coordinate of a core to ignore
         :type y: int or str
-        :param p: P The virtual core ID of a core if > 0,\
+        :param p: The virtual core ID of a core if > 0,
             or the physical core if <= 0 (actual value will be negated)
         :type p: int or str
         :param ip_address: Optional IP address which, if provided, make
@@ -52,7 +53,8 @@ class IgnoreCore(object):
 
     @property
     def virtual_p(self):
-        """ The virtual processor ID.
+        """
+        The virtual processor ID.
 
         When the processor is given as a physical processor, this is converted
         to a virtual core ID using the typical virtual/physical core map;
@@ -65,8 +67,9 @@ class IgnoreCore(object):
 
     @staticmethod
     def parse_cores(core_string):
-        """ Parses the "core" part of a string, which might be a single core,
-            or otherwise is a range of cores
+        """
+        Parses the "core" part of a string, which might be a single core,
+        or otherwise is a range of cores
 
         :param str: A string to parse
         :return: A list of cores, which might be just one
@@ -79,7 +82,8 @@ class IgnoreCore(object):
 
     @staticmethod
     def parse_single_string(downed_core):
-        """ Converts a string into an :py:class:`IgnoreCore` object
+        """
+        Converts a string into an :py:class:`IgnoreCore` object.
 
         The format is::
 
@@ -118,8 +122,9 @@ class IgnoreCore(object):
 
     @staticmethod
     def parse_string(downed_cores):
-        """ Converts a string into a (possibly empty) set of \
-            :py:class:`IgnoreCore` objects
+        """
+        Converts a string into a (possibly empty) set of
+        :py:class:`IgnoreCore` objects.
 
         The format is:
 

@@ -19,7 +19,8 @@ monitor = dict()
 
 
 class Processor(object):
-    """ A processor object included in a SpiNNaker chip
+    """
+    A processor object included in a SpiNNaker chip.
     """
 
     CLOCK_SPEED = 200 * 1000 * 1000
@@ -32,17 +33,16 @@ class Processor(object):
     def __init__(self, processor_id, clock_speed=CLOCK_SPEED, is_monitor=False,
                  dtcm_available=DTCM_AVAILABLE):
         """
-        :param processor_id: ID of the processor in the chip
-        :type processor_id: int
-        :param clock_speed: \
+        :param int processor_id:
+            ID of the processor in the chip
+        :param int clock_speed:
             The number of CPU cycles per second of the processor
-        :type clock_speed: int
-        :param is_monitor: Determines if the processor is considered the\
+        :param bool is_monitor:
+            Determines if the processor is considered the
             monitor processor, and so should not be otherwise allocated
-        :type is_monitor: bool
-        :param dtcm_available: Data Tightly Coupled Memory available
-        :type dtcm_available: int
-        :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:\
+        :param int dtcm_available:
+            Data Tightly Coupled Memory available
+        :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:
             If the clock speed is negative
         """
 
@@ -58,58 +58,58 @@ class Processor(object):
 
     @property
     def processor_id(self):
-        """ The ID of the processor
+        """
+        The ID of the processor.
 
-        :return: ID of the processor
         :rtype: int
         """
         return self._processor_id
 
     @property
     def dtcm_available(self):
-        """ The amount of DTCM available on this processor
+        """
+        The amount of DTCM available on this processor.
 
-        :return: the amount of DTCM available on this processor
         :rtype: int
-
         """
         return self._dtcm_available
 
     @property
     def cpu_cycles_available(self):
-        """ The number of CPU cycles available from this processor per ms
+        """
+        The number of CPU cycles available from this processor per ms.
 
-        :return: the number of CPU cycles available on this processor
         :rtype: int
         """
         return self._clock_speed // 1000
 
     @property
     def clock_speed(self):
-        """ The clock speed of the processor in cycles per second
+        """
+        The clock speed of the processor in cycles per second.
 
-        :return: The clock speed in cycles per second
         :rtype: int
         """
         return self._clock_speed
 
     @property
     def is_monitor(self):
-        """ Determines if the processor is the monitor, and therefore not\
-            to be allocated
+        """
+        Determines if the processor is the monitor, and therefore not
+        to be allocated.
 
         .. warning::
             Currently rejection processors are also marked as monitors.
 
-        :return: True if the processor is the monitor, False otherwise
         :rtype: bool
         """
         return self._is_monitor
 
     def __str__(self):
-        return "[CPU: id={}, clock_speed={} MHz, monitor={}]".format(
-            self._processor_id, (self._clock_speed // 1000000),
-            self._is_monitor)
+        return (
+            f"[CPU: id={self._processor_id}, "
+            f"clock_speed={self._clock_speed // 1000000} MHz, "
+            f"monitor={self._is_monitor}]")
 
     def __repr__(self):
         return self.__str__()
