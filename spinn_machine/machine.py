@@ -43,7 +43,6 @@ class Machine(object, metaclass=AbstractBase):
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
     DEFAULT_MAX_CORES_PER_CHIP = 18
     __max_cores = None
-    _max_sdram_found = 0
     MAX_CHIPS_PER_48_BOARD = 48
     MAX_CHIPS_PER_4_CHIP_BOARD = 4
     BOARD_VERSION_FOR_48_CHIPS = [4, 5]
@@ -87,6 +86,7 @@ class Machine(object, metaclass=AbstractBase):
         "_origin",
         "_spinnaker_links",
         "_maximum_user_cores_on_chip",
+        "_max_sdram_found",
         "_monitor_sdram",
         # Declared width of the machine
         # This can not be changed
@@ -597,7 +597,7 @@ class Machine(object, metaclass=AbstractBase):
         if chip.n_user_processors > self._maximum_user_cores_on_chip:
             self._maximum_user_cores_on_chip = chip.n_user_processors
         if chip.sdram > self._max_sdram_found:
-            Machine._max_sdram_found = chip.sdram
+            self._max_sdram_found = chip.sdram
 
     def add_chips(self, chips):
         """
@@ -1047,6 +1047,15 @@ class Machine(object, metaclass=AbstractBase):
         """
         return self._maximum_user_cores_on_chip
 
+    @property
+    def max_sdram_found(self):
+        """
+        The maximum amount of sdram on any chip. (including monitors)
+
+        :rtype: int
+        """
+        return self._max_sdram_found
+
     @staticmethod
     def get_max_sdram_found():
         """
@@ -1054,18 +1063,20 @@ class Machine(object, metaclass=AbstractBase):
 
         :rtype: int
         """
-        return Machine._max_sdram_found
+        return -100
 
-    @staticmethod
-    def set_max_sdram_found(new_value):
+    def _set_max_sdram_found(self, new_value):
         """
         Method for unittests to bypass normal way this data is created.
+
+        Will ONLY affect the value of max_sdram_found
+        NOT any of the Chips on this machine
 
         Not supported outside of unittests
 
         :param int new_value: Value for tests!
         """
-        Machine._max_sdram_found = new_value
+        self._max_sdram_found = new_value
 
     @property
     def maximum_user_sdram_on_chip(self):

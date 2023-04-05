@@ -216,3 +216,19 @@ class MachineDataView(UtilsDataView):
             if cls.__data._machine is None:
                 return "Chip is from a previous machine"
             return str(ex)
+
+    @classmethod
+    def get_max_sdram_found(cls):
+        """
+        Gets the max sdram for any chip on this machine.
+
+        Almost Semantic sugar for `get_machine().max_sdram_found`
+
+        :rtype: int
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If the machine is currently unavailable
+        """
+        try:
+            return cls.__data._machine.max_sdram_found
+        except Exception as ex:  # pylint: disable=broad-except
+           return cls.get_machine().max_sdram_found
