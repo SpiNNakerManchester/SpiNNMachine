@@ -230,5 +230,5 @@ class MachineDataView(UtilsDataView):
         """
         try:
             return cls.__data._machine.max_sdram_found
-        except Exception as ex:  # pylint: disable=broad-except
-           return cls.get_machine().max_sdram_found
+        except Exception:  # pylint: disable=broad-except
+            return cls.get_machine().max_sdram_found
