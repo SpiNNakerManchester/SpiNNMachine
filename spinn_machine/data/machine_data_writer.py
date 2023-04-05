@@ -93,7 +93,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
         :param int new_value:
         """
-        self.get_machine()._set_max_sdram_found
+        self.get_machine()._set_max_sdram_found(new_value)
 
     def clear_machine(self):
         """
