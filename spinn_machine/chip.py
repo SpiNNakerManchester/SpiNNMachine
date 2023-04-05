@@ -319,7 +319,8 @@ class Chip(object):
 
     def __str__(self):
         return (
-            f"[Chip: x={self._x}, y={self._y}, sdram={self.sdram}, "
+            f"[Chip: x={self._x}, y={self._y}, "
+            f"sdram={self.sdram // (1024 * 1024)} MB, "
             f"ip_address={self.ip_address}, router={self.router}, "
             f"processors={list(self._p.values())}, "
             f"nearest_ethernet={self._nearest_ethernet_x}:"

@@ -15,7 +15,7 @@
 from tempfile import mktemp
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine import (SDRAM, virtual_machine)
+from spinn_machine import virtual_machine
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
@@ -47,7 +47,7 @@ class TestJsonMachine(unittest.TestCase):
         router22._n_available_multicast_entries =  \
             router22._n_available_multicast_entries - 20
         chip33 = vm.get_chip_at(3, 3)
-        chip33._sdram = SDRAM(50000000)
+        chip33._sdram = 50000000
         chip33._tag_ids = [2, 3]
         jpath = mktemp("json")
         to_json_path(jpath)
@@ -77,7 +77,7 @@ class TestJsonMachine(unittest.TestCase):
         router48 = chip48.router
         router48._n_available_multicast_entries =  \
             router48._n_available_multicast_entries - 20
-        chip48._sdram = SDRAM(50000000)
+        chip48._sdram = 50000000
         chip48._tag_ids = [2, 3]
         jpath = mktemp("json")
         to_json_path(jpath)

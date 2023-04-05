@@ -43,6 +43,7 @@ class Machine(object, metaclass=AbstractBase):
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
     DEFAULT_MAX_CORES_PER_CHIP = 18
     __max_cores = None
+    _max_sdram_found = 0
     MAX_CHIPS_PER_48_BOARD = 48
     MAX_CHIPS_PER_4_CHIP_BOARD = 4
     BOARD_VERSION_FOR_48_CHIPS = [4, 5]
@@ -86,6 +87,7 @@ class Machine(object, metaclass=AbstractBase):
         "_origin",
         "_spinnaker_links",
         "_maximum_user_cores_on_chip",
+        "_monitor_sdram",
         # Declared width of the machine
         # This can not be changed
         "_width"
@@ -151,8 +153,10 @@ class Machine(object, metaclass=AbstractBase):
                 for y in range(height):
                     self._local_xys.append((x, y))
 
-        # The maximum number of user cores on any chip
+        # The maximum number of user cores and sdram on any chip
         self._maximum_user_cores_on_chip = 0
+        self._monitor_sdram = 0
+        self._max_sdram_found = 0
 
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
@@ -592,6 +596,8 @@ class Machine(object, metaclass=AbstractBase):
 
         if chip.n_user_processors > self._maximum_user_cores_on_chip:
             self._maximum_user_cores_on_chip = chip.n_user_processors
+        if chip.sdram > self._max_sdram_found:
+            Machine._max_sdram_found = chip.sdram
 
     def add_chips(self, chips):
         """
@@ -1020,6 +1026,18 @@ class Machine(object, metaclass=AbstractBase):
         return self.get_existing_xys_by_ethernet(
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
 
+    def reserve_monitor_on_all_chips(self, sdram):
+        """
+        Reduces maximun_user info by what the monitor needs
+
+        This should be called ONCE by any inserter that adds a monitor to
+        every single (not just ethernet) chips.
+
+        :param int sdram: Amount of sdram used by the monitor core
+        """
+        self._maximum_user_cores_on_chip -= 1
+        self._monitor_sdram += sdram
+
     @property
     def maximum_user_cores_on_chip(self):
         """
@@ -1028,6 +1046,35 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: int
         """
         return self._maximum_user_cores_on_chip
+
+    @staticmethod
+    def get_max_sdram_found():
+        """
+        The maximum amount of sdram on any chip. (including monitors)
+
+        :rtype: int
+        """
+        return Machine._max_sdram_found
+
+    @staticmethod
+    def set_max_sdram_found(new_value):
+        """
+        Method for unittests to bypass normal way this data is created.
+
+        Not supported outside of unittests
+
+        :param int new_value: Value for tests!
+        """
+        Machine._max_sdram_found = new_value
+
+    @property
+    def maximum_user_sdram_on_chip(self):
+        """
+        The maximum amount of user sdram on any chip.
+
+        :rtype: int
+        """
+        return self._max_sdram_found - self._monitor_sdram
 
     @property
     def total_available_user_cores(self):

@@ -17,7 +17,7 @@ test for testing the python representation of a spinnaker machine
 """
 import unittest
 from spinn_machine import (
-    Link, SDRAM, Router, Chip, Machine, machine_from_chips, machine_from_size)
+    Link, Router, Chip, Machine, machine_from_chips, machine_from_size)
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
@@ -30,7 +30,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
-        self._sdram = SDRAM(128)
+        self._sdram = 128
 
         links = list()
         links.append(Link(0, 0, 0, 1, 1))
@@ -421,6 +421,26 @@ class SpinnMachineTestCase(unittest.TestCase):
             (2, 0), (3, 1), (4, 2), (4, 3), (4, 4), (3, 4),
             (2, 4), (1, 3), (0, 2), (0, 1), (0, 0), (1, 0)]
         self.assertListEqual(expected, found)
+
+    def test_max_user(self):
+        machine = machine_from_size(8, 8)
+        self.assertEqual(0, machine.maximum_user_cores_on_chip)
+        self.assertEqual(0, machine.maximum_user_sdram_on_chip)
+        chip00 = Chip(0, 0, 14, self._router,  128, 0, 0, self._ip)
+        machine.add_chip(chip00)
+        self.assertEqual(13, machine.maximum_user_cores_on_chip)
+        self.assertEqual(128, machine.maximum_user_sdram_on_chip)
+        chip01 = Chip(0, 1, 15, self._router,  105, 0, 0, self._ip)
+        machine.add_chip(chip01)
+        self.assertEqual(14, machine.maximum_user_cores_on_chip)
+        self.assertEqual(128, machine.maximum_user_sdram_on_chip)
+        chip10 = Chip(1, 0, 12, self._router,  2565, 0, 0, self._ip)
+        machine.add_chip(chip10)
+        self.assertEqual(14, machine.maximum_user_cores_on_chip)
+        self.assertEqual(2565, machine.maximum_user_sdram_on_chip)
+        machine.reserve_monitor_on_all_chips(100)
+        self.assertEqual(13, machine.maximum_user_cores_on_chip)
+        self.assertEqual(2465, machine.maximum_user_sdram_on_chip)
 
 
 if __name__ == '__main__':
