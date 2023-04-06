@@ -232,8 +232,8 @@ class MachineDataView(UtilsDataView):
         """
         try:
             return cls.__data._machine.max_sdram_found
-        except Exception:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-except
             if cls.__data._mocked_max_sdram_found is not None:
                 return cls.__data._mocked_max_sdram_found
             else:
-                raise cls._exception("max_sdram_found")
+                raise cls._exception("max_sdram_found") from ex
