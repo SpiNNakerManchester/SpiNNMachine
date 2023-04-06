@@ -87,7 +87,6 @@ class Machine(object, metaclass=AbstractBase):
         "_spinnaker_links",
         "_maximum_user_cores_on_chip",
         "_max_sdram_found",
-        "_monitor_sdram",
         # Declared width of the machine
         # This can not be changed
         "_width"
@@ -155,7 +154,6 @@ class Machine(object, metaclass=AbstractBase):
 
         # The maximum number of user cores and sdram on any chip
         self._maximum_user_cores_on_chip = 0
-        self._monitor_sdram = 0
         self._max_sdram_found = 0
 
         # The list of chips with Ethernet connections
@@ -1036,7 +1034,6 @@ class Machine(object, metaclass=AbstractBase):
         :param int sdram: Amount of sdram used by the monitor core
         """
         self._maximum_user_cores_on_chip -= 1
-        self._monitor_sdram += sdram
 
     @property
     def maximum_user_cores_on_chip(self):
@@ -1055,24 +1052,6 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: int
         """
         return self._max_sdram_found
-
-    @staticmethod
-    def get_max_sdram_found():
-        """
-        The maximum amount of sdram on any chip. (including monitors)
-
-        :rtype: int
-        """
-        return -100
-
-    @property
-    def maximum_user_sdram_on_chip(self):
-        """
-        The maximum amount of user sdram on any chip.
-
-        :rtype: int
-        """
-        return self._max_sdram_found - self._monitor_sdram
 
     @property
     def total_available_user_cores(self):

@@ -425,22 +425,19 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_max_user(self):
         machine = machine_from_size(8, 8)
         self.assertEqual(0, machine.maximum_user_cores_on_chip)
-        self.assertEqual(0, machine.maximum_user_sdram_on_chip)
+        self.assertEqual(0, machine.max_sdram_found)
         chip00 = Chip(0, 0, 14, self._router,  128, 0, 0, self._ip)
         machine.add_chip(chip00)
         self.assertEqual(13, machine.maximum_user_cores_on_chip)
-        self.assertEqual(128, machine.maximum_user_sdram_on_chip)
+        self.assertEqual(128, machine.max_sdram_found)
         chip01 = Chip(0, 1, 15, self._router,  105, 0, 0, self._ip)
         machine.add_chip(chip01)
         self.assertEqual(14, machine.maximum_user_cores_on_chip)
-        self.assertEqual(128, machine.maximum_user_sdram_on_chip)
+        self.assertEqual(128, machine.max_sdram_found)
         chip10 = Chip(1, 0, 12, self._router,  2565, 0, 0, self._ip)
         machine.add_chip(chip10)
         self.assertEqual(14, machine.maximum_user_cores_on_chip)
-        self.assertEqual(2565, machine.maximum_user_sdram_on_chip)
-        machine.reserve_monitor_on_all_chips(100)
-        self.assertEqual(13, machine.maximum_user_cores_on_chip)
-        self.assertEqual(2465, machine.maximum_user_sdram_on_chip)
+        self.assertEqual(2565, machine.max_sdram_found)
 
 
 if __name__ == '__main__':
