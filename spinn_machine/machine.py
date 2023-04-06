@@ -1024,17 +1024,6 @@ class Machine(object, metaclass=AbstractBase):
         return self.get_existing_xys_by_ethernet(
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
 
-    def reserve_monitor_on_all_chips(self, sdram):
-        """
-        Reduces maximun_user info by what the monitor needs
-
-        This should be called ONCE by any inserter that adds a monitor to
-        every single (not just ethernet) chips.
-
-        :param int sdram: Amount of sdram used by the monitor core
-        """
-        self._maximum_user_cores_on_chip -= 1
-
     @property
     def maximum_user_cores_on_chip(self):
         """
