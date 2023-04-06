@@ -37,7 +37,8 @@ class _MachineDataModel(object):
         # Data values cached
         "_machine",
         "_machine_generator",
-        "_user_accessed_machine"
+        "_user_accessed_machine",
+        "_mocked_max_sdram_found"
     ]
 
     def __new__(cls):
@@ -55,6 +56,7 @@ class _MachineDataModel(object):
         """
         self._hard_reset()
         self._machine_generator = None
+        self._mocked_max_sdram_found = None
 
     def _hard_reset(self):
         """
@@ -231,4 +233,7 @@ class MachineDataView(UtilsDataView):
         try:
             return cls.__data._machine.max_sdram_found
         except Exception:  # pylint: disable=broad-except
-            return cls.get_machine().max_sdram_found
+            if cls.__data._mocked_max_sdram_found is not None:
+                return cls.__data._mocked_max_sdram_found
+            else:
+                raise cls._exception("max_sdram_found")

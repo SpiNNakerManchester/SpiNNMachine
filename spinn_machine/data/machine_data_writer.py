@@ -81,19 +81,16 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
             raise TypeError("machine should be a Machine")
         self.__data._machine = machine
 
-    def set_max_sdram_found(self, new_value):
+    def set_mocked_max_sdram_found(self, new_value):
         """
-        Sets the Machine's max_sdram_found
-
-        Semantic sugar for get_machine()._set_max_sdram_found
+        Sets the mock value for max_sdram_found if there is no Machine
 
         This method is designed for testing methods that use the
-        get_max_sdram_found. It will NOT change any of the Chips on the
-        machine that this call may create
+        get_max_sdram_found without creating a machine.
 
         :param int new_value:
         """
-        self.get_machine()._set_max_sdram_found(new_value)
+        self.__data._mocked_max_sdram_found = new_value
 
     def clear_machine(self):
         """

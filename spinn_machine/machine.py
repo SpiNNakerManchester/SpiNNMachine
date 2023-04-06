@@ -1065,19 +1065,6 @@ class Machine(object, metaclass=AbstractBase):
         """
         return -100
 
-    def _set_max_sdram_found(self, new_value):
-        """
-        Method for unittests to bypass normal way this data is created.
-
-        Will ONLY affect the value of max_sdram_found
-        NOT any of the Chips on this machine
-
-        Not supported outside of unittests
-
-        :param int new_value: Value for tests!
-        """
-        self._max_sdram_found = new_value
-
     @property
     def maximum_user_sdram_on_chip(self):
         """
