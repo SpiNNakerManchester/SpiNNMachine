@@ -82,3 +82,16 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(
             "No chip -1, 11 found",
             MachineDataView.where_is_xy(-1, 11))
+
+    def test_get_max_sdram_found(self):
+        with self.assertRaises(DataNotYetAvialable):
+            MachineDataView.get_max_sdram_found()
+        writer = MachineDataWriter.mock()
+        writer.set_mocked_max_sdram_found(100)
+        self.assertEqual(100, MachineDataView.get_max_sdram_found())
+        machine = virtual_machine(width=2, height=2)
+        writer.set_machine(machine)
+        self.assertGreater(MachineDataView.get_max_sdram_found(), 100)
+        # set mocked No affect if there is a machine
+        writer.set_mocked_max_sdram_found(200)
+        self.assertGreater(MachineDataView.get_max_sdram_found(), 200)
