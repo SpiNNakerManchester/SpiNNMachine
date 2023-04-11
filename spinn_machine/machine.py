@@ -86,8 +86,6 @@ class Machine(object, metaclass=AbstractBase):
         # to be used in the str method
         "_origin",
         "_spinnaker_links",
-        "_maximum_user_cores_on_chip",
-        "_max_sdram_found",
         # Declared width of the machine
         # This can not be changed
         "_width"
@@ -152,10 +150,6 @@ class Machine(object, metaclass=AbstractBase):
             for x in range(width):
                 for y in range(height):
                     self._local_xys.append((x, y))
-
-        # The maximum number of user cores and sdram on any chip
-        self._maximum_user_cores_on_chip = 0
-        self._max_sdram_found = 0
 
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
@@ -593,11 +587,6 @@ class Machine(object, metaclass=AbstractBase):
             if (chip.x == 0) and (chip.y == 0):
                 self._boot_ethernet_address = chip.ip_address
 
-        if chip.n_user_processors > self._maximum_user_cores_on_chip:
-            self._maximum_user_cores_on_chip = chip.n_user_processors
-        if chip.sdram > self._max_sdram_found:
-            self._max_sdram_found = chip.sdram
-
     def add_chips(self, chips):
         """
         Add some chips to the machine.
@@ -1024,24 +1013,6 @@ class Machine(object, metaclass=AbstractBase):
         """
         return self.get_existing_xys_by_ethernet(
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-
-    @property
-    def maximum_user_cores_on_chip(self):
-        """
-        The maximum number of user cores on any chip.
-
-        :rtype: int
-        """
-        return self._maximum_user_cores_on_chip
-
-    @property
-    def max_sdram_found(self):
-        """
-        The maximum amount of sdram on any chip. (including monitors)
-
-        :rtype: int
-        """
-        return self._max_sdram_found
 
     @property
     def total_available_user_cores(self):
