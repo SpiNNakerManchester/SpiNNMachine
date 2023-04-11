@@ -22,9 +22,8 @@ from .router import Router
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .machine_factory import machine_from_size
+from spinn_machine import Machine
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
-
-DEFAULT_SDRAM_BYTES = 117 * 1024 * 1024
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -104,7 +103,7 @@ class _VirtualMachine(object):
         self._sdram_per_chip = get_config_int(
             "Machine", "max_sdram_allowed_per_chip")
         if self._sdram_per_chip is None:
-            self._sdram_per_chip = DEFAULT_SDRAM_BYTES
+            self._sdram_per_chip = Machine.DEFAULT_SDRAM_BYTES
 
         # Store the down items
         unused_chips = []
