@@ -118,8 +118,8 @@ class Machine(object, metaclass=AbstractBase):
         :param int new_max: New value to use for the max
         :raises SpinnMachineException: if `max_cores_per_chip` has already been
             used and is now being changed.
-            The Exception also happens if the value is set twice to different
-            values. For example in the script and in the config.
+            This exception also happens if the value is set twice to different
+            values. For example in the script and in the configuration file.
         """
         if Machine.__max_cores is None:
             Machine.__max_cores = new_max
