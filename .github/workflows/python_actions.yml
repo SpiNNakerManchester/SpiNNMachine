@@ -64,6 +64,8 @@ jobs:
       with: 
         package: spinn_machine
         exitcheck: 39
+        # Enable spell checking
+        language: en_GB
 
     - name: Run rat copyright enforcement
       if: matrix.python-version == 3.8
