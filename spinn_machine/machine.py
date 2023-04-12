@@ -135,7 +135,7 @@ class Machine(object, metaclass=AbstractBase):
             The height of the machine
         :param iterable(Chip) chips: An iterable of chips in the machine
         :param str origin: Extra information about how this machine was created
-            to be used in the str method. Example "Virtual" or "Json"
+            to be used in the str method. Example "``Virtual``" or "``Json``"
         :raise SpinnMachineAlreadyExistsException:
             If any two chips have the same x and y coordinates
         """
@@ -984,7 +984,7 @@ class Machine(object, metaclass=AbstractBase):
         Links are assumed to be bidirectional so the total links counted is
         half of the unidirectional links found.
 
-        Spinnaker and fpga links are not included.
+        SpiNNaker and FPGA links are not included.
 
         :return: tuple of (n_cores, n_links)
         :rtype: tuple(int,int)
@@ -1253,7 +1253,7 @@ class Machine(object, metaclass=AbstractBase):
         It will however return the same `unused_xy` until a chip is added at
         that location.
 
-        :return: an unused xy
+        :return: an unused (x,y) coordinate
         :rtype: (int, int)
         """
         # get a set of xys that could be connected to any existing ethernet
