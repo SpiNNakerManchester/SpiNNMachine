@@ -184,7 +184,7 @@ class Machine(object, metaclass=AbstractBase):
 
         The assumption is that any size machine can be supported but that
         only ones with an expected 48 chip board size can have more than one
-        ethernet chip.
+        Ethernet-enabled chip.
 
         :return: True if this machine can have multiple 48 chip boards
         :rtype: bool
@@ -194,7 +194,8 @@ class Machine(object, metaclass=AbstractBase):
     def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
         Yields the potential x,y locations of all the chips on the board
-        with this ethernet. Including the Ethernet chip itself.
+        with this Ethernet-enabled chip. Including the Ethernet-enabled chip
+        itself.
 
         Wrap-arounds are handled as appropriate.
 
@@ -208,9 +209,9 @@ class Machine(object, metaclass=AbstractBase):
             machine.
 
         :param int ethernet_x:
-            The x coordinate of a (local 0,0) legal ethernet chip
+            The X coordinate of a (local 0,0) legal Ethernet-enabled chip
         :param int ethernet_y:
-            The y coordinate of a (local 0,0) legal ethernet chip
+            The Y coordinate of a (local 0,0) legal Ethernet-enabled chip
         :return: Yields the (x, y) coordinates of all the potential chips on
             this board.
         :rtype: iterable(tuple(int,int))
@@ -219,10 +220,10 @@ class Machine(object, metaclass=AbstractBase):
     @abstractmethod
     def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yields the potential x,y locations and the typical number of cores
-        of all the chips on the board with this ethernet.
+        Yields the potential (x,y) locations and the typical number of cores
+        of all the chips on the board with this Ethernet-enabled chip.
 
-        Includes the Ethernet chip itself.
+        Includes the Ethernet-enabled chip itself.
 
         Wrap-arounds are handled as appropriate.
 
@@ -241,9 +242,9 @@ class Machine(object, metaclass=AbstractBase):
             machine.
 
         :param int ethernet_x:
-            The x coordinate of a (local 0,0) legal ethernet chip
+            The X coordinate of a (local 0,0) legal Ethernet-enabled chip
         :param int ethernet_y:
-            The y coordinate of a (local 0,0) legal ethernet chip
+            The Y coordinate of a (local 0,0) legal Ethernet-enabled chip
         :return: Yields (x, y, n_cores) where x , y are coordinates of all
             the potential chips on this board, and n_cores is the typical
             number of cores for a chip in that position.
@@ -254,7 +255,7 @@ class Machine(object, metaclass=AbstractBase):
     def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
         Yields the (x,y) coordinates of the down chips on the board with this
-        ethernet.
+        Ethernet-enabled chip.
 
         .. note::
             The Ethernet chip itself can not be missing if validated.
@@ -264,26 +265,26 @@ class Machine(object, metaclass=AbstractBase):
         This method does check if the chip actually exists.
 
         :param int ethernet_x:
-            The x coordinate of a (local 0,0) legal ethernet chip
+            The X coordinate of a (local 0,0) legal Ethernet-enabled chip
         :param int ethernet_y:
-            The y coordinate of a (local 0,0) legal ethernet chip
+            The Y coordinate of a (local 0,0) legal Ethernet-enabled chip
         :return: Yields the (x, y) of the down chips on this board.
         :rtype: iterable(tuple(int,int))
         """
 
     def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yields the actual chips on the board with this ethernet.
-        Including the Ethernet chip itself.
+        Yields the actual chips on the board with this Ethernet-enabled chip.
+        Including the Ethernet-enabled chip itself.
 
         Wrap-arounds are handled as appropriate.
 
         This method does check if the chip actually exists.
 
         :param int ethernet_x:
-            The x coordinate of a (local 0,0) legal ethernet chip
+            The X coordinate of a (local 0,0) legal Ethernet-enabled chip
         :param int ethernet_y:
-            The y coordinate of a (local 0,0) legal ethernet chip
+            The Y coordinate of a (local 0,0) legal Ethernet-enabled chip
         :return: Yields the chips on this board.
         :rtype: iterable(Chip)
         """
@@ -294,17 +295,18 @@ class Machine(object, metaclass=AbstractBase):
     @abstractmethod
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
         """
-        Yields the (x,y)s of actual chips on the board with this ethernet.
-        Including the Ethernet chip itself.
+        Yields the (x,y)s of actual chips on the board with this
+        Ethernet-enabled chip.
+        Including the Ethernet-enabled chip itself.
 
         Wrap-arounds are handled as appropriate.
 
         This method does check if the chip actually exists.
 
         :param int ethernet_x:
-            The x coordinate of a (local 0,0) legal ethernet chip
+            The X coordinate of a (local 0,0) legal Ethernet-enabled chip
         :param int ethernet_y:
-            The y coordinate of a (local 0,0) legal ethernet chip
+            The Y coordinate of a (local 0,0) legal Ethernet-enabled chip
         :return: Yields the (x,y)s of chips on this board.
         :rtype: iterable(tuple(int,int))
         """
@@ -345,7 +347,7 @@ class Machine(object, metaclass=AbstractBase):
     def get_local_xy(self, chip):
         """
         Converts the x and y coordinates into the local coordinates on the
-        board as if the ethernet was at position 0,0.
+        board as if the Ethernet-enabled chip was at position 0,0.
 
         This method does take wrap-arounds into consideration.
 
@@ -392,9 +394,9 @@ class Machine(object, metaclass=AbstractBase):
     @abstractmethod
     def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
         """
-        Converts the local x and y coordinates into global (x,y) coordinates,
-        under the assumption that they are on the board with local 0,0 at
-        global coordinates (ethernet_x, ethernet_y).
+        Converts the local (X, Y) coordinates into global (x,y) coordinates,
+        under the assumption that they are on the board with local (0,0) at
+        global coordinates (`ethernet_x`, `ethernet_y`).
 
         This method does take wrap-arounds into consideration.
 
@@ -405,9 +407,11 @@ class Machine(object, metaclass=AbstractBase):
         :param int local_x: A valid local x coordinate for a chip
         :param int local_y: A valid local y coordinate for a chip
         :param int ethernet_x:
-            The global ethernet x for the board the chip is on
+            The global Ethernet-enabled chip X coordinate for the board the
+            chip is on
         :param int ethernet_y:
-            The global ethernet y for the board the chip is on
+            The global Ethernet-enabled chip Y coordinate for the board the
+            chip is on
         :return: global (x,y) coordinates of the chip
         :rtype: tuple(int,int)
         """
@@ -513,10 +517,12 @@ class Machine(object, metaclass=AbstractBase):
               range 0 to width -1.
             * An Error is raised if there is a chip with a y outside of the
               range 0 to height -1.
-            * An Error is raise if there is no chip at the declared ethernet
-              x and y.
-            * An Error is raised if an ethernet chip is not at a local 0,0.
-            * An Error is raised if there is no ethernet chip is at 0,0.
+            * An Error is raise if there is no chip at the declared
+              Ethernet-enabled chip x and y.
+            * An Error is raised if an Ethernet-enabled chip is not at a local
+              0,0.
+            * An Error is raised if there is no Ethernet-enabled chip is at
+              0,0.
             * An Error is raised if this is a unexpected multiple board
               situation.
         """

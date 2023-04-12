@@ -23,11 +23,11 @@ BASE_CONFIG_FILE = "spinn_machine.cfg"
 
 def unittest_setup():
     """
-    Resets the configs so only the local default config is included.
+    Resets the configurations so only the local default configuration is
+    included.
 
     .. note::
-        This file should only be called from SpiNNMachine/unittests
-
+        This file should only be called from `SpiNNMachine/unittests`
     """
     clear_cfg_files(True)
     add_spinn_machine_cfg()
@@ -36,7 +36,7 @@ def unittest_setup():
 
 def add_spinn_machine_cfg():
     """
-    Add the local cfg and all dependent cfg files.
+    Add the local configuration and all dependent configuration files.
     """
     add_spinn_utilities_cfg()
     add_default_cfg(os.path.join(os.path.dirname(__file__), BASE_CONFIG_FILE))
