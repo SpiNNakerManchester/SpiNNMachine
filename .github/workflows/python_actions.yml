@@ -36,6 +36,7 @@ jobs:
       with:
         repository: SpiNNakerManchester/SupportScripts
         path: support
+        ref: spell-chucking  # until SpiNNakerManchester/SupportScripts#54 merged
 
     - name: Install pip, etc
       uses: ./support/actions/python-tools
