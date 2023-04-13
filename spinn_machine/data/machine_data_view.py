@@ -37,8 +37,7 @@ class _MachineDataModel(object):
         # Data values cached
         "_machine",
         "_machine_generator",
-        "_user_accessed_machine",
-        "_mocked_max_sdram_found"
+        "_user_accessed_machine"
     ]
 
     def __new__(cls):
@@ -56,7 +55,6 @@ class _MachineDataModel(object):
         """
         self._hard_reset()
         self._machine_generator = None
-        self._mocked_max_sdram_found = None
 
     def _hard_reset(self):
         """
