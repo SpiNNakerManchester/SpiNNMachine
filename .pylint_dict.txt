@@ -13,13 +13,10 @@
 # limitations under the License.
 
 # Our abbreviations/names
-SDP
 CoreSubset
 IgnoreChip
 IgnoreCore
 IgnoreLink
 
-# Our special words
-defaultable
-routable
+# Our special words ("wrap-arounds" gets split up)
 arounds
