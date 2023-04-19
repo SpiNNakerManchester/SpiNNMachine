@@ -143,7 +143,7 @@ def _describe_chip(chip, std, eth):
 
     :param chip: The chip to describe.
     :param std: The standard chip resources.
-    :param eth: The standard ethernet chip resources.
+    :param eth: The standard Ethernet-enabled chip resources.
     :return: Description of chip that is trivial to serialize as JSON.
     """
     details = dict()
