@@ -15,6 +15,7 @@
 import os
 import unittest
 from spinn_utilities.config_holder import run_config_checks
+import spinn_machine
 from spinn_machine.config_setup import unittest_setup
 
 
@@ -24,7 +25,6 @@ class TestCfgChecker(unittest.TestCase):
         unittest_setup()
 
     def test_cfg_checker(self):
-        unittests = os.path.dirname(__file__)
-        parent = os.path.dirname(unittests)
-        spinn_machine = os.path.join(parent, "spinn_machine")
-        run_config_checks(directories=[spinn_machine, unittests])
+        unittests_dir = os.path.dirname(__file__)
+        spinn_machine_dir = spinn_machine.__path__[0]
+        run_config_checks(directories=[spinn_machine_dir, unittests_dir])
