@@ -24,7 +24,7 @@ class IgnoreLink(object):
         """
         :param x: X coordinate of a chip with a link to ignore
         :type x: int or str
-        :param y: Y coorridate of a chip with a link to ignore
+        :param y: Y coordinate of a chip with a link to ignore
         :type y: int or str
         :param link: ID of the link to ignore
         :type link: int or str
