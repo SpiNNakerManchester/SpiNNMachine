@@ -53,11 +53,15 @@ extensions = [
     'sphinx.ext.intersphinx'
 ]
 
+# Which version of other SpiNNaker docs do we refer to?
+spinnaker_doc_version = "latest"
+
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.8', None),
     'numpy': ("https://numpy.org/doc/stable/", None),
     'spinn_utilities': (
-        'https://spinnutils.readthedocs.io/en/latest/', None),
+        f'https://spinnutils.readthedocs.io/en/{spinnaker_doc_version}/',
+        None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
@@ -74,7 +78,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'SpiNNMachine'
-copyright = u'2014-2021'
+copyright = u'2014'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -294,7 +298,7 @@ texinfo_documents = [
 epub_title = u'SpiNNMachine'
 epub_author = u''
 epub_publisher = u''
-epub_copyright = u'2014-2017'
+epub_copyright = u'2014'
 
 # The basename for the epub file. It defaults to the project name.
 # epub_basename = u'data_allocation'
@@ -410,7 +414,7 @@ for fl in os.listdir("."):
         os.remove(fl)
 os.chdir("../..")  # WARNING! RELATIVE FILENAMES CHANGE MEANING HERE!
 apidoc.main([
-   '-o', _output_dir, _package_base,
+    '-o', _output_dir, _package_base,
     *excluded_because_in_init(_package_base)])
 
 # See Note at bottom of global doc conf.py
