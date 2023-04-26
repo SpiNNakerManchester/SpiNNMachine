@@ -5,8 +5,8 @@ This code depends on SpiNNUtils_. (Combined_documentation_).
 
 .. _SpiNNMachine: https://github.com/SpiNNakerManchester/SpiNNMachine
 .. _SpiNNaker: https://apt.cs.manchester.ac.uk/projects/SpiNNaker/
-.. _SpiNNUtils: https://spinnutils.readthedocs.io/en/7.0.0-a5/en/7.0.0-a5/en/7.0.0-a5
-.. _Combined_documentation: https://spinnakermanchester.readthedocs.io/en/7.0.0-a5/en/7.0.0-a5/en/7.0.0-a5
+.. _SpiNNUtils: https://spinnutils.readthedocs.io/en/7.0.0-a5
+.. _Combined_documentation: https://spinnakermanchester.readthedocs.io/en/7.0.0-a5
 
 SpiNNMachine
 ============
