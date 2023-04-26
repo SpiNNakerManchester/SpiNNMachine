@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from spinn_utilities.ordered_set import OrderedSet
+from .machine import Machine
 from .processor import Processor
 
 standard_processors = {}
@@ -111,7 +112,8 @@ class Chip(object):
             for i in range(1, n_processors):
                 if i not in down_cores:
                     processors[i] = Processor.factory(i)
-            self._n_user_processors = n_processors - 1 - len(down_cores)
+            self._n_user_processors = \
+                n_processors - Machine.NON_USER_CORES - len(down_cores)
             return processors
 
     def is_processor_with_id(self, processor_id):
@@ -319,7 +321,8 @@ class Chip(object):
 
     def __str__(self):
         return (
-            f"[Chip: x={self._x}, y={self._y}, sdram={self.sdram}, "
+            f"[Chip: x={self._x}, y={self._y}, "
+            f"sdram={self.sdram // (1024 * 1024)} MB, "
             f"ip_address={self.ip_address}, router={self.router}, "
             f"processors={list(self._p.values())}, "
             f"nearest_ethernet={self._nearest_ethernet_x}:"

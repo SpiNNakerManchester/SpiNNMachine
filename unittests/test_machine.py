@@ -17,7 +17,7 @@ test for testing the python representation of a spinnaker machine
 """
 import unittest
 from spinn_machine import (
-    Link, SDRAM, Router, Chip, Machine, machine_from_chips, machine_from_size)
+    Link, Router, Chip, Machine, machine_from_chips, machine_from_size)
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
@@ -30,7 +30,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
-        self._sdram = SDRAM(128)
+        self._sdram = 128
 
         links = list()
         links.append(Link(0, 0, 0, 1, 1))

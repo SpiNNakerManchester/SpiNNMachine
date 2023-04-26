@@ -14,7 +14,7 @@
 
 import unittest
 from spinn_utilities.ordered_set import OrderedSet
-from spinn_machine import Link, SDRAM, Router, Chip
+from spinn_machine import Link, Router, Chip
 from spinn_machine.config_setup import unittest_setup
 
 
@@ -36,7 +36,7 @@ class TestingChip(unittest.TestCase):
         links.append(Link(1, 0, 3, 0, 1))
         self._router = Router(links, False, 1024)
 
-        self._sdram = SDRAM(128)
+        self._sdram = 128
         self._ip = "192.162.240.253"
 
     def _create_chip(self, x, y, processors, r, sdram, ip):

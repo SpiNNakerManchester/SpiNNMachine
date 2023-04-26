@@ -19,7 +19,6 @@ from spinn_utilities.log import FormatAdapter
 from spinn_machine.data import MachineDataView
 from .chip import Chip
 from .router import Router
-from .sdram import SDRAM
 from .link import Link
 from .machine_factory import machine_from_size
 
@@ -62,12 +61,12 @@ def machine_from_json(j_machine):
     machine = machine_from_size(width, height, origin="Json")
     s_monitors = j_machine["standardResources"]["monitors"]
     s_router_entries = j_machine["standardResources"]["routerEntries"]
-    s_sdram = SDRAM(j_machine["standardResources"]["sdram"])
+    s_sdram = j_machine["standardResources"]["sdram"]
     s_tag_ids = j_machine["standardResources"]["tags"]
 
     e_monitors = j_machine["ethernetResources"]["monitors"]
     e_router_entries = j_machine["ethernetResources"]["routerEntries"]
-    e_sdram = SDRAM(j_machine["ethernetResources"]["sdram"])
+    e_sdram = j_machine["ethernetResources"]["sdram"]
     e_tag_ids = j_machine["ethernetResources"]["tags"]
 
     for j_chip in j_machine["chips"]:
@@ -96,7 +95,7 @@ def machine_from_json(j_machine):
             if "routerEntries" in exceptions:
                 router_entries = exceptions["routerEntries"]
             if "sdram" in exceptions:
-                sdram = SDRAM(exceptions["sdram"])
+                sdram = exceptions["sdram"]
             if "tags" in exceptions:
                 tag_ids = exceptions["tags"]
         if monitors != 1:
@@ -170,8 +169,8 @@ def _describe_chip(chip, std, eth):
                 chip.n_processors - chip.n_user_processors
         if router_entries != eth.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.sdram.size != eth.sdram:
-            exceptions["sdram"] = chip.sdram.size
+        if chip.sdram != eth.sdram:
+            exceptions["sdram"] = chip.sdram
         if chip.tag_ids != eth.tags:
             exceptions["tags"] = list(chip.tag_ids)
     else:
@@ -181,8 +180,8 @@ def _describe_chip(chip, std, eth):
                 chip.n_processors - chip.n_user_processors
         if router_entries != std.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.sdram.size != std.sdram:
-            exceptions["sdram"] = chip.sdram.size
+        if chip.sdram != std.sdram:
+            exceptions["sdram"] = chip.sdram
         if chip.tag_ids != std.tags:
             exceptions["tags"] = list(chip.tag_ids)
 
@@ -207,7 +206,7 @@ def to_json():
                 monitors=chip.n_processors - chip.n_user_processors,
                 router_entries=_int_value(
                     chip.router.n_available_multicast_entries),
-                sdram=chip.sdram.size,
+                sdram=chip.sdram,
                 tags=chip.tag_ids)
             break
     else:
@@ -220,7 +219,7 @@ def to_json():
         monitors=chip.n_processors - chip.n_user_processors,
         router_entries=_int_value(
             chip.router.n_available_multicast_entries),
-        sdram=chip.sdram.size,
+        sdram=chip.sdram,
         tags=chip.tag_ids)
 
     # Save the standard data to be used as defaults to none ethernet chips

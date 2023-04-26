@@ -42,6 +42,8 @@ class Machine(object, metaclass=AbstractBase):
     # UDP packets per millisecond
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
     DEFAULT_MAX_CORES_PER_CHIP = 18
+    NON_USER_CORES = 1
+    DEFAULT_SDRAM_BYTES = 123469792
     __max_cores = None
     MAX_CHIPS_PER_48_BOARD = 48
     MAX_CHIPS_PER_4_CHIP_BOARD = 4
@@ -85,7 +87,6 @@ class Machine(object, metaclass=AbstractBase):
         # to be used in the str method
         "_origin",
         "_spinnaker_links",
-        "_maximum_user_cores_on_chip",
         # Declared width of the machine
         # This can not be changed
         "_width"
@@ -150,9 +151,6 @@ class Machine(object, metaclass=AbstractBase):
             for x in range(width):
                 for y in range(height):
                     self._local_xys.append((x, y))
-
-        # The maximum number of user cores on any chip
-        self._maximum_user_cores_on_chip = 0
 
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
@@ -596,9 +594,6 @@ class Machine(object, metaclass=AbstractBase):
             if (chip.x == 0) and (chip.y == 0):
                 self._boot_ethernet_address = chip.ip_address
 
-        if chip.n_user_processors > self._maximum_user_cores_on_chip:
-            self._maximum_user_cores_on_chip = chip.n_user_processors
-
     def add_chips(self, chips):
         """
         Add some chips to the machine.
@@ -1025,15 +1020,6 @@ class Machine(object, metaclass=AbstractBase):
         """
         return self.get_existing_xys_by_ethernet(
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
-
-    @property
-    def maximum_user_cores_on_chip(self):
-        """
-        The maximum number of user cores on any chip.
-
-        :rtype: int
-        """
-        return self._maximum_user_cores_on_chip
 
     @property
     def total_available_user_cores(self):
