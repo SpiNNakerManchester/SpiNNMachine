@@ -67,7 +67,7 @@ def machine_from_size(width, height, chips=None, origin=None):
     :param chips: Any chips to be added.
     :type chips: list(Chip) or None
     :param origin: Extra information about how this machine was created
-        to be used in the str method. Example "Virtual" or "Json"
+        to be used in the str method. Example "``Virtual``" or "``Json``"
     :type origin: str or None
     :return: A subclass of Machine
     :rtype: Machine
@@ -122,16 +122,16 @@ def _machine_ignore(original, dead_chips, dead_links):
     as dead.
 
     Spinnaker_links and fpga_links are re-added so removing a wrap around link
-    could results in and extra spinnaker or fpga link.
+    could results in and extra spiNNaker or FPGA link.
 
     Dead Chips or links not in the original machine are ignored.
 
     Does not change the original machine!
 
     :param original: Machine to make a near copy of
-    :param dead_chips: Collection of dead chips x and y cooridnates
+    :param dead_chips: Collection of dead chips' (x, y) coordinates
     :type dead_chips: Collection (int, int)
-    :param dead_links: Collection of dead link x y and direction cooridnates
+    :param dead_links: Collection of dead links' (x, y, direction) coordinates
     :type dead_links: Collection of (int, int, int)
     :return: A New Machine object
     """

@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+# Our abbreviations/names
+CoreSubset
+IgnoreChip
+IgnoreCore
+IgnoreLink
+
+# Our special words ("wrap-arounds" gets split up)
+arounds

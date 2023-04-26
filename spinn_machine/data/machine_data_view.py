@@ -125,7 +125,7 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_chip_at(cls, x, y):
         """
-        Gets the chip at x and y.
+        Gets the chip at (`x`, `y`).
 
         Almost Semantic sugar for `get_machine().get_chip_at()`
 
@@ -144,19 +144,20 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_nearest_ethernet(cls, x, y):
         """
-        Gets the nearest ethernet x and y for the chip at x, y if it exists.
+        Gets the nearest Ethernet-enabled chip (`x`, `y`) for the chip at
+        (`x`, `y`) if it exists.
 
-        If there is no machine or no chip at (x, y) this method,
-        or any other issue will just return x,y
+        If there is no machine or no chip at (`x`, `y`) this method,
+        or any other issue will just return (`x`, `y`)
 
         .. note::
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
-        :param int x:
-        :param int y:
-        :return: Chip(x,y)'s nearest_ethernet info
-            or if that is not available just x, and y
+        :param int x: Chip X coordinate
+        :param int y: Chip Y coordinate
+        :return: Chip (`x`,`y`)'s nearest_ethernet info
+            or if that is not available just (`x`, `y`)
         :rtype: tuple(int, int)
         """
         try:
