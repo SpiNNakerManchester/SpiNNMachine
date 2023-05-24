@@ -161,8 +161,10 @@ class Router(object):
         Convert a routing table entry represented in software to a
         binary routing table entry usable on the machine.
 
-        :param ~spinn_machine.MulticastRoutingEntry routing_table_entry:
+        :param routing_table_entry:
             The entry to convert
+        :type routing_table_entry: ~spinn_machine.MulticastRoutingEntry or
+             ~spinn_machine.FixedRouteEntry
         :rtype: int
         """
         route_entry = 0

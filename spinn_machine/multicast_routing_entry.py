@@ -19,12 +19,13 @@ from spinn_machine.router import Router
 class MulticastRoutingEntry(object):
     """
     Represents an entry in a SpiNNaker chip's multicast routing table.
+    There can be up to 1024 such entries per chip, but some may be reserved
+    for system purposes.
     """
 
     __slots__ = (
         "_routing_entry_key", "_mask", "_defaultable", "_processor_ids",
-        "_link_ids", "_spinnaker_route"
-    )
+        "_link_ids", "_spinnaker_route", "__repr")
 
     # pylint: disable=too-many-arguments
     def __init__(self, routing_entry_key, mask, processor_ids=None,
@@ -56,6 +57,7 @@ class MulticastRoutingEntry(object):
         self._routing_entry_key = routing_entry_key
         self._mask = mask
         self._defaultable = defaultable
+        self.__repr = None
 
         if (routing_entry_key & mask) != routing_entry_key:
             raise SpinnMachineInvalidParameterException(
@@ -67,8 +69,8 @@ class MulticastRoutingEntry(object):
 
         # Add processor IDs, ignore duplicates
         if spinnaker_route is None:
-            self._processor_ids = set(processor_ids)
-            self._link_ids = set(link_ids)
+            self._processor_ids = frozenset(processor_ids)
+            self._link_ids = frozenset(link_ids)
             self._spinnaker_route = self._calc_spinnaker_route()
         else:
             self._spinnaker_route = spinnaker_route
@@ -98,7 +100,7 @@ class MulticastRoutingEntry(object):
         """
         The destination processor IDs.
 
-        :rtype: iterable(int)
+        :rtype: frozenset(int)
         """
         if self._processor_ids is None:
             self._processor_ids, self._link_ids = self._calc_routing_ids()
@@ -109,7 +111,7 @@ class MulticastRoutingEntry(object):
         """
         The destination link IDs.
 
-        :rtype: iterable(int)
+        :rtype: frozenset(int)
         """
         if self._link_ids is None:
             self._processor_ids, self._link_ids = self._calc_routing_ids()
@@ -130,6 +132,11 @@ class MulticastRoutingEntry(object):
 
     @property
     def spinnaker_route(self):
+        """
+        The encoded SpiNNaker route.
+
+        :rtype: int
+        """
         return self._spinnaker_route
 
     def merge(self, other_entry):
@@ -201,10 +208,12 @@ class MulticastRoutingEntry(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return "{}:{}:{}:{{{}}}:{{{}}}".format(
-            self._routing_entry_key, self._mask, self._defaultable,
-            ", ".join(map(str, self.processor_ids)),
-            ", ".join(map(str, self.link_ids)))
+        if not self.__repr:
+            self.__repr = "{}:{}:{}:{{{}}}:{{{}}}".format(
+                self._routing_entry_key, self._mask, self._defaultable,
+                ", ".join(map(str, sorted(self.processor_ids))),
+                ", ".join(map(str, sorted(self.link_ids))))
+        return self.__repr
 
     def __str__(self):
         return self.__repr__()
@@ -239,11 +248,11 @@ class MulticastRoutingEntry(object):
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.
 
-        :rtype: tuple(list(int), list(int))
+        :rtype: tuple(frozenset(int), frozenset(int))
         """
-        processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+        processor_ids = (pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
                          if self._spinnaker_route & 1 <<
-                         (Router.MAX_LINKS_PER_ROUTER + pi)]
-        link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
-                    if self._spinnaker_route & 1 << li]
-        return processor_ids, link_ids
+                         (Router.MAX_LINKS_PER_ROUTER + pi))
+        link_ids = (li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
+                    if self._spinnaker_route & 1 << li)
+        return frozenset(processor_ids), frozenset(link_ids)
