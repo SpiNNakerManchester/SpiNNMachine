@@ -17,41 +17,44 @@ from .exceptions import SpinnMachineAlreadyExistsException
 
 class FixedRouteEntry(object):
     """
-    Describes an entry in a SpiNNaker chip's fixed route routing table.
+    Describes the sole entry in a SpiNNaker chip's fixed route routing table.
+    There is only one fixed route entry per chip.
     """
-
     __slots__ = (
-
         # the processors IDs for this route
         "_processor_ids",
-
         # the link IDs for this route
-        "_link_ids"
-    )
+        "_link_ids",
+        "__repr")
 
     def __init__(self, processor_ids, link_ids):
+        """
+        :param iterable(int) processor_ids:
+        :param iterable(int) link_ids:
+        """
+        self.__repr = None
         # Add processor IDs, checking that there is only one of each
-        self._processor_ids = set()
-        for processor_id in processor_ids:
-            if processor_id in self._processor_ids:
-                raise SpinnMachineAlreadyExistsException(
-                    "processor ID", str(processor_id))
-            self._processor_ids.add(processor_id)
+        self._processor_ids = frozenset(processor_ids)
+        self.__check_dupes(processor_ids, "processor ID")
 
         # Add link IDs, checking that there is only one of each
-        self._link_ids = set()
-        for link_id in link_ids:
-            if link_id in self._link_ids:
-                raise SpinnMachineAlreadyExistsException(
-                    "link ID", str(link_id))
-            self._link_ids.add(link_id)
+        self._link_ids = frozenset(link_ids)
+        self.__check_dupes(link_ids, "link ID")
+
+    @staticmethod
+    def __check_dupes(sequence, name):
+        check = set()
+        for _id in sequence:
+            if _id in check:
+                raise SpinnMachineAlreadyExistsException(name, str(_id))
+            check.add(_id)
 
     @property
     def processor_ids(self):
         """
         The destination processor IDs.
 
-        :rtype: iterable(int)
+        :rtype: frozenset(int)
         """
         return self._processor_ids
 
@@ -60,11 +63,13 @@ class FixedRouteEntry(object):
         """
         The destination link IDs.
 
-        :rtype: iterable(int)
+        :rtype: frozenset(int)
         """
         return self._link_ids
 
     def __repr__(self):
-        return ("{%s}:{%s}" % (
-            ", ".join(map(str, self._link_ids)),
-            ", ".join(map(str, self._processor_ids))))
+        if not self.__repr:
+            self.__repr = ("{%s}:{%s}" % (
+                ", ".join(map(str, sorted(self._link_ids))),
+                ", ".join(map(str, sorted(self._processor_ids)))))
+        return self.__repr

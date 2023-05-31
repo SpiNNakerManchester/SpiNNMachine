@@ -57,11 +57,11 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         multicast1 = MulticastRoutingEntry(1, 1, [1, 3, 4, 16], [2, 3, 5])
         self.assertEqual(4196012, multicast1.spinnaker_route)
         multicast2 = MulticastRoutingEntry(1, 1, spinnaker_route=4196012)
-        self.assertEqual(multicast2.processor_ids, [1, 3, 4, 16])
+        self.assertEqual(multicast2.processor_ids, {1, 3, 4, 16})
         # Third test getting the link_ids first
         multicast3 = MulticastRoutingEntry(1, 1, spinnaker_route=4196012)
-        self.assertEqual(multicast3.link_ids, [2, 3, 5])
-        self.assertEqual(multicast3.processor_ids, [1, 3, 4, 16])
+        self.assertEqual(multicast3.link_ids, {2, 3, 5})
+        self.assertEqual(multicast3.processor_ids, {1, 3, 4, 16})
 
     def test_merger(self):
         link_ids = list()
