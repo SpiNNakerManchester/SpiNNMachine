@@ -330,3 +330,12 @@ class Chip(object):
 
     def __repr__(self):
         return self.__str__()
+
+    def __eq__(self, other):
+        # Equality just on X,Y; that's most useful
+        if not isinstance(other, Chip):
+            return NotImplemented
+        return self._x == other.x and self._y == other.y
+
+    def __hash__(self):
+        return self._x * 256 + self._y
