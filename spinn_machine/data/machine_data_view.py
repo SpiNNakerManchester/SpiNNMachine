@@ -11,8 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Callable, Optional
+from spinn_utilities.typing.coords import XY
 from spinn_utilities.data import UtilsDataView
+from spinn_machine.chip import Chip
+from spinn_machine.machine import Machine
+from spinn_machine.exceptions import SpinnMachineException
 # pylint: disable=protected-access
 
 
@@ -31,7 +35,7 @@ class _MachineDataModel(object):
     What data is held where and how can change without notice.
     """
 
-    __singleton = None
+    __singleton: Optional['_MachineDataModel'] = None
 
     __slots__ = [
         # Data values cached
@@ -40,8 +44,8 @@ class _MachineDataModel(object):
         "_user_accessed_machine"
     ]
 
-    def __new__(cls):
-        if cls.__singleton:
+    def __new__(cls) -> '_MachineDataModel':
+        if cls.__singleton is not None:
             return cls.__singleton
         # pylint: disable=protected-access
         obj = object.__new__(cls)
@@ -49,24 +53,24 @@ class _MachineDataModel(object):
         obj._clear()
         return obj
 
-    def _clear(self):
+    def _clear(self) -> None:
         """
         Clears out all data
         """
         self._hard_reset()
-        self._machine_generator = None
+        self._machine_generator: Optional[Callable[[], None]] = None
 
-    def _hard_reset(self):
+    def _hard_reset(self) -> None:
         """
         Clears out all data that should change after a reset and graph change
 
         This does NOT clear the machine as it may have been asked for before
         """
         self._soft_reset()
-        self._machine = None
+        self._machine: Optional[Machine] = None
         self._user_accessed_machine = False
 
-    def _soft_reset(self):
+    def _soft_reset(self) -> None:
         """
         Clears timing and other data that should changed every reset
         """
@@ -85,12 +89,12 @@ class MachineDataView(UtilsDataView):
     """
 
     __data = _MachineDataModel()
-    __slots__ = []
+    __slots__ = ()
 
     # machine methods
 
     @classmethod
-    def has_machine(cls):
+    def has_machine(cls) -> bool:
         """
         Reports if a machine is currently set or can be mocked.
 
@@ -100,7 +104,7 @@ class MachineDataView(UtilsDataView):
                 cls._is_mocked())
 
     @classmethod
-    def get_machine(cls):
+    def get_machine(cls) -> Machine:
         """
         Returns the Machine if it has been set.
 
@@ -115,15 +119,18 @@ class MachineDataView(UtilsDataView):
                 cls.__data._machine = None
             cls.__data._user_accessed_machine = True
         if cls.__data._machine is None:
-            if cls.__data._machine_generator:
+            if cls.__data._machine_generator is not None:
                 # pylint: disable=not-callable
                 cls.__data._machine_generator()
+                if cls.__data._machine is None:
+                    raise SpinnMachineException(
+                        "machine generator did not generate machine")
                 return cls.__data._machine
             raise cls._exception("machine")
         return cls.__data._machine
 
     @classmethod
-    def get_chip_at(cls, x, y):
+    def get_chip_at(cls, x: int, y: int) -> Chip:
         """
         Gets the chip at (`x`, `y`).
 
@@ -142,7 +149,7 @@ class MachineDataView(UtilsDataView):
         return cls.get_machine()._chips[(x, y)]
 
     @classmethod
-    def get_nearest_ethernet(cls, x, y):
+    def get_nearest_ethernet(cls, x: int, y: int) -> XY:
         """
         Gets the nearest Ethernet-enabled chip (`x`, `y`) for the chip at
         (`x`, `y`) if it exists.
@@ -161,15 +168,16 @@ class MachineDataView(UtilsDataView):
         :rtype: tuple(int, int)
         """
         try:
-            chip = cls.__data._machine._chips[(x, y)]
-            return chip.nearest_ethernet_x, chip.nearest_ethernet_y
+            m = cls.__data._machine
+            if m is not None:
+                chip = m._chips[(x, y)]
+                return chip.nearest_ethernet_x, chip.nearest_ethernet_y
         except Exception:  # pylint: disable=broad-except
-            if cls.__data._machine is None:
-                return x, y
-            return x, y
+            pass
+        return x, y
 
     @classmethod
-    def where_is_xy(cls, x, y):
+    def where_is_xy(cls, x: int, y: int) -> str:
         """
         Gets a string saying where chip at x and y is if possible.
 
@@ -187,14 +195,17 @@ class MachineDataView(UtilsDataView):
         :rtype: str
         """
         try:
-            return cls.__data._machine.where_is_xy(x, y)
+            m = cls.__data._machine
+            if m is not None:
+                return m.where_is_xy(x, y)
+            return "No Machine created yet"
         except Exception as ex:  # pylint: disable=broad-except
             if cls.__data._machine is None:
                 return "No Machine created yet"
             return str(ex)
 
     @classmethod
-    def where_is_chip(cls, chip):
+    def where_is_chip(cls, chip: Chip) -> str:
         """
         Gets a string saying where chip is if possible.
 
@@ -207,13 +218,14 @@ class MachineDataView(UtilsDataView):
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
-        :param int x:
-        :param int y:
+        :param Chip chip:
         :rtype: str
         """
         try:
-            return cls.__data._machine.where_is_chip(chip)
+            m = cls.__data._machine
+            if m is not None:
+                return m.where_is_chip(chip)
         except Exception as ex:  # pylint: disable=broad-except
-            if cls.__data._machine is None:
-                return "Chip is from a previous machine"
-            return str(ex)
+            if cls.__data._machine is not None:
+                return str(ex)
+        return "Chip is from a previous machine"

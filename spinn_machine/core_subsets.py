@@ -11,7 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Dict, Iterable, Iterator, Union
+from spinn_utilities.typing.coords import XY, XYP
 from .core_subset import CoreSubset
 
 
@@ -23,17 +24,16 @@ class CoreSubsets(object):
 
     __slots__ = ("_core_subsets", )
 
-    def __init__(self, core_subsets=None):
+    def __init__(self, core_subsets: Iterable[CoreSubset] = ()):
         """
         :param iterable(CoreSubset) core_subsets:
             The cores for each desired chip
         """
-        self._core_subsets = dict()
-        if core_subsets is not None:
-            for core_subset in core_subsets:
-                self.add_core_subset(core_subset)
+        self._core_subsets: Dict[XY, CoreSubset] = dict()
+        for core_subset in core_subsets:
+            self.add_core_subset(core_subset)
 
-    def add_core_subset(self, core_subset):
+    def add_core_subset(self, core_subset: CoreSubset):
         """
         Add a core subset to the set
 
@@ -44,7 +44,7 @@ class CoreSubsets(object):
         for processor_id in core_subset.processor_ids:
             self.add_processor(x, y, processor_id)
 
-    def add_core_subsets(self, core_subsets):
+    def add_core_subsets(self, core_subsets: Iterable[CoreSubset]):
         """
         Merges a core subsets into this one.
 
@@ -53,7 +53,7 @@ class CoreSubsets(object):
         for core_subset in core_subsets:
             self.add_core_subset(core_subset)
 
-    def add_processor(self, x, y, processor_id):
+    def add_processor(self, x: int, y: int, processor_id: int):
         """
         Add a processor on a given chip to the set.
 
@@ -67,7 +67,7 @@ class CoreSubsets(object):
         else:
             self._core_subsets[xy].add_processor(processor_id)
 
-    def is_chip(self, x, y):
+    def is_chip(self, x: int, y: int) -> bool:
         """
         Determine if the chip with coordinates (x, y) is in the subset
 
@@ -78,7 +78,7 @@ class CoreSubsets(object):
         """
         return (x, y) in self._core_subsets
 
-    def is_core(self, x, y, processor_id):
+    def is_core(self, x: int, y: int, processor_id: int) -> bool:
         """
         Determine if there is a chip with coordinates (x, y) in the
         subset, which has a core with the given ID in the subset
@@ -96,7 +96,7 @@ class CoreSubsets(object):
         return processor_id in self._core_subsets[xy]
 
     @property
-    def core_subsets(self):
+    def core_subsets(self) -> Iterable[CoreSubset]:
         """
         The one-per-chip subsets.
 
@@ -105,7 +105,7 @@ class CoreSubsets(object):
         """
         return iter(self._core_subsets.values())
 
-    def get_core_subset_for_chip(self, x, y):
+    def get_core_subset_for_chip(self, x: int, y: int) -> CoreSubset:
         """
         Get the core subset for a chip.
 
@@ -119,7 +119,7 @@ class CoreSubsets(object):
             return CoreSubset(x, y, [])
         return self._core_subsets[xy]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[CoreSubset]:
         """
         Iterable of core_subsets.
 
@@ -127,7 +127,7 @@ class CoreSubsets(object):
         """
         return iter(self._core_subsets.values())
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         The total number of processors that are in these core subsets.
 
@@ -135,7 +135,7 @@ class CoreSubsets(object):
         """
         return sum(len(subset) for subset in self._core_subsets.values())
 
-    def __contains__(self, x_y_tuple):
+    def __contains__(self, x_y_tuple: Union[XY, XYP]) -> bool:
         """
         True if the given coordinates are in the set.
 
@@ -149,7 +149,7 @@ class CoreSubsets(object):
             return self.is_chip(*x_y_tuple)
         return self.is_core(*x_y_tuple)
 
-    def __getitem__(self, x_y_tuple):
+    def __getitem__(self, x_y_tuple: XY) -> CoreSubset:
         """
         The core subset for the given x, y tuple.
 
@@ -158,7 +158,7 @@ class CoreSubsets(object):
         """
         return self._core_subsets[x_y_tuple]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Human-readable version of the object.
 
@@ -169,7 +169,7 @@ class CoreSubsets(object):
             output += str(xy)
         return output
 
-    def intersect(self, other):
+    def intersect(self, other: 'CoreSubsets') -> 'CoreSubsets':
         """
         Returns a new CoreSubsets which is an intersect of this and the other.
 
@@ -186,7 +186,7 @@ class CoreSubsets(object):
                     result.add_core_subset(subset)
         return result
 
-    def values(self):
+    def values(self) -> Iterable[CoreSubset]:
         """
         :rtype: iterable(CoreSubset)
         """

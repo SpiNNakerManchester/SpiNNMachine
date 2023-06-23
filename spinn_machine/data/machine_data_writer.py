@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import logging
+from typing import Callable
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
@@ -33,36 +34,36 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
     repository unit tests as all methods are available to subclasses.
     """
     __data = _MachineDataModel()
-    __slots__ = []
+    __slots__ = ()
 
     @overrides(UtilsDataWriter._mock)
-    def _mock(self):
+    def _mock(self) -> None:
         UtilsDataWriter._mock(self)
         self.__data._clear()
         self.__data._machine_generator = self._mock_machine
 
-    def _mock_machine(self):
+    def _mock_machine(self) -> None:
         """
         Method to create a virtual machine in mock mode.
         """
         self.set_machine(virtual_machine(width=8, height=8))
 
     @overrides(UtilsDataWriter._setup)
-    def _setup(self):
+    def _setup(self) -> None:
         UtilsDataWriter._setup(self)
         self.__data._clear()
 
     @overrides(UtilsDataWriter._hard_reset)
-    def _hard_reset(self):
+    def _hard_reset(self) -> None:
         UtilsDataWriter._hard_reset(self)
         self.__data._hard_reset()
 
     @overrides(UtilsDataWriter._soft_reset)
-    def _soft_reset(self):
+    def _soft_reset(self) -> None:
         UtilsDataWriter._soft_reset(self)
         self.__data._soft_reset()
 
-    def get_user_accessed_machine(self):
+    def get_user_accessed_machine(self) -> bool:
         """
         Reports if `...View.get_machine` has been called outside of `sim.run`.
 
@@ -70,7 +71,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         return self.__data._user_accessed_machine
 
-    def set_machine(self, machine):
+    def set_machine(self, machine: Machine):
         """
         Sets the machine.
 
@@ -81,7 +82,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
             raise TypeError("machine should be a Machine")
         self.__data._machine = machine
 
-    def clear_machine(self):
+    def clear_machine(self) -> None:
         """
         Clears any previously set machine.
 
@@ -92,9 +93,11 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         self.__data._machine = None
 
-    def set_machine_generator(self, machine_generator):
+    def set_machine_generator(self, machine_generator: Callable[[], None]):
         """
-        Registers a function that can be called to give a machine.
+        Registers a function that can be called to give a machine. Note that
+        if the function does not actually register a machine when called, an
+        exception will be thrown.
 
         :param function machine_generator:
         """
