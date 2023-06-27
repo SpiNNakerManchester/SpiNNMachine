@@ -13,7 +13,7 @@
 # limitations under the License.
 import logging
 from typing import (
-    Dict, Iterable, Iterator, List, Optional, Set, Tuple, Union)
+    Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Union)
 from typing_extensions import TypeAlias
 from spinn_utilities.abstract_base import (
     AbstractBase, abstractproperty, abstractmethod)
@@ -744,7 +744,7 @@ class Machine(object, metaclass=AbstractBase):
         return len(self._chips)
 
     @property
-    def ethernet_connected_chips(self) -> Iterable[Chip]:
+    def ethernet_connected_chips(self) -> Sequence[Chip]:
         """
         The chips in the machine that have an Ethernet connection.
 
