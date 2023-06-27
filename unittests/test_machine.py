@@ -185,6 +185,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         chips = self._create_chips()
         new_machine = machine_from_chips(chips)
         self.assertEqual(chips[0], new_machine.get_chip_at(0, 0))
+        self.assertEqual(chips[0], new_machine[0, 0])
 
     def test_machine_big_x(self):
         """

@@ -11,8 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Sequence, Optional, Tuple
+from typing_extensions import TypeAlias
+from spinn_utilities.typing.coords import XY
 from spinn_machine.machine import Machine
+
+_Centre: TypeAlias = Tuple[float, float]
 
 
 class SpiNNakerTriadGeometry(object):
@@ -34,10 +38,10 @@ class SpiNNakerTriadGeometry(object):
         "_roots")
 
     # Stored singleton
-    spinn5_triad_geometry = None
+    spinn5_triad_geometry: Optional['SpiNNakerTriadGeometry'] = None
 
     @staticmethod
-    def get_spinn5_geometry():
+    def get_spinn5_geometry() -> 'SpiNNakerTriadGeometry':
         """
         Get the geometry object for a SpiNN-5 arrangement of boards
 
@@ -51,7 +55,9 @@ class SpiNNakerTriadGeometry(object):
                     12, 12, [(0, 0), (4, 8), (8, 4)], (3.6, 3.4))
         return SpiNNakerTriadGeometry.spinn5_triad_geometry
 
-    def __init__(self, triad_width, triad_height, roots, centre):
+    def __init__(
+            self, triad_width: int, triad_height: int, roots: Sequence[XY],
+            centre: _Centre):
         """
         :param int triad_width: width of a triad in chips
         :param int triad_height: height of a triad in chips
@@ -59,6 +65,9 @@ class SpiNNakerTriadGeometry(object):
         :type roots: list(tuple(int, int))
         :param centre:
             the distance from each Ethernet chip to the centre of the hexagon
+
+            .. note::
+                This is the theoretical centre, it might not be an actual chip
         :type centre: tuple(float, float)
         """
         self._triad_width = triad_width
@@ -75,8 +84,8 @@ class SpiNNakerTriadGeometry(object):
 
         # Find the nearest Ethernet to each chip by hexagonal distance
         nearest_ethernets = (
-            (self._locate_nearest_ethernet(
-                x, y, extended_ethernet_chips, centre)
+            (self.__locate_nearest_ethernet(
+                (x, y), extended_ethernet_chips, centre)
              for x in range(triad_width))
             for y in range(triad_height)
         )
@@ -91,7 +100,7 @@ class SpiNNakerTriadGeometry(object):
             for y, row in enumerate(nearest_ethernets)]
 
     @staticmethod
-    def _hexagonal_metric_distance(x, y, x_centre, y_centre):
+    def __hexagonal_metric_distance(xy: XY, centre: _Centre):
         """
         Get the hexagonal metric distance of a point from the centre of
         the hexagon.
@@ -116,11 +125,14 @@ class SpiNNakerTriadGeometry(object):
         :return: how far the chip is away from the centre of the hexagon
         :rtype: float
         """
+        x, y = xy
+        x_centre, y_centre = centre
         dx = x - x_centre
         dy = y - y_centre
         return max(abs(dx), abs(dy), abs(dx - dy))
 
-    def _locate_nearest_ethernet(self, x, y, ethernet_chips, centre):
+    def __locate_nearest_ethernet(
+            self, xy: XY, ethernet_chips: Sequence[XY], centre: _Centre):
         """
         Get the coordinate of the nearest Ethernet chip down and left from
         a given chip.
@@ -135,20 +147,20 @@ class SpiNNakerTriadGeometry(object):
         """
         x_c, y_c = centre
 
+        def measure(xy0: XY) -> float:
+            x0, y0 = xy0
+            return self.__hexagonal_metric_distance(xy, (x0 + x_c, y0 + y_c))
+
         # Find the coordinates of the closest Ethernet chip by measuring
         # the distance to the nominal centre of each board; the closest
         # Ethernet is the one that is on the same board as the one the chip
         # is closest to the centre of
-        x1, y1, _ = min(
-            ((x0, y0, self._hexagonal_metric_distance(
-                x, y, x0 + x_c, y0 + y_c))
-             for x0, y0 in ethernet_chips),
-            key=lambda tupl: tupl[2])
-        return (x1, y1)
+        return min(ethernet_chips, key=measure)
 
     # pylint: disable=too-many-arguments
     def get_ethernet_chip_coordinates(
-            self, x, y, width, height, root_x=0, root_y=0):
+            self, x: int, y: int, width: int, height: int,
+            root_x: int = 0, root_y: int = 0) -> XY:
         """
         Get the coordinates of a chip's local Ethernet connected chip
         according to this triad geometry object.
@@ -177,7 +189,8 @@ class SpiNNakerTriadGeometry(object):
         dx, dy = self.get_local_chip_coordinate(x, y, root_x, root_y)
         return ((x - dx) % width), ((y - dy) % height)
 
-    def get_local_chip_coordinate(self, x, y, root_x=0, root_y=0):
+    def get_local_chip_coordinate(
+            self, x: int, y: int, root_x: int = 0, root_y: int = 0) -> XY:
         """
         Get the coordinates of a chip on its board of a multi-board system
         relative to the Ethernet chip of the board.
@@ -196,7 +209,8 @@ class SpiNNakerTriadGeometry(object):
         dy = (y - root_y) % self._triad_height
         return self._ethernet_offset[dy][dx]
 
-    def get_potential_ethernet_chips(self, width, height):
+    def get_potential_ethernet_chips(
+            self, width: int, height: int) -> Sequence[XY]:
         """
         Get the coordinates of chips that should be Ethernet chips
 

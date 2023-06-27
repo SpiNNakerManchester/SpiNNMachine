@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Dict
 from .exceptions import SpinnMachineInvalidParameterException
 
-non_monitor = dict()
-monitor = dict()
+non_monitor: Dict[int, 'Processor'] = dict()
+monitor: Dict[int, 'Processor'] = dict()
 
 
 class Processor(object):
@@ -30,8 +30,10 @@ class Processor(object):
         "_processor_id", "_clock_speed", "_is_monitor", "_dtcm_available"
     )
 
-    def __init__(self, processor_id, clock_speed=CLOCK_SPEED, is_monitor=False,
-                 dtcm_available=DTCM_AVAILABLE):
+    def __init__(self, processor_id: int,
+                 clock_speed: int = CLOCK_SPEED,
+                 is_monitor: bool = False,
+                 dtcm_available: int = DTCM_AVAILABLE):
         """
         :param int processor_id:
             ID of the processor in the chip
@@ -57,7 +59,7 @@ class Processor(object):
         self._dtcm_available = dtcm_available
 
     @property
-    def processor_id(self):
+    def processor_id(self) -> int:
         """
         The ID of the processor.
 
@@ -66,7 +68,7 @@ class Processor(object):
         return self._processor_id
 
     @property
-    def dtcm_available(self):
+    def dtcm_available(self) -> int:
         """
         The amount of DTCM available on this processor.
 
@@ -75,7 +77,7 @@ class Processor(object):
         return self._dtcm_available
 
     @property
-    def cpu_cycles_available(self):
+    def cpu_cycles_available(self) -> int:
         """
         The number of CPU cycles available from this processor per ms.
 
@@ -84,7 +86,7 @@ class Processor(object):
         return self._clock_speed // 1000
 
     @property
-    def clock_speed(self):
+    def clock_speed(self) -> int:
         """
         The clock speed of the processor in cycles per second.
 
@@ -93,7 +95,7 @@ class Processor(object):
         return self._clock_speed
 
     @property
-    def is_monitor(self):
+    def is_monitor(self) -> bool:
         """
         Determines if the processor is the monitor, and therefore not
         to be allocated.
@@ -105,17 +107,17 @@ class Processor(object):
         """
         return self._is_monitor
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"[CPU: id={self._processor_id}, "
             f"clock_speed={self._clock_speed // 1000000} MHz, "
             f"monitor={self._is_monitor}]")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
     @staticmethod
-    def factory(processor_id, is_monitor=False):
+    def factory(processor_id: int, is_monitor: bool = False) -> 'Processor':
         if is_monitor:
             if processor_id not in monitor:
                 monitor[processor_id] = Processor(

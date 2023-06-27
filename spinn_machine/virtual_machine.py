@@ -14,21 +14,23 @@
 
 from collections import defaultdict
 import logging
+from typing import Dict, List, Optional, Set, Tuple
 from spinn_utilities.config_holder import get_config_int, get_config_str
 from spinn_utilities.log import FormatAdapter
+from spinn_utilities.typing.coords import XY
 from .chip import Chip
 from .exceptions import SpinnMachineInvalidParameterException
 from .router import Router
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .machine_factory import machine_from_size
-from spinn_machine import Machine
+from .machine import Machine
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
 
-def _verify_width_height(width, height):
+def _verify_width_height(width: int, height: int):
     try:
         if width < 0 or height < 0:
             raise SpinnMachineInvalidParameterException(
@@ -58,7 +60,8 @@ def _verify_width_height(width, height):
 
 
 def virtual_machine(
-        width, height, n_cpus_per_chip=None, validate=True):
+        width: int, height: int, n_cpus_per_chip: Optional[int] = None,
+        validate: bool = True):
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
@@ -94,8 +97,8 @@ class _VirtualMachine(object):
     ORIGIN = "Virtual"
 
     def __init__(
-            self, width, height, n_cpus_per_chip=None, validate=True):
-
+            self, width: int, height: int, n_cpus_per_chip: Optional[int],
+            validate: bool):
         _verify_width_height(width, height)
         self._machine = machine_from_size(width, height, origin=self.ORIGIN)
 
@@ -106,36 +109,25 @@ class _VirtualMachine(object):
             self._sdram_per_chip = Machine.DEFAULT_SDRAM_BYTES
 
         # Store the down items
-        unused_chips = []
+        unused_chips: List[XY] = []
         for down_chip in IgnoreChip.parse_string(get_config_str(
                 "Machine", "down_chips")):
-            if isinstance(down_chip, IgnoreChip):
-                if down_chip.ip_address is None:
-                    unused_chips.append((down_chip.x, down_chip.y))
-            else:
-                unused_chips.append((down_chip[0], down_chip[1]))
+            if down_chip.ip_address is None:
+                unused_chips.append((down_chip.x, down_chip.y))
 
-        self._unused_cores = defaultdict(set)
+        self._unused_cores: Dict[XY, Set[int]] = defaultdict(set)
         for down_core in IgnoreCore.parse_string(get_config_str(
                 "Machine", "down_cores")):
-            if isinstance(down_core, IgnoreCore):
-                if down_core.ip_address is None:
-                    self._unused_cores[(down_core.x, down_core.y)].add(
-                        down_core.virtual_p)
-            else:
-                self._unused_cores[(down_core[0], down_core[1])].add(
-                    down_core[2])
+            if down_core.ip_address is None:
+                self._unused_cores[down_core.x, down_core.y].add(
+                    down_core.virtual_p)
 
-        self._unused_links = set()
+        self._unused_links: Set[Tuple[int, int, int]] = set()
         for down_link in IgnoreLink.parse_string(get_config_str(
                 "Machine", "down_links")):
-            if isinstance(down_link, IgnoreLink):
-                if down_link.ip_address is None:
-                    self._unused_links.add(
-                        (down_link.x, down_link.y, down_link.link))
-            else:
+            if down_link.ip_address is None:
                 self._unused_links.add(
-                    (down_link[0], down_link[1], down_link[2]))
+                    (down_link.x, down_link.y, down_link.link))
 
         if width == 2:  # Already checked height is now also 2
             self._unused_links.update(_VirtualMachine._4_chip_down_links)
@@ -148,31 +140,31 @@ class _VirtualMachine(object):
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
-        configured_chips = dict()
+        configured_chips: Dict[XY, Tuple[XY, int]] = dict()
         if n_cpus_per_chip is None:
-            for (eth_x, eth_y) in ethernet_chips:
-                for (x_y, n_cores) in self._machine.get_xy_cores_by_ethernet(
-                        eth_x, eth_y):
-                    if x_y not in unused_chips:
-                        configured_chips[x_y] = (eth_x, eth_y, n_cores)
+            for eth in ethernet_chips:
+                for (xy, n_cores) in self._machine.get_xy_cores_by_ethernet(
+                        *eth):
+                    if xy not in unused_chips:
+                        configured_chips[xy] = (eth, n_cores)
         else:
-            for (eth_x, eth_y) in ethernet_chips:
-                for x_y in self._machine.get_xys_by_ethernet(eth_x, eth_y):
-                    if x_y not in unused_chips:
-                        configured_chips[x_y] = (eth_x, eth_y, n_cpus_per_chip)
+            for eth in ethernet_chips:
+                for xy in self._machine.get_xys_by_ethernet(*eth):
+                    if xy not in unused_chips:
+                        configured_chips[xy] = (eth, n_cpus_per_chip)
 
         # for chip in self._unreachable_outgoing_chips:
         #    configured_chips.remove(chip)
         # for chip in self._unreachable_incoming_chips:
         #    configured_chips.remove(chip)
 
-        for x_y in configured_chips:
-            x, y = x_y
-            if x_y in ethernet_chips:
+        for xy in configured_chips:
+            if xy in ethernet_chips:
+                x, y = xy
                 new_chip = self._create_chip(
-                    x, y, configured_chips, f"127.0.{x}.{y}")
+                    xy, configured_chips, f"127.0.{x}.{y}")
             else:
-                new_chip = self._create_chip(x, y, configured_chips)
+                new_chip = self._create_chip(xy, configured_chips)
             self._machine.add_chip(new_chip)
 
         self._machine.add_spinnaker_links()
@@ -181,25 +173,29 @@ class _VirtualMachine(object):
             self._machine.validate()
 
     @property
-    def machine(self):
+    def machine(self) -> Machine:
         return self._machine
 
-    def _create_chip(self, x, y, configured_chips, ip_address=None):
-        chip_links = self._calculate_links(x, y, configured_chips)
-        chip_router = Router(
-            chip_links)
+    def _create_chip(self, xy: XY, configured_chips: Dict[XY, Tuple[XY, int]],
+                     ip_address: Optional[str] = None) -> Chip:
+        chip_links = self._calculate_links(xy, configured_chips)
+        chip_router = Router(chip_links)
 
-        (eth_x, eth_y, n_cores) = configured_chips[(x, y)]
+        ((eth_x, eth_y), n_cores) = configured_chips[xy]
 
-        down_cores = self._unused_cores.get((x, y), None)
+        down_cores = self._unused_cores.get(xy, None)
+        x, y = xy
         return Chip(
             x, y, n_cores, chip_router, self._sdram_per_chip, eth_x, eth_y,
             ip_address, down_cores=down_cores)
 
-    def _calculate_links(self, x, y, configured_chips):
+    def _calculate_links(
+            self, xy: XY, configured_chips: Dict[XY, Tuple[XY, int]]
+            ) -> List[Link]:
         """
         Calculate the links needed for a machine structure
         """
+        x, y = xy
         links = list()
         for link_id in range(6):
             if (x, y, link_id) not in self._unused_links:

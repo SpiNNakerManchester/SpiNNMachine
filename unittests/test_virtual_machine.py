@@ -109,7 +109,7 @@ class TestVirtualMachine(unittest.TestCase):
 #                         "[VirtualMachine: max_x=1, max_y=1, n_chips=4]")
         self.assertEqual(vm.get_cores_and_link_count(), (72, 8))
         count = 0
-        for _chip in vm.get_existing_xys_on_board(vm.get_chip_at(1, 1)):
+        for _chip in vm.get_existing_xys_on_board(vm[1, 1]):
             count += 1
         self.assertEqual(4, count)
         self.assertEqual((2, 0), vm.get_unused_xy())
@@ -141,7 +141,7 @@ class TestVirtualMachine(unittest.TestCase):
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(864, count)
         count = 0
-        for _chip in vm.get_existing_xys_on_board(vm.get_chip_at(1, 1)):
+        for _chip in vm.get_existing_xys_on_board(vm[1, 1]):
             count += 1
         self.assertEqual(48, count)
         self.assertEqual((12, 0), vm.get_unused_xy())
@@ -181,7 +181,7 @@ class TestVirtualMachine(unittest.TestCase):
     def test_new_vm_with_monitor(self):
         n_cpus = 13
         vm = virtual_machine(2, 2, n_cpus_per_chip=n_cpus, validate=True)
-        _chip = vm.get_chip_at(1, 1)
+        _chip = vm[1, 1]
         self.assertEqual(n_cpus, _chip.n_processors)
         monitors = 0
         normal = 0
@@ -456,7 +456,7 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_size_2_2(self):
         machine = virtual_machine(2, 2, validate=True)
-        ethernet = machine.get_chip_at(0, 0)
+        ethernet = machine[0, 0]
         chips = set(machine.get_existing_xys_on_board(ethernet))
         self.assertEqual(len(chips), 4)
         chips = set(machine.get_existing_xys_by_ethernet(0, 0))
@@ -939,28 +939,28 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertTrue(machine.is_chip_at(6, 6))
         self.assertTrue(machine.is_chip_at(0, 0))
 
-        chip = machine.get_chip_at(3, 3)
+        chip = machine[3, 3]
         self.assertFalse(chip.is_processor_with_id(3))
 
-        chip = machine.get_chip_at(5, 5)
+        chip = machine[5, 5]
         self.assertFalse(chip.is_processor_with_id(6))
 
-        chip = machine.get_chip_at(7, 7)
+        chip = machine[7, 7]
         self.assertTrue(chip.is_processor_with_id(6))
 
-        chip = machine.get_chip_at(1, 1)
+        chip = machine[1, 1]
         self.assertFalse(chip.is_processor_with_id(1))
 
-        router = machine.get_chip_at(1, 3).router
+        router = machine[1, 3].router
         self.assertFalse(router.is_link(3))
 
-        router = machine.get_chip_at(3, 5).router
+        router = machine[3, 5].router
         self.assertFalse(router.is_link(3))
 
-        router = machine.get_chip_at(5, 3).router
+        router = machine[5, 3].router
         self.assertTrue(router.is_link(3))
 
-        chip = machine.get_chip_at(0, 0)
+        chip = machine[0, 0]
         for i in range(0, 5):
             self.assertTrue(chip.is_processor_with_id(i))
         for i in range(5, 11):
@@ -1004,11 +1004,11 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
-        chip34 = machine.get_chip_at(3, 4)
+        chip34 = machine[3, 4]
         where = machine.where_is_chip(chip34)
         self.assertEqual(
             where, 'global chip 3, 4 on 127.0.0.0 is chip 3, 4 on 127.0.0.0')
-        chip1112 = machine.get_chip_at(11, 12)
+        chip1112 = machine[11, 12]
         where = machine.where_is_chip(chip1112)
         self.assertEqual(
             where, 'global chip 11, 12 on 127.0.0.0 is chip 7, 4 on 127.0.4.8')

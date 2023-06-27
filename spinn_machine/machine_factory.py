@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 from collections import defaultdict
+import logging
+from typing import Collection, Iterable, Optional, Sequence, Set, Tuple
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
-from spinn_machine import (Chip, Router)
+from spinn_utilities.typing.coords import XY
+from spinn_machine import Chip, Router, Machine
 from .no_wrap_machine import NoWrapMachine
 from .horizontal_wrap_machine import HorizontalWrapMachine
 from .vertical_wrap_machine import VerticalWrapMachine
@@ -51,7 +53,9 @@ CHIP_REMOVED_BY_DEAD_PARENT = (
     "spinnakerusers@googlegroups.com \n\n")
 
 
-def machine_from_size(width, height, chips=None, origin=None):
+def machine_from_size(
+        width: int, height: int, chips: Optional[Sequence[Chip]] = None,
+        origin: str = "") -> Machine:
     """
     Create a machine with the assumed wrap-around based on the sizes.
 
@@ -88,7 +92,7 @@ def machine_from_size(width, height, chips=None, origin=None):
             return NoWrapMachine(width, height, chips, origin)
 
 
-def machine_from_chips(chips):
+def machine_from_chips(chips: Sequence[Chip]) -> Machine:
     """
     Create a machine with the assumed wrap-around based on the sizes.
 
@@ -111,7 +115,9 @@ def machine_from_chips(chips):
     return machine_from_size(max_x + 1, max_y + 1, chips)
 
 
-def _machine_ignore(original, dead_chips, dead_links):
+def _machine_ignore(
+        original: Machine, dead_chips: Collection[XY],
+        dead_links: Set[Tuple[int, int, int, int]]) -> Machine:
     """
     Creates a near copy of the machine without the dead bits.
 
@@ -161,12 +167,13 @@ def _machine_ignore(original, dead_chips, dead_links):
 
 
 def _generate_uni_direction_link_error(
-        dest_x, dest_y, src_x, src_y, back, original):
+        dest_x: int, dest_y: int, src_x: int, src_y: int, back: int,
+        original: Machine) -> str:
     # get the chips so we can find ethernet's and local ids
-    dest_chip = original.get_chip_at(dest_x, dest_y)
-    src_chip = original.get_chip_at(src_x, src_y)
-    src_ethernet = original.get_chip_at(
-        src_chip.nearest_ethernet_x, src_chip.nearest_ethernet_y).ip_address
+    dest_chip = original[dest_x, dest_y]
+    src_chip = original[src_x, src_y]
+    src_ethernet = original[
+        src_chip.nearest_ethernet_x, src_chip.nearest_ethernet_y].ip_address
 
     # if the dest chip is dead. Only report src chip ip address.
     if dest_chip is None:
@@ -175,8 +182,8 @@ def _generate_uni_direction_link_error(
             dest_x, dest_y)
 
     # got working chips, so get the separate ethernet's
-    dest_ethernet = original.get_chip_at(
-        dest_chip.nearest_ethernet_x, dest_chip.nearest_ethernet_y).ip_address
+    dest_ethernet = original[
+        dest_chip.nearest_ethernet_x, dest_chip.nearest_ethernet_y].ip_address
 
     # get board local ids
     (local_src_chip_x, local_src_chip_y) = original.get_local_xy(src_chip)
@@ -196,7 +203,7 @@ def _generate_uni_direction_link_error(
             local_src_chip_x, local_src_chip_y)
 
 
-def machine_repair(original, removed_chips=tuple()):
+def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
     """
     Remove chips that can't be reached or that can't reach other chips
     due to missing links.
@@ -216,17 +223,16 @@ def machine_repair(original, removed_chips=tuple()):
     :rtype: Machine
     """
     repair_machine = get_config_bool("Machine", "repair_machine")
-    dead_chips = set()
-    dead_links = set()
+    dead_chips: Set[XY] = set()
+    dead_links: Set[Tuple[int, int, int, int]] = set()
 
     # holder for error message
     error_message = ""
 
     for xy in original.unreachable_incoming_local_chips():
-        chip = original.get_chip_at(xy[0], xy[1])
+        chip = original[xy[0], xy[1]]
         error_xy = original.get_local_xy(chip)
-        ethernet = original.get_chip_at(
-            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        ethernet = original[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
         msg = BAD_MSG.format(
             "unreachable incoming chips", error_xy, ethernet.ip_address)
         if repair_machine:
@@ -236,10 +242,9 @@ def machine_repair(original, removed_chips=tuple()):
             logger.error(msg)
             error_message += msg
     for xy in original.unreachable_outgoing_local_chips():
-        chip = original.get_chip_at(xy[0], xy[1])
+        chip = original[xy[0], xy[1]]
         error_xy = original.get_local_xy(chip)
-        ethernet = original.get_chip_at(
-            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        ethernet = original[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
         msg = BAD_MSG.format(
             "unreachable outgoing chips", error_xy, ethernet.ip_address)
         if repair_machine:
@@ -267,8 +272,8 @@ def machine_repair(original, removed_chips=tuple()):
             parent_x, parent_y = original.xy_over_link(
                 chip.x, chip.y, chip.parent_link)
             if not original.is_chip_at(parent_x, parent_y):
-                ethernet_chip = original.get_chip_at(
-                    chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+                ethernet_chip = original[
+                    chip.nearest_ethernet_x, chip.nearest_ethernet_y]
                 msg = CHIP_REMOVED_BY_DEAD_PARENT.format(
                     chip.x, chip.y, parent_x, parent_y,
                     ethernet_chip.ip_address)
@@ -282,7 +287,7 @@ def machine_repair(original, removed_chips=tuple()):
     if not repair_machine and error_message != "":
         raise SpinnMachineException(error_message)
 
-    if len(dead_chips) == 0 and len(dead_links) == 0:
+    if not dead_chips and not dead_links:
         return original
 
     new_machine = _machine_ignore(original, dead_chips, dead_links)

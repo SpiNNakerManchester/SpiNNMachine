@@ -134,7 +134,7 @@ class MachineDataView(UtilsDataView):
         """
         Gets the chip at (`x`, `y`).
 
-        Almost Semantic sugar for `get_machine().get_chip_at()`
+        Almost Semantic sugar for `get_machine()[x, y]`
 
         The method however does not return `None` but rather raises a KeyError
         if the chip is not known
@@ -146,7 +146,7 @@ class MachineDataView(UtilsDataView):
             If the machine is currently unavailable
         :raises KeyError: If the chip does not exist but the machine does
         """
-        return cls.get_machine()._chips[(x, y)]
+        return cls.get_machine()._chips[x, y]
 
     @classmethod
     def get_nearest_ethernet(cls, x: int, y: int) -> XY:

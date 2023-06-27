@@ -21,7 +21,7 @@ from spinn_machine.data.machine_data_writer import MachineDataWriter
 BASE_CONFIG_FILE = "spinn_machine.cfg"
 
 
-def unittest_setup():
+def unittest_setup() -> None:
     """
     Resets the configurations so only the local default configuration is
     included.
@@ -34,7 +34,7 @@ def unittest_setup():
     MachineDataWriter.mock()
 
 
-def add_spinn_machine_cfg():
+def add_spinn_machine_cfg() -> None:
     """
     Add the local configuration and all dependent configuration files.
     """
