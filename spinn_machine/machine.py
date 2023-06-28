@@ -11,17 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import annotations
 import logging
 from typing import (
-    Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Union)
+    Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Union,
+    TYPE_CHECKING)
 from typing_extensions import TypeAlias
 from spinn_utilities.abstract_base import (
     AbstractBase, abstractproperty, abstractmethod)
 from spinn_utilities.typing.coords import XY
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
-from .chip import Chip
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
+if TYPE_CHECKING:
+    from .chip import Chip
 
 logger = logging.getLogger(__name__)
 _SpinLinkKey: TypeAlias = Tuple[Union[str, XY], int]

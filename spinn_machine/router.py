@@ -11,13 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Dict, Iterable, Iterator, List, Optional, Tuple, Union
+from __future__ import annotations
+from typing import (
+    Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 from .machine import Machine
-from .link import Link
-from .fixed_route_entry import FixedRouteEntry
-from .multicast_routing_entry import MulticastRoutingEntry
+if TYPE_CHECKING:
+    from .link import Link
+    from .fixed_route_entry import FixedRouteEntry
+    from .multicast_routing_entry import MulticastRoutingEntry
 
 
 class Router(object):
