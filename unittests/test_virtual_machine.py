@@ -163,7 +163,7 @@ class TestVirtualMachine(unittest.TestCase):
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         # 240 - 6 * 2
         self.assertEqual(228, count)
-        self.assertEqual(48, len(vm.local_xys))
+        self.assertEqual(48, len(list(vm.local_xys)))
 
     def test_version_5_hole2(self):
         set_config("Machine", "down_chips", "0,3")
@@ -175,7 +175,7 @@ class TestVirtualMachine(unittest.TestCase):
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         # 240 - 3 * 2
         self.assertEqual(234, count)
-        self.assertEqual(48, len(vm.local_xys))
+        self.assertEqual(48, len(list(vm.local_xys)))
         self.assertEqual((0, 4), vm.get_unused_xy())
 
     def test_new_vm_with_monitor(self):
@@ -471,7 +471,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 4)
-        self.assertEqual(4, len(machine.local_xys))
+        self.assertEqual(4, len(list(machine.local_xys)))
 
     def test_48_28(self):
         machine = virtual_machine(48, 24, validate=True)
@@ -485,7 +485,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 24)
-        self.assertEqual(48, len(machine.local_xys))
+        self.assertEqual(48, len(list(machine.local_xys)))
 
     def test_48_24(self):
         machine = virtual_machine(48, 24, validate=True)
@@ -499,7 +499,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 24)
-        self.assertEqual(48, len(machine.local_xys))
+        self.assertEqual(48, len(list(machine.local_xys)))
 
     def test_52_28(self):
         machine = virtual_machine(48, 24, validate=True)
@@ -513,7 +513,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 24)
-        self.assertEqual(48, len(machine.local_xys))
+        self.assertEqual(48, len(list(machine.local_xys)))
 
     def test_52_24(self):
         machine = virtual_machine(48, 24, validate=True)
@@ -527,7 +527,7 @@ class TestVirtualMachine(unittest.TestCase):
             self.assertEqual(global_y, chip.y)
             global_xys.add((global_x, global_y))
         self.assertEqual(len(global_xys), 48 * 24)
-        self.assertEqual(48, len(machine.local_xys))
+        self.assertEqual(48, len(list(machine.local_xys)))
 
     def test_size_2_2_hole(self):
         hole = [(1, 1)]

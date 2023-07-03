@@ -170,7 +170,7 @@ def _generate_uni_direction_link_error(
         dest_x: int, dest_y: int, src_x: int, src_y: int, back: int,
         original: Machine) -> str:
     # get the chips so we can find ethernet's and local ids
-    dest_chip = original[dest_x, dest_y]
+    dest_chip = original.get_chip_at(dest_x, dest_y)
     src_chip = original[src_x, src_y]
     src_ethernet = original[
         src_chip.nearest_ethernet_x, src_chip.nearest_ethernet_y].ip_address

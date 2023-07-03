@@ -86,7 +86,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(next(x[1].ip_address for x in new_machine), self._ip)
         self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
         self.assertEqual(new_machine.cores_and_link_output_string(),
-                         "450 cores and 50.0 links")
+                         "450 cores and 50 links")
         self.assertEqual("[NoWrapMachine: width=5, height=5, n_chips=25]",
                          new_machine.__repr__())
         self.assertEqual(list(new_machine.spinnaker_links), [])

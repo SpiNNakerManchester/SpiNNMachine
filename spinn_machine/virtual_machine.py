@@ -103,10 +103,11 @@ class _VirtualMachine(object):
         self._machine = machine_from_size(width, height, origin=self.ORIGIN)
 
         # Store the details
-        self._sdram_per_chip = get_config_int(
+        sdram_per_chip = get_config_int(
             "Machine", "max_sdram_allowed_per_chip")
-        if self._sdram_per_chip is None:
-            self._sdram_per_chip = Machine.DEFAULT_SDRAM_BYTES
+        if sdram_per_chip is None:
+            sdram_per_chip = Machine.DEFAULT_SDRAM_BYTES
+        self._sdram_per_chip = sdram_per_chip
 
         # Store the down items
         unused_chips: List[XY] = []
