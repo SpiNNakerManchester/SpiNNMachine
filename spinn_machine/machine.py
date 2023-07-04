@@ -768,7 +768,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def get_spinnaker_link_with_id(
             self, spinnaker_link_id: int, board_address: Optional[str] = None,
-            chip_coords: Optional[XY] = None) -> Optional[SpinnakerLinkData]:
+            chip_coords: Optional[XY] = None) -> SpinnakerLinkData:
         """
         Get a SpiNNaker link with a given ID.
 
@@ -784,7 +784,7 @@ class Machine(object, metaclass=AbstractBase):
             with. If this is `None` and board_address is `None`, the boot board
             will be assumed.
         :type chip_coords: tuple(int, int) or None
-        :return: The SpiNNaker link data or `None` if no link
+        :return: The SpiNNaker link data
         :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData
         """
         # Try chip coordinates first
