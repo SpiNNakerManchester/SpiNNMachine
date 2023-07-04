@@ -17,8 +17,7 @@ from typing import (
     Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Union,
     TYPE_CHECKING)
 from typing_extensions import TypeAlias
-from spinn_utilities.abstract_base import (
-    AbstractBase, abstractproperty, abstractmethod)
+from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.typing.coords import XY
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
@@ -579,7 +578,8 @@ class Machine(object, metaclass=AbstractBase):
                     raise SpinnMachineException(
                         f"{chip} has an unexpected local xy of {local_xy}")
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def wrap(self) -> str:
         """
         A short string representing the type of wrap.
