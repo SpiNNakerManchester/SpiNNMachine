@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import annotations
 from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
 from .exceptions import SpinnMachineInvalidParameterException
 from spinn_machine.router import Router
@@ -44,9 +45,11 @@ class MulticastRoutingEntry(object):
         ...
 
     # pylint: disable=too-many-arguments
-    def __init__(self, routing_entry_key, mask, *, processor_ids=None,
-                 link_ids=None, defaultable=False, spinnaker_route=None
-                 ) -> None:
+    def __init__(self, routing_entry_key: int, mask: int, *,
+                 processor_ids: Optional[Iterable[int]] = None,
+                 link_ids: Optional[Iterable[int]] = None,
+                 defaultable: bool = False,
+                 spinnaker_route: Optional[int] = None) -> None:
         """
         .. note::
             The processor_ids and link_ids parameters are only optional if a
@@ -159,8 +162,7 @@ class MulticastRoutingEntry(object):
         """
         return self._spinnaker_route
 
-    def merge(self, other_entry: 'MulticastRoutingEntry'
-              ) -> 'MulticastRoutingEntry':
+    def merge(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
         Merges together two multicast routing entries.  The entry to merge
         must have the same key and mask.  The merge will join the
@@ -169,49 +171,41 @@ class MulticastRoutingEntry(object):
         routing table. It is also possible to use the add (`+`) operator
         or the or (`|`) operator with the same effect.
 
-        :param ~spinn_machine.MulticastRoutingEntry other_entry:
+        :param ~spinn_machine.MulticastRoutingEntry other:
             The multicast entry to merge with this entry
         :return: A new multicast routing entry with merged destinations
         :rtype: ~spinn_machine.MulticastRoutingEntry
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:
             If the key and mask of the other entry do not match
         """
-        if other_entry.routing_entry_key != self.routing_entry_key:
+        if other.routing_entry_key != self.routing_entry_key:
             raise SpinnMachineInvalidParameterException(
-                "other_entry.key", hex(other_entry.routing_entry_key),
+                "other.key", hex(other.routing_entry_key),
                 f"The key does not match 0x{self.routing_entry_key:x}")
-
-        if other_entry.mask != self.mask:
+        if other.mask != self.mask:
             raise SpinnMachineInvalidParameterException(
-                "other_entry.mask", hex(other_entry.mask),
+                "other.mask", hex(other.mask),
                 f"The mask does not match 0x{self.mask:x}")
 
-        defaultable = self._defaultable
-        if self._defaultable != other_entry.defaultable:
-            defaultable = False
-
-        new_entry = MulticastRoutingEntry(
+        return MulticastRoutingEntry(
             self.routing_entry_key, self.mask,
-            processor_ids=self.processor_ids.union(other_entry.processor_ids),
-            link_ids=self.link_ids.union(other_entry.link_ids),
-            defaultable=defaultable)
-        return new_entry
+            processor_ids=(self.processor_ids | other.processor_ids),
+            link_ids=(self.link_ids | other.link_ids),
+            defaultable=(self._defaultable and other.defaultable))
 
-    def __add__(self, other_entry: 'MulticastRoutingEntry'
-                ) -> 'MulticastRoutingEntry':
+    def __add__(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
         Allows overloading of `+` to merge two entries together.
         See :py:meth:`merge`
         """
-        return self.merge(other_entry)
+        return self.merge(other)
 
-    def __or__(self, other_entry: 'MulticastRoutingEntry'
-               ) -> 'MulticastRoutingEntry':
+    def __or__(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
         Allows overloading of `|` to merge two entries together.
         See :py:meth:`merge`
         """
-        return self.merge(other_entry)
+        return self.merge(other)
 
     def __eq__(self, other_entry: Any) -> bool:
         if not isinstance(other_entry, MulticastRoutingEntry):
