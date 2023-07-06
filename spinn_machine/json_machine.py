@@ -36,7 +36,7 @@ _Desc = namedtuple("_Desc", [
     # What tags this chip has
     "tags"])
 
-JAVA_MAX_INT = 2147483647
+_JAVA_MAX_INT = 2147483647
 OPPOSITE_LINK_OFFSET = 3
 
 
@@ -130,10 +130,10 @@ def machine_from_json(j_machine):
 
 
 def _int_value(value):
-    if value < JAVA_MAX_INT:
+    if value < _JAVA_MAX_INT:
         return value
     else:
-        return JAVA_MAX_INT
+        return _JAVA_MAX_INT
 
 
 def _describe_chip(chip, std, eth):
