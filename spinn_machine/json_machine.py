@@ -20,6 +20,7 @@ from spinn_machine.data import MachineDataView
 from .chip import Chip
 from .router import Router
 from .link import Link
+from .machine import Machine
 from .machine_factory import machine_from_size
 
 
@@ -37,7 +38,6 @@ _Desc = namedtuple("_Desc", [
     "tags"])
 
 _JAVA_MAX_INT = 2147483647
-OPPOSITE_LINK_OFFSET = 3
 
 
 def machine_from_json(j_machine):
