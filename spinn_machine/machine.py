@@ -44,7 +44,6 @@ class Machine(object, metaclass=AbstractBase):
     NON_USER_CORES = 1
     DEFAULT_SDRAM_BYTES = 123469792
     __max_cores = None
-    MAX_CHIPS_PER_48_BOARD = 48
 
     # other useful magic numbers for machines
     SIZE_X_OF_ONE_BOARD = 8
