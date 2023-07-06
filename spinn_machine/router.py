@@ -30,9 +30,6 @@ class Router(object):
     # The maximum number of links/directions a router can handle
     MAX_LINKS_PER_ROUTER = 6
 
-    # Number to add or sub from a link to get its opposite
-    LINK_OPPOSITE = 3
-
     MAX_CORES_PER_ROUTER = 18
 
     __slots__ = (
@@ -236,4 +233,4 @@ class Router(object):
         :rtype: int
         """
         # Mod is faster than if
-        return (link_id + Router.LINK_OPPOSITE) % Router.MAX_LINKS_PER_ROUTER
+        return (link_id + Machine.LINK_OPPOSITE) % Router.MAX_LINKS_PER_ROUTER

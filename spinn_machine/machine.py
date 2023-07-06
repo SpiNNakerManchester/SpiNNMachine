@@ -66,6 +66,9 @@ class Machine(object, metaclass=AbstractBase):
     BOARD_48_CHIPS = list(CHIPS_PER_BOARD.keys())
     ROUTER_ENTRIES = 1023
 
+    # Number to add or sub from a link to get its opposite
+    LINK_OPPOSITE = 3
+
     __slots__ = (
         "_boot_ethernet_address",
         "_chips",
