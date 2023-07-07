@@ -186,6 +186,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: True if this machine can have multiple 48 chip boards
         :rtype: bool
         """
+        raise NotImplementedError
 
     @abstractmethod
     def get_xys_by_ethernet(
@@ -214,6 +215,7 @@ class Machine(object, metaclass=AbstractBase):
             this board.
         :rtype: iterable(tuple(int,int))
         """
+        raise NotImplementedError
 
     @abstractmethod
     def get_xy_cores_by_ethernet(
@@ -250,6 +252,7 @@ class Machine(object, metaclass=AbstractBase):
             number of cores for a chip in that position.
         :rtype: iterable(tuple(tuple(int,int),int))
         """
+        raise NotImplementedError
 
     @abstractmethod
     def get_down_xys_by_ethernet(
@@ -272,6 +275,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: Yields the (x, y) of the down chips on this board.
         :rtype: iterable(tuple(int,int))
         """
+        raise NotImplementedError
 
     def get_chips_by_ethernet(
             self, ethernet_x: int, ethernet_y: int) -> Iterable[Chip]:
@@ -313,6 +317,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: Yields the (x,y)s of chips on this board.
         :rtype: iterable(tuple(int,int))
         """
+        raise NotImplementedError
 
     @abstractmethod
     def xy_over_link(self, x: int, y: int, link: int) -> XY:
@@ -345,6 +350,7 @@ class Machine(object, metaclass=AbstractBase):
             valid or some fictional (x,y) if not.
         :rtype: tuple(int,int)
         """
+        raise NotImplementedError
 
     @abstractmethod
     def get_local_xy(self, chip: Chip) -> XY:
@@ -361,6 +367,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: Local (x, y) coordinates.
         :rtype: tuple(int,int)
         """
+        raise NotImplementedError
 
     def where_is_chip(self, chip: Chip) -> str:
         """
@@ -419,6 +426,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: global (x,y) coordinates of the chip
         :rtype: tuple(int,int)
         """
+        raise NotImplementedError
 
     @abstractmethod
     def get_vector_length(self, source: XY, destination: XY) -> int:
@@ -464,6 +472,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: The distance in steps
         :rtype: int
         """
+        raise NotImplementedError
 
     @abstractmethod
     def get_vector(self, source: XY, destination: XY) -> Tuple[int, int, int]:
@@ -489,6 +498,7 @@ class Machine(object, metaclass=AbstractBase):
         :type destination: tuple(int, int)
         :return: The vector
         """
+        raise NotImplementedError
 
     @abstractmethod
     def concentric_xys(self, radius: int, start: XY) -> Iterable[XY]:
@@ -506,6 +516,7 @@ class Machine(object, metaclass=AbstractBase):
         :param tuple(int,int) start: The start coordinate
         :rtype: iterable(tuple(int,int))
         """
+        raise NotImplementedError
 
     def validate(self) -> None:
         """
@@ -580,6 +591,7 @@ class Machine(object, metaclass=AbstractBase):
 
         :rtype: str
         """
+        raise NotImplementedError
 
     def add_chip(self, chip: Chip):
         """
