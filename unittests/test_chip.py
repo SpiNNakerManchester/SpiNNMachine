@@ -58,7 +58,7 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(
             new_chip.__repr__(),
             "[Chip: x=0, y=1, sdram=0 MB, ip_address=192.162.240.253, "
-            "router=[Router: emergency_routing=False, "
+            "router=[Router: "
             "available_entries=1024, links=["
             "[Link: source_x=0, source_y=0, source_link_id=0, "
             "destination_x=1, destination_y=1], "

@@ -53,7 +53,7 @@ class TestingRouter(unittest.TestCase):
                           {'x': 0, 'y': 0}, {'x': 0, 'y': 1}])
         self.assertEqual(
             r.__repr__(),
-            "[Router: emergency_routing=False, "
+            "[Router: "
             "available_entries=1024, links=["
             "[Link: source_x=0, source_y=0, source_link_id=0, "
             "destination_x=1, destination_y=1], "
