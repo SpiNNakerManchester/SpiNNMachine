@@ -22,7 +22,6 @@ from .router import Router
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .machine_factory import machine_from_size
-from spinn_machine import Machine
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
 logger = FormatAdapter(logging.getLogger(__name__))
