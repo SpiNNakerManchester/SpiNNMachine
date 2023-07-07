@@ -12,14 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+from spinn_utilities.log import FormatAdapter
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 from spinn_utilities.abstract_base import (
     AbstractBase, abstractproperty, abstractmethod)
-import logging
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 
 class Machine(object, metaclass=AbstractBase):
