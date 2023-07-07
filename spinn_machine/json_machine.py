@@ -20,7 +20,6 @@ from spinn_machine.data import MachineDataView
 from .chip import Chip
 from .router import Router
 from .link import Link
-from .machine import Machine
 from .machine_factory import machine_from_size
 
 
