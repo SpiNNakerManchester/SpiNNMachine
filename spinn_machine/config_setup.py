@@ -33,25 +33,45 @@ __SPIN2_SDRAM = 1234567890
 logger = FormatAdapter(logging.getLogger(__name__))
 
 
-def unittest_setup():
+def unittest_setup(*, board_type=None):
     """
     Resets the configurations so only the local default configuration is
     included.
 
     .. note::
         This file should only be called from `SpiNNMachine/unittests`
+
+    :param board_type: Value to say how to confuire the system.
+        This includes defining what a VirtualMachine would be
+        Can be 1 for Spin1 boards, 2 for Spin2 boards or
+        None if the test do not depend on knowing the board type.
+    :type board_type: None or int
     """
     clear_cfg_files(True)
-    add_spinn_machine_cfg()
     MachineDataWriter.mock()
+    add_spinn_machine_cfg(board_type)
 
 
-def add_spinn_machine_cfg():
+def add_spinn_machine_cfg(board_type):
     """
     Add the local configuration and all dependent configuration files.
+
+    :param board_type: Value to say how to confuire the system.
+        This includes defining what a VirtualMachine would be
+        Can be 1 for Spin1 boards, 2 for Spin2 boards or
+        None if the test do not depend on knowing the board type.
+    :type board_type: None or int
     """
     add_spinn_utilities_cfg()
     add_default_cfg(os.path.join(os.path.dirname(__file__), BASE_CONFIG_FILE))
+    if board_type is None:
+        pass
+    elif board_type == 1:
+        setup_spin1()
+    elif board_type == 2:
+        setup_spin2()
+    else:
+        raise ValueError(f"Unexpected {board_type=}")
 
 
 def __setup_spin(board_type, sdram):
@@ -76,6 +96,10 @@ def setup_spin1():
     """
     Changes any board type settings to the Values required for a Spin1 board
 
+    .. note::
+        This method should only be called by ASB as part of sim.setup()
+        or here by unittest_setup. Any other usage is NOT supported!
+
     :raises SpinnMachineException: If called after a Machine has been created
     """
     __setup_spin("spin 1", __SPIN1_SDRAM)
@@ -84,6 +108,10 @@ def setup_spin1():
 def setup_spin2():
     """
     Changes any board type settings to the Values required for a Spin2 board
+
+    .. note::
+        This method should only be called by ASB as part of sim.setup()
+        or here by unittest_setup. Any other usage is NOT supported!
 
     :raises SpinnMachineException: If called after a Machine has been created
     """

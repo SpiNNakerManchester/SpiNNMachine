@@ -14,7 +14,7 @@
 
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine.config_setup import unittest_setup, setup_spin1
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine import (Chip, Link, Machine, machine_from_size, Router,
                            virtual_machine)
 from spinn_machine.exceptions import (
@@ -31,8 +31,7 @@ class TestVirtualMachine(unittest.TestCase):
     TYPICAL_N_CORES_PER_BOARD = sum(Machine.CHIPS_PER_BOARD.values())
 
     def setUp(self):
-        unittest_setup()
-        setup_spin1()
+        unittest_setup(board_type=1)
 
     def _create_chip(self, x, y):
         # Create a list of processors.

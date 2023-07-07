@@ -17,15 +17,14 @@ import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_machine import virtual_machine
 from spinn_machine.data.machine_data_writer import MachineDataWriter
-from spinn_machine.config_setup import unittest_setup, setup_spin1
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
 
 
 class TestJsonMachine(unittest.TestCase):
 
     def setUp(self):
-        unittest_setup()
-        setup_spin1()
+        unittest_setup(board_type=1)
 
     def test_json_version_5_hole(self):
         set_config("Machine", "down_chips", "3,3")
