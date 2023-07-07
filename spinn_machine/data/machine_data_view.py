@@ -100,6 +100,15 @@ class MachineDataView(UtilsDataView):
                 cls._is_mocked())
 
     @classmethod
+    def has_actual_machine(cls):
+        """
+        Reports if a machine has actually been created.
+
+        :rtype: bool
+        """
+        return cls.__data._machine is not None
+
+    @classmethod
     def get_machine(cls):
         """
         Returns the Machine if it has been set.
