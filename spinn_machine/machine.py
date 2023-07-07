@@ -48,19 +48,13 @@ class Machine(object, metaclass=AbstractBase):
 
     # current opinions is that the Ethernet connected chip can handle 10
     # UDP packets per millisecond
-    MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
     DEFAULT_MAX_CORES_PER_CHIP = 18
     NON_USER_CORES = 1
     DEFAULT_SDRAM_BYTES = 123469792
     __max_cores: Optional[int] = None
     MAX_CHIPS_PER_48_BOARD = 48
-    MAX_CHIPS_PER_4_CHIP_BOARD = 4
-    BOARD_VERSION_FOR_48_CHIPS = [4, 5]
-    BOARD_VERSION_FOR_4_CHIPS = [2, 3]
 
     # other useful magic numbers for machines
-    MAX_CHIP_X_ID_ON_ONE_BOARD = 7
-    MAX_CHIP_Y_ID_ON_ONE_BOARD = 7
     SIZE_X_OF_ONE_BOARD = 8
     SIZE_Y_OF_ONE_BOARD = 8
 

@@ -153,8 +153,7 @@ def _machine_ignore(
             for link in chip.router.links:
                 if link.source_link_id not in links_map[(chip.x, chip.y)]:
                     links.append(link)
-            router = Router(links, chip.router.emergency_routing_enabled,
-                            chip.router.n_available_multicast_entries)
+            router = Router(links)
             chip = Chip(
                 chip.x, chip.y, chip.n_processors, router, chip.sdram,
                 chip.nearest_ethernet_x, chip.nearest_ethernet_y,

@@ -30,7 +30,7 @@ class TestingRouter(unittest.TestCase):
         links.append(Link(0, 1, 1, 1, 0))
         links.append(Link(1, 1, 2, 0, 0))
         links.append(Link(1, 0, 3, 0, 1))
-        r = Router(links, False, 1024)
+        r = Router(links, 1024)
 
         self.assertEqual(len(r), 4)
         for i in range(4):
@@ -41,7 +41,6 @@ class TestingRouter(unittest.TestCase):
         self.assertEqual([link[0] for link in r], [0, 1, 2, 3])
         self.assertEqual([link[1].source_link_id for link in r], [0, 1, 2, 3])
 
-        self.assertFalse(r.emergency_routing_enabled)
         self.assertEqual(r.n_available_multicast_entries, 1024)
 
         self.assertFalse(r.is_link(-1))
@@ -54,7 +53,7 @@ class TestingRouter(unittest.TestCase):
                           {'x': 0, 'y': 0}, {'x': 0, 'y': 1}])
         self.assertEqual(
             r.__repr__(),
-            "[Router: emergency_routing=False, "
+            "[Router: "
             "available_entries=1024, links=["
             "[Link: source_x=0, source_y=0, source_link_id=0, "
             "destination_x=1, destination_y=1], "
@@ -65,21 +64,13 @@ class TestingRouter(unittest.TestCase):
             "[Link: source_x=1, source_y=0, source_link_id=3, "
             "destination_x=0, destination_y=1]]]")
 
-    def test_creating_new_router_with_emergency_routing_on(self):
-        links = list()
-        (e, ne, n, w, sw, s) = range(6)
-        links.append(Link(0, 0, 0, 0, 1))
-        links.append(Link(0, 1, 1, 0, 1))
-        r = Router(links, True, 1024)
-        self.assertTrue(r.emergency_routing_enabled)
-
     def test_creating_new_router_with_duplicate_links(self):
         links = list()
         (e, ne, n, w, sw, s) = range(6)
         links.append(Link(0, 0, 0, 0, 1))
         links.append(Link(0, 1, 0, 0, 1))
         with self.assertRaises(SpinnMachineAlreadyExistsException):
-            Router(links, False, 1024)
+            Router(links, 1024)
 
     def test_convert_to_route(self):
         e = MulticastRoutingEntry(28, 60, processor_ids=[4, 5, 7],

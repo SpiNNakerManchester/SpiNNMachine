@@ -37,7 +37,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         links.append(Link(0, 1, 1, 1, 0))
         links.append(Link(1, 1, 2, 0, 0))
         links.append(Link(1, 0, 3, 0, 1))
-        self._router = Router(links, False, 1024)
+        self._router = Router(links, 1024)
 
         self._nearest_ethernet_chip = (0, 0)
 
