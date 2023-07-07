@@ -44,7 +44,6 @@ class Machine(object, metaclass=AbstractBase):
     MAX_BANDWIDTH_PER_ETHERNET_CONNECTED_CHIP = 10 * 256
     DEFAULT_MAX_CORES_PER_CHIP = 18
     NON_USER_CORES = 1
-    DEFAULT_SDRAM_BYTES = 123469792
     __max_cores = None
     MAX_CHIPS_PER_48_BOARD = 48
     MAX_CHIPS_PER_4_CHIP_BOARD = 4

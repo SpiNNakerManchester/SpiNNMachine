@@ -102,8 +102,7 @@ class _VirtualMachine(object):
         # Store the details
         self._sdram_per_chip = get_config_int(
             "Machine", "max_sdram_allowed_per_chip")
-        if self._sdram_per_chip is None:
-            self._sdram_per_chip = Machine.DEFAULT_SDRAM_BYTES
+        assert self._sdram_per_chip
 
         # Store the down items
         unused_chips = []

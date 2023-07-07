@@ -80,6 +80,7 @@ class Chip(object):
         self._y = y
         self._p = self.__generate_processors(n_processors, down_cores)
         self._router = router
+        assert sdram
         self._sdram = sdram
         self._ip_address = ip_address
         if tag_ids is not None:

@@ -15,7 +15,7 @@
 import unittest
 from spinn_utilities.exceptions import (DataNotYetAvialable)
 from spinn_machine import virtual_machine
-from spinn_machine.config_setup import unittest_setup
+from spinn_machine.config_setup import unittest_setup, setup_spin1
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 
@@ -24,6 +24,7 @@ class TestSimulatorData(unittest.TestCase):
 
     def setUp(cls):
         unittest_setup()
+        setup_spin1()
 
     def test_setup(self):
         # What happens before setup depends on the previous test
