@@ -168,7 +168,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             link_ids=link_ids2, defaultable=True)
         with self.assertRaises(SpinnMachineInvalidParameterException) as e:
             a_multicast.merge(b_multicast)
-        self.assertEqual(e.exception.parameter, "other_entry.key")
+        self.assertEqual(e.exception.parameter, "other.key")
         self.assertEqual(e.exception.value, "0x2")
         self.assertEqual(e.exception.problem, "The key does not match 0x1")
 
