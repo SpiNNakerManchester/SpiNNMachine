@@ -68,7 +68,7 @@ jobs:
         package: spinn_machine
         language: en_GB
     - name: Lint with mypy
-      run: mypy $ROOT_PKG
+      run: mypy spinn_machine
 
   validate:
     runs-on: ubuntu-latest
