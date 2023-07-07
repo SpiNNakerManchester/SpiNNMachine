@@ -43,7 +43,7 @@ class TestVirtualMachine(unittest.TestCase):
         links.append(Link(0, 1, 1, 1, 0))
         links.append(Link(1, 1, 2, 0, 0))
         links.append(Link(1, 0, 3, 0, 1))
-        _router = Router(links, False, 1024)
+        _router = Router(links, 1024)
 
         _sdram = 128
         nearest_ethernet_chip = (0, 0)
