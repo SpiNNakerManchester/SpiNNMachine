@@ -186,8 +186,7 @@ class _VirtualMachine(object):
 
     def _create_chip(self, x, y, configured_chips, ip_address=None):
         chip_links = self._calculate_links(x, y, configured_chips)
-        chip_router = Router(
-            chip_links)
+        chip_router = Router(chip_links)
 
         (eth_x, eth_y, n_cores) = configured_chips[(x, y)]
 

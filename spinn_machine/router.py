@@ -32,18 +32,14 @@ class Router(object):
 
     MAX_CORES_PER_ROUTER = 18
 
-    __slots__ = (
-        "_emergency_routing_enabled", "_links",
+    __slots__ = ("_links",
         "_n_available_multicast_entries"
     )
 
     def __init__(
-            self, links, emergency_routing_enabled=False,
-            n_available_multicast_entries=Machine.ROUTER_ENTRIES):
+            self, links, n_available_multicast_entries=Machine.ROUTER_ENTRIES):
         """
         :param iterable(~spinn_machine.Link) links: iterable of links
-        :param bool emergency_routing_enabled:
-            Determines if the router emergency routing is operating
         :param int n_available_multicast_entries:
             The number of entries available in the routing table
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
@@ -53,7 +49,6 @@ class Router(object):
         for link in links:
             self.add_link(link)
 
-        self._emergency_routing_enabled = emergency_routing_enabled
         self._n_available_multicast_entries = n_available_multicast_entries
 
     def add_link(self, link):
@@ -135,15 +130,6 @@ class Router(object):
         return len(self._links)
 
     @property
-    def emergency_routing_enabled(self):
-        """
-        Whether emergency routing is enabled.
-
-        :rtype: bool
-        """
-        return self._emergency_routing_enabled
-
-    @property
     def n_available_multicast_entries(self):
         """
         The number of available multicast entries in the routing tables.
@@ -213,7 +199,7 @@ class Router(object):
 
     def __str__(self):
         return (
-            f"[Router: emergency_routing={self._emergency_routing_enabled}, "
+            f"[Router: "
             f"available_entries={self._n_available_multicast_entries}, "
             f"links={list(self._links.values())}]")
 

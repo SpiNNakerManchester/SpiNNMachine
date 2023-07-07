@@ -114,7 +114,7 @@ def machine_from_json(j_machine):
                 links.append(Link(
                     source_x, source_y, source_link_id, destination_x,
                     destination_y))
-        router = Router(links, False, router_entries)
+        router = Router(links, router_entries)
 
         # Create and add a chip with this router
         chip = Chip(
