@@ -35,9 +35,7 @@ class Router(object):
 
     MAX_CORES_PER_ROUTER = 18
 
-    __slots__ = ("_links",
-        "_n_available_multicast_entries"
-    )
+    __slots__ = ("_links", "_n_available_multicast_entries")
 
     def __init__(
             self, links, n_available_multicast_entries=Machine.ROUTER_ENTRIES):
