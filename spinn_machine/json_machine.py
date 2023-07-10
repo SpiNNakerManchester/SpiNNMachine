@@ -14,33 +14,67 @@
 
 import logging
 import json
-from collections import namedtuple
+from typing import NamedTuple
 from spinn_utilities.log import FormatAdapter
+from spinn_utilities.typing.json import JsonArray, JsonObject, JsonValue
 from spinn_machine.data import MachineDataView
 from .chip import Chip
 from .router import Router
 from .link import Link
 from .machine_factory import machine_from_size
-
+from .machine import Machine
 
 logger = FormatAdapter(logging.getLogger(__name__))
-
-# A description of a standard set of resources possessed by a chip
-_Desc = namedtuple("_Desc", [
-    # The cores where the monitors are
-    "monitors",
-    # The entries on the router
-    "router_entries",
-    # The amount of SDRAM on the chip
-    "sdram",
-    # What tags this chip has
-    "tags"])
-
 JAVA_MAX_INT = 2147483647
 OPPOSITE_LINK_OFFSET = 3
 
 
-def machine_from_json(j_machine):
+class _Desc(NamedTuple):
+    """
+    A description of a standard set of resources possessed by a chip.
+    """
+
+    #: The cores where the monitors are
+    monitors: int
+    #: The entries on the router
+    router_entries: int
+    #: The amount of SDRAM on the chip
+    sdram: int
+    #: What tags this chip has
+    tags: JsonArray
+
+
+def _int(value: JsonValue) -> int:
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        return int(value)
+    raise ValueError(
+        f"unsupported value type for integer field: {type(value)}")
+
+
+def _str(value: JsonValue) -> str:
+    if isinstance(value, str):
+        return value
+    raise ValueError(
+        f"unsupported value type for string field: {type(value)}")
+
+
+def _ary(value: JsonValue) -> JsonArray:
+    if isinstance(value, list):
+        return value
+    raise ValueError(
+        f"unsupported value type for array field: {type(value)}")
+
+
+def _obj(value: JsonValue) -> JsonObject:
+    if isinstance(value, dict):
+        return value
+    raise ValueError(
+        f"unsupported value type for object field: {type(value)}")
+
+
+def machine_from_json(j_machine: JsonObject) -> Machine:
     """
     Generate a model of a machine from a JSON description of that machine.
 
@@ -55,29 +89,32 @@ def machine_from_json(j_machine):
             j_machine = json.load(j_file)
 
     # get the default values
-    width = j_machine["width"]
-    height = j_machine["height"]
+    width = _int(j_machine["width"])
+    height = _int(j_machine["height"])
 
     machine = machine_from_size(width, height, origin="Json")
-    s_monitors = j_machine["standardResources"]["monitors"]
-    s_router_entries = j_machine["standardResources"]["routerEntries"]
-    s_sdram = j_machine["standardResources"]["sdram"]
-    s_tag_ids = j_machine["standardResources"]["tags"]
+    std_res = _obj(j_machine["standardResources"])
+    s_monitors = std_res["monitors"]
+    s_router_entries = _int(std_res["routerEntries"])
+    s_sdram = _int(std_res["sdram"])
+    s_tag_ids = _ary(std_res["tags"])
 
-    e_monitors = j_machine["ethernetResources"]["monitors"]
-    e_router_entries = j_machine["ethernetResources"]["routerEntries"]
-    e_sdram = j_machine["ethernetResources"]["sdram"]
-    e_tag_ids = j_machine["ethernetResources"]["tags"]
+    eth_res = _obj(j_machine["ethernetResources"])
+    e_monitors = eth_res["monitors"]
+    e_router_entries = _int(eth_res["routerEntries"])
+    e_sdram = _int(eth_res["sdram"])
+    e_tag_ids = _ary(eth_res["tags"])
 
-    for j_chip in j_machine["chips"]:
-        details = j_chip[2]
-        source_x = j_chip[0]
-        source_y = j_chip[1]
-        nearest_ethernet = details["ethernet"]
+    for aj_chip in _ary(j_machine["chips"]):
+        j_chip = _ary(aj_chip)
+        details = _obj(j_chip[2])
+        source_x = _int(j_chip[0])
+        source_y = _int(j_chip[1])
+        board_x, board_y = _ary(details["ethernet"])
 
         # get the details
         if "ipAddress" in details:
-            ip_address = details["ipAddress"]
+            ip_address = _str(details["ipAddress"])
             router_entries = e_router_entries
             sdram = e_sdram
             tag_ids = e_tag_ids
@@ -89,22 +126,22 @@ def machine_from_json(j_machine):
             tag_ids = s_tag_ids
             monitors = s_monitors
         if len(j_chip) > 3:
-            exceptions = j_chip[3]
+            exceptions = _obj(j_chip[3])
             if "monitors" in exceptions:
                 monitors = exceptions["monitors"]
             if "routerEntries" in exceptions:
-                router_entries = exceptions["routerEntries"]
+                router_entries = _int(exceptions["routerEntries"])
             if "sdram" in exceptions:
-                sdram = exceptions["sdram"]
+                sdram = _int(exceptions["sdram"])
             if "tags" in exceptions:
-                tag_ids = exceptions["tags"]
+                tag_ids = _ary(exceptions["tags"])
         if monitors != 1:
             raise NotImplementedError(
                 "We currently only support exactly 1 monitor per core")
 
         # create a router based on the details
         if "deadLinks" in details:
-            dead_links = details["deadLinks"]
+            dead_links = _ary(details["deadLinks"])
         else:
             dead_links = []
         links = []
@@ -119,8 +156,9 @@ def machine_from_json(j_machine):
 
         # Create and add a chip with this router
         chip = Chip(
-            source_x, source_y, details["cores"], router, sdram,
-            nearest_ethernet[0], nearest_ethernet[1], ip_address, tag_ids)
+            source_x, source_y, _int(details["cores"]), router, sdram,
+            _int(board_x), _int(board_y), ip_address, [
+                _int(tag) for tag in tag_ids])
         machine.add_chip(chip)
 
     machine.add_spinnaker_links()
@@ -129,14 +167,14 @@ def machine_from_json(j_machine):
     return machine
 
 
-def _int_value(value):
+def _int_value(value: int) -> int:
     if value < JAVA_MAX_INT:
         return value
     else:
         return JAVA_MAX_INT
 
 
-def _describe_chip(chip, std, eth):
+def _describe_chip(chip: Chip, std, eth) -> JsonArray:
     """
     Produce a JSON-suitable description of a single chip.
 
@@ -145,22 +183,23 @@ def _describe_chip(chip, std, eth):
     :param eth: The standard Ethernet-enabled chip resources.
     :return: Description of chip that is trivial to serialize as JSON.
     """
-    details = dict()
-    details["cores"] = chip.n_processors
+    details: JsonObject = {
+        "cores": chip.n_processors}
     if chip.nearest_ethernet_x is not None:
         details["ethernet"] = \
             [chip.nearest_ethernet_x, chip.nearest_ethernet_y]
 
-    dead_links = []
-    for link_id in range(0, Router.MAX_LINKS_PER_ROUTER):
-        if not chip.router.is_link(link_id):
-            dead_links.append(link_id)
+    dead_links: JsonArray = [
+        link_id
+        for link_id in range(Router.MAX_LINKS_PER_ROUTER)
+        if not chip.router.is_link(link_id)]
     if dead_links:
         details["deadLinks"] = dead_links
 
-    exceptions = dict()
+    exceptions: JsonObject = dict()
     router_entries = _int_value(
         chip.router.n_available_multicast_entries)
+    tags: JsonArray = list(chip.tag_ids)
     if chip.ip_address is not None:
         details['ipAddress'] = chip.ip_address
         # Write the Resources ONLY if different from the e_values
@@ -171,8 +210,8 @@ def _describe_chip(chip, std, eth):
             exceptions["routerEntries"] = router_entries
         if chip.sdram != eth.sdram:
             exceptions["sdram"] = chip.sdram
-        if chip.tag_ids != eth.tags:
-            exceptions["tags"] = list(chip.tag_ids)
+        if tags != eth.tags:
+            exceptions["tags"] = tags
     else:
         # Write the Resources ONLY if different from the s_values
         if (chip.n_processors - chip.n_user_processors) != std.monitors:
@@ -182,8 +221,8 @@ def _describe_chip(chip, std, eth):
             exceptions["routerEntries"] = router_entries
         if chip.sdram != std.sdram:
             exceptions["sdram"] = chip.sdram
-        if chip.tag_ids != std.tags:
-            exceptions["tags"] = list(chip.tag_ids)
+        if tags != std.tags:
+            exceptions["tags"] = tags
 
     if exceptions:
         return [chip.x, chip.y, details, exceptions]
@@ -191,7 +230,7 @@ def _describe_chip(chip, std, eth):
         return [chip.x, chip.y, details]
 
 
-def to_json():
+def to_json() -> JsonObject:
     """
     Runs the code to write the machine in Java readable JSON.
 
@@ -207,11 +246,11 @@ def to_json():
                 router_entries=_int_value(
                     chip.router.n_available_multicast_entries),
                 sdram=chip.sdram,
-                tags=chip.tag_ids)
+                tags=list(chip.tag_ids))
             break
     else:
         # Probably ought to warn if std is unpopulated
-        pass
+        raise ValueError("could not compute standard resources")
 
     # find the eth values to use for ethernet chips
     chip = machine.boot_chip
@@ -220,40 +259,33 @@ def to_json():
         router_entries=_int_value(
             chip.router.n_available_multicast_entries),
         sdram=chip.sdram,
-        tags=chip.tag_ids)
-
-    # Save the standard data to be used as defaults to none ethernet chips
-    standard_resources = dict()
-    standard_resources["monitors"] = std.monitors
-    standard_resources["routerEntries"] = std.router_entries
-    standard_resources["sdram"] = std.sdram
-    standard_resources["tags"] = list(std.tags)
-
-    # Save the standard data to be used as defaults to none ethernet chips
-    ethernet_resources = dict()
-    ethernet_resources["monitors"] = eth.monitors
-    ethernet_resources["routerEntries"] = eth.router_entries
-    ethernet_resources["sdram"] = eth.sdram
-    ethernet_resources["tags"] = list(eth.tags)
+        tags=list(chip.tag_ids))
 
     # write basic stuff
-    json_obj = dict()
-    json_obj["height"] = machine.height
-    json_obj["width"] = machine.width
-    # Could be removed but need to check all use case
-    json_obj["root"] = [0, 0]
-    json_obj["standardResources"] = standard_resources
-    json_obj["ethernetResources"] = ethernet_resources
-    json_obj["chips"] = []
+    return {
+        "height": machine.height,
+        "width": machine.width,
+        # Could be removed but need to check all use case
+        "root": [0, 0],
+        # Save the standard data to be used as defaults to none ethernet chips
+        "standardResources": {
+            "monitors": std.monitors,
+            "routerEntries": std.router_entries,
+            "sdram": std.sdram,
+            "tags": std.tags},
+        # Save the standard data to be used as defaults to ethernet chips
+        "ethernetResources": {
+            "monitors": eth.monitors,
+            "routerEntries": eth.router_entries,
+            "sdram": eth.sdram,
+            "tags": eth.tags},
+        # handle chips
+        "chips": [
+            _describe_chip(chip, std, eth)
+            for chip in machine.chips]}
 
-    # handle chips
-    for chip in machine.chips:
-        json_obj["chips"].append(_describe_chip(chip, std, eth))
 
-    return json_obj
-
-
-def to_json_path(file_path):
+def to_json_path(file_path: str) -> None:
     """
     Runs the code to write the machine in Java readable JSON.
 

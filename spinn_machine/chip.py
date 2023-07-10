@@ -11,7 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any, Collection, Dict, Iterable, Iterator, Optional, Tuple
+from typing import (
+    Any, Collection, Dict, Iterable, Iterator, Optional, Tuple)
 from spinn_utilities.ordered_set import OrderedSet
 from .machine import Machine
 from .processor import Processor
@@ -87,9 +88,9 @@ class Chip(object):
         self._sdram = sdram
         self._ip_address = ip_address
         if tag_ids is not None:
-            self._tag_ids = tag_ids
+            self._tag_ids = OrderedSet(tag_ids)
         elif self._ip_address is None:
-            self._tag_ids = []
+            self._tag_ids = OrderedSet()
         else:
             self._tag_ids = self._IPTAG_IDS
         self._nearest_ethernet_x = nearest_ethernet_x
