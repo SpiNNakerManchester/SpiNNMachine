@@ -40,7 +40,6 @@ class Machine(object, metaclass=AbstractBase):
 
     # current opinions is that the Ethernet connected chip can handle 10
     # UDP packets per millisecond
-    DEFAULT_MAX_CORES_PER_CHIP = 18
     NON_USER_CORES = 1
     DEFAULT_SDRAM_BYTES = 123469792
     __max_cores = None
@@ -85,43 +84,6 @@ class Machine(object, metaclass=AbstractBase):
         # This can not be changed
         "_width"
     )
-
-    @staticmethod
-    def max_cores_per_chip():
-        """
-        Gets the max core per chip for the while system.
-
-        There is no guarantee that there will be any Chips with this many
-        cores, only that there will be no cores with more.
-
-        :return: the default cores per chip unless overridden by set
-        """
-        if Machine.__max_cores is None:
-            Machine.__max_cores = Machine.DEFAULT_MAX_CORES_PER_CHIP
-        return Machine.__max_cores
-
-    @staticmethod
-    def set_max_cores_per_chip(new_max):
-        """
-        Allows setting the max number of cores per chip for the whole system.
-
-        Allows virtual machines to go higher than normal.
-
-        Real machines can only be capped never increased beyond what they
-        actually have.
-
-        :param int new_max: New value to use for the max
-        :raises SpinnMachineException: if `max_cores_per_chip` has already been
-            used and is now being changed.
-            This exception also happens if the value is set twice to different
-            values. For example in the script and in the configuration file.
-        """
-        if Machine.__max_cores is None:
-            Machine.__max_cores = new_max
-        elif Machine.__max_cores != new_max:
-            raise SpinnMachineException(
-                "max_cores_per_chip has already been accessed "
-                "so can not be changed.")
 
     def __init__(self, width, height, chips=None, origin=None):
         """

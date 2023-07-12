@@ -14,6 +14,7 @@
 
 from .machine import Machine
 from spinn_utilities.overrides import overrides
+from spinn_machine.data import MachineDataView
 
 
 class NoWrapMachine(Machine):
@@ -36,7 +37,7 @@ class NoWrapMachine(Machine):
                 yield ((x + ethernet_x, y + ethernet_y), n_cores)
         else:
             # covers weird sizes
-            n_cores = Machine.max_cores_per_chip()
+            n_cores = MachineDataView.get_machine_version().max_cores_per_chip
             for (x, y) in self._local_xys:
                 yield ((x, y), n_cores)
 

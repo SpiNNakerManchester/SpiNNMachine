@@ -322,21 +322,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
         self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (25, 4))
 
-    def test_max_cores_per_chip(self):
-        """
-        Test set_max_cores_per_chip
-
-        Note: Method tested here may not be
-        :return:
-        """
-        Machine.set_max_cores_per_chip(10)
-        self.assertEqual(Machine.max_cores_per_chip(), 10)
-        with self.assertRaises(SpinnMachineException):
-            Machine.set_max_cores_per_chip(11)
-        # hack to set back to None to not break other tests
-        Machine._Machine__max_cores = None
-        self.assertEqual(Machine.max_cores_per_chip(), 18)
-
     def test_no_boot(self):
         machine = machine_from_size(8, 8)
         with self.assertRaises(SpinnMachineException):

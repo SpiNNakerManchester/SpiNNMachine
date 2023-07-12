@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from spinn_utilities.overrides import overrides
+from spinn_machine.data import MachineDataView
 from .machine import Machine
 
 
@@ -32,7 +33,9 @@ class FullWrapMachine(Machine):
     @overrides(Machine.get_xy_cores_by_ethernet)
     def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
         if (self._width == self._height == 2):
-            n_cores = Machine.max_cores_per_chip()
+            version = MachineDataView.get_machine_version()
+            n_cores = version.max_cores_per_chip
+            n_cores = MachineDataView.get_machine_version().max_cores_per_chip
             for (x, y) in self._local_xys:
                 # if ethernet_x/y != 0 GIGO mode so ignore ethernet
                 yield (x, y), n_cores
