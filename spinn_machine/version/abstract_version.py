@@ -66,5 +66,14 @@ class AbstractVersion(object, metaclass=AbstractBase):
         cores, only that there will be no cores with more.
 
         :return: the default cores per chip
+        :rtype: int
         """
         return self._max_cores_per_chip
+
+    @property
+    def n_non_user_cores(self):
+        """
+        The number of user cores per chip
+
+        :rtype: int
+        """

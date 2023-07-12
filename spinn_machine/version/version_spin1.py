@@ -26,3 +26,8 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
 
     def __init__(self):
         super().__init__(max_cores_per_chip=18)
+
+    @property
+    @overrides(AbstractVersion.n_non_user_cores)
+    def n_non_user_cores(self):
+        return 1
