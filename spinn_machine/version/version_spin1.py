@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from spinn_utilities.abstract_base import AbstractBase, abstractproperty
+from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.overrides import overrides
 from .abstract_version import AbstractVersion
 
@@ -25,7 +25,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     __slots__ = []
 
     def __init__(self):
-        super().__init__(max_cores_per_chip=18)
+        super().__init__(max_cores_per_chip=18, max_sdram_per_chip=123469792)
 
     @property
     @overrides(AbstractVersion.n_non_user_cores)

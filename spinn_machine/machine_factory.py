@@ -51,7 +51,7 @@ CHIP_REMOVED_BY_DEAD_PARENT = (
     "spinnakerusers@googlegroups.com \n\n")
 
 
-def machine_from_size(width, height, chips=None, origin=None):
+def machine_from_size(width, height, origin=None):
     """
     Create a machine with the assumed wrap-around based on the sizes.
 
@@ -64,51 +64,24 @@ def machine_from_size(width, height, chips=None, origin=None):
 
     :param int width: The width of the machine excluding any virtual chips
     :param int height: The height of the machine excluding any virtual chips
-    :param chips: Any chips to be added.
-    :type chips: list(Chip) or None
     :param origin: Extra information about how this machine was created
         to be used in the str method. Example "``Virtual``" or "``Json``"
     :type origin: str or None
     :return: A subclass of Machine
     :rtype: Machine
     """
-    if chips is None:
-        chips = []
     if width == 2 and height == 2:
-        return FullWrapMachine(width, height, chips, origin)
+        return FullWrapMachine(width, height, origin)
     if width % 12 == 0:
         if height % 12 == 0:
-            return FullWrapMachine(width, height, chips, origin)
+            return FullWrapMachine(width, height, origin)
         else:
-            return HorizontalWrapMachine(width, height, chips, origin)
+            return HorizontalWrapMachine(width, height, origin)
     else:
         if height % 12 == 0:
-            return VerticalWrapMachine(width, height, chips, origin)
+            return VerticalWrapMachine(width, height, origin)
         else:
-            return NoWrapMachine(width, height, chips, origin)
-
-
-def machine_from_chips(chips):
-    """
-    Create a machine with the assumed wrap-around based on the sizes.
-
-    The size of the machine is calculated from the list of chips.
-
-    :param chips: Full list of all chips on this machine.
-        Or at least a list which includes a chip with the highest X and
-        one with the highest Y (excluding any virtual chips)
-    :type chips: list(Chip)
-    :return: A subclass of Machine
-    :rtype: Machine
-    """
-    max_x = 0
-    max_y = 0
-    for chip in chips:
-        if chip.x > max_x:
-            max_x = chip.x
-        if chip.y > max_y:
-            max_y = chip.y
-    return machine_from_size(max_x + 1, max_y + 1, chips)
+            return NoWrapMachine(width, height, origin)
 
 
 def _machine_ignore(original, dead_chips, dead_links):

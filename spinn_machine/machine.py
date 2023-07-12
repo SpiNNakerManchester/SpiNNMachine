@@ -38,9 +38,6 @@ class Machine(object, metaclass=AbstractBase):
     to determine the correct machine class.
     """
 
-    # current opinions is that the Ethernet connected chip can handle 10
-    # UDP packets per millisecond
-    DEFAULT_SDRAM_BYTES = 123469792
     MAX_CHIPS_PER_48_BOARD = 48
 
     # other useful magic numbers for machines
@@ -83,17 +80,18 @@ class Machine(object, metaclass=AbstractBase):
         "_width"
     )
 
-    def __init__(self, width, height, chips=None, origin=None):
+    def __init__(self, width, height, origin=None):
         """
         :param int width: The width of the machine excluding
         :param int height:
             The height of the machine
-        :param iterable(Chip) chips: An iterable of chips in the machine
         :param str origin: Extra information about how this machine was created
             to be used in the str method. Example "``Virtual``" or "``Json``"
         :raise SpinnMachineAlreadyExistsException:
             If any two chips have the same x and y coordinates
         """
+        if origin is not None:
+            assert isinstance(origin, str)
         self._width = width
         self._height = height
 
@@ -120,8 +118,6 @@ class Machine(object, metaclass=AbstractBase):
 
         # The dictionary of chips
         self._chips = dict()
-        if chips is not None:
-            self.add_chips(chips)
 
         if origin is None:
             self._origin = ""

@@ -13,12 +13,9 @@
 # limitations under the License.
 
 import logging
-from spinn_utilities.abstract_base import (
-    AbstractBase, abstractproperty, abstractmethod)
+from spinn_utilities.abstract_base import (AbstractBase, abstractproperty)
 from spinn_utilities.log import FormatAdapter
-from spinn_utilities.config_holder import (
-    config_options, load_config, get_config_bool, get_config_int,
-    get_config_str, get_config_str_list, set_config)
+from spinn_utilities.config_holder import get_config_int
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -31,9 +28,10 @@ class AbstractVersion(object, metaclass=AbstractBase):
     __slots__ = [
         # the board address associated with this tag
         "_max_cores_per_chip",
+        "_max_sdram_per_chip"
     ]
 
-    def __init__(self, max_cores_per_chip):
+    def __init__(self, max_cores_per_chip, max_sdram_per_chip):
         self._max_cores_per_chip = max_cores_per_chip
         max_machine_core = get_config_int("Machine", "max_machine_core")
         if max_machine_core is not None:
@@ -48,6 +46,21 @@ class AbstractVersion(object, metaclass=AbstractBase):
                     f"Max cores per chip reduced to {max_machine_core} "
                     f"due to cfg setting [Machine]max_machine_core")
                 self._max_cores_per_chip = max_machine_core
+
+        self._max_sdram_per_chip = max_sdram_per_chip
+        max_sdram = get_config_int("Machine", "max_sdram_allowed_per_chip")
+        if max_sdram is not None:
+            if max_sdram > self._max_sdram_per_chip:
+                logger.info(
+                    f"Ignoring csg setting [Machine]max_sdram_allowed_per_chip "
+                    f"{max_sdram} as it is larger than "
+                    f"{self._max_sdram_per_chip} which is the default for a "
+                    f"{self.name} board ")
+            if max_sdram < self._max_cores_per_chip:
+                logger.warning(
+                    f"Max sdram per chip reduced to {max_sdram_per_chip} "
+                    f"due to cfg setting [Machine]max_sdram_allowed_per_chip")
+                self._max_sdram_per_chip = max_sdram_per_chip
 
     @abstractproperty
     def name(self):
@@ -70,10 +83,23 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         return self._max_cores_per_chip
 
-    @property
+    @abstractproperty
     def n_non_user_cores(self):
         """
         The number of user cores per chip
 
         :rtype: int
         """
+
+    @property
+    def max_sdram_per_chip(self):
+        """
+        Gets the max sdram per chip for the whole system.
+
+        While it is likely that all Chips will have this sdram
+        this should not be counted on. Ask each Chip for its sdram.
+
+        :return: the default sdram per chip
+        :rtype: int
+        """
+        return self._max_sdram_per_chip

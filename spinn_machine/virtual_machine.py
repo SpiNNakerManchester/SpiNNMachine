@@ -23,6 +23,7 @@ from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .machine_factory import machine_from_size
 from spinn_machine import Machine
+from spinn_machine.data import MachineDataView
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
 logger = FormatAdapter(logging.getLogger(__name__))
@@ -83,7 +84,6 @@ class _VirtualMachine(object):
         "_unused_cores",
         "_unused_links",
         "_machine",
-        "_sdram_per_chip",
         "_with_monitors")
 
     _4_chip_down_links = {
@@ -98,12 +98,6 @@ class _VirtualMachine(object):
 
         _verify_width_height(width, height)
         self._machine = machine_from_size(width, height, origin=self.ORIGIN)
-
-        # Store the details
-        self._sdram_per_chip = get_config_int(
-            "Machine", "max_sdram_allowed_per_chip")
-        if self._sdram_per_chip is None:
-            self._sdram_per_chip = Machine.DEFAULT_SDRAM_BYTES
 
         # Store the down items
         unused_chips = []
@@ -191,8 +185,9 @@ class _VirtualMachine(object):
         (eth_x, eth_y, n_cores) = configured_chips[(x, y)]
 
         down_cores = self._unused_cores.get((x, y), None)
+        sdram = MachineDataView.get_machine_version().max_sdram_per_chip
         return Chip(
-            x, y, n_cores, chip_router, self._sdram_per_chip, eth_x, eth_y,
+            x, y, n_cores, chip_router, sdram, eth_x, eth_y,
             ip_address, down_cores=down_cores)
 
     def _calculate_links(self, x, y, configured_chips):

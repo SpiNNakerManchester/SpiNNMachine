@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from spinn_utilities.abstract_base import AbstractBase, abstractproperty
 from spinn_utilities.overrides import overrides
 from .version_spin1 import VersionSpin1
 

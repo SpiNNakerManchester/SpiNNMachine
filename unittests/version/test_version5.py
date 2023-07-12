@@ -28,8 +28,9 @@ class TestVersion5(unittest.TestCase):
 
     def test_version(self):
         version = Version5()
-        a = version.max_cores_per_chip
         self.assertEqual(18, version.max_cores_per_chip)
+        self.assertEqual(123469792, version.max_sdram_per_chip)
+        self.assertEqual(1, version.n_non_user_cores)
 
 
 if __name__ == '__main__':
