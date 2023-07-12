@@ -16,6 +16,7 @@
 test for testing the python representation of a spinnaker machine
 """
 import unittest
+from spinn_utilities.config_holder import set_config
 from spinn_machine import (
     Link, Router, Chip, machine_from_size)
 from spinn_machine import virtual_machine
@@ -31,6 +32,8 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
+
         self._sdram = 123469792
 
         links = list()

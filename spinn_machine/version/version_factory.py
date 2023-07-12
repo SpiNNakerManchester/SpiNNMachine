@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from spinn_utilities.config_holder import get_config_int
+import logging
+from spinn_utilities.config_holder import get_config_int, get_config_str
+from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
 from .version_3 import Version3
 from .version_5 import Version5
+
+logger = FormatAdapter(logging.getLogger(__name__))
 
 
 def version_factory():
@@ -29,10 +33,27 @@ def version_factory():
     version = get_config_int("Machine", "version")
     if version in [2, 3]:
         return Version3()
-    elif version in [4, 5]:
+
+    if version in [4, 5]:
         return Version5()
-    elif version is None:
-        # TODO raise an error once unittest set cfg
+
+    spalloc_server = get_config_str("Machine", "spalloc_server")
+    if spalloc_server is not None:
         return Version5()
-    else:
-        return SpinnMachineException("Unexpected cfg [Machine]version")
+
+    remote_spinnaker_url = get_config_str("Machine", "remote_spinnaker_url")
+    if remote_spinnaker_url is not None:
+        return Version5()
+
+    height = get_config_int("Machine", "height")
+    width = get_config_int("Machine", "width")
+    if height is not None and width is not None:
+        if height == width == 2:
+            logger.info("Your cfg file does not have a ")
+            return Version3()
+        return Version5()
+
+    if version is None:
+        raise SpinnMachineException("cfg [Machine]version {version} is None")
+
+    raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")
