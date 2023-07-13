@@ -163,7 +163,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
             If the size is unexpected
         """
 
-    def create_machine(self, width, height, origin):
+    def create_machine(self, width, height, origin=None):
         """
         Creates a new Empty machine based on the width, height and version
 

@@ -17,8 +17,7 @@ test for testing the python representation of a spinnaker machine
 """
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine import (
-    Link, Router, Chip, machine_from_size)
+from spinn_machine import Link, Router, Chip
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
@@ -289,37 +288,37 @@ class SpinnMachineTestCase(unittest.TestCase):
             machine.validate()
 
     def test_big_x(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        machine = virtual_machine(8, 8)
         machine.get_chip_at(1, 1)._x = 9
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_big_y(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        machine = virtual_machine(8, 8)
         machine.get_chip_at(1, 1)._y = 9
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_weird_ethernet1(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        machine = virtual_machine(8, 8)
         machine.get_chip_at(1, 3)._ip_address = "1.2.3.4"
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_bad_ethernet_chip_x(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        machine = virtual_machine(8, 8)
         machine.get_chip_at(0, 1)._nearest_ethernet_x = 1
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_bad_ethernet_chip_no_chip(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        machine =virtual_machine(8, 8)
         machine.get_chip_at(0, 1)._nearest_ethernet_x = 12
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_getitem(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        machine = virtual_machine(8, 8)
         chip12 = machine[(1, 2)]
         self.assertEqual(chip12.x, 1)
         self.assertEqual(chip12.y, 2)
@@ -327,7 +326,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertFalse((1, 9) in machine)
 
     def test_concentric_xys(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        machine = virtual_machine(8, 8)
         machine.get_chip_at(1, 3)
         found = list(machine.concentric_xys(2, (2, 2)))
         expected = [
