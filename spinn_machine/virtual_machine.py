@@ -19,7 +19,6 @@ from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .router import Router
 from .link import Link
-from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from spinn_machine.data import MachineDataView
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
@@ -64,7 +63,8 @@ class _VirtualMachine(object):
     def __init__(
             self, width, height, n_cpus_per_chip=None, validate=True):
 
-        self._machine = MachineDataView.get_machine_version().create_machine(
+        version = MachineDataView.get_machine_version()
+        self._machine = version.create_machine(
             width, height, origin=self.ORIGIN)
 
         # Store the down items
@@ -102,10 +102,7 @@ class _VirtualMachine(object):
         if width == 2:  # Already checked height is now also 2
             self._unused_links.update(_VirtualMachine._4_chip_down_links)
 
-        # Calculate the Ethernet connections in the machine, assuming 48-node
-        # boards
-        geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
-        ethernet_chips = geometry.get_potential_ethernet_chips(width, height)
+        ethernet_chips = version.get_potential_ethernet_chip(width, height)
 
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,

@@ -166,6 +166,22 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :rtype: dict((int, int), int)
         """
 
+    @abstractmethod
+    def get_potential_ethernet_chips(self, width, height):
+        """
+        Get the coordinates of chips that should be Ethernet chips
+
+        This may well be passed down to SpiNNakerTriadGeometry
+
+        .. note::
+            This methods assumes that width and height would pass verify_size.
+            It not the results may be wrong
+
+        :param int width: The width of the machine to find the chips in
+        :param int height: The height of the machine to find the chips in
+        :rtype: list(tuple(int, int))
+        """
+
     def verify_size(self, width, height):
         """
         Checks that the width and height are allowed for this version

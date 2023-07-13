@@ -18,7 +18,7 @@ from spinn_machine.full_wrap_machine import FullWrapMachine
 from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
 from spinn_machine.no_wrap_machine import NoWrapMachine
 from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
-
+from spinn_machine import SpiNNakerTriadGeometry
 from .version_spin1 import VersionSpin1
 
 CHIPS_PER_BOARD = {
@@ -51,6 +51,11 @@ class Version5(VersionSpin1):
     @overrides(VersionSpin1.chip_core_map)
     def chip_core_map(self):
         return CHIPS_PER_BOARD
+
+    @overrides(VersionSpin1.get_potential_ethernet_chips)
+    def get_potential_ethernet_chips(self, width, height):
+        geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
+        return geometry.get_potential_ethernet_chips(width, height)
 
     @overrides(VersionSpin1._verify_size)
     def _verify_size(self, width, height):

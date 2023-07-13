@@ -39,6 +39,10 @@ class Version3(VersionSpin1):
     def chip_core_map(self):
         return CHIPS_PER_BOARD
 
+    @overrides(VersionSpin1.get_potential_ethernet_chips)
+    def get_potential_ethernet_chips(self, width, height):
+        return [(0, 0)]
+
     @overrides(VersionSpin1._verify_size)
     def _verify_size(self, width, height):
         if width != 2:
