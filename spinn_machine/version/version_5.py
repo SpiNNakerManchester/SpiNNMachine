@@ -13,6 +13,12 @@
 # limitations under the License.
 
 from spinn_utilities.overrides import overrides
+from spinn_machine.exceptions import SpinnMachineException
+from spinn_machine.full_wrap_machine import FullWrapMachine
+from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
+from spinn_machine.no_wrap_machine import NoWrapMachine
+from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
+
 from .version_spin1 import VersionSpin1
 
 
@@ -29,3 +35,30 @@ class Version5(VersionSpin1):
     @overrides(VersionSpin1.name)
     def name(self):
         return "Spin1 48 Chip"
+
+    @overrides(VersionSpin1._verify_size)
+    def _verify_size(self, width, height):
+        if width == height == 8:
+            # 1 board
+            return
+        if width % 12 not in [0, 4]:
+            raise SpinnMachineException(
+                f"{width=} must be a multiple of 12 "
+                f"or a multiple of 12 plus 4")
+        if height % 12 not in [0, 4]:
+            raise SpinnMachineException(
+                f"{height=} must be a multiple of 12 "
+                f"or a multiple of 12 plus 4")
+
+    @overrides(VersionSpin1._create_machine)
+    def _create_machine(self, width, height, origin):
+        if width % 12 == 0:
+            if height % 12 == 0:
+                return FullWrapMachine(width, height, origin)
+            else:
+                return HorizontalWrapMachine(width, height, origin)
+        else:
+            if height % 12 == 0:
+                return VerticalWrapMachine(width, height, origin)
+            else:
+                return NoWrapMachine(width, height, origin)

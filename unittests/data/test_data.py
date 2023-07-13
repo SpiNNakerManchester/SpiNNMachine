@@ -42,6 +42,7 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(48, MachineDataView.get_machine().n_chips)
 
     def test_machine(self):
+        set_config("Machine", "version", 3)
         writer = MachineDataWriter.setup()
 
         with self.assertRaises(DataNotYetAvialable):

@@ -17,6 +17,7 @@ from collections import defaultdict
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
 from spinn_machine import (Chip, Router)
+from spinn_machine.data import MachineDataView
 from .no_wrap_machine import NoWrapMachine
 from .horizontal_wrap_machine import HorizontalWrapMachine
 from .vertical_wrap_machine import VerticalWrapMachine
@@ -51,39 +52,6 @@ CHIP_REMOVED_BY_DEAD_PARENT = (
     "spinnakerusers@googlegroups.com \n\n")
 
 
-def machine_from_size(width, height, origin=None):
-    """
-    Create a machine with the assumed wrap-around based on the sizes.
-
-    This could include a machine with no wrap-arounds, only vertical ones,
-    only horizontal ones or both.
-
-    .. note::
-        If the sizes do not match the ones for a known wrap-around machine,
-        a machine with no wrap-arounds is assumed.
-
-    :param int width: The width of the machine excluding any virtual chips
-    :param int height: The height of the machine excluding any virtual chips
-    :param origin: Extra information about how this machine was created
-        to be used in the str method. Example "``Virtual``" or "``Json``"
-    :type origin: str or None
-    :return: A subclass of Machine
-    :rtype: Machine
-    """
-    if width == 2 and height == 2:
-        return FullWrapMachine(width, height, origin)
-    if width % 12 == 0:
-        if height % 12 == 0:
-            return FullWrapMachine(width, height, origin)
-        else:
-            return HorizontalWrapMachine(width, height, origin)
-    else:
-        if height % 12 == 0:
-            return VerticalWrapMachine(width, height, origin)
-        else:
-            return NoWrapMachine(width, height, origin)
-
-
 def _machine_ignore(original, dead_chips, dead_links):
     """
     Creates a near copy of the machine without the dead bits.
@@ -108,7 +76,8 @@ def _machine_ignore(original, dead_chips, dead_links):
     :type dead_links: Collection of (int, int, int)
     :return: A New Machine object
     """
-    new_machine = machine_from_size(original.width, original.height)
+    new_machine = MachineDataView.get_machine_version().create_machine(
+        original.width, original.height, "Fixed")
     links_map = defaultdict(set)
     for x, y, d, _ in dead_links:
         links_map[(x, y)].add(d)

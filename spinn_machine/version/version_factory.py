@@ -16,8 +16,6 @@ import logging
 from spinn_utilities.config_holder import get_config_int, get_config_str
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
-from .version_3 import Version3
-from .version_5 import Version5
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -30,6 +28,10 @@ def version_factory():
     :rtype:  ~spinn_machine.version.abstract_version.py
     :raises SpinnMachineException: If the cfg version is not set correctly
     """
+    # Delayed import to avoid circular imports
+    from .version_3 import Version3
+    from .version_5 import Version5
+
     version = get_config_int("Machine", "version")
     if version in [2, 3]:
         return Version3()

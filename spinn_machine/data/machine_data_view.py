@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from spinn_utilities.data import UtilsDataView
-from spinn_machine.version import version_factory
+from spinn_machine.version.version_factory import version_factory
 # pylint: disable=protected-access
 
 
@@ -97,10 +97,25 @@ class MachineDataView(UtilsDataView):
         """
         Reports if a machine is currently set or can be mocked.
 
+        Unlike has_existing_machine for unittests this will return True even
+        if a Machine has not yet been created
+
         :rtype: bool
         """
         return (cls.__data._machine is not None or
                 cls._is_mocked())
+
+    @classmethod
+    def has_existing_machine(cls):
+        """
+        Reports if a machine is currently already created.
+
+        Unlike has_machine this method returns false if a machine could be
+        mocked
+
+        :rtype: bool
+        """
+        return cls.__data._machine
 
     @classmethod
     def get_machine(cls):

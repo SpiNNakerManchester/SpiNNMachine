@@ -15,8 +15,7 @@
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine import (Chip, Link, Machine, machine_from_size, Router,
-                           virtual_machine)
+from spinn_machine import (Chip, Link, Machine, Router, virtual_machine)
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException,
     SpinnMachineInvalidParameterException)
@@ -1050,14 +1049,6 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(n_cores, 4 * 18)
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, 4 * 18)
-
-    def test_n_cores_weird(self):
-        # Can not do a weird VirtualMachine so use an empty one
-        machine = machine_from_size(5, 5)
-        n_cores = sum(
-            cores for (_, cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEqual(n_cores, 5 * 5 * 18)
-        # Machine is empty so can not do sum of actual processors
 
 
 if __name__ == '__main__':

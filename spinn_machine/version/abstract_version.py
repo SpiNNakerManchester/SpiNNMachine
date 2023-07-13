@@ -13,9 +13,11 @@
 # limitations under the License.
 
 import logging
-from spinn_utilities.abstract_base import (AbstractBase, abstractproperty)
+from spinn_utilities.abstract_base import (
+    AbstractBase, abstractmethod, abstractproperty)
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int
+from spinn_machine.exceptions import SpinnMachineException
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -32,6 +34,33 @@ class AbstractVersion(object, metaclass=AbstractBase):
     ]
 
     def __init__(self, max_cores_per_chip, max_sdram_per_chip):
+        self.__verify_config_width_height()
+        self.__set_max_cores_per_chip(max_cores_per_chip)
+        self.__set_max_sdram_per_chip(max_sdram_per_chip)
+
+    def __verify_config_width_height(self):
+        """
+        Check that if there is a cfg width or height the values are valid
+
+        :raises SpinnMachineException:
+            If the cfg width or height is unexpected
+        """
+        width = get_config_int("Machine", "width")
+        height = get_config_int("Machine", "height")
+        if width is None:
+            if height is None:
+                pass
+            else:
+                raise SpinnMachineException(
+                    f"the cfg has a [Machine]width {width} but a no height")
+        else:
+            if height is None:
+                raise SpinnMachineException(
+                    f"the cfg has a [Machine]height {width} but a no width")
+            else:
+                self.verify_size(width, height)
+
+    def __set_max_cores_per_chip(self, max_cores_per_chip):
         self._max_cores_per_chip = max_cores_per_chip
         max_machine_core = get_config_int("Machine", "max_machine_core")
         if max_machine_core is not None:
@@ -47,6 +76,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
                     f"due to cfg setting [Machine]max_machine_core")
                 self._max_cores_per_chip = max_machine_core
 
+    def __set_max_sdram_per_chip(self, max_sdram_per_chip):
         self._max_sdram_per_chip = max_sdram_per_chip
         max_sdram = get_config_int("Machine", "max_sdram_allowed_per_chip")
         if max_sdram is not None:
@@ -103,3 +133,63 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :rtype: int
         """
         return self._max_sdram_per_chip
+
+    def verify_size(self, width, height):
+        """
+        Checks that the width and height are allowed for this version
+
+        :param int width:
+        :param int height:
+        :raise SpinnMachineException: If the size is unexpected
+        """
+        if width is None:
+            raise SpinnMachineException("Width can not be None")
+        if height is None:
+            raise SpinnMachineException("Height can not be None")
+        if width <= 0:
+            raise SpinnMachineException("Unexpected {width=}")
+        if height <= 0:
+            raise SpinnMachineException("Unexpected {height=}")
+        self._verify_size(width, height)
+
+    @abstractmethod
+    def _verify_size(self, width, height):
+        """
+        Adds the width and height checks that depend on the version
+
+        :param int width: 
+        :param int height: 
+        :raise SpinnMachineException:
+            If the size is unexpected
+        """
+
+    def create_machine(self, width, height, origin):
+        """
+        Creates a new Empty machine based on the width, height and version
+
+        :param int width: The width of the machine excluding any virtual chips
+        :param int height: The height of the machine excluding any virtual chips
+        :param origin: Extra information about how this machine was created
+            to be used in the str method. Example "``Virtual``" or "``Json``"
+        :type origin: str or None
+        :return: A subclass of Machine with no Chips in it
+        :rtype: ~spinn_machine.Machine
+        :raises SpinnMachineInvalidParameterException:
+            If the size is unexpected
+        """
+        self.verify_size(width, height)
+        return self._create_machine(width, height, origin)
+
+    @abstractmethod
+    def _create_machine(self, width, height, origin):
+        """
+        Creates a new Empty machine based on the width, height and version
+
+        :param int width: The width of the machine excluding any virtual chips
+        :param int height: The height of the machine excluding any virtual chips
+        :param origin: Extra information about how this machine was created
+            to be used in the str method. Example "``Virtual``" or "``Json``"
+        :type origin: str or None
+        :return: A subclass of Machine with no Chips in it
+        :rtype: ~spinn_machine.Machine
+        """

@@ -14,6 +14,8 @@
 
 from spinn_utilities.overrides import overrides
 from .version_spin1 import VersionSpin1
+from spinn_machine.full_wrap_machine import FullWrapMachine
+from spinn_machine.exceptions import SpinnMachineException
 
 
 class Version3(VersionSpin1):
@@ -29,3 +31,14 @@ class Version3(VersionSpin1):
     @overrides(VersionSpin1.name)
     def name(self):
         return "Spin1 4 Chip"
+
+    @overrides(VersionSpin1._verify_size)
+    def _verify_size(self, width, height):
+        if width != 2:
+            raise SpinnMachineException("Unexpected {width=}")
+        if height != 2:
+            raise SpinnMachineException("Unexpected {height=}")
+
+    @overrides(VersionSpin1._create_machine)
+    def _create_machine(self, width, height, origin):
+        return FullWrapMachine(width, height, origin)

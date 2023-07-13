@@ -21,6 +21,7 @@ from spinn_machine import (
     Link, Router, Chip, machine_from_size)
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
 
@@ -145,7 +146,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        new_machine = machine_from_size(8, 8)
+        new_machine = MachineDataView.get_machine_version().create_machine(8, 8)
         new_machine.add_chip(self._create_chip(0, 0))
         # the add does not have the safety code
         new_machine.add_chip(self._create_chip(10, 2))
@@ -162,7 +163,8 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        new_machine = machine_from_size(8, 8)
+        version = MachineDataView.get_machine_version()
+        new_machine = version.create_machine(8, 8)
         new_machine.add_chip(self._create_chip(0, 0))
         # the add does not have the safety code
         new_machine.add_chip(self._create_chip(2, 10))
@@ -223,22 +225,22 @@ class SpinnMachineTestCase(unittest.TestCase):
         :return:
         """
         # full wrap around
-        machine = machine_from_size(24, 24)
+        machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, 23))
         self.assertEqual(machine.xy_over_link(23, 23, 1), (0, 0))
         self.assertEqual(machine.wrap, "Wrapped")
         # no wrap around'
-        machine = machine_from_size(16, 16)
+        machine = MachineDataView.get_machine_version().create_machine(16, 16)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, -1))
         self.assertEqual(machine.xy_over_link(15, 15, 1), (16, 16))
         self.assertEqual(machine.wrap, "NoWrap")
         # Horizontal wrap arounds
-        machine = machine_from_size(24, 16)
+        machine = MachineDataView.get_machine_version().create_machine(24, 16)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, -1))
         self.assertEqual(machine.xy_over_link(23, 15, 1), (0, 16))
         self.assertEqual(machine.wrap, "HorWrap")
         # Vertical wrap arounds
-        machine = machine_from_size(16, 24)
+        machine = MachineDataView.get_machine_version().create_machine(16, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (-1, 23))
         self.assertEqual(machine.xy_over_link(15, 23, 1), (16, 0))
         self.assertEqual(machine.wrap, "VerWrap")
@@ -251,73 +253,73 @@ class SpinnMachineTestCase(unittest.TestCase):
         :return:
         """
         # full wrap around
-        machine = machine_from_size(24, 24)
+        machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
         self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (1, 4))
         # no wrap around'
-        machine = machine_from_size(28, 28)
+        machine = MachineDataView.get_machine_version().create_machine(28, 28)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 24))
         self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (25, 4))
         # Horizontal wrap arounds
-        machine = machine_from_size(24, 28)
+        machine = MachineDataView.get_machine_version().create_machine(24, 28)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 24))
         self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (1, 4))
         # Vertical wrap arounds
-        machine = machine_from_size(28, 24)
+        machine = MachineDataView.get_machine_version().create_machine(28, 24)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
         self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (25, 4))
 
     def test_no_boot(self):
-        machine = machine_from_size(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_negative_x(self):
-        machine = machine_from_size(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         chip = self._create_chip(2, -1)
         machine.add_chip(chip)
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_negative_y(self):
-        machine = machine_from_size(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         chip = self._create_chip(-1, 3)
         machine.add_chip(chip)
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_big_x(self):
-        machine = virtual_machine(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         machine.get_chip_at(1, 1)._x = 9
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_big_y(self):
-        machine = virtual_machine(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         machine.get_chip_at(1, 1)._y = 9
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_weird_ethernet1(self):
-        machine = virtual_machine(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         machine.get_chip_at(1, 3)._ip_address = "1.2.3.4"
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_bad_ethernet_chip_x(self):
-        machine = virtual_machine(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         machine.get_chip_at(0, 1)._nearest_ethernet_x = 1
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_bad_ethernet_chip_no_chip(self):
-        machine = virtual_machine(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         machine.get_chip_at(0, 1)._nearest_ethernet_x = 12
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_getitem(self):
-        machine = virtual_machine(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         chip12 = machine[(1, 2)]
         self.assertEqual(chip12.x, 1)
         self.assertEqual(chip12.y, 2)
@@ -325,7 +327,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertFalse((1, 9) in machine)
 
     def test_concentric_xys(self):
-        machine = virtual_machine(8, 8)
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
         machine.get_chip_at(1, 3)
         found = list(machine.concentric_xys(2, (2, 2)))
         expected = [

@@ -21,41 +21,11 @@ from .exceptions import SpinnMachineInvalidParameterException
 from .router import Router
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
-from .machine_factory import machine_from_size
 from spinn_machine import Machine
 from spinn_machine.data import MachineDataView
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
 logger = FormatAdapter(logging.getLogger(__name__))
-
-
-def _verify_width_height(width, height):
-    try:
-        if width < 0 or height < 0:
-            raise SpinnMachineInvalidParameterException(
-                "width or height", f"{width} and {height}",
-                "Negative dimensions are not supported")
-    except TypeError as original:
-        if width is None or height is None:
-            raise SpinnMachineInvalidParameterException(
-                "width or height", f"{width} and {height}",
-                "parameter required") from original
-        raise
-
-    if width == height == 2:
-        return
-    if width == height == 8:
-        return
-    if width % 12 != 0 and (width - 4) % 12 != 0:
-        raise SpinnMachineInvalidParameterException(
-            "width", width,
-            "A virtual machine must have a width that is divisible by 12 or "
-            "width - 4 that is divisible by 12")
-    if height % 12 != 0 and (height - 4) % 12 != 0:
-        raise SpinnMachineInvalidParameterException(
-            "height", height,
-            "A virtual machine must have a height that is divisible by 12 or "
-            "height - 4 that is divisible by 12")
 
 
 def virtual_machine(
@@ -96,8 +66,8 @@ class _VirtualMachine(object):
     def __init__(
             self, width, height, n_cpus_per_chip=None, validate=True):
 
-        _verify_width_height(width, height)
-        self._machine = machine_from_size(width, height, origin=self.ORIGIN)
+        self._machine = MachineDataView.get_machine_version().create_machine(
+            width, height, origin=self.ORIGIN)
 
         # Store the down items
         unused_chips = []

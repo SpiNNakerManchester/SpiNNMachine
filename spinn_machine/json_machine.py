@@ -20,7 +20,6 @@ from spinn_machine.data import MachineDataView
 from .chip import Chip
 from .router import Router
 from .link import Link
-from .machine_factory import machine_from_size
 
 
 logger = FormatAdapter(logging.getLogger(__name__))
@@ -58,7 +57,8 @@ def machine_from_json(j_machine):
     width = j_machine["width"]
     height = j_machine["height"]
 
-    machine = machine_from_size(width, height, origin="Json")
+    machine = MachineDataView.get_machine_version().create_machine(
+        width, height, origin="Json")
     s_monitors = j_machine["standardResources"]["monitors"]
     s_router_entries = j_machine["standardResources"]["routerEntries"]
     s_sdram = j_machine["standardResources"]["sdram"]
