@@ -33,10 +33,6 @@ class Machine(object, metaclass=AbstractBase):
 
     """
 
-    # other useful magic numbers for machines
-    SIZE_X_OF_ONE_BOARD = 8
-    SIZE_Y_OF_ONE_BOARD = 8
-
     # Table of the amount to add to the x and y coordinates to get the
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
