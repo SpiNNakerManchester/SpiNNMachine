@@ -21,6 +21,17 @@ from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
 
 from .version_spin1 import VersionSpin1
 
+CHIPS_PER_BOARD = {
+    (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,
+    (1, 2): 18, (1, 3): 17, (1, 4): 18, (2, 0): 18, (2, 1): 18, (2, 2): 18,
+    (2, 3): 18, (2, 4): 18, (2, 5): 18, (3, 0): 18, (3, 1): 17, (3, 2): 18,
+    (3, 3): 17, (3, 4): 18, (3, 5): 17, (3, 6): 18, (4, 0): 18, (4, 1): 18,
+    (4, 2): 18, (4, 3): 18, (4, 4): 18, (4, 5): 18, (4, 6): 18, (4, 7): 18,
+    (5, 1): 18, (5, 2): 17, (5, 3): 18, (5, 4): 17, (5, 5): 18, (5, 6): 17,
+    (5, 7): 18, (6, 2): 18, (6, 3): 18, (6, 4): 18, (6, 5): 18, (6, 6): 18,
+    (6, 7): 18, (7, 3): 18, (7, 4): 18, (7, 5): 18, (7, 6): 18, (7, 7): 18
+}
+
 
 class Version5(VersionSpin1):
     """
@@ -36,9 +47,10 @@ class Version5(VersionSpin1):
     def name(self):
         return "Spin1 48 Chip"
 
-    @overrides(VersionSpin1.n_chips_per_board)
-    def n_chips_per_board(self):
-        return 48
+    @property
+    @overrides(VersionSpin1.chip_core_map)
+    def chip_core_map(self):
+        return CHIPS_PER_BOARD
 
     @overrides(VersionSpin1._verify_size)
     def _verify_size(self, width, height):
@@ -58,11 +70,13 @@ class Version5(VersionSpin1):
     def _create_machine(self, width, height, origin):
         if width % 12 == 0:
             if height % 12 == 0:
-                return FullWrapMachine(width, height, origin)
+                return FullWrapMachine(width, height, CHIPS_PER_BOARD, origin)
             else:
-                return HorizontalWrapMachine(width, height, origin)
+                return HorizontalWrapMachine(
+                    width, height, CHIPS_PER_BOARD, origin)
         else:
             if height % 12 == 0:
-                return VerticalWrapMachine(width, height, origin)
+                return VerticalWrapMachine(
+                    width, height, CHIPS_PER_BOARD, origin)
             else:
-                return NoWrapMachine(width, height, origin)
+                return NoWrapMachine(width, height, CHIPS_PER_BOARD, origin)

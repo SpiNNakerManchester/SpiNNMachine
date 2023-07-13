@@ -135,7 +135,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         return self._max_sdram_per_chip
 
-    @abstractproperty
+    @property
     def n_chips_per_board(self):
         """
         The normal number of Chips on each board of this version
@@ -143,6 +143,27 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Remember that will the board may have dead or excluded chips
 
         :rtype: int
+        """
+        return len(self.chip_core_map)
+
+    @property
+    def expected_xys(self):
+        """
+        List of the standard xy coordinates of Chips for this version
+
+        Remember that will the board may have dead or excluded chips
+
+        :return:
+        """
+        return list(self.chip_core_map.keys())
+
+    @abstractproperty
+    def chip_core_map(self):
+        """
+        A map off the expected x,y coordinates on a standard board to
+        the most likely number of cores on that chip.
+
+        :rtype: dict((int, int), int)
         """
 
     def verify_size(self, width, height):

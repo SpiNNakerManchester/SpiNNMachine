@@ -20,13 +20,14 @@ from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.machine_factory import machine_repair
+from spinn_machine.version.version_5 import CHIPS_PER_BOARD
 from .geometry import (to_xyz, shortest_mesh_path_length,
                        shortest_torus_path_length, minimise_xyz)
 
 
 class TestVirtualMachine(unittest.TestCase):
 
-    TYPICAL_N_CORES_PER_BOARD = sum(Machine.CHIPS_PER_BOARD.values())
+    VERSION_5_N_CORES_PER_BOARD = sum(CHIPS_PER_BOARD.values())
 
     def setUp(self):
         unittest_setup()
@@ -1021,9 +1022,9 @@ class TestVirtualMachine(unittest.TestCase):
         n_cores = sum(
             n_cores
             for (_, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD * 3)
 
     def test_n_cores_no_wrap(self):
         set_config("Machine", "version", 5)
@@ -1031,9 +1032,9 @@ class TestVirtualMachine(unittest.TestCase):
         n_cores = sum(
             n_cores
             for (_, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD * 3)
         chip34 = machine.get_chip_at(3, 4)
         where = machine.where_is_chip(chip34)
         self.assertEqual(
@@ -1054,26 +1055,26 @@ class TestVirtualMachine(unittest.TestCase):
         n_cores = sum(
             n_cores
             for (_, n_cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD * 3)
 
     def test_n_cores_vertical_wrap(self):
         set_config("Machine", "version", 5)
         machine = virtual_machine(12, 16)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD * 3)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD * 3)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD * 3)
 
     def test_n_cores_8_8(self):
         set_config("Machine", "version", 5)
         machine = virtual_machine(8, 8)
         n_cores = sum(
             cores for (_, cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, self.TYPICAL_N_CORES_PER_BOARD)
+        self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD)
 
     def test_n_cores_2_2(self):
         set_config("Machine", "version", 2)

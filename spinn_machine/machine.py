@@ -31,11 +31,6 @@ class Machine(object, metaclass=AbstractBase):
         * ``y`` is the y-coordinate of a chip,
         * ``chip`` is the chip with the given ``(x, y)`` coordinates.
 
-    Use
-    :py:func:`~spinn_machine.machine_from_chips`
-    and
-    :py:func:`~spinn_machine.machine_from_size`
-    to determine the correct machine class.
     """
 
     # other useful magic numbers for machines
@@ -46,29 +41,19 @@ class Machine(object, metaclass=AbstractBase):
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
-    CHIPS_PER_BOARD = {
-        (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,
-        (1, 2): 18, (1, 3): 17, (1, 4): 18, (2, 0): 18, (2, 1): 18, (2, 2): 18,
-        (2, 3): 18, (2, 4): 18, (2, 5): 18, (3, 0): 18, (3, 1): 17, (3, 2): 18,
-        (3, 3): 17, (3, 4): 18, (3, 5): 17, (3, 6): 18, (4, 0): 18, (4, 1): 18,
-        (4, 2): 18, (4, 3): 18, (4, 4): 18, (4, 5): 18, (4, 6): 18, (4, 7): 18,
-        (5, 1): 18, (5, 2): 17, (5, 3): 18, (5, 4): 17, (5, 5): 18, (5, 6): 17,
-        (5, 7): 18, (6, 2): 18, (6, 3): 18, (6, 4): 18, (6, 5): 18, (6, 6): 18,
-        (6, 7): 18, (7, 3): 18, (7, 4): 18, (7, 5): 18, (7, 6): 18, (7, 7): 18
-    }
-    BOARD_48_CHIPS = list(CHIPS_PER_BOARD.keys())
     ROUTER_ENTRIES = 1023
 
     __slots__ = (
         "_boot_ethernet_address",
+        # A map off the expected x, y coordinates on a standard board to
+        # the most likely number of cores on that chip.
+        "_chip_core_map",
         "_chips",
         "_ethernet_connected_chips",
         "_fpga_links",
         # Declared height of the machine
         # This can not be changed
         "_height",
-        # List of the possible chips (x,y) on each board of the machine
-        "_local_xys",
         # Extra information about how this machine was created
         # to be used in the str method
         "_origin",
@@ -78,11 +63,14 @@ class Machine(object, metaclass=AbstractBase):
         "_width"
     )
 
-    def __init__(self, width, height, origin=None):
+    def __init__(self, width, height, chip_core_map, origin=None):
         """
         :param int width: The width of the machine excluding
         :param int height:
             The height of the machine
+        :param dict((int, int), int) chip_core_map:
+            A map off the expected x,y coordinates on a standard board to
+            the most likely number of cores on that chip.
         :param str origin: Extra information about how this machine was created
             to be used in the str method. Example "``Virtual``" or "``Json``"
         :raise SpinnMachineAlreadyExistsException:
@@ -92,15 +80,7 @@ class Machine(object, metaclass=AbstractBase):
             assert isinstance(origin, str)
         self._width = width
         self._height = height
-
-        if (self._width == self._height == 8) or \
-                self.multiple_48_chip_boards():
-            self._local_xys = self.BOARD_48_CHIPS
-        else:
-            self._local_xys = []
-            for x in range(width):
-                for y in range(height):
-                    self._local_xys.append((x, y))
+        self._chip_core_map = chip_core_map
 
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips = list()
@@ -510,7 +490,7 @@ class Machine(object, metaclass=AbstractBase):
                     raise SpinnMachineException(
                         f"{chip} has an invalid ethernet chip")
                 local_xy = self.get_local_xy(chip)
-                if local_xy not in self._local_xys:
+                if local_xy not in self._chip_core_map:
                     raise SpinnMachineException(
                         f"{chip} has an unexpected local xy of {local_xy}")
 
@@ -1172,7 +1152,7 @@ class Machine(object, metaclass=AbstractBase):
 
         :rtype: iterable(tuple(int,int))
         """
-        return self._local_xys
+        return self._chip_core_map.keys()
 
     def get_unused_xy(self):
         """

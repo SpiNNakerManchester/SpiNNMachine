@@ -17,6 +17,8 @@ from .version_spin1 import VersionSpin1
 from spinn_machine.full_wrap_machine import FullWrapMachine
 from spinn_machine.exceptions import SpinnMachineException
 
+CHIPS_PER_BOARD = {(0, 0): 18, (0, 1): 18, (1, 0): 18, (1, 1): 18}
+
 
 class Version3(VersionSpin1):
     """
@@ -32,9 +34,10 @@ class Version3(VersionSpin1):
     def name(self):
         return "Spin1 4 Chip"
 
-    @overrides(VersionSpin1.n_chips_per_board)
-    def n_chips_per_board(self):
-        return 4
+    @property
+    @overrides(VersionSpin1.chip_core_map)
+    def chip_core_map(self):
+        return CHIPS_PER_BOARD
 
     @overrides(VersionSpin1._verify_size)
     def _verify_size(self, width, height):
@@ -45,4 +48,4 @@ class Version3(VersionSpin1):
 
     @overrides(VersionSpin1._create_machine)
     def _create_machine(self, width, height, origin):
-        return FullWrapMachine(width, height, origin)
+        return FullWrapMachine(width, height, CHIPS_PER_BOARD, origin)
