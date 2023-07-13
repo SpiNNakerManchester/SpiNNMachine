@@ -32,6 +32,7 @@ class TestVirtualMachine(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
 
     def _create_chip(self, x, y):
         # Create a list of processors.
