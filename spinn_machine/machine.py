@@ -38,8 +38,6 @@ class Machine(object, metaclass=AbstractBase):
     to determine the correct machine class.
     """
 
-    MAX_CHIPS_PER_48_BOARD = 48
-
     # other useful magic numbers for machines
     SIZE_X_OF_ONE_BOARD = 8
     SIZE_Y_OF_ONE_BOARD = 8

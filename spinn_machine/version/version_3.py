@@ -32,6 +32,10 @@ class Version3(VersionSpin1):
     def name(self):
         return "Spin1 4 Chip"
 
+    @overrides(VersionSpin1.n_chips_per_board)
+    def n_chips_per_board(self):
+        return 4
+
     @overrides(VersionSpin1._verify_size)
     def _verify_size(self, width, height):
         if width != 2:

@@ -135,6 +135,16 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         return self._max_sdram_per_chip
 
+    @abstractproperty
+    def n_chips_per_board(self):
+        """
+        The normal number of Chips on each board of this version
+
+        Remember that will the board may have dead or excluded chips
+
+        :rtype: int
+        """
+
     def verify_size(self, width, height):
         """
         Checks that the width and height are allowed for this version
