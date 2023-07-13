@@ -17,8 +17,7 @@ from spinn_utilities.config_holder import set_config
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine import (Chip, Link, Machine, Router, virtual_machine)
 from spinn_machine.exceptions import (
-    SpinnMachineException, SpinnMachineAlreadyExistsException,
-    SpinnMachineInvalidParameterException)
+    SpinnMachineException, SpinnMachineAlreadyExistsException)
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.machine_factory import machine_repair
 from .geometry import (to_xyz, shortest_mesh_path_length,

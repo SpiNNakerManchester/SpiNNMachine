@@ -78,7 +78,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(new_machine.boot_chip.ip_address, "127.0.0.0")
         self.assertEqual(new_machine.n_chips, 48)
         self.assertEqual(len(new_machine), 48)
-        self.assertEqual(next(x[1].ip_address for x in new_machine), "127.0.0.0")
+        self.assertEqual(
+            next(x[1].ip_address for x in new_machine), "127.0.0.0")
         self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
         self.assertEqual("856 cores and 120.0 links",
                          new_machine.cores_and_link_output_string())
@@ -145,13 +146,13 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        new_machine = MachineDataView.get_machine_version().create_machine(8, 8)
-        new_machine.add_chip(self._create_chip(0, 0))
+        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        machine.add_chip(self._create_chip(0, 0))
         # the add does not have the safety code
-        new_machine.add_chip(self._create_chip(10, 2))
+        machine.add_chip(self._create_chip(10, 2))
         # however the validate does
         try:
-            new_machine.validate()
+            machine.validate()
         except SpinnMachineException as ex:
             self.assertIn("has an x larger than width 8", str(ex))
 
@@ -312,7 +313,7 @@ class SpinnMachineTestCase(unittest.TestCase):
             machine.validate()
 
     def test_bad_ethernet_chip_no_chip(self):
-        machine =virtual_machine(8, 8)
+        machine = virtual_machine(8, 8)
         machine.get_chip_at(0, 1)._nearest_ethernet_x = 12
         with self.assertRaises(SpinnMachineException):
             machine.validate()

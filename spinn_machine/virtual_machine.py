@@ -14,14 +14,12 @@
 
 from collections import defaultdict
 import logging
-from spinn_utilities.config_holder import get_config_int, get_config_str
+from spinn_utilities.config_holder import get_config_str
 from spinn_utilities.log import FormatAdapter
 from .chip import Chip
-from .exceptions import SpinnMachineInvalidParameterException
 from .router import Router
 from .link import Link
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
-from spinn_machine import Machine
 from spinn_machine.data import MachineDataView
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
@@ -38,7 +36,7 @@ def virtual_machine(
     :param int n_cpus_per_chip: The number of CPUs to put on each chip
     :param bool validate: if True will call the machine validate function
     :returns: a virtual machine (that cannot execute code)
-    :rtype: Machine
+    :rtype: ~spinn_machine.Machine
     """
 
     factory = _VirtualMachine(width, height, n_cpus_per_chip, validate)

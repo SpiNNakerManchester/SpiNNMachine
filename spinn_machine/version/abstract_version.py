@@ -82,7 +82,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         if max_sdram is not None:
             if max_sdram > self._max_sdram_per_chip:
                 logger.info(
-                    f"Ignoring csg setting [Machine]max_sdram_allowed_per_chip "
+                    f"Ignoring csg setting "
+                    f"[Machine]max_sdram_allowed_per_chip "
                     f"{max_sdram} as it is larger than "
                     f"{self._max_sdram_per_chip} which is the default for a "
                     f"{self.name} board ")
@@ -157,8 +158,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Adds the width and height checks that depend on the version
 
-        :param int width: 
-        :param int height: 
+        :param int width:
+        :param int height:
         :raise SpinnMachineException:
             If the size is unexpected
         """
@@ -168,7 +169,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Creates a new Empty machine based on the width, height and version
 
         :param int width: The width of the machine excluding any virtual chips
-        :param int height: The height of the machine excluding any virtual chips
+        :param int height:
+            The height of the machine excluding any virtual chips
         :param origin: Extra information about how this machine was created
             to be used in the str method. Example "``Virtual``" or "``Json``"
         :type origin: str or None
@@ -186,7 +188,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Creates a new Empty machine based on the width, height and version
 
         :param int width: The width of the machine excluding any virtual chips
-        :param int height: The height of the machine excluding any virtual chips
+        :param int height:
+            The height of the machine excluding any virtual chips
         :param origin: Extra information about how this machine was created
             to be used in the str method. Example "``Virtual``" or "``Json``"
         :type origin: str or None

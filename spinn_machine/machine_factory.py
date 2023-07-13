@@ -18,10 +18,6 @@ from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
 from spinn_machine import (Chip, Router)
 from spinn_machine.data import MachineDataView
-from .no_wrap_machine import NoWrapMachine
-from .horizontal_wrap_machine import HorizontalWrapMachine
-from .vertical_wrap_machine import VerticalWrapMachine
-from .full_wrap_machine import FullWrapMachine
 from .exceptions import SpinnMachineException
 
 logger = FormatAdapter(logging.getLogger(__name__))
