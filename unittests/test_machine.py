@@ -15,8 +15,10 @@
 """
 test for testing the python representation of a spinnaker machine
 """
+from testfixtures import LogCapture
 import unittest
 from spinn_utilities.config_holder import set_config
+from spinn_utilities.testing import log_checker
 from spinn_machine import Link, Router, Chip
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
@@ -82,15 +84,58 @@ class SpinnMachineTestCase(unittest.TestCase):
             next(x[1].ip_address for x in new_machine), "127.0.0.0")
         self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
         self.assertEqual(
-            "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 links. "
-            "Chips have sdram of 123469792 bytes, router table of size 1023, "
-            "between 17 and 18 cores and between 3 and 6 links.",
-            new_machine.summary_string())
-        self.assertEqual(
             "[VirtualNoWrapMachine: width=8, height=8, n_chips=48]",
             new_machine.__repr__())
         self.assertEqual(2, len(list(new_machine.spinnaker_links)))
         self.assertEqual(1023, new_machine.min_n_router_enteries)
+
+    def test_summary(self):
+        machine = virtual_machine(8, 8)
+        self.assertEqual(
+            "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 links. "
+            "Chips have sdram of 123469792 bytes, router table of size 1023, "
+            "between 17 and 18 cores and between 3 and 6 links.",
+             machine.summary_string())
+
+        # Hack to test sefety code. Doing this outside tests not supported
+        machine._sdram_counter.clear()
+        machine._sdram_counter[123] += 1
+        machine._n_router_entries_counter.clear()
+        machine._n_router_entries_counter[456] += 1
+        with LogCapture() as lc:
+            self.assertEqual(
+                "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0"
+                " links. Chips have sdram of 123 bytes, router table of size "
+                "456, between 17 and 18 cores and between 3 and 6 links.",
+                machine.summary_string())
+            log_checker.assert_logs_warning_contains(
+                lc.records,
+                "The sdram per chip of 123 was differemt to the expected "
+                "value of 123469792 for board Version Spin1 48 Chip")
+            log_checker.assert_logs_warning_contains(
+                lc.records,
+                "The number of router entries per chip of 456 was different "
+                "to the expected value of 1023 "
+                "for board Version Spin1 48 Chip")
+
+        # Hack to test sefety code. Doing this outside tests not supported
+        machine._sdram_counter[789] += 1
+        machine._n_router_entries_counter[321] += 1
+        with LogCapture() as lc:
+            self.assertEqual(
+                "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 "
+                "links. Chips have sdram of between 123 and 789 bytes, "
+                "router table sizes between 321 and 456, "
+                "between 17 and 18 cores and between 3 and 6 links.",
+                machine.summary_string())
+            log_checker.assert_logs_warning_contains(
+                lc.records,
+                "Not all Chips have the same sdram. "
+                "The counts where Counter({123: 1, 789: 1}).")
+            log_checker.assert_logs_warning_contains(
+                lc.records,
+                "Not all Chips had the same n_router_tables. "
+                "The counts where Counter({456: 1, 321: 1}).")
 
     def test_create_new_machine_with_invalid_chips(self):
         """

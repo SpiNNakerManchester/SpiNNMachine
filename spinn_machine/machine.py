@@ -952,7 +952,9 @@ class Machine(object, metaclass=AbstractBase):
         """
         Gets a summary of the Machine and logs warnings for weirdness
 
-        :return:
+        :return: A String descibing the Machine
+        :raises IndexError: If there are no Chips in the MAchine
+        :raises AttributeError: If there is no boot chip
         """
         version = MachineDataView.get_machine_version()
 
@@ -965,7 +967,7 @@ class Machine(object, metaclass=AbstractBase):
                     f"for board Version {version.name}")
             sdram_st = f"sdram of {sdram[0]} bytes"
         else:
-            sdram_st = "sdram of between {sdram[0]} and {sdram[-1]} bytes"
+            sdram_st = f"sdram of between {sdram[0]} and {sdram[-1]} bytes"
             logger.warning (f"Not all Chips have the same sdram. "
                             f"The counts where {self._sdram_counter}.")
 
