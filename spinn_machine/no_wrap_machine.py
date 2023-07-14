@@ -14,7 +14,6 @@
 
 from .machine import Machine
 from spinn_utilities.overrides import overrides
-from spinn_machine.data import MachineDataView
 
 
 class NoWrapMachine(Machine):

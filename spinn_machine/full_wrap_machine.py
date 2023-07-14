@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from spinn_utilities.overrides import overrides
-from spinn_machine.data import MachineDataView
 from .machine import Machine
 
 

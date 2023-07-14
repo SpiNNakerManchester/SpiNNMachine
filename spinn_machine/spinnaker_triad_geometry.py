@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from spinn_machine.machine import Machine
-
 
 class SpiNNakerTriadGeometry(object):
     """

@@ -95,7 +95,7 @@ class SpinnMachineTestCase(unittest.TestCase):
             "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 links. "
             "Chips have sdram of 123469792 bytes, router table of size 1023, "
             "between 17 and 18 cores and between 3 and 6 links.",
-             machine.summary_string())
+            machine.summary_string())
 
         # Hack to test sefety code. Doing this outside tests not supported
         machine._sdram_counter.clear()

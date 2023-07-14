@@ -14,7 +14,6 @@
 
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
-from .machine import Machine
 
 
 class Router(object):

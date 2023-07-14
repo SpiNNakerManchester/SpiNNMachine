@@ -968,8 +968,8 @@ class Machine(object, metaclass=AbstractBase):
             sdram_st = f"sdram of {sdram[0]} bytes"
         else:
             sdram_st = f"sdram of between {sdram[0]} and {sdram[-1]} bytes"
-            logger.warning (f"Not all Chips have the same sdram. "
-                            f"The counts where {self._sdram_counter}.")
+            logger.warning(f"Not all Chips have the same sdram. "
+                           f"The counts where {self._sdram_counter}.")
 
         routers = sorted(self._n_router_entries_counter.keys())
         if len(routers) == 1:
