@@ -85,7 +85,7 @@ def _machine_ignore(original, dead_chips, dead_links):
             for link in chip.router.links:
                 if link.source_link_id not in links_map[(chip.x, chip.y)]:
                     links.append(link)
-            router = Router(links)
+            router = Router(links, chip.router.n_available_multicast_entries)
             chip = Chip(
                 chip.x, chip.y, chip.n_processors, router, chip.sdram,
                 chip.nearest_ethernet_x, chip.nearest_ethernet_y,

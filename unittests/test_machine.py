@@ -87,6 +87,7 @@ class SpinnMachineTestCase(unittest.TestCase):
             "[VirtualNoWrapMachine: width=8, height=8, n_chips=48]",
             new_machine.__repr__())
         self.assertEqual(2, len(list(new_machine.spinnaker_links)))
+        self.assertEqual(1023, new_machine.min_n_router_enteries)
 
     def test_create_new_machine_with_invalid_chips(self):
         """

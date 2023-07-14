@@ -146,6 +146,17 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         return len(self.chip_core_map)
 
+    @abstractproperty
+    def n_router_entries(self):
+        """
+        The standard number of router entires in a router table.
+
+        While it is likely that all Chips will have this number it should
+        not be counted on. Ask each Chip's Router for the correct value
+
+        :rtype: int
+        """
+
     @property
     def expected_xys(self):
         """

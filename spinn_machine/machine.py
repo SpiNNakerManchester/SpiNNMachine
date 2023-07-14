@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections import Counter
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
@@ -37,8 +38,6 @@ class Machine(object, metaclass=AbstractBase):
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
-    ROUTER_ENTRIES = 1023
-
     __slots__ = (
         "_boot_ethernet_address",
         # A map off the expected x, y coordinates on a standard board to
@@ -50,10 +49,19 @@ class Machine(object, metaclass=AbstractBase):
         # Declared height of the machine
         # This can not be changed
         "_height",
+        # A Counter of the number of cores on each Chip
+        "_n_cores_counter",
+        # A Counter of links on each Chip
+        # Counts each direction so the n_links is half the total
+        "n_links_counter"
+        # A Counter for the number of router entries on each Chip
+        "_n_router_entries_counter",
         # Extra information about how this machine was created
         # to be used in the str method
         "_origin",
         "_spinnaker_links",
+        # A Counter for sdram on each Chip
+        "_sdram_counter",
         # Declared width of the machine
         # This can not be changed
         "_width"
@@ -97,6 +105,11 @@ class Machine(object, metaclass=AbstractBase):
             self._origin = ""
         else:
             self._origin = origin
+
+        self._n_cores_counter = Counter()
+        self._n_links_counter = Counter()
+        self._n_router_entries_counter = Counter()
+        self._sdram_counter = Counter()
 
     @abstractmethod
     def multiple_48_chip_boards(self):
@@ -513,6 +526,13 @@ class Machine(object, metaclass=AbstractBase):
 
         self._chips[chip_id] = chip
 
+        # keep some stats about the
+        self._n_cores_counter[chip.n_processors] += 1
+        self._n_links_counter[len(chip.router)] += 1
+        self._n_router_entries_counter[
+            chip.router.n_available_multicast_entries] += 1
+        self._sdram_counter[chip.sdram] += 1
+
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
             if (chip.x == 0) and (chip.y == 0):
@@ -908,13 +928,17 @@ class Machine(object, metaclass=AbstractBase):
         :return: tuple of (n_cores, n_links)
         :rtype: tuple(int,int)
         """
-        cores = 0
-        total_links = 0
-        for chip_key in self._chips:
-            chip = self._chips[chip_key]
-            cores += chip.n_processors
-            total_links += len(chip.router)
-        return cores, total_links / 2
+        return (sum(n * count for n, count in self._n_cores_counter.items()),
+                sum(n * count for n, count in self._n_links_counter.items())
+                / 2)
+
+    @property
+    def min_n_router_enteries(self):
+        """
+        The minumum number of router_enteries found on any Chip
+        :return:
+        """
+        return sorted(self._n_router_entries_counter.keys())[-1]
 
     def cores_and_link_output_string(self):
         """

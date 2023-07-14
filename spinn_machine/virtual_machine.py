@@ -51,7 +51,9 @@ class _VirtualMachine(object):
         "_unused_cores",
         "_unused_links",
         "_machine",
-        "_with_monitors")
+        "_with_monitors",
+        "_n_router_entries"
+    )
 
     _4_chip_down_links = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
@@ -64,6 +66,7 @@ class _VirtualMachine(object):
             self, width, height, n_cpus_per_chip=None, validate=True):
 
         version = MachineDataView.get_machine_version()
+        self._n_router_entries = version.n_router_entries
         self._machine = version.create_machine(
             width, height, origin=self.ORIGIN)
 
@@ -102,7 +105,7 @@ class _VirtualMachine(object):
         if width == 2:  # Already checked height is now also 2
             self._unused_links.update(_VirtualMachine._4_chip_down_links)
 
-        ethernet_chips = version.get_potential_ethernet_chip(width, height)
+        ethernet_chips = version.get_potential_ethernet_chips(width, height)
 
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
@@ -145,7 +148,7 @@ class _VirtualMachine(object):
 
     def _create_chip(self, x, y, configured_chips, ip_address=None):
         chip_links = self._calculate_links(x, y, configured_chips)
-        chip_router = Router(chip_links)
+        chip_router = Router(chip_links, self._n_router_entries)
 
         (eth_x, eth_y, n_cores) = configured_chips[(x, y)]
 
