@@ -15,6 +15,7 @@
 from collections import Counter
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
+from spinn_machine.data import MachineDataView
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 from spinn_utilities.abstract_base import (
     AbstractBase, abstractproperty, abstractmethod)
@@ -53,7 +54,7 @@ class Machine(object, metaclass=AbstractBase):
         "_n_cores_counter",
         # A Counter of links on each Chip
         # Counts each direction so the n_links is half the total
-        "n_links_counter"
+        "_n_links_counter",
         # A Counter for the number of router entries on each Chip
         "_n_router_entries_counter",
         # Extra information about how this machine was created
@@ -916,21 +917,28 @@ class Machine(object, metaclass=AbstractBase):
     def __repr__(self):
         return self.__str__()
 
-    def get_cores_and_link_count(self):
+    def get_cores_count(self):
         """
-        Get the number of cores and links from the machine.
+        Get the number of cores from the machine.
+
+        :return: n_cores
+        :rtype: int
+        """
+        return sum(n * count for n, count in self._n_cores_counter.items())
+
+    def get_links_count(self):
+        """
+        Get the number of links from the machine.
 
         Links are assumed to be bidirectional so the total links counted is
         half of the unidirectional links found.
 
         SpiNNaker and FPGA links are not included.
 
-        :return: tuple of (n_cores, n_links)
-        :rtype: tuple(int,int)
+        :return: n_links
+        :rtype: int
         """
-        return (sum(n * count for n, count in self._n_cores_counter.items()),
-                sum(n * count for n, count in self._n_links_counter.items())
-                / 2)
+        return sum(n * count for n, count in self._n_links_counter.items()) / 2
 
     @property
     def min_n_router_enteries(self):
@@ -940,14 +948,60 @@ class Machine(object, metaclass=AbstractBase):
         """
         return sorted(self._n_router_entries_counter.keys())[-1]
 
-    def cores_and_link_output_string(self):
+    def summary_string(self):
         """
-        Get a string detailing the number of cores and links.
+        Gets a summary of the Machine and logs warnings for weirdness
 
-        :rtype: str
+        :return:
         """
-        cores, links = self.get_cores_and_link_count()
-        return f"{cores} cores and {links} links"
+        version = MachineDataView.get_machine_version()
+
+        sdram = sorted(self._sdram_counter.keys())
+        if len(sdram) == 1:
+            if sdram[0] != version.max_sdram_per_chip:
+                logger.warning(
+                    f"The sdram per chip of {sdram[0]} was differemt to the "
+                    f"expected value of {version.max_sdram_per_chip} "
+                    f"for board Version {version.name}")
+            sdram_st = f"sdram of {sdram[0]} bytes"
+        else:
+            sdram_st = "sdram of between {sdram[0]} and {sdram[-1]} bytes"
+            logger.warning (f"Not all Chips have the same sdram. "
+                            f"The counts where {self._sdram_counter}.")
+
+        routers = sorted(self._n_router_entries_counter.keys())
+        if len(routers) == 1:
+            if routers[0] != version.n_router_entries:
+                logger.warning(
+                    f"The number of router entries per chip of {routers[0]} "
+                    f"was different to the expected value of "
+                    f"{version.n_router_entries} "
+                    f"for board Version {version.name}")
+            routers_st = f"router table of size {routers[0]}"
+        else:
+            routers_st = (f"router table sizes between "
+                          f"{routers[0]} and {routers[-1]}")
+            logger.warning(
+                f"Not all Chips had the same n_router_tables. "
+                f"The counts where {self._n_router_entries_counter}.")
+
+        cores = sorted(self._n_cores_counter.keys())
+        if len(cores) == 1:
+            cores_st = f" {cores[0]} cores"
+        else:
+            cores_st = f"between {cores[0]} and {cores[-1]} cores"
+
+        links = sorted(self._n_links_counter.keys())
+        if len(links) == 1:
+            links_st = f" {links[0]} links."
+        else:
+            links_st = f"between {links[0]} and {links[-1]} links"
+
+        return (
+            f"Machine on {self.boot_chip.ip_address} "
+            f"with {self.n_chips} Chips, {self.get_cores_count()} cores "
+            f"and {self.get_links_count()} links. "
+            f"Chips have {sdram_st}, {routers_st}, {cores_st} and {links_st}.")
 
     @property
     def boot_chip(self):

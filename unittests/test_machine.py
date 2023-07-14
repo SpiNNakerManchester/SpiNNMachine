@@ -81,8 +81,11 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(
             next(x[1].ip_address for x in new_machine), "127.0.0.0")
         self.assertEqual(next(new_machine.chip_coordinates), (0, 0))
-        self.assertEqual("856 cores and 120.0 links",
-                         new_machine.cores_and_link_output_string())
+        self.assertEqual(
+            "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 links. "
+            "Chips have sdram of 123469792 bytes, router table of size 1023, "
+            "between 17 and 18 cores and between 3 and 6 links.",
+            new_machine.summary_string())
         self.assertEqual(
             "[VirtualNoWrapMachine: width=8, height=8, n_chips=48]",
             new_machine.__repr__())

@@ -108,7 +108,8 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(16, count)
 #        self.assertEqual(str(vm),
 #                         "[VirtualMachine: max_x=1, max_y=1, n_chips=4]")
-        self.assertEqual(vm.get_cores_and_link_count(), (72, 8))
+        self.assertEqual(72, vm.get_cores_count())
+        self.assertEqual(8, vm.get_links_count())
         count = 0
         for _chip in vm.get_existing_xys_on_board(vm.get_chip_at(1, 1)):
             count += 1
