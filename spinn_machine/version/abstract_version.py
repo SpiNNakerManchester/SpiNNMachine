@@ -149,7 +149,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
     @abstractproperty
     def n_router_entries(self):
         """
-        The standard number of router entires in a router table.
+        The standard number of router entries in a router table.
 
         While it is likely that all Chips will have this number it should
         not be counted on. Ask each Chip's Router for the correct value
@@ -160,7 +160,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
     @property
     def expected_xys(self):
         """
-        List of the standard xy coordinates of Chips for this version
+        List of the standard x y coordinates of Chips for this version
 
         Remember that will the board may have dead or excluded chips
 

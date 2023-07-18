@@ -97,7 +97,7 @@ class MachineDataView(UtilsDataView):
         """
         Reports if a machine is currently set or can be mocked.
 
-        Unlike has_existing_machine for unittests this will return True even
+        Unlike has_existing_machine for unit tests this will return True even
         if a Machine has not yet been created
 
         :rtype: bool

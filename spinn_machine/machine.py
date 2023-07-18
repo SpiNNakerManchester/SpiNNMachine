@@ -943,8 +943,10 @@ class Machine(object, metaclass=AbstractBase):
     @property
     def min_n_router_enteries(self):
         """
-        The minumum number of router_enteries found on any Chip
-        :return:
+        The minimum number of router_enteries found on any Chip
+
+        :return: The lowest n router entry found on any Router
+        :rtype: int
         """
         return sorted(self._n_router_entries_counter.keys())[-1]
 
@@ -952,19 +954,20 @@ class Machine(object, metaclass=AbstractBase):
         """
         Gets a summary of the Machine and logs warnings for weirdness
 
-        :return: A String descibing the Machine
+        :return: A String describing the Machine
         :raises IndexError: If there are no Chips in the MAchine
         :raises AttributeError: If there is no boot chip
         """
+        # pylint: disable=logging-fstring-interpolation
         version = MachineDataView.get_machine_version()
 
         sdram = sorted(self._sdram_counter.keys())
         if len(sdram) == 1:
             if sdram[0] != version.max_sdram_per_chip:
                 logger.warning(
-                    f"The sdram per chip of {sdram[0]} was differemt to the "
-                    f"expected value of {version.max_sdram_per_chip} "
-                    f"for board Version {version.name}")
+                    "The sdram per chip of {sdram[0]} was differemt to the "
+                    "expected value of {version.max_sdram_per_chip} "
+                    "for board Version {version.name}")
             sdram_st = f"sdram of {sdram[0]} bytes"
         else:
             sdram_st = f"sdram of between {sdram[0]} and {sdram[-1]} bytes"
