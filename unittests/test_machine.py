@@ -110,7 +110,7 @@ class SpinnMachineTestCase(unittest.TestCase):
                 machine.summary_string())
             log_checker.assert_logs_warning_contains(
                 lc.records,
-                "The sdram per chip of 123 was differemt to the expected "
+                "The sdram per chip of 123 was different to the expected "
                 "value of 123469792 for board Version Spin1 48 Chip")
             log_checker.assert_logs_warning_contains(
                 lc.records,

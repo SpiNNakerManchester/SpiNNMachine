@@ -965,9 +965,9 @@ class Machine(object, metaclass=AbstractBase):
         if len(sdram) == 1:
             if sdram[0] != version.max_sdram_per_chip:
                 logger.warning(
-                    "The sdram per chip of {sdram[0]} was differemt to the "
-                    "expected value of {version.max_sdram_per_chip} "
-                    "for board Version {version.name}")
+                    f"The sdram per chip of {sdram[0]} was different to the "
+                    f"expected value of {version.max_sdram_per_chip} "
+                    f"for board Version {version.name}")
             sdram_st = f"sdram of {sdram[0]} bytes"
         else:
             sdram_st = f"sdram of between {sdram[0]} and {sdram[-1]} bytes"
