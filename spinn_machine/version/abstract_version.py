@@ -87,11 +87,11 @@ class AbstractVersion(object, metaclass=AbstractBase):
                     f"{max_sdram} as it is larger than "
                     f"{self._max_sdram_per_chip} which is the default for a "
                     f"{self.name} board ")
-            if max_sdram < self._max_cores_per_chip:
+            if max_sdram < self._max_sdram_per_chip:
                 logger.warning(
                     f"Max sdram per chip reduced to {max_sdram_per_chip} "
                     f"due to cfg setting [Machine]max_sdram_allowed_per_chip")
-                self._max_sdram_per_chip = max_sdram_per_chip
+                self._max_sdram_per_chip = max_sdram
 
     @abstractproperty
     def name(self):
