@@ -101,7 +101,6 @@ class TestVersion5(unittest.TestCase):
         eths = version.get_potential_ethernet_chips(2, 2)
         self.assertListEqual([(0, 0)], eths)
 
-
     def test_verify_size(self):
         version = Version5()
 
@@ -143,6 +142,7 @@ class TestVersion5(unittest.TestCase):
         self.assertIsInstance(machine, VerticalWrapMachine)
         machine = version.create_machine(12, 12)
         self.assertIsInstance(machine, FullWrapMachine)
+
 
 if __name__ == '__main__':
     unittest.main()
