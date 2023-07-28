@@ -14,7 +14,6 @@
 
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
-from .machine import Machine
 
 
 class Router(object):
@@ -37,8 +36,7 @@ class Router(object):
 
     __slots__ = ("_links", "_n_available_multicast_entries")
 
-    def __init__(
-            self, links, n_available_multicast_entries=Machine.ROUTER_ENTRIES):
+    def __init__(self, links, n_available_multicast_entries):
         """
         :param iterable(~spinn_machine.Link) links: iterable of links
         :param int n_available_multicast_entries:

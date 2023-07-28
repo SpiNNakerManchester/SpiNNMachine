@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from spinn_utilities.data import UtilsDataView
+from spinn_machine.version.version_factory import version_factory
 # pylint: disable=protected-access
 
 
@@ -37,6 +38,7 @@ class _MachineDataModel(object):
         # Data values cached
         "_machine",
         "_machine_generator",
+        "_machine_version",
         "_user_accessed_machine"
     ]
 
@@ -55,6 +57,7 @@ class _MachineDataModel(object):
         """
         self._hard_reset()
         self._machine_generator = None
+        self._machine_version = None
 
     def _hard_reset(self):
         """
@@ -94,10 +97,25 @@ class MachineDataView(UtilsDataView):
         """
         Reports if a machine is currently set or can be mocked.
 
+        Unlike has_existing_machine for unit tests this will return True even
+        if a Machine has not yet been created
+
         :rtype: bool
         """
         return (cls.__data._machine is not None or
                 cls._is_mocked())
+
+    @classmethod
+    def has_existing_machine(cls):
+        """
+        Reports if a machine is currently already created.
+
+        Unlike has_machine this method returns false if a machine could be
+        mocked
+
+        :rtype: bool
+        """
+        return cls.__data._machine
 
     @classmethod
     def get_machine(cls):
@@ -217,3 +235,18 @@ class MachineDataView(UtilsDataView):
             if cls.__data._machine is None:
                 return "Chip is from a previous machine"
             return str(ex)
+
+    @classmethod
+    def get_machine_version(cls):
+        """
+        Returns the Machine Version if it has or can be set.
+
+`       May call version_factory to create the version
+
+        :return: A superclass of AbstractVersion
+        :rtype:  ~spinn_machine.version.abstract_version.py
+        :raises SpinnMachineException: If the cfg version is not set correctly
+        """
+        if cls.__data._machine_version is None:
+            cls.__data._machine_version = version_factory()
+        return cls.__data._machine_version

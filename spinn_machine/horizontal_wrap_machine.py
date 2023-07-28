@@ -24,19 +24,19 @@ class HorizontalWrapMachine(Machine):
 
     @overrides(Machine.get_xys_by_ethernet)
     def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_x = (x + ethernet_x) % self._width
             chip_y = (y + ethernet_y)
             yield (chip_x, chip_y)
 
     @overrides(Machine.get_xy_cores_by_ethernet)
     def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y), n_cores in self.CHIPS_PER_BOARD.items():
+        for (x, y), n_cores in self._chip_core_map.items():
             yield ((x + ethernet_x) % self._width, (y + ethernet_y)), n_cores
 
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y))
             if chip_xy in self._chips:
@@ -44,7 +44,7 @@ class HorizontalWrapMachine(Machine):
 
     @overrides(Machine.get_down_xys_by_ethernet)
     def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y))
             if (chip_xy) not in self._chips:

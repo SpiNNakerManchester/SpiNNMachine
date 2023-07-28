@@ -25,6 +25,7 @@ class TestJsonMachine(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
 
     def test_json_version_5_hole(self):
         set_config("Machine", "down_chips", "3,3")
