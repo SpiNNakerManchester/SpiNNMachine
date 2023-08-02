@@ -101,6 +101,22 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :rtype: str
         """
 
+    @abstractproperty
+    def number(self):
+        """
+        The version number that produced this Version
+
+        :rtype: int
+        """
+
+    @abstractproperty
+    def board_shape(self):
+        """
+        The width and heigth of a single board of this type
+
+        :return:
+        """
+
     @property
     def max_cores_per_chip(self):
         """

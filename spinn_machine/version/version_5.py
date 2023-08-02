@@ -48,6 +48,16 @@ class Version5(VersionSpin1):
         return "Spin1 48 Chip"
 
     @property
+    @overrides(VersionSpin1.number)
+    def number(self):
+        return 5
+
+    @property
+    @overrides(VersionSpin1.board_shape)
+    def board_shape(self):
+        return (8, 8)
+
+    @property
     @overrides(VersionSpin1.chip_core_map)
     def chip_core_map(self):
         return CHIPS_PER_BOARD
