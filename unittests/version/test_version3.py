@@ -35,6 +35,8 @@ class TestVersion3(unittest.TestCase):
         self.assertEqual(123469792, version.max_sdram_per_chip)
         self.assertEqual(1, version.n_non_user_cores)
         self.assertEqual("Spin1 4 Chip", version.name)
+        self.assertEqual(3, version.number)
+        self.assertEqual((2, 2), version.board_shape)
         self.assertEqual(4, version.n_chips_per_board)
         self.assertEqual(1023, version.n_router_entries)
 

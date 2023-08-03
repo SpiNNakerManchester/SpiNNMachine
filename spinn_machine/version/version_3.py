@@ -35,6 +35,16 @@ class Version3(VersionSpin1):
         return "Spin1 4 Chip"
 
     @property
+    @overrides(VersionSpin1.number)
+    def number(self):
+        return 3
+
+    @property
+    @overrides(VersionSpin1.board_shape)
+    def board_shape(self):
+        return (2, 2)
+
+    @property
     @overrides(VersionSpin1.chip_core_map)
     def chip_core_map(self):
         return CHIPS_PER_BOARD
