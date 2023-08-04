@@ -42,7 +42,6 @@ class Version5(VersionSpin1):
 
     Covers versions 4 and 5
     """
-
     __slots__ = ()
 
     @property
