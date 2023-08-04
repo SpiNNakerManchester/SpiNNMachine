@@ -114,10 +114,10 @@ class Machine(object, metaclass=AbstractBase):
 
         self._origin = origin
 
-        self._n_cores_counter = Counter()
-        self._n_links_counter = Counter()
-        self._n_router_entries_counter = Counter()
-        self._sdram_counter = Counter()
+        self._n_cores_counter: Counter[int] = Counter()
+        self._n_links_counter: Counter[int] = Counter()
+        self._n_router_entries_counter: Counter[int] = Counter()
+        self._sdram_counter: Counter[int] = Counter()
 
     @abstractmethod
     def multiple_48_chip_boards(self) -> bool:
@@ -424,6 +424,9 @@ class Machine(object, metaclass=AbstractBase):
     def get_vector(self, source: XY, destination: XY) -> Tuple[int, int, int]:
         """
         Get mathematical shortest vector (x, y, z) from source to destination.
+        The z direction uses the diagonal inter-chip links; (0,0,1) is
+        equivalent to (1,1,0) in terms of where it reaches but uses a more
+        efficient route.
 
         This method does not check if the chips and links it assumes to take
         actually exist.
@@ -960,7 +963,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return sum(n * count for n, count in self._n_cores_counter.items())
 
-    def get_links_count(self) -> int:
+    def get_links_count(self) -> float:
         """
         Get the number of links from the machine.
 
@@ -969,8 +972,8 @@ class Machine(object, metaclass=AbstractBase):
 
         SpiNNaker and FPGA links are not included.
 
-        :return: n_links
-        :rtype: int
+        :return: n_links; fractional parts indicate partial link problems
+        :rtype: float
         """
         return sum(n * count for n, count in self._n_links_counter.items()) / 2
 
@@ -1243,7 +1246,7 @@ class Machine(object, metaclass=AbstractBase):
                     return (x - y, 0, -y)
 
     @property
-    def local_xys(self) -> Iterator[XY]:
+    def local_xys(self) -> Iterable[XY]:
         """
         Provides a list of local (x,y) coordinates for a perfect board on this
         machine.
