@@ -103,6 +103,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         :rtype: str
         """
+        raise NotImplementedError
 
     @property
     @abstractmethod
@@ -112,6 +113,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         :rtype: int
         """
+        raise NotImplementedError
 
     @property
     @abstractmethod
@@ -119,6 +121,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         The width and height of a single board of this type
         """
+        raise NotImplementedError
 
     @property
     def max_cores_per_chip(self) -> int:
@@ -140,6 +143,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         :rtype: int
         """
+        raise NotImplementedError
 
     @property
     def max_sdram_per_chip(self) -> int:
@@ -176,6 +180,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         :rtype: int
         """
+        raise NotImplementedError
 
     @property
     def expected_xys(self) -> Sequence[XY]:
@@ -197,6 +202,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         :rtype: dict((int, int), int)
         """
+        raise NotImplementedError
 
     @abstractmethod
     def get_potential_ethernet_chips(
@@ -214,6 +220,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :param int height: The height of the machine to find the chips in
         :rtype: list(tuple(int, int))
         """
+        raise NotImplementedError
 
     def verify_size(self, width: Optional[int], height: Optional[int]):
         """
@@ -228,9 +235,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
         if height is None:
             raise SpinnMachineException("Height can not be None")
         if width <= 0:
-            raise SpinnMachineException("Unexpected {width=}")
+            raise SpinnMachineException(f"Unexpected width={width}")
         if height <= 0:
-            raise SpinnMachineException("Unexpected {height=}")
+            raise SpinnMachineException(f"Unexpected height={height}")
         self._verify_size(width, height)
 
     @abstractmethod
@@ -243,6 +250,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :raise SpinnMachineException:
             If the size is unexpected
         """
+        raise NotImplementedError
 
     def create_machine(
             self, width: Optional[int], height: Optional[int],
@@ -278,3 +286,4 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :return: A subclass of Machine with no Chips in it
         :rtype: ~spinn_machine.Machine
         """
+        raise NotImplementedError
