@@ -16,7 +16,6 @@ from typing import (
     Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
-from .machine import Machine
 if TYPE_CHECKING:
     from .link import Link
     from .fixed_route_entry import FixedRouteEntry
@@ -45,7 +44,7 @@ class Router(object):
 
     def __init__(
             self, links: Iterable[Link],
-            n_available_multicast_entries: int = Machine.ROUTER_ENTRIES):
+            n_available_multicast_entries: int):
         """
         :param iterable(~spinn_machine.Link) links: iterable of links
         :param int n_available_multicast_entries:

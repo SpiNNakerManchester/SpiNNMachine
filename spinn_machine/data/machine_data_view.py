@@ -11,12 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Callable, Optional
+from __future__ import annotations
+from typing import Callable, Optional, TYPE_CHECKING
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.data import UtilsDataView
-from spinn_machine.chip import Chip
-from spinn_machine.machine import Machine
 from spinn_machine.exceptions import SpinnMachineException
+from spinn_machine.version.version_factory import version_factory
+if TYPE_CHECKING:
+    from spinn_machine.chip import Chip
+    from spinn_machine.machine import Machine
+    from spinn_machine.version.abstract_version import AbstractVersion
 # pylint: disable=protected-access
 
 
@@ -41,6 +45,7 @@ class _MachineDataModel(object):
         # Data values cached
         "_machine",
         "_machine_generator",
+        "_machine_version",
         "_user_accessed_machine"
     ]
 
@@ -59,6 +64,7 @@ class _MachineDataModel(object):
         """
         self._hard_reset()
         self._machine_generator: Optional[Callable[[], None]] = None
+        self._machine_version: Optional[AbstractVersion] = None
 
     def _hard_reset(self) -> None:
         """
@@ -98,10 +104,24 @@ class MachineDataView(UtilsDataView):
         """
         Reports if a machine is currently set or can be mocked.
 
+        Unlike has_existing_machine for unit tests this will return True even
+        if a Machine has not yet been created
+
         :rtype: bool
         """
-        return (cls.__data._machine is not None or
-                cls._is_mocked())
+        return (cls.__data._machine is not None or cls._is_mocked())
+
+    @classmethod
+    def has_existing_machine(cls) -> bool:
+        """
+        Reports if a machine is currently already created.
+
+        Unlike has_machine this method returns false if a machine could be
+        mocked
+
+        :rtype: bool
+        """
+        return cls.__data._machine is not None
 
     @classmethod
     def get_machine(cls) -> Machine:
@@ -229,3 +249,17 @@ class MachineDataView(UtilsDataView):
             if cls.__data._machine is not None:
                 return str(ex)
         return "Chip is from a previous machine"
+
+    @classmethod
+    def get_machine_version(cls) -> AbstractVersion:
+        """
+        Returns the Machine Version if it has or can be set.
+
+`       May call version_factory to create the version
+
+        :return: A superclass of AbstractVersion
+        :raises SpinnMachineException: If the cfg version is not set correctly
+        """
+        if cls.__data._machine_version is None:
+            cls.__data._machine_version = version_factory()
+        return cls.__data._machine_version

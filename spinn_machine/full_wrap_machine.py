@@ -27,7 +27,7 @@ class FullWrapMachine(Machine):
     @overrides(Machine.get_xys_by_ethernet)
     def get_xys_by_ethernet(
             self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_x = (x + ethernet_x) % self._width
             chip_y = (y + ethernet_y) % self._height
             yield (chip_x, chip_y)
@@ -36,20 +36,14 @@ class FullWrapMachine(Machine):
     def get_xy_cores_by_ethernet(
             self, ethernet_x: int, ethernet_y: int
             ) -> Iterable[Tuple[XY, int]]:
-        if (self._width == self._height == 2):
-            n_cores = Machine.max_cores_per_chip()
-            for (x, y) in self._local_xys:
-                # if ethernet_x/y != 0 GIGO mode so ignore ethernet
-                yield (x, y), n_cores
-        else:
-            for (x, y), n_cores in self.CHIPS_PER_BOARD.items():
-                yield (((x + ethernet_x) % self._width,
-                       (y + ethernet_y) % self._height), n_cores)
+        for (x, y), n_cores in self._chip_core_map.items():
+            yield (((x + ethernet_x) % self._width,
+                   (y + ethernet_y) % self._height), n_cores)
 
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(
             self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y) % self._height)
             if chip_xy in self._chips:
@@ -58,10 +52,10 @@ class FullWrapMachine(Machine):
     @overrides(Machine.get_down_xys_by_ethernet)
     def get_down_xys_by_ethernet(
             self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y) % self._height)
-            if (chip_xy) not in self._chips:
+            if chip_xy not in self._chips:
                 yield chip_xy
 
     @overrides(Machine.xy_over_link)

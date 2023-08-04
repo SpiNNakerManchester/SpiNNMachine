@@ -14,7 +14,6 @@
 from typing import Sequence, Optional, Tuple
 from typing_extensions import TypeAlias
 from spinn_utilities.typing.coords import XY
-from spinn_machine.machine import Machine
 
 _Centre: TypeAlias = Tuple[float, float]
 
@@ -35,6 +34,8 @@ class SpiNNakerTriadGeometry(object):
         "_ethernet_offset",
         "_triad_height",
         "_triad_width",
+        "_board_height",
+        "_board_width",
         "_roots")
 
     # Stored singleton
@@ -52,15 +53,18 @@ class SpiNNakerTriadGeometry(object):
         if SpiNNakerTriadGeometry.spinn5_triad_geometry is None:
             SpiNNakerTriadGeometry.spinn5_triad_geometry = \
                 SpiNNakerTriadGeometry(
-                    12, 12, [(0, 0), (4, 8), (8, 4)], (3.6, 3.4))
+                    12, 12, 8, 8, [(0, 0), (4, 8), (8, 4)], (3.6, 3.4))
         return SpiNNakerTriadGeometry.spinn5_triad_geometry
 
     def __init__(
-            self, triad_width: int, triad_height: int, roots: Sequence[XY],
-            centre: _Centre):
+            self, triad_width: int, triad_height: int,
+            board_width: int, board_height: int,
+            roots: Sequence[XY], centre: _Centre):
         """
         :param int triad_width: width of a triad in chips
         :param int triad_height: height of a triad in chips
+        :param int board_width: width of a board in chips
+        :param int board_height: height of a board in chips
         :param roots: locations of the Ethernet connected chips
         :type roots: list(tuple(int, int))
         :param centre:
@@ -72,6 +76,8 @@ class SpiNNakerTriadGeometry(object):
         """
         self._triad_width = triad_width
         self._triad_height = triad_height
+        self._board_width = board_width
+        self._board_height = board_height
         self._roots = roots
 
         # Copy the Ethernet locations to surrounding triads to make the
@@ -221,11 +227,11 @@ class SpiNNakerTriadGeometry(object):
         if width % self._triad_width == 0:
             eth_width = width
         else:
-            eth_width = width - Machine.SIZE_X_OF_ONE_BOARD + 1
+            eth_width = width - self._board_width + 1
         if height % self._triad_height == 0:
             eth_height = height
         else:
-            eth_height = height - Machine.SIZE_Y_OF_ONE_BOARD + 1
+            eth_height = height - self._board_height + 1
         # special case for single boards like the 2,2
         if (eth_width <= 0 or eth_height <= 0):
             return [(0, 0)]

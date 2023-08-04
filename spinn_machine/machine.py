@@ -19,8 +19,11 @@ from typing import (
 from typing_extensions import TypeAlias
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.typing.coords import XY
+
+from collections import Counter
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
+from spinn_machine.data import MachineDataView
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 if TYPE_CHECKING:
     from .chip import Chip
@@ -39,121 +42,60 @@ class Machine(object, metaclass=AbstractBase):
         * ``y`` is the y-coordinate of a chip,
         * ``chip`` is the chip with the given ``(x, y)`` coordinates.
 
-    Use
-    :py:func:`~spinn_machine.machine_from_chips`
-    and
-    :py:func:`~spinn_machine.machine_from_size`
-    to determine the correct machine class.
     """
-
-    # current opinions is that the Ethernet connected chip can handle 10
-    # UDP packets per millisecond
-    DEFAULT_MAX_CORES_PER_CHIP = 18
-    NON_USER_CORES = 1
-    DEFAULT_SDRAM_BYTES = 123469792
-    __max_cores: Optional[int] = None
-    MAX_CHIPS_PER_48_BOARD = 48
-
-    # other useful magic numbers for machines
-    SIZE_X_OF_ONE_BOARD = 8
-    SIZE_Y_OF_ONE_BOARD = 8
 
     # Table of the amount to add to the x and y coordinates to get the
     #  coordinates down the given link (0-5)
     LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
-    CHIPS_PER_BOARD = {
-        (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,
-        (1, 2): 18, (1, 3): 17, (1, 4): 18, (2, 0): 18, (2, 1): 18, (2, 2): 18,
-        (2, 3): 18, (2, 4): 18, (2, 5): 18, (3, 0): 18, (3, 1): 17, (3, 2): 18,
-        (3, 3): 17, (3, 4): 18, (3, 5): 17, (3, 6): 18, (4, 0): 18, (4, 1): 18,
-        (4, 2): 18, (4, 3): 18, (4, 4): 18, (4, 5): 18, (4, 6): 18, (4, 7): 18,
-        (5, 1): 18, (5, 2): 17, (5, 3): 18, (5, 4): 17, (5, 5): 18, (5, 6): 17,
-        (5, 7): 18, (6, 2): 18, (6, 3): 18, (6, 4): 18, (6, 5): 18, (6, 6): 18,
-        (6, 7): 18, (7, 3): 18, (7, 4): 18, (7, 5): 18, (7, 6): 18, (7, 7): 18
-    }
-    BOARD_48_CHIPS = list(CHIPS_PER_BOARD.keys())
-    ROUTER_ENTRIES = 1023
-
     __slots__ = (
         "_boot_ethernet_address",
+        # A map off the expected x, y coordinates on a standard board to
+        # the most likely number of cores on that chip.
+        "_chip_core_map",
         "_chips",
         "_ethernet_connected_chips",
         "_fpga_links",
         # Declared height of the machine
         # This can not be changed
         "_height",
-        # List of the possible chips (x,y) on each board of the machine
-        "_local_xys",
+        # A Counter of the number of cores on each Chip
+        "_n_cores_counter",
+        # A Counter of links on each Chip
+        # Counts each direction so the n_links is half the total
+        "_n_links_counter",
+        # A Counter for the number of router entries on each Chip
+        "_n_router_entries_counter",
         # Extra information about how this machine was created
         # to be used in the str method
         "_origin",
         "_spinnaker_links",
+        # A Counter for sdram on each Chip
+        "_sdram_counter",
         # Declared width of the machine
         # This can not be changed
         "_width"
     )
 
-    @staticmethod
-    def max_cores_per_chip() -> int:
-        """
-        Gets the max core per chip for the while system.
-
-        There is no guarantee that there will be any Chips with this many
-        cores, only that there will be no cores with more.
-
-        :return: the default cores per chip unless overridden by set
-        """
-        if Machine.__max_cores is None:
-            Machine.__max_cores = Machine.DEFAULT_MAX_CORES_PER_CHIP
-        return Machine.__max_cores
-
-    @staticmethod
-    def set_max_cores_per_chip(new_max: int):
-        """
-        Allows setting the max number of cores per chip for the whole system.
-
-        Allows virtual machines to go higher than normal.
-
-        Real machines can only be capped never increased beyond what they
-        actually have.
-
-        :param int new_max: New value to use for the max
-        :raises SpinnMachineException: if `max_cores_per_chip` has already been
-            used and is now being changed.
-            This exception also happens if the value is set twice to different
-            values. For example in the script and in the configuration file.
-        """
-        if Machine.__max_cores is None:
-            Machine.__max_cores = new_max
-        elif Machine.__max_cores != new_max:
-            raise SpinnMachineException(
-                "max_cores_per_chip has already been accessed "
-                "so can not be changed.")
-
-    def __init__(self, width: int, height: int, chips: Iterable[Chip] = (),
+    def __init__(self, width: int, height: int, chip_core_map: Dict[XY, int],
                  origin: str = ""):
         """
         :param int width: The width of the machine excluding
         :param int height:
             The height of the machine
-        :param iterable(Chip) chips: An iterable of chips in the machine
+        :param dict((int, int), int) chip_core_map:
+            A map off the expected x,y coordinates on a standard board to
+            the most likely number of cores on that chip.
         :param str origin: Extra information about how this machine was created
             to be used in the str method. Example "``Virtual``" or "``Json``"
         :raise SpinnMachineAlreadyExistsException:
             If any two chips have the same x and y coordinates
         """
+        if origin is not None:
+            assert isinstance(origin, str)
         self._width = width
         self._height = height
-
-        if (self._width == self._height == 8) or \
-                self.multiple_48_chip_boards():
-            self._local_xys: List[XY] = self.BOARD_48_CHIPS
-        else:
-            self._local_xys = []
-            for x in range(width):
-                for y in range(height):
-                    self._local_xys.append((x, y))
+        self._chip_core_map = chip_core_map
 
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips: List[Chip] = list()
@@ -169,9 +111,13 @@ class Machine(object, metaclass=AbstractBase):
 
         # The dictionary of chips
         self._chips: Dict[XY, Chip] = dict()
-        self.add_chips(chips)
 
         self._origin = origin
+
+        self._n_cores_counter = Counter()
+        self._n_links_counter = Counter()
+        self._n_router_entries_counter = Counter()
+        self._sdram_counter = Counter()
 
     @abstractmethod
     def multiple_48_chip_boards(self) -> bool:
@@ -579,7 +525,7 @@ class Machine(object, metaclass=AbstractBase):
                     raise SpinnMachineException(
                         f"{chip} has an invalid ethernet chip")
                 local_xy = self.get_local_xy(chip)
-                if local_xy not in self._local_xys:
+                if local_xy not in self._chip_core_map:
                     raise SpinnMachineException(
                         f"{chip} has an unexpected local xy of {local_xy}")
 
@@ -607,6 +553,13 @@ class Machine(object, metaclass=AbstractBase):
                 "chip", f"{chip.x}, {chip.y}")
 
         self._chips[chip_id] = chip
+
+        # keep some stats about the
+        self._n_cores_counter[chip.n_processors] += 1
+        self._n_links_counter[len(chip.router)] += 1
+        self._n_router_entries_counter[
+            chip.router.n_available_multicast_entries] += 1
+        self._sdram_counter[chip.sdram] += 1
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
@@ -998,34 +951,96 @@ class Machine(object, metaclass=AbstractBase):
     def __repr__(self) -> str:
         return self.__str__()
 
-    def get_cores_and_link_count(self) -> Tuple[int, int]:
+    def get_cores_count(self) -> int:
         """
-        Get the number of cores and links from the machine.
+        Get the number of cores from the machine.
+
+        :return: n_cores
+        :rtype: int
+        """
+        return sum(n * count for n, count in self._n_cores_counter.items())
+
+    def get_links_count(self) -> int:
+        """
+        Get the number of links from the machine.
 
         Links are assumed to be bidirectional so the total links counted is
         half of the unidirectional links found.
 
         SpiNNaker and FPGA links are not included.
 
-        :return: tuple of (n_cores, n_links)
-        :rtype: tuple(int,int)
+        :return: n_links
+        :rtype: int
         """
-        cores = 0
-        total_links = 0
-        for chip_key in self._chips:
-            chip = self._chips[chip_key]
-            cores += chip.n_processors
-            total_links += len(chip.router)
-        return cores, total_links // 2
+        return sum(n * count for n, count in self._n_links_counter.items()) / 2
 
-    def cores_and_link_output_string(self) -> str:
+    @property
+    def min_n_router_enteries(self) -> int:
         """
-        Get a string detailing the number of cores and links.
+        The minimum number of router_enteries found on any Chip
 
-        :rtype: str
+        :return: The lowest n router entry found on any Router
+        :rtype: int
         """
-        cores, links = self.get_cores_and_link_count()
-        return f"{cores} cores and {links} links"
+        return sorted(self._n_router_entries_counter.keys())[-1]
+
+    def summary_string(self) -> str:
+        """
+        Gets a summary of the Machine and logs warnings for weirdness
+
+        :return: A String describing the Machine
+        :raises IndexError: If there are no Chips in the MAchine
+        :raises AttributeError: If there is no boot chip
+        """
+        # pylint: disable=logging-fstring-interpolation
+        version = MachineDataView.get_machine_version()
+
+        sdram = sorted(self._sdram_counter.keys())
+        if len(sdram) == 1:
+            if sdram[0] != version.max_sdram_per_chip:
+                logger.warning(
+                    f"The sdram per chip of {sdram[0]} was different to the "
+                    f"expected value of {version.max_sdram_per_chip} "
+                    f"for board Version {version.name}")
+            sdram_st = f"sdram of {sdram[0]} bytes"
+        else:
+            sdram_st = f"sdram of between {sdram[0]} and {sdram[-1]} bytes"
+            logger.warning(f"Not all Chips have the same sdram. "
+                           f"The counts where {self._sdram_counter}.")
+
+        routers = sorted(self._n_router_entries_counter.keys())
+        if len(routers) == 1:
+            if routers[0] != version.n_router_entries:
+                logger.warning(
+                    f"The number of router entries per chip of {routers[0]} "
+                    f"was different to the expected value of "
+                    f"{version.n_router_entries} "
+                    f"for board Version {version.name}")
+            routers_st = f"router table of size {routers[0]}"
+        else:
+            routers_st = (f"router table sizes between "
+                          f"{routers[0]} and {routers[-1]}")
+            logger.warning(
+                f"Not all Chips had the same n_router_tables. "
+                f"The counts where {self._n_router_entries_counter}.")
+
+        cores = sorted(self._n_cores_counter.keys())
+        if len(cores) == 1:
+            cores_st = f" {cores[0]} cores"
+        else:
+            cores_st = f"between {cores[0]} and {cores[-1]} cores"
+
+        links = sorted(self._n_links_counter.keys())
+        if len(links) == 1:
+            links_st = f" {links[0]} links."
+        else:
+            links_st = f"between {links[0]} and {links[-1]} links"
+
+        return (
+            f"Machine on {self.boot_chip.ip_address} "
+            f"with {self.n_chips} Chips, {self.get_cores_count()} cores "
+            f"and {self.get_links_count()} links. "
+            f"Chips have {sdram_st}, {routers_st}, {cores_st} and {links_st}.")
 
     @property
     def boot_chip(self) -> Chip:
@@ -1241,7 +1256,7 @@ class Machine(object, metaclass=AbstractBase):
 
         :rtype: iterable(tuple(int,int))
         """
-        return iter(self._local_xys)
+        return self._chip_core_map.keys()
 
     def get_unused_xy(self) -> XY:
         """

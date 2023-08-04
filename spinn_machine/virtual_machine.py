@@ -15,48 +15,17 @@
 from collections import defaultdict
 import logging
 from typing import Dict, List, Optional, Set, Tuple
-from spinn_utilities.config_holder import get_config_int, get_config_str
+from spinn_utilities.config_holder import get_config_str
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
 from .chip import Chip
-from .exceptions import SpinnMachineInvalidParameterException
 from .router import Router
 from .link import Link
-from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
-from .machine_factory import machine_from_size
 from .machine import Machine
+from spinn_machine.data import MachineDataView
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
 logger = FormatAdapter(logging.getLogger(__name__))
-
-
-def _verify_width_height(width: int, height: int):
-    try:
-        if width < 0 or height < 0:
-            raise SpinnMachineInvalidParameterException(
-                "width or height", f"{width} and {height}",
-                "Negative dimensions are not supported")
-    except TypeError as original:
-        if width is None or height is None:
-            raise SpinnMachineInvalidParameterException(
-                "width or height", f"{width} and {height}",
-                "parameter required") from original
-        raise
-
-    if width == height == 2:
-        return
-    if width == height == 8:
-        return
-    if width % 12 != 0 and (width - 4) % 12 != 0:
-        raise SpinnMachineInvalidParameterException(
-            "width", width,
-            "A virtual machine must have a width that is divisible by 12 or "
-            "width - 4 that is divisible by 12")
-    if height % 12 != 0 and (height - 4) % 12 != 0:
-        raise SpinnMachineInvalidParameterException(
-            "height", height,
-            "A virtual machine must have a height that is divisible by 12 or "
-            "height - 4 that is divisible by 12")
 
 
 def virtual_machine(
@@ -70,7 +39,7 @@ def virtual_machine(
     :param int n_cpus_per_chip: The number of CPUs to put on each chip
     :param bool validate: if True will call the machine validate function
     :returns: a virtual machine (that cannot execute code)
-    :rtype: Machine
+    :rtype: ~spinn_machine.Machine
     """
 
     factory = _VirtualMachine(width, height, n_cpus_per_chip, validate)
@@ -86,8 +55,9 @@ class _VirtualMachine(object):
         "_unused_cores",
         "_unused_links",
         "_machine",
-        "_sdram_per_chip",
-        "_with_monitors")
+        "_with_monitors",
+        "_n_router_entries"
+    )
 
     _4_chip_down_links = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
@@ -97,17 +67,12 @@ class _VirtualMachine(object):
     ORIGIN = "Virtual"
 
     def __init__(
-            self, width: int, height: int, n_cpus_per_chip: Optional[int],
-            validate: bool):
-        _verify_width_height(width, height)
-        self._machine = machine_from_size(width, height, origin=self.ORIGIN)
-
-        # Store the details
-        sdram_per_chip = get_config_int(
-            "Machine", "max_sdram_allowed_per_chip")
-        if sdram_per_chip is None:
-            sdram_per_chip = Machine.DEFAULT_SDRAM_BYTES
-        self._sdram_per_chip = sdram_per_chip
+            self, width: int, height: int,
+            n_cpus_per_chip: Optional[int] = None, validate: bool = True):
+        version = MachineDataView.get_machine_version()
+        self._n_router_entries = version.n_router_entries
+        self._machine = version.create_machine(
+            width, height, origin=self.ORIGIN)
 
         # Store the down items
         unused_chips: List[XY] = []
@@ -133,10 +98,7 @@ class _VirtualMachine(object):
         if width == 2:  # Already checked height is now also 2
             self._unused_links.update(_VirtualMachine._4_chip_down_links)
 
-        # Calculate the Ethernet connections in the machine, assuming 48-node
-        # boards
-        geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
-        ethernet_chips = geometry.get_potential_ethernet_chips(width, height)
+        ethernet_chips = version.get_potential_ethernet_chips(width, height)
 
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
@@ -180,14 +142,15 @@ class _VirtualMachine(object):
     def _create_chip(self, xy: XY, configured_chips: Dict[XY, Tuple[XY, int]],
                      ip_address: Optional[str] = None) -> Chip:
         chip_links = self._calculate_links(xy, configured_chips)
-        chip_router = Router(chip_links)
+        chip_router = Router(chip_links, self._n_router_entries)
 
         ((eth_x, eth_y), n_cores) = configured_chips[xy]
 
         down_cores = self._unused_cores.get(xy, None)
         x, y = xy
+        sdram = MachineDataView.get_machine_version().max_sdram_per_chip
         return Chip(
-            x, y, n_cores, chip_router, self._sdram_per_chip, eth_x, eth_y,
+            x, y, n_cores, chip_router, sdram, eth_x, eth_y,
             ip_address, down_cores=down_cores)
 
     def _calculate_links(

@@ -14,15 +14,12 @@
 
 from collections import defaultdict
 import logging
-from typing import Collection, Iterable, Optional, Sequence, Set, Tuple
+from typing import Collection, Iterable, Set, Tuple
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
 from spinn_machine import Chip, Router, Machine
-from .no_wrap_machine import NoWrapMachine
-from .horizontal_wrap_machine import HorizontalWrapMachine
-from .vertical_wrap_machine import VerticalWrapMachine
-from .full_wrap_machine import FullWrapMachine
+from spinn_machine.data import MachineDataView
 from .exceptions import SpinnMachineException
 
 logger = FormatAdapter(logging.getLogger(__name__))
@@ -53,68 +50,6 @@ CHIP_REMOVED_BY_DEAD_PARENT = (
     "spinnakerusers@googlegroups.com \n\n")
 
 
-def machine_from_size(
-        width: int, height: int, chips: Optional[Sequence[Chip]] = None,
-        origin: str = "") -> Machine:
-    """
-    Create a machine with the assumed wrap-around based on the sizes.
-
-    This could include a machine with no wrap-arounds, only vertical ones,
-    only horizontal ones or both.
-
-    .. note::
-        If the sizes do not match the ones for a known wrap-around machine,
-        a machine with no wrap-arounds is assumed.
-
-    :param int width: The width of the machine excluding any virtual chips
-    :param int height: The height of the machine excluding any virtual chips
-    :param chips: Any chips to be added.
-    :type chips: list(Chip) or None
-    :param origin: Extra information about how this machine was created
-        to be used in the str method. Example "``Virtual``" or "``Json``"
-    :type origin: str or None
-    :return: A subclass of Machine
-    :rtype: Machine
-    """
-    if chips is None:
-        chips = []
-    if width == 2 and height == 2:
-        return FullWrapMachine(width, height, chips, origin)
-    if width % 12 == 0:
-        if height % 12 == 0:
-            return FullWrapMachine(width, height, chips, origin)
-        else:
-            return HorizontalWrapMachine(width, height, chips, origin)
-    else:
-        if height % 12 == 0:
-            return VerticalWrapMachine(width, height, chips, origin)
-        else:
-            return NoWrapMachine(width, height, chips, origin)
-
-
-def machine_from_chips(chips: Sequence[Chip]) -> Machine:
-    """
-    Create a machine with the assumed wrap-around based on the sizes.
-
-    The size of the machine is calculated from the list of chips.
-
-    :param chips: Full list of all chips on this machine.
-        Or at least a list which includes a chip with the highest X and
-        one with the highest Y (excluding any virtual chips)
-    :type chips: list(Chip)
-    :return: A subclass of Machine
-    :rtype: Machine
-    """
-    max_x = 0
-    max_y = 0
-    for chip in chips:
-        if chip.x > max_x:
-            max_x = chip.x
-        if chip.y > max_y:
-            max_y = chip.y
-    return machine_from_size(max_x + 1, max_y + 1, chips)
-
-
 def _machine_ignore(
         original: Machine, dead_chips: Collection[XY],
         dead_links: Set[Tuple[int, int, int, int]]) -> Machine:
@@ -141,7 +76,8 @@ def _machine_ignore(
     :type dead_links: Collection of (int, int, int)
     :return: A New Machine object
     """
-    new_machine = machine_from_size(original.width, original.height)
+    new_machine = MachineDataView.get_machine_version().create_machine(
+        original.width, original.height, "Fixed")
     links_map = defaultdict(set)
     for x, y, d, _ in dead_links:
         links_map[(x, y)].add(d)
@@ -153,7 +89,7 @@ def _machine_ignore(
             for link in chip.router.links:
                 if link.source_link_id not in links_map[(chip.x, chip.y)]:
                     links.append(link)
-            router = Router(links)
+            router = Router(links, chip.router.n_available_multicast_entries)
             chip = Chip(
                 chip.x, chip.y, chip.n_processors, router, chip.sdram,
                 chip.nearest_ethernet_x, chip.nearest_ethernet_y,

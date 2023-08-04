@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+from spinn_utilities.config_holder import set_config
 from spinn_utilities.exceptions import (DataNotYetAvialable)
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
@@ -24,6 +25,7 @@ class TestSimulatorData(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
 
     def test_setup(self):
         # What happens before setup depends on the previous test
@@ -40,7 +42,9 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(48, MachineDataView.get_machine().n_chips)
 
     def test_machine(self):
+        set_config("Machine", "version", 3)
         writer = MachineDataWriter.setup()
+
         with self.assertRaises(DataNotYetAvialable):
             MachineDataView.get_machine()
         self.assertFalse(MachineDataWriter.has_machine())

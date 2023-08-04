@@ -14,7 +14,7 @@
 from typing import (
     Any, Collection, Dict, Iterable, Iterator, Optional, Tuple)
 from spinn_utilities.ordered_set import OrderedSet
-from .machine import Machine
+from spinn_machine.data import MachineDataView
 from .processor import Processor
 from .router import Router
 
@@ -119,8 +119,9 @@ class Chip(object):
             for i in range(1, n_processors):
                 if i not in down_cores:
                     processors[i] = Processor.factory(i)
-            self._n_user_processors = \
-                n_processors - Machine.NON_USER_CORES - len(down_cores)
+            self._n_user_processors = (
+                    n_processors - len(down_cores) -
+                    MachineDataView.get_machine_version().n_non_user_cores)
             return processors
 
     def is_processor_with_id(self, processor_id: int) -> bool:
