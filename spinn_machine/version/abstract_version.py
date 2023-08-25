@@ -16,7 +16,7 @@ import logging
 from spinn_utilities.abstract_base import (
     AbstractBase, abstractmethod, abstractproperty)
 from spinn_utilities.log import FormatAdapter
-from spinn_utilities.config_holder import get_config_int
+from spinn_utilities.config_holder import get_config_int_or_none
 from spinn_machine.exceptions import SpinnMachineException
 
 logger = FormatAdapter(logging.getLogger(__name__))
@@ -45,8 +45,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :raises SpinnMachineException:
             If the cfg width or height is unexpected
         """
-        width = get_config_int("Machine", "width")
-        height = get_config_int("Machine", "height")
+        width = get_config_int_or_none("Machine", "width")
+        height = get_config_int_or_none("Machine", "height")
         if width is None:
             if height is None:
                 pass
@@ -62,7 +62,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     def __set_max_cores_per_chip(self, max_cores_per_chip):
         self._max_cores_per_chip = max_cores_per_chip
-        max_machine_core = get_config_int("Machine", "max_machine_core")
+        max_machine_core = get_config_int_or_none(
+            "Machine", "max_machine_core")
         if max_machine_core is not None:
             if max_machine_core > self._max_cores_per_chip:
                 logger.info(
@@ -78,7 +79,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     def __set_max_sdram_per_chip(self, max_sdram_per_chip):
         self._max_sdram_per_chip = max_sdram_per_chip
-        max_sdram = get_config_int("Machine", "max_sdram_allowed_per_chip")
+        max_sdram = get_config_int_or_none(
+            "Machine", "max_sdram_allowed_per_chip")
         if max_sdram is not None:
             if max_sdram > self._max_sdram_per_chip:
                 logger.info(

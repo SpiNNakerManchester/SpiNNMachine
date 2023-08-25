@@ -13,7 +13,8 @@
 # limitations under the License.
 
 import logging
-from spinn_utilities.config_holder import get_config_int, get_config_str
+from spinn_utilities.config_holder import (
+    get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
 
@@ -32,23 +33,23 @@ def version_factory():
     from .version_3 import Version3
     from .version_5 import Version5
 
-    version = get_config_int("Machine", "version")
+    version = get_config_int_or_none("Machine", "version")
     if version in [2, 3]:
         return Version3()
 
     if version in [4, 5]:
         return Version5()
 
-    spalloc_server = get_config_str("Machine", "spalloc_server")
+    spalloc_server = get_config_str_or_none("Machine", "spalloc_server")
     if spalloc_server is not None:
         return Version5()
 
-    remote_spinnaker_url = get_config_str("Machine", "remote_spinnaker_url")
+    remote_spinnaker_url = get_config_str_or_none("Machine", "remote_spinnaker_url")
     if remote_spinnaker_url is not None:
         return Version5()
 
-    height = get_config_int("Machine", "height")
-    width = get_config_int("Machine", "width")
+    height = get_config_int_or_none("Machine", "height")
+    width = get_config_int_or_none("Machine", "width")
     if height is not None and width is not None:
         if height == width == 2:
             logger.info("Your cfg file does not have a ")
