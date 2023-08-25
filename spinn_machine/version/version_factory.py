@@ -44,7 +44,8 @@ def version_factory():
     if spalloc_server is not None:
         return Version5()
 
-    remote_spinnaker_url = get_config_str_or_none("Machine", "remote_spinnaker_url")
+    remote_spinnaker_url = get_config_str_or_none(
+        "Machine", "remote_spinnaker_url")
     if remote_spinnaker_url is not None:
         return Version5()
 
