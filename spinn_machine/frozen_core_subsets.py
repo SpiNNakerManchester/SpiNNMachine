@@ -24,6 +24,8 @@ class FrozenCoreSubsets(CoreSubsets):
     Represents a frozen group of CoreSubsets, with a maximum of one per
     SpiNNaker chip.
     """
+
+    # pylint: disable=super-init-not-called
     def __init__(self, core_subsets: Iterable[CoreSubset] = ()):
         self._core_subsets: Dict[XY, CoreSubset] = dict()
         for core_subset in core_subsets:
