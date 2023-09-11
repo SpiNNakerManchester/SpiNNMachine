@@ -15,7 +15,6 @@
 from collections import defaultdict
 import logging
 from typing import Dict, List, Optional, Set, Tuple
-from spinn_utilities.config_holder import get_config_str
 from spinn_utilities.config_holder import get_config_str_or_none
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
@@ -83,8 +82,6 @@ class _VirtualMachine(object):
                 unused_chips.append((down_chip.x, down_chip.y))
 
         self._unused_cores: Dict[XY, Set[int]] = defaultdict(set)
-        for down_core in IgnoreCore.parse_string(get_config_str(
-        self._unused_cores = defaultdict(set)
         for down_core in IgnoreCore.parse_string(get_config_str_or_none(
                 "Machine", "down_cores")):
             if down_core.ip_address is None:
@@ -92,8 +89,6 @@ class _VirtualMachine(object):
                     down_core.virtual_p)
 
         self._unused_links: Set[Tuple[int, int, int]] = set()
-        for down_link in IgnoreLink.parse_string(get_config_str(
-        self._unused_links = set()
         for down_link in IgnoreLink.parse_string(get_config_str_or_none(
                 "Machine", "down_links")):
             if down_link.ip_address is None:

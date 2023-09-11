@@ -15,7 +15,6 @@
 from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
-from spinn_utilities.config_holder import get_config_int, get_config_str
 from spinn_utilities.config_holder import (
     get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
