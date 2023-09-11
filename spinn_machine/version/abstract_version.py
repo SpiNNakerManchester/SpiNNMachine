@@ -17,7 +17,6 @@ from typing import Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
-from spinn_utilities.config_holder import get_config_int
 from spinn_utilities.typing.coords import XY
 from spinn_machine.exceptions import SpinnMachineException
 if TYPE_CHECKING:
