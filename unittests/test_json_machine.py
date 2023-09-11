@@ -1,22 +1,21 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2017 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from tempfile import mktemp
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine import (SDRAM, virtual_machine)
+from spinn_machine import virtual_machine
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
@@ -26,6 +25,7 @@ class TestJsonMachine(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
 
     def test_json_version_5_hole(self):
         set_config("Machine", "down_chips", "3,3")
@@ -48,7 +48,7 @@ class TestJsonMachine(unittest.TestCase):
         router22._n_available_multicast_entries =  \
             router22._n_available_multicast_entries - 20
         chip33 = vm.get_chip_at(3, 3)
-        chip33._sdram = SDRAM(50000000)
+        chip33._sdram = 50000000
         chip33._tag_ids = [2, 3]
         jpath = mktemp("json")
         to_json_path(jpath)
@@ -78,7 +78,7 @@ class TestJsonMachine(unittest.TestCase):
         router48 = chip48.router
         router48._n_available_multicast_entries =  \
             router48._n_available_multicast_entries - 20
-        chip48._sdram = SDRAM(50000000)
+        chip48._sdram = 50000000
         chip48._tag_ids = [2, 3]
         jpath = mktemp("json")
         to_json_path(jpath)

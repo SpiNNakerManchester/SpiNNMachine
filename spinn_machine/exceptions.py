@@ -1,26 +1,27 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2014 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 class SpinnMachineException(Exception):
-    """ A generic exception which all other exceptions extend
+    """
+    A generic exception which all other exceptions in this package extend.
     """
 
 
 class SpinnMachineAlreadyExistsException(SpinnMachineException):
-    """ Indicates that something already exists of which there can only be one
+    """
+    Indicates that something already exists of which there can only be one.
     """
     __slots__ = [
         "_item",
@@ -31,26 +32,29 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
         :param str item: The item of which there is already one of
         :param str value: The value of the item
         """
-        super().__init__("There can only be one {} with a value of {}".format(
-            item, value))
+        super().__init__(
+            f"There can only be one {item} with a value of {value}")
         self._item = item
         self._value = value
 
     @property
     def item(self):
-        """ The item of which there is already one
+        """
+        The item of which there is already one.
         """
         return self._item
 
     @property
     def value(self):
-        """ The value of the item
+        """
+        The value of the item.
         """
         return self._value
 
 
 class SpinnMachineInvalidParameterException(SpinnMachineException):
-    """ Indicates that there is a problem with a parameter value
+    """
+    Indicates that there is a problem with a parameter value.
     """
     __slots__ = [
         "_parameter",
@@ -64,26 +68,29 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         :param str value: The value of the parameter that is invalid
         :param str problem: The reason for the exception
         """
-        super().__init__("It is invalid to set {} to {}: {}".format(
-            parameter, value, problem))
+        super().__init__(
+            f"It is invalid to set {parameter} to {value}: {problem}")
         self._parameter = parameter
         self._value = value
         self._problem = problem
 
     @property
     def parameter(self):
-        """ The name of the parameter
+        """
+        The name of the parameter.
         """
         return self._parameter
 
     @property
     def value(self):
-        """ The value of the parameter
+        """
+        The value of the parameter.
         """
         return self._value
 
     @property
     def problem(self):
-        """ The problem with the setting of the parameter
+        """
+        The problem with the setting of the parameter.
         """
         return self._problem

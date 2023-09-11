@@ -1,25 +1,25 @@
-# Copyright (c) 2021-2022 The University of Manchester
+# Copyright (c) 2021 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from spinn_utilities.data import UtilsDataView
+from spinn_machine.version.version_factory import version_factory
 # pylint: disable=protected-access
 
 
 class _MachineDataModel(object):
     """
-    Singleton data model
+    Singleton data model.
 
     This class should not be accessed directly please use the DataView and
     DataWriter classes.
@@ -38,6 +38,7 @@ class _MachineDataModel(object):
         # Data values cached
         "_machine",
         "_machine_generator",
+        "_machine_version",
         "_user_accessed_machine"
     ]
 
@@ -56,6 +57,7 @@ class _MachineDataModel(object):
         """
         self._hard_reset()
         self._machine_generator = None
+        self._machine_version = None
 
     def _hard_reset(self):
         """
@@ -78,7 +80,8 @@ class MachineDataView(UtilsDataView):
     """
     Adds the extra Methods to the View for Machine level.
 
-    See UtilsDataView for a more detailed description.
+    See :py:class:`~spinn_utilities.data.UtilsDataView` for a more detailed
+    description.
 
     This class is designed to only be used directly within the SpiNNMachine
     repository as all methods are available to subclasses
@@ -92,7 +95,10 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def has_machine(cls):
         """
-        Reports if a machine is currently set or can be mocked
+        Reports if a machine is currently set or can be mocked.
+
+        Unlike has_existing_machine for unit tests this will return True even
+        if a Machine has not yet been created
 
         :rtype: bool
         """
@@ -100,9 +106,21 @@ class MachineDataView(UtilsDataView):
                 cls._is_mocked())
 
     @classmethod
+    def has_existing_machine(cls):
+        """
+        Reports if a machine is currently already created.
+
+        Unlike has_machine this method returns false if a machine could be
+        mocked
+
+        :rtype: bool
+        """
+        return cls.__data._machine
+
+    @classmethod
     def get_machine(cls):
         """
-        Returns the Machine if it has been set
+        Returns the Machine if it has been set.
 
         In Mock mode will create and return a virtual 8 * 8 board
 
@@ -125,11 +143,11 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_chip_at(cls, x, y):
         """
-        Gets the chip at x and y
+        Gets the chip at (`x`, `y`).
 
-        Almost Semantic sugar for machine.get_chip_at
+        Almost Semantic sugar for `get_machine().get_chip_at()`
 
-        The method however does not return None but rather raises a KeyError
+        The method however does not return `None` but rather raises a KeyError
         if the chip is not known
 
         :param int x:
@@ -144,19 +162,20 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_nearest_ethernet(cls, x, y):
         """
-        Gets the nearest ethernet x and y for the chip at x, y if it exists
+        Gets the nearest Ethernet-enabled chip (`x`, `y`) for the chip at
+        (`x`, `y`) if it exists.
 
-        If there is no machine or no chip at (x, y) this method,
-        or any other issue will just return x,y
+        If there is no machine or no chip at (`x`, `y`) this method,
+        or any other issue will just return (`x`, `y`)
 
-        .. Note:
+        .. note::
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
-        :param int x:
-        :param int y:
-        :return: Chip(x,y)'s nearest_ethernet info
-            or if that is not available just x, and y
+        :param int x: Chip X coordinate
+        :param int y: Chip Y coordinate
+        :return: Chip (`x`,`y`)'s nearest_ethernet info
+            or if that is not available just (`x`, `y`)
         :rtype: tuple(int, int)
         """
         try:
@@ -170,14 +189,14 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def where_is_xy(cls, x, y):
         """
-        Gets a string saying where chip at x and y is if possible
+        Gets a string saying where chip at x and y is if possible.
 
-        Almost Semantic sugar for get_machine.where_is_xy
+        Almost Semantic sugar for `get_machine().where_is_xy()`
 
         The method does not raise an exception rather returns a String of the
         exception
 
-        .. Note:
+        .. note::
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
@@ -195,14 +214,14 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def where_is_chip(cls, chip):
         """
-        Gets a string saying where chip is if possible
+        Gets a string saying where chip is if possible.
 
-        Almost Semantic sugar for get_machine.where_is_xy
+        Almost Semantic sugar for `get_machine().where_is_chip()`
 
         The method does not raise an exception rather returns a String of the
         exception
 
-        .. Note:
+        .. note::
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
@@ -216,3 +235,18 @@ class MachineDataView(UtilsDataView):
             if cls.__data._machine is None:
                 return "Chip is from a previous machine"
             return str(ex)
+
+    @classmethod
+    def get_machine_version(cls):
+        """
+        Returns the Machine Version if it has or can be set.
+
+`       May call version_factory to create the version
+
+        :return: A superclass of AbstractVersion
+        :rtype:  ~spinn_machine.version.abstract_version.py
+        :raises SpinnMachineException: If the cfg version is not set correctly
+        """
+        if cls.__data._machine_version is None:
+            cls.__data._machine_version = version_factory()
+        return cls.__data._machine_version

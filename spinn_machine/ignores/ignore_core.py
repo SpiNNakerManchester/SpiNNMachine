@@ -1,17 +1,16 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2017 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import re
 
 TYPICAL_PHYSICAL_VIRTUAL_MAP = {
@@ -22,7 +21,8 @@ CORE_RANGE = re.compile(r"(\d+)-(\d+)")
 
 
 class IgnoreCore(object):
-    """ Represents a core to be ignored when building a machine.
+    """
+    Represents a core to be ignored when building a machine.
     """
 
     __slots__ = ["x", "y", "p", "ip_address"]
@@ -33,7 +33,7 @@ class IgnoreCore(object):
         :type x: int or str
         :param y: Y coordinate of a core to ignore
         :type y: int or str
-        :param p: P The virtual core ID of a core if > 0,\
+        :param p: The virtual core ID of a core if > 0,
             or the physical core if <= 0 (actual value will be negated)
         :type p: int or str
         :param ip_address: Optional IP address which, if provided, make
@@ -53,7 +53,8 @@ class IgnoreCore(object):
 
     @property
     def virtual_p(self):
-        """ The virtual processor ID.
+        """
+        The virtual processor ID.
 
         When the processor is given as a physical processor, this is converted
         to a virtual core ID using the typical virtual/physical core map;
@@ -66,8 +67,9 @@ class IgnoreCore(object):
 
     @staticmethod
     def parse_cores(core_string):
-        """ Parses the "core" part of a string, which might be a single core,
-            or otherwise is a range of cores
+        """
+        Parses the "core" part of a string, which might be a single core,
+        or otherwise is a range of cores
 
         :param str: A string to parse
         :return: A list of cores, which might be just one
@@ -80,7 +82,8 @@ class IgnoreCore(object):
 
     @staticmethod
     def parse_single_string(downed_core):
-        """ Converts a string into an :py:class:`IgnoreCore` object
+        """
+        Converts a string into an :py:class:`IgnoreCore` object.
 
         The format is::
 
@@ -115,13 +118,13 @@ class IgnoreCore(object):
             return [IgnoreCore(parts[0], parts[1], core, parts[3])
                     for core in IgnoreCore.parse_cores(parts[2])]
         else:
-            raise Exception(
-                "Unexpected downed_core: {}".format(downed_core))
+            raise ValueError(f"Unexpected downed_core: {downed_core}")
 
     @staticmethod
     def parse_string(downed_cores):
-        """ Converts a string into a (possibly empty) set of \
-            :py:class:`IgnoreCore` objects
+        """
+        Converts a string into a (possibly empty) set of
+        :py:class:`IgnoreCore` objects.
 
         The format is:
 

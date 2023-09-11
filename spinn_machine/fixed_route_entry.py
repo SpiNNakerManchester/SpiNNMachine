@@ -1,70 +1,75 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2017 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from .exceptions import SpinnMachineAlreadyExistsException
 
 
 class FixedRouteEntry(object):
-    """ Describes an entry in a SpiNNaker chip's fixed route routing table.
     """
-
+    Describes the sole entry in a SpiNNaker chip's fixed route routing table.
+    There is only one fixed route entry per chip.
+    """
     __slots__ = (
-
         # the processors IDs for this route
         "_processor_ids",
-
         # the link IDs for this route
-        "_link_ids"
-    )
+        "_link_ids",
+        "__repr")
 
     def __init__(self, processor_ids, link_ids):
+        """
+        :param iterable(int) processor_ids:
+        :param iterable(int) link_ids:
+        """
+        self.__repr = None
         # Add processor IDs, checking that there is only one of each
-        self._processor_ids = set()
-        for processor_id in processor_ids:
-            if processor_id in self._processor_ids:
-                raise SpinnMachineAlreadyExistsException(
-                    "processor ID", str(processor_id))
-            self._processor_ids.add(processor_id)
+        self._processor_ids = frozenset(processor_ids)
+        self.__check_dupes(processor_ids, "processor ID")
 
         # Add link IDs, checking that there is only one of each
-        self._link_ids = set()
-        for link_id in link_ids:
-            if link_id in self._link_ids:
-                raise SpinnMachineAlreadyExistsException(
-                    "link ID", str(link_id))
-            self._link_ids.add(link_id)
+        self._link_ids = frozenset(link_ids)
+        self.__check_dupes(link_ids, "link ID")
+
+    @staticmethod
+    def __check_dupes(sequence, name):
+        check = set()
+        for _id in sequence:
+            if _id in check:
+                raise SpinnMachineAlreadyExistsException(name, str(_id))
+            check.add(_id)
 
     @property
     def processor_ids(self):
-        """ The destination processor IDs
+        """
+        The destination processor IDs.
 
-        :return: An iterable of processor IDs
-        :rtype: iterable(int)
+        :rtype: frozenset(int)
         """
         return self._processor_ids
 
     @property
     def link_ids(self):
-        """ The destination link IDs
+        """
+        The destination link IDs.
 
-        :return: An iterable of link IDs
-        :rtype: iterable(int)
+        :rtype: frozenset(int)
         """
         return self._link_ids
 
     def __repr__(self):
-        return ("{%s}:{%s}" % (
-            ", ".join(map(str, self._link_ids)),
-            ", ".join(map(str, self._processor_ids))))
+        if not self.__repr:
+            self.__repr = ("{%s}:{%s}" % (
+                ", ".join(map(str, sorted(self._link_ids))),
+                ", ".join(map(str, sorted(self._processor_ids)))))
+        return self.__repr

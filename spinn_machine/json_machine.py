@@ -1,17 +1,16 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2017 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import logging
 import json
@@ -20,9 +19,7 @@ from spinn_utilities.log import FormatAdapter
 from spinn_machine.data import MachineDataView
 from .chip import Chip
 from .router import Router
-from .sdram import SDRAM
 from .link import Link
-from .machine_factory import machine_from_size
 
 
 logger = FormatAdapter(logging.getLogger(__name__))
@@ -44,9 +41,12 @@ OPPOSITE_LINK_OFFSET = 3
 
 def machine_from_json(j_machine):
     """
+    Generate a model of a machine from a JSON description of that machine.
+
     :param j_machine: JSON description of the machine
     :type j_machine: dict in format returned by json.load or a
         str representing a path to the JSON file
+    :return: The machine model.
     :rtype: Machine
     """
     if isinstance(j_machine, str):
@@ -57,15 +57,16 @@ def machine_from_json(j_machine):
     width = j_machine["width"]
     height = j_machine["height"]
 
-    machine = machine_from_size(width, height, origin="Json")
+    machine = MachineDataView.get_machine_version().create_machine(
+        width, height, origin="Json")
     s_monitors = j_machine["standardResources"]["monitors"]
     s_router_entries = j_machine["standardResources"]["routerEntries"]
-    s_sdram = SDRAM(j_machine["standardResources"]["sdram"])
+    s_sdram = j_machine["standardResources"]["sdram"]
     s_tag_ids = j_machine["standardResources"]["tags"]
 
     e_monitors = j_machine["ethernetResources"]["monitors"]
     e_router_entries = j_machine["ethernetResources"]["routerEntries"]
-    e_sdram = SDRAM(j_machine["ethernetResources"]["sdram"])
+    e_sdram = j_machine["ethernetResources"]["sdram"]
     e_tag_ids = j_machine["ethernetResources"]["tags"]
 
     for j_chip in j_machine["chips"]:
@@ -94,7 +95,7 @@ def machine_from_json(j_machine):
             if "routerEntries" in exceptions:
                 router_entries = exceptions["routerEntries"]
             if "sdram" in exceptions:
-                sdram = SDRAM(exceptions["sdram"])
+                sdram = exceptions["sdram"]
             if "tags" in exceptions:
                 tag_ids = exceptions["tags"]
         if monitors != 1:
@@ -114,7 +115,7 @@ def machine_from_json(j_machine):
                 links.append(Link(
                     source_x, source_y, source_link_id, destination_x,
                     destination_y))
-        router = Router(links, False, router_entries)
+        router = Router(links, router_entries)
 
         # Create and add a chip with this router
         chip = Chip(
@@ -136,17 +137,18 @@ def _int_value(value):
 
 
 def _describe_chip(chip, std, eth):
-    """ Produce a JSON-suitable description of a single chip.
+    """
+    Produce a JSON-suitable description of a single chip.
 
     :param chip: The chip to describe.
     :param std: The standard chip resources.
-    :param eth: The standard ethernet chip resources.
+    :param eth: The standard Ethernet-enabled chip resources.
     :return: Description of chip that is trivial to serialize as JSON.
     """
     details = dict()
     details["cores"] = chip.n_processors
     if chip.nearest_ethernet_x is not None:
-        details["ethernet"] =\
+        details["ethernet"] = \
             [chip.nearest_ethernet_x, chip.nearest_ethernet_y]
 
     dead_links = []
@@ -167,8 +169,8 @@ def _describe_chip(chip, std, eth):
                 chip.n_processors - chip.n_user_processors
         if router_entries != eth.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.sdram.size != eth.sdram:
-            exceptions["sdram"] = chip.sdram.size
+        if chip.sdram != eth.sdram:
+            exceptions["sdram"] = chip.sdram
         if chip.tag_ids != eth.tags:
             exceptions["tags"] = list(chip.tag_ids)
     else:
@@ -178,8 +180,8 @@ def _describe_chip(chip, std, eth):
                 chip.n_processors - chip.n_user_processors
         if router_entries != std.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.sdram.size != std.sdram:
-            exceptions["sdram"] = chip.sdram.size
+        if chip.sdram != std.sdram:
+            exceptions["sdram"] = chip.sdram
         if chip.tag_ids != std.tags:
             exceptions["tags"] = list(chip.tag_ids)
 
@@ -190,7 +192,8 @@ def _describe_chip(chip, std, eth):
 
 
 def to_json():
-    """ Runs the code to write the machine in Java readable JSON.
+    """
+    Runs the code to write the machine in Java readable JSON.
 
     :rtype: dict
     """
@@ -203,7 +206,7 @@ def to_json():
                 monitors=chip.n_processors - chip.n_user_processors,
                 router_entries=_int_value(
                     chip.router.n_available_multicast_entries),
-                sdram=chip.sdram.size,
+                sdram=chip.sdram,
                 tags=chip.tag_ids)
             break
     else:
@@ -216,7 +219,7 @@ def to_json():
         monitors=chip.n_processors - chip.n_user_processors,
         router_entries=_int_value(
             chip.router.n_available_multicast_entries),
-        sdram=chip.sdram.size,
+        sdram=chip.sdram,
         tags=chip.tag_ids)
 
     # Save the standard data to be used as defaults to none ethernet chips
@@ -251,7 +254,8 @@ def to_json():
 
 
 def to_json_path(file_path):
-    """ Runs the code to write the machine in Java readable JSON.
+    """
+    Runs the code to write the machine in Java readable JSON.
 
     :param file_path: Location to write file to. Warning will overwrite!
     :type file_path: str

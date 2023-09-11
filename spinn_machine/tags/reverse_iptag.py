@@ -1,23 +1,23 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2015 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from .abstract_tag import AbstractTag
 
 
 class ReverseIPTag(AbstractTag):
-    """ Used to hold data that is contained within a Reverse IP tag
+    """
+    Used to hold data that is contained within a Reverse IP tag.
     """
 
     __slots__ = [
@@ -54,36 +54,40 @@ class ReverseIPTag(AbstractTag):
 
     @property
     def sdp_port(self):
-        """ The SDP port number of the tag that these packets are to be\
-            received on for the processor.
+        """
+        The SDP port number of the tag that these packets are to be
+        received on for the processor.
         """
         return self._sdp_port
 
     @property
     def destination_x(self):
-        """ The destination x coordinate of a chip in the SpiNNaker machine\
-            that packets should be sent to for this reverse IP tag.
+        """
+        The destination x coordinate of a chip in the SpiNNaker machine
+        that packets should be sent to for this reverse IP tag.
         """
         return self._destination_x
 
     @property
     def destination_y(self):
-        """ The destination y coordinate of a chip in the SpiNNaker machine\
-            that packets should be sent to for this reverse IP tag.
+        """
+        The destination y coordinate of a chip in the SpiNNaker machine
+        that packets should be sent to for this reverse IP tag.
         """
         return self._destination_y
 
     @property
     def destination_p(self):
-        """ The destination processor ID for the chip at (x,y) that packets\
-            should be send to for this reverse IP tag
+        """
+        The destination processor ID for the chip at (x,y) that packets
+        should be send to for this reverse IP tag.
         """
         return self._destination_p
 
     def __repr__(self):
         return (
-            "ReverseIPTag(board_address={}, tag={}, port={}, destination_x={},"
-            " destination_y={}, destination_p={}, sdp_port={})".format(
-                self._board_address, self._tag, self._port,
-                self._destination_x, self._destination_y,
-                self._destination_p, self._sdp_port))
+            f"ReverseIPTag(board_address={self._board_address}, "
+            f"tag={self._tag}, port={self._port}, "
+            f"destination_x={self._destination_x}, "
+            f"destination_y={self._destination_y}, "
+            f"destination_p={self._destination_p}, sdp_port={self._sdp_port})")

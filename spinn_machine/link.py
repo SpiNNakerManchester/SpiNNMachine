@@ -1,17 +1,16 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2014 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 """
 a Link in a SpiNNaker machine
@@ -19,7 +18,8 @@ a Link in a SpiNNaker machine
 
 
 class Link(object):
-    """ Represents a directional link between SpiNNaker chips in the machine
+    """
+    Represents a directional link between SpiNNaker chips in the machine.
     """
 
     __slots__ = (
@@ -31,19 +31,13 @@ class Link(object):
     def __init__(self, source_x, source_y, source_link_id, destination_x,
                  destination_y):
         """
-        :param source_x: The x-coordinate of the source chip of the link
-        :type source_x: int
-        :param source_y: The y-coordinate of the source chip of the link
-        :type source_y: int
-        :param source_link_id: The ID of the link in the source chip
-        :type source_link_id: int
-        :param destination_x: \
+        :param int source_x: The x-coordinate of the source chip of the link
+        :param int source_y: The y-coordinate of the source chip of the link
+        :param int source_link_id: The ID of the link in the source chip
+        :param int destination_x:
             The x-coordinate of the destination chip of the link
-        :type destination_x: int
-        :param destination_y: \
+        :param int destination_y:
             The y-coordinate of the destination chip of the link
-        :type destination_y: int
-        :raise None: No known exceptions are raised
         """
         self._source_x = source_x
         self._source_y = source_y
@@ -53,56 +47,55 @@ class Link(object):
 
     @property
     def source_x(self):
-        """ The x-coordinate of the source chip of this link
+        """
+        The X-coordinate of the source chip of this link.
 
-        :return: The x-coordinate
         :rtype: int
         """
         return self._source_x
 
     @property
     def source_y(self):
-        """ The y-coordinate of the source chip of this link
+        """
+        The Y-coordinate of the source chip of this link.
 
-        :return: The y-coordinate
         :rtype: int
         """
         return self._source_y
 
     @property
     def source_link_id(self):
-        """ The ID of the link on the source chip
+        """
+        The ID of the link on the source chip.
 
-        :return: The link ID
         :rtype: int
         """
         return self._source_link_id
 
     @property
     def destination_x(self):
-        """ The x-coordinate of the destination chip of this link
+        """
+        The X-coordinate of the destination chip of this link.
 
-        :return: The x-coordinate
         :rtype: int
         """
         return self._destination_x
 
     @property
     def destination_y(self):
-        """ The y-coordinate of the destination chip of this link
+        """
+        The Y-coordinate of the destination chip of this link.
 
-        :return: The y-coordinate
         :rtype: int
         """
         return self._destination_y
 
-    __REPR_TEMPLATE = ("[Link: source_x={}, source_y={}, source_link_id={}, "
-                       "destination_x={}, destination_y={}]")
-
     def __str__(self):
-        return self.__REPR_TEMPLATE.format(
-            self._source_x, self._source_y, self._source_link_id,
-            self._destination_x, self._destination_y)
+        return (
+            f"[Link: source_x={self._source_x}, source_y={self._source_y}, "
+            f"source_link_id={self._source_link_id}, "
+            f"destination_x={self._destination_x}, "
+            f"destination_y={self._destination_y}]")
 
     def __repr__(self):
         return self.__str__()

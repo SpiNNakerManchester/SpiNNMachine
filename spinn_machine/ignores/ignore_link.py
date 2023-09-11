@@ -1,21 +1,21 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2017 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 class IgnoreLink(object):
-    """ Represents a link that should be ignored when building a machine.
+    """
+    Represents a link that should be ignored when building a machine.
     """
 
     __slots__ = ["x", "y", "link", "ip_address"]
@@ -24,7 +24,7 @@ class IgnoreLink(object):
         """
         :param x: X coordinate of a chip with a link to ignore
         :type x: int or str
-        :param y: Y coorridate of a chip with a link to ignore
+        :param y: Y coordinate of a chip with a link to ignore
         :type y: int or str
         :param link: ID of the link to ignore
         :type link: int or str
@@ -44,7 +44,8 @@ class IgnoreLink(object):
 
     @staticmethod
     def parse_single_string(downed_link):
-        """ Converts a string into an :py:class:`IgnoreLink` object
+        """
+        Converts a string into an :py:class:`IgnoreLink` object.
 
         The format is::
 
@@ -70,13 +71,14 @@ class IgnoreLink(object):
         elif len(parts) == 4:
             return IgnoreLink(parts[0], parts[1], parts[2], parts[3])
         else:
-            raise Exception(
-                "Unexpected downed_link: {}".format(downed_link))
+            raise ValueError(
+                f"Unexpected downed_link: {downed_link}")
 
     @staticmethod
     def parse_string(downed_links):
-        """ Converts a string into a (possibly empty) set of \
-            :py:class:`IgnoreLink` objects
+        """
+        Converts a string into a (possibly empty) set of
+        :py:class:`IgnoreLink` objects
 
         The format is::
 

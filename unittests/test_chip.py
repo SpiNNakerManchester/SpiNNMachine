@@ -1,21 +1,20 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2014 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import unittest
 from spinn_utilities.ordered_set import OrderedSet
-from spinn_machine import Link, SDRAM, Router, Chip
+from spinn_machine import Link, Router, Chip
 from spinn_machine.config_setup import unittest_setup
 
 
@@ -35,9 +34,9 @@ class TestingChip(unittest.TestCase):
         links.append(Link(0, 1, 1, 1, 0))
         links.append(Link(1, 1, 2, 0, 0))
         links.append(Link(1, 0, 3, 0, 1))
-        self._router = Router(links, False, 1024)
+        self._router = Router(links, 1024)
 
-        self._sdram = SDRAM(128)
+        self._sdram = 128
         self._ip = "192.162.240.253"
 
     def _create_chip(self, x, y, processors, r, sdram, ip):
@@ -59,7 +58,7 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(
             new_chip.__repr__(),
             "[Chip: x=0, y=1, sdram=0 MB, ip_address=192.162.240.253, "
-            "router=[Router: emergency_routing=False, "
+            "router=[Router: "
             "available_entries=1024, links=["
             "[Link: source_x=0, source_y=0, source_link_id=0, "
             "destination_x=1, destination_y=1], "

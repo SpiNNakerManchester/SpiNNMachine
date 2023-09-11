@@ -1,23 +1,23 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2015 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from .abstract_tag import AbstractTag
 
 
 class IPTag(AbstractTag):
-    """ Used to hold data that is contained within an IP tag
+    """
+    Used to hold data that is contained within an IP tag.
     """
 
     __slots__ = [
@@ -62,42 +62,47 @@ class IPTag(AbstractTag):
 
     @property
     def ip_address(self):
-        """ The IP address to which SDP packets with this tag will be sent.
+        """
+        The IP address to which SDP packets with this tag will be sent.
         """
         return self._ip_address
 
     @property
     def strip_sdp(self):
-        """ Return if the SDP header is to be stripped
+        """
+        Whether the SDP header is to be stripped.
         """
         return self._strip_sdp
 
     @property
     def traffic_identifier(self):
-        """ The identifier of traffic using this tag
+        """
+        The identifier of traffic using this tag.
         """
         return self._traffic_identifier
 
     @property
     def destination_x(self):
-        """ The x-coordinate where users of this tag should send packets to
+        """
+        The X-coordinate where users of this tag should send packets to.
         """
         return self._destination_x
 
     @property
     def destination_y(self):
-        """ The y-coordinate where users of this tag should send packets to
+        """
+        The Y-coordinate where users of this tag should send packets to.
         """
         return self._destination_y
 
     def __repr__(self):
         return (
-            "IPTag(board_address={}, destination_x={}, destination_y={},"
-            " tag={}, port={}, ip_address={}, strip_sdp={},"
-            " traffic_identifier={})".format(
-                self.board_address, self.destination_x, self.destination_y,
-                self.tag, self.port, self.ip_address, self.strip_sdp,
-                self.traffic_identifier))
+            f"IPTag(board_address={self.board_address}, "
+            f"destination_x={self.destination_x}, "
+            f"destination_y={self.destination_y},"
+            f" tag={self.tag}, port={self.port}, "
+            f"ip_address={self.ip_address}, strip_sdp={self.strip_sdp}, "
+            f"traffic_identifier={self.traffic_identifier})")
 
     def __eq__(self, other):
         if not isinstance(other, IPTag):

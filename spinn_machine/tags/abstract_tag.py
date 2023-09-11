@@ -1,21 +1,21 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2015 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 class AbstractTag(object):
-    """ Common properties of SpiNNaker IP tags and reverse IP tags.
+    """
+    Common properties of SpiNNaker IP tags and reverse IP tags.
     """
 
     __slots__ = [
@@ -36,25 +36,29 @@ class AbstractTag(object):
 
     @property
     def board_address(self):
-        """ The board address of the tag
+        """
+        The board address of the tag.
         """
         return self._board_address
 
     @property
     def tag(self):
-        """ The tag ID of the tag
+        """
+        The tag ID of the tag.
         """
         return self._tag
 
     @property
     def port(self):
-        """ The port of the tag
+        """
+        The port of the tag.
         """
         return self._port
 
     @port.setter
     def port(self, port):
-        """ Set the port; will fail if the port is already set
+        """
+        Set the port; will fail if the port is already set.
         """
         if self._port is not None:
             raise RuntimeError("Port cannot be set more than once")

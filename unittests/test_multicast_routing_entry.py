@@ -1,17 +1,16 @@
-# Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2014 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import pickle
 import unittest
@@ -58,11 +57,11 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         multicast1 = MulticastRoutingEntry(1, 1, [1, 3, 4, 16], [2, 3, 5])
         self.assertEqual(4196012, multicast1.spinnaker_route)
         multicast2 = MulticastRoutingEntry(1, 1, spinnaker_route=4196012)
-        self.assertEqual(multicast2.processor_ids, [1, 3, 4, 16])
+        self.assertEqual(multicast2.processor_ids, {1, 3, 4, 16})
         # Third test getting the link_ids first
         multicast3 = MulticastRoutingEntry(1, 1, spinnaker_route=4196012)
-        self.assertEqual(multicast3.link_ids, [2, 3, 5])
-        self.assertEqual(multicast3.processor_ids, [1, 3, 4, 16])
+        self.assertEqual(multicast3.link_ids, {2, 3, 5})
+        self.assertEqual(multicast3.processor_ids, {1, 3, 4, 16})
 
     def test_merger(self):
         link_ids = list()

@@ -1,17 +1,16 @@
 # Copyright (c) 2019 The University of Manchester
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from spinn_utilities.overrides import overrides
 from .machine import Machine
@@ -25,19 +24,19 @@ class VerticalWrapMachine(Machine):
 
     @overrides(Machine.get_xys_by_ethernet)
     def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_x = (x + ethernet_x)
             chip_y = (y + ethernet_y) % self._height
             yield (chip_x, chip_y)
 
     @overrides(Machine.get_xy_cores_by_ethernet)
     def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y), n_cores in self.CHIPS_PER_BOARD.items():
+        for (x, y), n_cores in self._chip_core_map.items():
             yield ((x + ethernet_x), (y + ethernet_y) % self._height), n_cores
 
     @overrides(Machine.get_existing_xys_by_ethernet)
     def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_xy = ((x + ethernet_x),
                        (y + ethernet_y) % self._height)
             if chip_xy in self._chips:
@@ -45,7 +44,7 @@ class VerticalWrapMachine(Machine):
 
     @overrides(Machine.get_down_xys_by_ethernet)
     def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
-        for (x, y) in self._local_xys:
+        for (x, y) in self._chip_core_map:
             chip_xy = ((x + ethernet_x),
                        (y + ethernet_y) % self._height)
             if (chip_xy) not in self._chips:
