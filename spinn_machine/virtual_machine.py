@@ -14,7 +14,7 @@
 
 from collections import defaultdict
 import logging
-from spinn_utilities.config_holder import get_config_str
+from spinn_utilities.config_holder import get_config_str_or_none
 from spinn_utilities.log import FormatAdapter
 from .chip import Chip
 from .router import Router
@@ -72,7 +72,7 @@ class _VirtualMachine(object):
 
         # Store the down items
         unused_chips = []
-        for down_chip in IgnoreChip.parse_string(get_config_str(
+        for down_chip in IgnoreChip.parse_string(get_config_str_or_none(
                 "Machine", "down_chips")):
             if isinstance(down_chip, IgnoreChip):
                 if down_chip.ip_address is None:
@@ -81,7 +81,7 @@ class _VirtualMachine(object):
                 unused_chips.append((down_chip[0], down_chip[1]))
 
         self._unused_cores = defaultdict(set)
-        for down_core in IgnoreCore.parse_string(get_config_str(
+        for down_core in IgnoreCore.parse_string(get_config_str_or_none(
                 "Machine", "down_cores")):
             if isinstance(down_core, IgnoreCore):
                 if down_core.ip_address is None:
@@ -92,7 +92,7 @@ class _VirtualMachine(object):
                     down_core[2])
 
         self._unused_links = set()
-        for down_link in IgnoreLink.parse_string(get_config_str(
+        for down_link in IgnoreLink.parse_string(get_config_str_or_none(
                 "Machine", "down_links")):
             if isinstance(down_link, IgnoreLink):
                 if down_link.ip_address is None:
