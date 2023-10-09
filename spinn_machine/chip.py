@@ -94,22 +94,25 @@ class Chip(object):
         self._v_to_p_map = v_to_p_map
 
     def __generate_processors(self, n_processors, down_cores):
+        n_non_user = MachineDataView.get_machine_version().n_non_user_cores
         if down_cores is None:
             if n_processors not in standard_processors:
                 processors = dict()
-                processors[0] = Processor.factory(0, True)
-                for i in range(1, n_processors):
+                for i in range(0, n_non_user):
+                    processors[i] = Processor.factory(i, True)
+                for i in range(n_non_user, n_processors):
                     processors[i] = Processor.factory(i)
                 standard_processors[n_processors] = processors
-            self._n_user_processors = n_processors - 1
+            self._n_user_processors = n_processors - n_non_user
             return standard_processors[n_processors]
         else:
             processors = dict()
-            if 0 in down_cores:
-                raise NotImplementedError(
-                    "Declaring core 0 as down is not supported")
-            processors[0] = Processor.factory(0, True)
-            for i in range(1, n_processors):
+            for i in range(0, n_non_user):
+                if i in down_cores:
+                    raise NotImplementedError(
+                        "Declaring core {i} as down is not supported")
+                processors[i] = Processor.factory(i, True)
+            for i in range(n_non_user, n_processors):
                 if i not in down_cores:
                     processors[i] = Processor.factory(i)
             self._n_user_processors = (
