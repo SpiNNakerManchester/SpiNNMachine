@@ -173,6 +173,16 @@ class Chip(object):
         """
         return iter(self._p.values())
 
+    def get_user_processors_ids(self):
+        """
+        An iterable of the ids of available processors.
+
+        :rtype: iterable(int)
+        """
+        for processor in self._p.values():
+            if not processor.is_monitor:
+                yield processor.processor_id
+
     @property
     def n_processors(self):
         """

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+from spinn_utilities.config_holder import set_config
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Link, Router, Chip
 from spinn_machine.config_setup import unittest_setup
@@ -22,6 +23,7 @@ class TestingChip(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
         self._x = 0
         self._y = 1
 
@@ -101,6 +103,9 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(6, new_chip[6].processor_id)
         self.assertTrue(7 in new_chip)
         self.assertIsNone(new_chip.get_processor_with_id(-1))
+        self.assertEqual(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+            list(new_chip.get_user_processors_ids()))
 
     def test_get_first_none_monitor_processor(self):
         """ test the get_first_none_monitor_processor
