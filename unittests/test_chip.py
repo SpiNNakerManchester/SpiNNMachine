@@ -105,7 +105,8 @@ class TestingChip(unittest.TestCase):
         self.assertIsNone(new_chip.get_processor_with_id(-1))
         self.assertEqual(
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
-            list(new_chip.get_user_processors_ids()))
+            list(new_chip.get_user_processor_ids()))
+        self.assertEqual([0], list(new_chip.get_monitor_ids()))
 
     def test_get_first_none_monitor_processor(self):
         """ test the get_first_none_monitor_processor
