@@ -27,7 +27,13 @@ logger = FormatAdapter(logging.getLogger(__name__))
 
 class AbstractVersion(object, metaclass=AbstractBase):
     """
-    Properties for sa spec
+    Base class for the version classes.
+
+    Version classes are the main way to create a Machine object of the
+    correct class.
+
+    The version classes contain properties that will change depending
+    on the version.
     """
 
     __slots__ = (

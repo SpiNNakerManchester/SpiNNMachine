@@ -174,13 +174,14 @@ def _int_value(value: int) -> int:
         return JAVA_MAX_INT
 
 
-def _describe_chip(chip: Chip, std, eth) -> JsonArray:
+# pylint: disable=wrong-spelling-in-docstring
+def _describe_chip(chip: Chip, standard, ethernet) -> JsonArray:
     """
     Produce a JSON-suitable description of a single chip.
 
     :param chip: The chip to describe.
-    :param std: The standard chip resources.
-    :param eth: The standard Ethernet-enabled chip resources.
+    :param standard: The standard chip resources.
+    :param ethernet: The standard Ethernet-enabled chip resources.
     :return: Description of chip that is trivial to serialize as JSON.
     """
     details: JsonObject = {
@@ -203,25 +204,25 @@ def _describe_chip(chip: Chip, std, eth) -> JsonArray:
     if chip.ip_address is not None:
         details['ipAddress'] = chip.ip_address
         # Write the Resources ONLY if different from the e_values
-        if (chip.n_processors - chip.n_user_processors) != eth.monitors:
+        if (chip.n_processors - chip.n_user_processors) != ethernet.monitors:
             exceptions["monitors"] = \
                 chip.n_processors - chip.n_user_processors
-        if router_entries != eth.router_entries:
+        if router_entries != ethernet.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.sdram != eth.sdram:
+        if chip.sdram != ethernet.sdram:
             exceptions["sdram"] = chip.sdram
-        if tags != eth.tags:
+        if tags != ethernet.tags:
             exceptions["tags"] = tags
     else:
         # Write the Resources ONLY if different from the s_values
-        if (chip.n_processors - chip.n_user_processors) != std.monitors:
+        if (chip.n_processors - chip.n_user_processors) != standard.monitors:
             exceptions["monitors"] = \
                 chip.n_processors - chip.n_user_processors
-        if router_entries != std.router_entries:
+        if router_entries != standard.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.sdram != std.sdram:
+        if chip.sdram != standard.sdram:
             exceptions["sdram"] = chip.sdram
-        if tags != std.tags:
+        if tags != standard.tags:
             exceptions["tags"] = tags
 
     if exceptions:
