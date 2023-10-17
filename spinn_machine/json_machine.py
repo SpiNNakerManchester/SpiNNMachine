@@ -136,13 +136,13 @@ def _int_value(value):
         return JAVA_MAX_INT
 
 
-def _describe_chip(chip, std, eth):
+def _describe_chip(chip, standard, ethernet):
     """
     Produce a JSON-suitable description of a single chip.
 
     :param chip: The chip to describe.
-    :param std: The standard chip resources.
-    :param eth: The standard Ethernet-enabled chip resources.
+    :param standard: The standard chip resources.
+    :param ethernet: The standard Ethernet-enabled chip resources.
     :return: Description of chip that is trivial to serialize as JSON.
     """
     details = dict()
@@ -164,25 +164,25 @@ def _describe_chip(chip, std, eth):
     if chip.ip_address is not None:
         details['ipAddress'] = chip.ip_address
         # Write the Resources ONLY if different from the e_values
-        if (chip.n_processors - chip.n_user_processors) != eth.monitors:
+        if (chip.n_processors - chip.n_user_processors) != ethernet.monitors:
             exceptions["monitors"] = \
                 chip.n_processors - chip.n_user_processors
-        if router_entries != eth.router_entries:
+        if router_entries != ethernet.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.sdram != eth.sdram:
+        if chip.sdram != ethernet.sdram:
             exceptions["sdram"] = chip.sdram
-        if chip.tag_ids != eth.tags:
+        if chip.tag_ids != ethernet.tags:
             exceptions["tags"] = list(chip.tag_ids)
     else:
         # Write the Resources ONLY if different from the s_values
-        if (chip.n_processors - chip.n_user_processors) != std.monitors:
+        if (chip.n_processors - chip.n_user_processors) != standard.monitors:
             exceptions["monitors"] = \
                 chip.n_processors - chip.n_user_processors
-        if router_entries != std.router_entries:
+        if router_entries != standard.router_entries:
             exceptions["routerEntries"] = router_entries
-        if chip.sdram != std.sdram:
+        if chip.sdram != standard.sdram:
             exceptions["sdram"] = chip.sdram
-        if chip.tag_ids != std.tags:
+        if chip.tag_ids != standard.tags:
             exceptions["tags"] = list(chip.tag_ids)
 
     if exceptions:
