@@ -136,6 +136,7 @@ def _int_value(value):
         return JAVA_MAX_INT
 
 
+# pylint: wrong-spelling-in-docstring
 def _describe_chip(chip, standard, ethernet):
     """
     Produce a JSON-suitable description of a single chip.
