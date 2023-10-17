@@ -39,7 +39,7 @@ class Chip(object):
         "_n_user_processors", "_parent_link", "_v_to_p_map"
     )
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
     def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
                  nearest_ethernet_y, ip_address=None,
                  tag_ids=None, down_cores=None, parent_link=None,
