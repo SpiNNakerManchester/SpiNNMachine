@@ -24,7 +24,13 @@ logger = FormatAdapter(logging.getLogger(__name__))
 
 class AbstractVersion(object, metaclass=AbstractBase):
     """
-    Properties for sa spec
+    Base class for the version classes.
+
+    Version classes are the main way to create a Machine object of the
+    correct class.
+
+    The version classes contain properties that will change depending
+    on the version.
     """
 
     __slots__ = [
@@ -114,7 +120,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
     @abstractproperty
     def board_shape(self):
         """
-        The width and heigth of a single board of this type
+        The width and height of a single board of this type
 
         :return:
         """
@@ -143,12 +149,12 @@ class AbstractVersion(object, metaclass=AbstractBase):
     @property
     def max_sdram_per_chip(self):
         """
-        Gets the max sdram per chip for the whole system.
+        Gets the max SDRAM per chip for the whole system.
 
-        While it is likely that all Chips will have this sdram
-        this should not be counted on. Ask each Chip for its sdram.
+        While it is likely that all Chips will have this SDRAM
+        this should not be counted on. Ask each Chip for its SDRAM.
 
-        :return: the default sdram per chip
+        :return: the default SDRAM per chip
         :rtype: int
         """
         return self._max_sdram_per_chip
