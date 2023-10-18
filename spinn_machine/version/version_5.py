@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, Mapping, Sequence, Tuple
+from typing import Final, Mapping, Optional, Sequence, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 from spinn_machine.exceptions import SpinnMachineException
@@ -98,3 +98,12 @@ class Version5(VersionSpin1):
                     width, height, CHIPS_PER_BOARD, origin)
             else:
                 return NoWrapMachine(width, height, CHIPS_PER_BOARD, origin)
+
+    @overrides(VersionSpin1.illegal_ethernet_message)
+    def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
+        if x % 4 != 0:
+            return "Only Chip with X divisible by 4 may be an Ethernet Chip"
+        if (x + y) % 12 != 0:
+            return "Only Chip with x + y divisible by 12 " \
+                   "may be an Ethernet Chip"
+        return None
