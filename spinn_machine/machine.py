@@ -327,10 +327,14 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: str
         """
         chip00 = self[0, 0]
-        local00 = self[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
+        try:
+            local00 = self[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
+            ip_address = f"on {local00.ip_address}"
+        except KeyError:
+            ip_address = ""
         (localx, localy) = self.get_local_xy(chip)
         return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
-                f"is chip {localx}, {localy} on {local00.ip_address}")
+                f"is chip {localx}, {localy} {ip_address}")
 
     def where_is_xy(self, x: int, y: int) -> str:
         """
@@ -501,36 +505,44 @@ class Machine(object, metaclass=AbstractBase):
         # The fact that self._boot_ethernet_address is set means there is an
         # ethernet chip and it is at 0,0 so no need to check that
 
+        version = MachineDataView.get_machine_version()
         for chip in self.chips:
             if chip.x < 0:
-                raise SpinnMachineException(f"{chip} has a negative x")
+                raise SpinnMachineException(
+                    f"{self.where_is_chip(chip)} has a negative x")
             if chip.y < 0:
-                raise SpinnMachineException(f"{chip} has a negative y")
+                raise SpinnMachineException(
+                    f"{self.where_is_chip(chip)} has a negative y")
             if chip.x >= self._width:
                 raise SpinnMachineException(
-                    f"{chip} has an x larger than width {self._width}")
+                    f"{self.where_is_chip(chip)} has an x larger "
+                    f"than width {self._width}")
             if chip.y >= self._height:
                 raise SpinnMachineException(
-                    f"{chip} has a y larger than height {self._height}")
+                    f"{self.where_is_chip(chip)} has a y larger "
+                    f"than height {self._height}")
+            if chip.n_processors < version.minimum_cores_expected:
+                raise SpinnMachineException(
+                    f"{self.where_is_chip(chip)} has too few cores "
+                    f"found {chip.n_processors}")
             if chip.ip_address:
                 # Ethernet Chip checks
-                if chip.x % 4 != 0:
+                error = version.illegal_ethernet_message(chip.x, chip.y)
+                if error is not None:
                     raise SpinnMachineException(
-                        f"Ethernet {chip} has a x which is not divisible by 4")
-                if (chip.x + chip.y) % 12 != 0:
-                    raise SpinnMachineException(
-                        f"Ethernet {chip} has an x,y pair that "
-                        "does not add up to 12")
+                        f"{self.where_is_chip(chip)} {error}")
             else:
                 # Non-Ethernet chip checks
                 if not self.is_chip_at(
                         chip.nearest_ethernet_x, chip.nearest_ethernet_y):
                     raise SpinnMachineException(
-                        f"{chip} has an invalid ethernet chip")
+                        f"{self.where_is_chip(chip)} "
+                        f"has an invalid ethernet chip")
                 local_xy = self.get_local_xy(chip)
                 if local_xy not in self._chip_core_map:
                     raise SpinnMachineException(
-                        f"{chip} has an unexpected local xy of {local_xy}")
+                        f"{self.where_is_chip(chip)} "
+                        f"has an unexpected local xy of {local_xy}")
 
     @property
     @abstractmethod
