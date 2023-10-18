@@ -326,15 +326,18 @@ class Machine(object, metaclass=AbstractBase):
         :return: A human-readable description of the location of a chip.
         :rtype: str
         """
-        chip00 = self[0, 0]
         try:
-            local00 = self[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
-            ip_address = f"on {local00.ip_address}"
-        except KeyError:
-            ip_address = ""
-        (localx, localy) = self.get_local_xy(chip)
-        return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
-                f"is chip {localx}, {localy} {ip_address}")
+            chip00 = self[0, 0]
+            try:
+                local00 = self[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
+                ip_address = f"on {local00.ip_address}"
+            except KeyError:
+                ip_address = ""
+            (localx, localy) = self.get_local_xy(chip)
+            return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
+                    f"is chip {localx}, {localy} {ip_address}")
+        except Exception:  # pylint: disable=broad-except
+            return str(Chip)
 
     def where_is_xy(self, x: int, y: int) -> str:
         """
