@@ -34,7 +34,8 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         key = 1
         mask = 1
         a_multicast = MulticastRoutingEntry(
-            key, mask, proc_ids, link_ids, True)
+            key, mask, processor_ids=proc_ids, link_ids=link_ids,
+            defaultable=True)
 
         self.assertEqual(a_multicast.routing_entry_key, key)
         self.assertEqual(a_multicast.link_ids, set(link_ids))
@@ -54,7 +55,8 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             MulticastRoutingEntry(1, 2)
 
     def test_spinnaker_route(self):
-        multicast1 = MulticastRoutingEntry(1, 1, [1, 3, 4, 16], [2, 3, 5])
+        multicast1 = MulticastRoutingEntry(1, 1, processor_ids=[1, 3, 4, 16],
+                                           link_ids=[2, 3, 5])
         self.assertEqual(4196012, multicast1.spinnaker_route)
         multicast2 = MulticastRoutingEntry(1, 1, spinnaker_route=4196012)
         self.assertEqual(multicast2.processor_ids, {1, 3, 4, 16})
@@ -79,9 +81,11 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         key = 1
         mask = 1
         a_multicast = MulticastRoutingEntry(
-            key, mask, proc_ids, link_ids, True)
+            key, mask, processor_ids=proc_ids, link_ids=link_ids,
+            defaultable=True)
         b_multicast = MulticastRoutingEntry(
-            key, mask, proc_ids2, link_ids2, True)
+            key, mask, processor_ids=proc_ids2, link_ids=link_ids2,
+            defaultable=True)
 
         result_multicast = a_multicast.merge(b_multicast)
         comparison_link_ids = list()
@@ -115,9 +119,11 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         key = 1
         mask = 1
         a_multicast = MulticastRoutingEntry(
-            key, mask, proc_ids, link_ids, True)
+            key, mask, processor_ids=proc_ids, link_ids=link_ids,
+            defaultable=True)
         b_multicast = MulticastRoutingEntry(
-            key, mask, proc_ids2, link_ids2, False)
+            key, mask, processor_ids=proc_ids2, link_ids=link_ids2,
+            defaultable=False)
 
         result_multicast = a_multicast.merge(b_multicast)
         comparison_link_ids = list()
@@ -155,12 +161,14 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         key_combo = 1
         mask = 1
         a_multicast = MulticastRoutingEntry(
-            key_combo, mask, proc_ids, link_ids, True)
+            key_combo, mask, processor_ids=proc_ids, link_ids=link_ids,
+            defaultable=True)
         b_multicast = MulticastRoutingEntry(
-            key_combo + 1, mask + 1, proc_ids2, link_ids2, True)
+            key_combo + 1, mask + 1, processor_ids=proc_ids2,
+            link_ids=link_ids2, defaultable=True)
         with self.assertRaises(SpinnMachineInvalidParameterException) as e:
             a_multicast.merge(b_multicast)
-        self.assertEqual(e.exception.parameter, "other_entry.key")
+        self.assertEqual(e.exception.parameter, "other.key")
         self.assertEqual(e.exception.value, "0x2")
         self.assertEqual(e.exception.problem, "The key does not match 0x1")
 
@@ -180,9 +188,11 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         key = 0
         mask = 2
         a_multicast = MulticastRoutingEntry(
-            key, mask, proc_ids, link_ids, True)
+            key, mask, processor_ids=proc_ids, link_ids=link_ids,
+            defaultable=True)
         b_multicast = MulticastRoutingEntry(
-            key, 4, proc_ids2, link_ids2, True)
+            key, 4, processor_ids=proc_ids2, link_ids=link_ids2,
+            defaultable=True)
         self.assertNotEqual(a_multicast, b_multicast)
         self.assertNotEqual(a_multicast, "foo")
         with self.assertRaises(SpinnMachineInvalidParameterException):
