@@ -329,7 +329,8 @@ class Machine(object, metaclass=AbstractBase):
         try:
             chip00 = self[0, 0]
             try:
-                local00 = self[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
+                local00 = self[chip.nearest_ethernet_x,
+                               chip.nearest_ethernet_y]
                 ip_address = f"on {local00.ip_address}"
             except KeyError:
                 ip_address = ""
