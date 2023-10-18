@@ -316,10 +316,10 @@ class AbstractVersion(object, metaclass=AbstractBase):
     @abstractmethod
     def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
         """
-        Checks if x and y could be for an Ethernet
+        Checks if x and y could be for an Ethernet.
 
         This method will return an explanation if the values for x and y are
-        known be illegal for an ethernet chip.
+        known be illegal for an Ethernet chip.
 
         Due to the limited information available this method will generate
         False negatives.
