@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import FrozenSet, Iterable, Optional
 from .exceptions import SpinnMachineAlreadyExistsException
 
 
@@ -27,12 +27,12 @@ class FixedRouteEntry(object):
         "_link_ids",
         "__repr")
 
-    def __init__(self, processor_ids, link_ids):
+    def __init__(self, processor_ids: Iterable[int], link_ids: Iterable[int]):
         """
         :param iterable(int) processor_ids:
         :param iterable(int) link_ids:
         """
-        self.__repr = None
+        self.__repr: Optional[str] = None
         # Add processor IDs, checking that there is only one of each
         self._processor_ids = frozenset(processor_ids)
         self.__check_dupes(processor_ids, "processor ID")
@@ -42,7 +42,7 @@ class FixedRouteEntry(object):
         self.__check_dupes(link_ids, "link ID")
 
     @staticmethod
-    def __check_dupes(sequence, name):
+    def __check_dupes(sequence: Iterable[int], name: str):
         check = set()
         for _id in sequence:
             if _id in check:
@@ -50,7 +50,7 @@ class FixedRouteEntry(object):
             check.add(_id)
 
     @property
-    def processor_ids(self):
+    def processor_ids(self) -> FrozenSet[int]:
         """
         The destination processor IDs.
 
@@ -59,7 +59,7 @@ class FixedRouteEntry(object):
         return self._processor_ids
 
     @property
-    def link_ids(self):
+    def link_ids(self) -> FrozenSet[int]:
         """
         The destination link IDs.
 
@@ -67,7 +67,7 @@ class FixedRouteEntry(object):
         """
         return self._link_ids
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if not self.__repr:
             self.__repr = ("{%s}:{%s}" % (
                 ", ".join(map(str, sorted(self._link_ids))),

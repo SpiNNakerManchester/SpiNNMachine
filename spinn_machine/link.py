@@ -24,12 +24,12 @@ class Link(object):
 
     __slots__ = (
         "_destination_x", "_destination_y", "_source_link_id", "_source_x",
-        "_source_y"
-    )
+        "_source_y")
 
-    # pylint: disable=too-many-arguments
-    def __init__(self, source_x, source_y, source_link_id, destination_x,
-                 destination_y):
+    def __init__(
+            self, source_x: int, source_y: int, source_link_id: int,
+            destination_x: int, destination_y: int):
+        # pylint: disable=too-many-arguments
         """
         :param int source_x: The x-coordinate of the source chip of the link
         :param int source_y: The y-coordinate of the source chip of the link
@@ -46,7 +46,7 @@ class Link(object):
         self._destination_y = destination_y
 
     @property
-    def source_x(self):
+    def source_x(self) -> int:
         """
         The X-coordinate of the source chip of this link.
 
@@ -55,7 +55,7 @@ class Link(object):
         return self._source_x
 
     @property
-    def source_y(self):
+    def source_y(self) -> int:
         """
         The Y-coordinate of the source chip of this link.
 
@@ -64,7 +64,7 @@ class Link(object):
         return self._source_y
 
     @property
-    def source_link_id(self):
+    def source_link_id(self) -> int:
         """
         The ID of the link on the source chip.
 
@@ -73,7 +73,7 @@ class Link(object):
         return self._source_link_id
 
     @property
-    def destination_x(self):
+    def destination_x(self) -> int:
         """
         The X-coordinate of the destination chip of this link.
 
@@ -82,7 +82,7 @@ class Link(object):
         return self._destination_x
 
     @property
-    def destination_y(self):
+    def destination_y(self) -> int:
         """
         The Y-coordinate of the destination chip of this link.
 
@@ -90,12 +90,12 @@ class Link(object):
         """
         return self._destination_y
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"[Link: source_x={self._source_x}, source_y={self._source_y}, "
             f"source_link_id={self._source_link_id}, "
             f"destination_x={self._destination_x}, "
             f"destination_y={self._destination_y}]")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()

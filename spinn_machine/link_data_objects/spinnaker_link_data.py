@@ -20,24 +20,24 @@ class SpinnakerLinkData(AbstractLinkData):
     Data object for SpiNNaker links.
     """
 
-    __slots__ = [
-        "_spinnaker_link_id"]
+    __slots__ = ("_spinnaker_link_id",)
 
     # pylint: disable=too-many-arguments
-    def __init__(self, spinnaker_link_id, connected_chip_x, connected_chip_y,
-                 connected_link, board_address):
+    def __init__(self, spinnaker_link_id: int, connected_chip_x: int,
+                 connected_chip_y: int, connected_link: int,
+                 board_address: str):
         super().__init__(
             connected_chip_x, connected_chip_y, connected_link, board_address)
         self._spinnaker_link_id = spinnaker_link_id
 
     @property
-    def spinnaker_link_id(self):
+    def spinnaker_link_id(self) -> int:
         """
         The ID of the SpiNNaker link.
         """
         return self._spinnaker_link_id
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, SpinnakerLinkData):
             return False
         return (self._spinnaker_link_id == other.spinnaker_link_id and
@@ -46,12 +46,12 @@ class SpinnakerLinkData(AbstractLinkData):
                 self.connected_link == other.connected_link and
                 self.board_address == other.board_address)
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         if not isinstance(other, SpinnakerLinkData):
             return True
         return not self.__eq__(other)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._spinnaker_link_id,
                      self.connected_chip_x, self.connected_chip_y,
                      self.connected_link, self.board_address))

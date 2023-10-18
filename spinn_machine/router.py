@@ -11,9 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import annotations
+from typing import (
+    Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+if TYPE_CHECKING:
+    from .link import Link
+    from .fixed_route_entry import FixedRouteEntry
+    from .multicast_routing_entry import MulticastRoutingEntry
 
 
 class Router(object):
@@ -36,7 +42,9 @@ class Router(object):
 
     __slots__ = ("_links", "_n_available_multicast_entries")
 
-    def __init__(self, links, n_available_multicast_entries):
+    def __init__(
+            self, links: Iterable[Link],
+            n_available_multicast_entries: int):
         """
         :param iterable(~spinn_machine.Link) links: iterable of links
         :param int n_available_multicast_entries:
@@ -44,13 +52,13 @@ class Router(object):
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If any two links have the same ``source_link_id``
         """
-        self._links = dict()
+        self._links: Dict[int, Link] = dict()
         for link in links:
             self.add_link(link)
 
         self._n_available_multicast_entries = n_available_multicast_entries
 
-    def add_link(self, link):
+    def add_link(self, link: Link):
         """
         Add a link to the router of the chip.
 
@@ -63,7 +71,7 @@ class Router(object):
                 "link", str(link.source_link_id))
         self._links[link.source_link_id] = link
 
-    def is_link(self, source_link_id):
+    def is_link(self, source_link_id: int) -> bool:
         """
         Determine if there is a link with ID source_link_id.
         Also implemented as ``__contains__(source_link_id)``
@@ -74,13 +82,13 @@ class Router(object):
         """
         return source_link_id in self._links
 
-    def __contains__(self, source_link_id):
+    def __contains__(self, source_link_id: int) -> bool:
         """
         See :py:meth:`is_link`
         """
         return self.is_link(source_link_id)
 
-    def get_link(self, source_link_id):
+    def get_link(self, source_link_id: int) -> Optional[Link]:
         """
         Get the link with the given ID, or `None` if no such link.
         Also implemented as ``__getitem__(source_link_id)``
@@ -89,18 +97,16 @@ class Router(object):
         :return: The link, or ``None`` if no such link
         :rtype: ~spinn_machine.Link or None
         """
-        if source_link_id in self._links:
-            return self._links[source_link_id]
-        return None
+        return self._links.get(source_link_id)
 
-    def __getitem__(self, source_link_id):
+    def __getitem__(self, source_link_id: int) -> Optional[Link]:
         """
         See :py:meth:`get_link`
         """
         return self.get_link(source_link_id)
 
     @property
-    def links(self):
+    def links(self) -> Iterator[Link]:
         """
         The available links of this router.
 
@@ -108,7 +114,7 @@ class Router(object):
         """
         return iter(self._links.values())
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Tuple[int, Link]]:
         """
         Get an iterable of source link IDs and links in the router.
 
@@ -119,7 +125,7 @@ class Router(object):
         """
         return iter(self._links.items())
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Get the number of links in the router.
 
@@ -129,7 +135,7 @@ class Router(object):
         return len(self._links)
 
     @property
-    def n_available_multicast_entries(self):
+    def n_available_multicast_entries(self) -> int:
         """
         The number of available multicast entries in the routing tables.
 
@@ -138,7 +144,9 @@ class Router(object):
         return self._n_available_multicast_entries
 
     @staticmethod
-    def convert_routing_table_entry_to_spinnaker_route(routing_table_entry):
+    def convert_routing_table_entry_to_spinnaker_route(
+            routing_table_entry: Union[
+                MulticastRoutingEntry, FixedRouteEntry]) -> int:
         """
         Convert a routing table entry represented in software to a
         binary routing table entry usable on the machine.
@@ -168,7 +176,8 @@ class Router(object):
         return route_entry
 
     @staticmethod
-    def convert_spinnaker_route_to_routing_ids(route):
+    def convert_spinnaker_route_to_routing_ids(route: int) -> Tuple[
+            List[int], List[int]]:
         """
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.
@@ -183,30 +192,28 @@ class Router(object):
                     if route & 1 << li]
         return processor_ids, link_ids
 
-    def get_neighbouring_chips_coords(self):
+    def get_neighbouring_chips_coords(self) -> List[Dict[str, int]]:
         """
         Utility method to convert links into x and y coordinates.
 
         :return: iterable list of destination coordinates in x and y dict
         :rtype: iterable(dict(str,int))
         """
-        next_hop_chips_coords = list()
-        for link in self.links:
-            next_hop_chips_coords.append(
-                {'x': link.destination_x, 'y': link.destination_y})
-        return next_hop_chips_coords
+        return [
+            {'x': link.destination_x, 'y': link.destination_y}
+            for link in self.links]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"[Router: "
             f"available_entries={self._n_available_multicast_entries}, "
             f"links={list(self._links.values())}]")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
     @staticmethod
-    def opposite(link_id):
+    def opposite(link_id: int) -> int:
         """
         Given a valid link_id this method returns its opposite.
 

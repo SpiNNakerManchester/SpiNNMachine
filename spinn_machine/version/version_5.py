@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Final, Mapping, Sequence, Tuple
 from spinn_utilities.overrides import overrides
+from spinn_utilities.typing.coords import XY
 from spinn_machine.exceptions import SpinnMachineException
+from spinn_machine.machine import Machine
 from spinn_machine.full_wrap_machine import FullWrapMachine
 from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
 from spinn_machine.no_wrap_machine import NoWrapMachine
@@ -21,7 +24,7 @@ from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
 from spinn_machine import SpiNNakerTriadGeometry
 from .version_spin1 import VersionSpin1
 
-CHIPS_PER_BOARD = {
+CHIPS_PER_BOARD: Final = {
     (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,
     (1, 2): 18, (1, 3): 17, (1, 4): 18, (2, 0): 18, (2, 1): 18, (2, 2): 18,
     (2, 3): 18, (2, 4): 18, (2, 5): 18, (3, 0): 18, (3, 1): 17, (3, 2): 18,
@@ -39,36 +42,36 @@ class Version5(VersionSpin1):
 
     Covers versions 4 and 5
     """
-
-    __slots__ = []
+    __slots__ = ()
 
     @property
     @overrides(VersionSpin1.name)
-    def name(self):
+    def name(self) -> str:
         return "Spin1 48 Chip"
 
     @property
     @overrides(VersionSpin1.number)
-    def number(self):
+    def number(self) -> int:
         return 5
 
     @property
     @overrides(VersionSpin1.board_shape)
-    def board_shape(self):
+    def board_shape(self) -> Tuple[int, int]:
         return (8, 8)
 
     @property
     @overrides(VersionSpin1.chip_core_map)
-    def chip_core_map(self):
+    def chip_core_map(self) -> Mapping[XY, int]:
         return CHIPS_PER_BOARD
 
     @overrides(VersionSpin1.get_potential_ethernet_chips)
-    def get_potential_ethernet_chips(self, width, height):
+    def get_potential_ethernet_chips(
+            self, width: int, height: int) -> Sequence[XY]:
         geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
         return geometry.get_potential_ethernet_chips(width, height)
 
     @overrides(VersionSpin1._verify_size)
-    def _verify_size(self, width, height):
+    def _verify_size(self, width: int, height: int):
         if width == height == 8:
             # 1 board
             return
@@ -82,7 +85,7 @@ class Version5(VersionSpin1):
                 f"or a multiple of 12 plus 4")
 
     @overrides(VersionSpin1._create_machine)
-    def _create_machine(self, width, height, origin):
+    def _create_machine(self, width: int, height: int, origin: str) -> Machine:
         if width % 12 == 0:
             if height % 12 == 0:
                 return FullWrapMachine(width, height, CHIPS_PER_BOARD, origin)

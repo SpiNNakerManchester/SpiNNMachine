@@ -11,31 +11,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Iterable, Tuple
 from spinn_utilities.overrides import overrides
+from spinn_utilities.typing.coords import XY
 from .machine import Machine
+from .chip import Chip
 
 
 class HorizontalWrapMachine(Machine):
 
     @overrides(Machine.multiple_48_chip_boards)
-    def multiple_48_chip_boards(self):
+    def multiple_48_chip_boards(self) -> bool:
         return self._width % 12 == 0 and (self._height - 4) % 12 == 0
 
     @overrides(Machine.get_xys_by_ethernet)
-    def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_xys_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
         for (x, y) in self._chip_core_map:
             chip_x = (x + ethernet_x) % self._width
             chip_y = (y + ethernet_y)
             yield (chip_x, chip_y)
 
     @overrides(Machine.get_xy_cores_by_ethernet)
-    def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_xy_cores_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[
+                Tuple[XY, int]]:
         for (x, y), n_cores in self._chip_core_map.items():
             yield ((x + ethernet_x) % self._width, (y + ethernet_y)), n_cores
 
     @overrides(Machine.get_existing_xys_by_ethernet)
-    def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_existing_xys_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
         for (x, y) in self._chip_core_map:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y))
@@ -43,35 +49,38 @@ class HorizontalWrapMachine(Machine):
                 yield chip_xy
 
     @overrides(Machine.get_down_xys_by_ethernet)
-    def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_down_xys_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
         for (x, y) in self._chip_core_map:
             chip_xy = ((x + ethernet_x) % self._width,
                        (y + ethernet_y))
-            if (chip_xy) not in self._chips:
+            if chip_xy not in self._chips:
                 yield chip_xy
 
     @overrides(Machine.xy_over_link)
-    def xy_over_link(self, x, y, link):
+    def xy_over_link(self, x: int, y: int, link: int) -> XY:
         add_x, add_y = Machine.LINK_ADD_TABLE[link]
         link_x = (x + add_x + self._width) % self._width
         link_y = y + add_y
         return link_x, link_y
 
     @overrides(Machine.get_local_xy)
-    def get_local_xy(self, chip):
+    def get_local_xy(self, chip: Chip) -> XY:
         local_x = (chip.x - chip.nearest_ethernet_x + self._width) \
                    % self._width
         local_y = chip.y - chip.nearest_ethernet_y
         return local_x, local_y
 
     @overrides(Machine.get_global_xy)
-    def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
+    def get_global_xy(
+            self, local_x: int, local_y: int,
+            ethernet_x: int, ethernet_y: int) -> XY:
         global_x = (local_x + ethernet_x) % self._width
         global_y = local_y + ethernet_y
         return global_x, global_y
 
     @overrides(Machine.get_vector_length)
-    def get_vector_length(self, source, destination):
+    def get_vector_length(self, source: XY, destination: XY) -> int:
         # Aliases for convenience
         w = self._width
 
@@ -101,7 +110,7 @@ class HorizontalWrapMachine(Machine):
             return len_left
 
     @overrides(Machine.get_vector)
-    def get_vector(self, source, destination):
+    def get_vector(self, source: XY, destination: XY) -> Tuple[int, int, int]:
         # Aliases for convenience
         w = self._width
 
@@ -131,7 +140,7 @@ class HorizontalWrapMachine(Machine):
             return self._minimize_vector(x_left, y)
 
     @overrides(Machine.concentric_xys)
-    def concentric_xys(self, radius, start):
+    def concentric_xys(self, radius: int, start: XY) -> Iterable[XY]:
         # Aliases for convenience
         w = self._width
         for (x, y) in self._basic_concentric_xys(radius, start):
@@ -139,5 +148,5 @@ class HorizontalWrapMachine(Machine):
 
     @property
     @overrides(Machine.wrap)
-    def wrap(self):
+    def wrap(self) -> str:
         return "HorWrap"

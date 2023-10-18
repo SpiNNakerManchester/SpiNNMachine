@@ -23,7 +23,7 @@ from spinn_machine.data.machine_data_writer import MachineDataWriter
 
 class TestSimulatorData(unittest.TestCase):
 
-    def setUp(cls):
+    def setUp(self):
         unittest_setup()
         set_config("Machine", "version", 5)
 

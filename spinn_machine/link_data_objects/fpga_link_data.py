@@ -22,32 +22,32 @@ class FPGALinkData(AbstractLinkData):
 
     __slots__ = (
         "_fpga_link_id",
-        "_fpga_id"
-    )
+        "_fpga_id")
 
     # pylint: disable=too-many-arguments
-    def __init__(self, fpga_link_id, fpga_id, connected_chip_x,
-                 connected_chip_y, connected_link, board_address):
+    def __init__(self, fpga_link_id: int, fpga_id: int, connected_chip_x: int,
+                 connected_chip_y: int, connected_link: int,
+                 board_address: str):
         super().__init__(
             connected_chip_x, connected_chip_y, connected_link, board_address)
         self._fpga_link_id = fpga_link_id
         self._fpga_id = fpga_id
 
     @property
-    def fpga_link_id(self):
+    def fpga_link_id(self) -> int:
         """
         The ID of the link out of the SpiNNaker FPGA.
         """
         return self._fpga_link_id
 
     @property
-    def fpga_id(self):
+    def fpga_id(self) -> int:
         """
         The ID of the SpiNNaker FPGA.
         """
         return self._fpga_id
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, FPGALinkData):
             return False
         return (self._fpga_id == other.fpga_id and
@@ -57,12 +57,12 @@ class FPGALinkData(AbstractLinkData):
                 self.connected_link == other.connected_link and
                 self.board_address == other.board_address)
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         if not isinstance(other, FPGALinkData):
             return True
         return not self.__eq__(other)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._fpga_id, self._fpga_link_id,
                      self.connected_chip_x, self.connected_chip_y,
                      self.connected_link, self.board_address))

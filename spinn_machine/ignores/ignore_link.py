@@ -11,6 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Any, Optional, Set, Union
+from typing_extensions import TypeAlias
+_Intable: TypeAlias = Union[int, str]
 
 
 class IgnoreLink(object):
@@ -20,7 +23,8 @@ class IgnoreLink(object):
 
     __slots__ = ["x", "y", "link", "ip_address"]
 
-    def __init__(self, x, y, link, ip_address=None):
+    def __init__(self, x: _Intable, y: _Intable, link: _Intable,
+                 ip_address: Optional[str] = None):
         """
         :param x: X coordinate of a chip with a link to ignore
         :type x: int or str
@@ -43,7 +47,7 @@ class IgnoreLink(object):
         self.ip_address = ip_address
 
     @staticmethod
-    def parse_single_string(downed_link):
+    def parse_single_string(downed_link: str) -> 'IgnoreLink':
         """
         Converts a string into an :py:class:`IgnoreLink` object.
 
@@ -75,7 +79,7 @@ class IgnoreLink(object):
                 f"Unexpected downed_link: {downed_link}")
 
     @staticmethod
-    def parse_string(downed_links):
+    def parse_string(downed_links: Optional[str]) -> Set['IgnoreLink']:
         """
         Converts a string into a (possibly empty) set of
         :py:class:`IgnoreLink` objects
@@ -100,7 +104,7 @@ class IgnoreLink(object):
         :return: Set (possibly empty) of IgnoreLinks
         :rtype: set(IgnoreLink)
         """
-        ignored_links = set()
+        ignored_links: Set['IgnoreLink'] = set()
         if downed_links is None:
             return ignored_links
         if downed_links.lower() == "none":
@@ -108,3 +112,12 @@ class IgnoreLink(object):
         for downed_chip in downed_links.split(":"):
             ignored_links.add(IgnoreLink.parse_single_string(downed_chip))
         return ignored_links
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, IgnoreLink):
+            return False
+        return (self.x == other.x) and (self.y == other.y) and (
+            self.link == other.link) and (self.ip_address == other.ip_address)
+
+    def __hash__(self) -> int:
+        return (self.x << 16) | (self.y << 8) | self.link

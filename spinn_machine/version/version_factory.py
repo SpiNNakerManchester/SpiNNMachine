@@ -12,21 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
 import logging
+from typing import TYPE_CHECKING
 from spinn_utilities.config_holder import (
     get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
+if TYPE_CHECKING:
+    from .abstract_version import AbstractVersion
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
 
-def version_factory():
+def version_factory() -> AbstractVersion:
     """
     Creates a Machine Version class based on cfg settings.
 
-    :return: A superclass of AbstractVersion
-    :rtype:  ~spinn_machine.version.abstract_version.py
+    :return: A subclass of AbstractVersion
     :raises SpinnMachineException: If the cfg version is not set correctly
     """
     # Delayed import to avoid circular imports
