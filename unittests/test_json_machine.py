@@ -43,11 +43,11 @@ class TestJsonMachine(unittest.TestCase):
     def test_exceptions(self):
         vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
-        chip22 = vm.get_chip_at(2, 2)
+        chip22 = vm[2, 2]
         router22 = chip22.router
         router22._n_available_multicast_entries =  \
             router22._n_available_multicast_entries - 20
-        chip33 = vm.get_chip_at(3, 3)
+        chip33 = vm[3, 3]
         chip33._sdram = 50000000
         chip33._tag_ids = [2, 3]
         jpath = mktemp("json")
@@ -55,13 +55,13 @@ class TestJsonMachine(unittest.TestCase):
         jm = machine_from_json(jpath)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
-        vchip33 = jm.get_chip_at(3, 3)
+        vchip33 = jm[3, 3]
         self.assertEqual(vchip33.tag_ids, chip33.tag_ids)
 
     def test_monitor_exceptions(self):
         vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
-        chip02 = vm.get_chip_at(0, 2)
+        chip02 = vm[0, 2]
         # Hack in an extra monitor
         chip02._n_user_processors -= 1
         jpath = mktemp("json")
@@ -74,7 +74,7 @@ class TestJsonMachine(unittest.TestCase):
     def test_ethernet_exceptions(self):
         vm = virtual_machine(width=16, height=16)
         MachineDataWriter.mock().set_machine(vm)
-        chip48 = vm.get_chip_at(4, 8)
+        chip48 = vm[4, 8]
         router48 = chip48.router
         router48._n_available_multicast_entries =  \
             router48._n_available_multicast_entries - 20
@@ -85,7 +85,7 @@ class TestJsonMachine(unittest.TestCase):
         jm = machine_from_json(jpath)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
-        vchip48 = jm.get_chip_at(4, 8)
+        vchip48 = jm[4, 8]
         self.assertEqual(vchip48.tag_ids, chip48.tag_ids)
 
 

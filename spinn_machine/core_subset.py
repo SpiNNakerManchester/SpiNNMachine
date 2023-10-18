@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Any, Iterable, Iterator
 from spinn_utilities.ordered_set import OrderedSet
 
 
@@ -24,7 +24,7 @@ class CoreSubset(object):
         "_x", "_y", "_processor_ids"
     )
 
-    def __init__(self, x, y, processor_ids):
+    def __init__(self, x: int, y: int, processor_ids: Iterable[int]):
         """
         :param int x: The x-coordinate of the chip
         :param int y: The y-coordinate of the chip
@@ -32,11 +32,11 @@ class CoreSubset(object):
         """
         self._x = x
         self._y = y
-        self._processor_ids = OrderedSet()
+        self._processor_ids: OrderedSet[int] = OrderedSet()
         for processor_id in processor_ids:
             self.add_processor(processor_id)
 
-    def add_processor(self, processor_id):
+    def add_processor(self, processor_id: int):
         """
         Adds a processor ID to this subset
 
@@ -44,11 +44,11 @@ class CoreSubset(object):
         """
         self._processor_ids.add(processor_id)
 
-    def __contains__(self, processor_id):
+    def __contains__(self, processor_id: int) -> bool:
         return processor_id in self._processor_ids
 
     @property
-    def x(self):
+    def x(self) -> int:
         """
         The X-coordinate of the chip
 
@@ -57,7 +57,7 @@ class CoreSubset(object):
         return self._x
 
     @property
-    def y(self):
+    def y(self) -> int:
         """
         The Y-coordinate of the chip
 
@@ -66,7 +66,7 @@ class CoreSubset(object):
         return self._y
 
     @property
-    def processor_ids(self):
+    def processor_ids(self) -> Iterator[int]:
         """
         The processor IDs on the chip that in the subset.
 
@@ -74,29 +74,29 @@ class CoreSubset(object):
         """
         return iter(self._processor_ids)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self._x}:{self._y}:{self._processor_ids}"
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, CoreSubset):
             return False
         return self.x == other.x and self._y == other.y and \
             self._processor_ids == other.processor_ids
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         processors = frozenset(self._processor_ids)
         return (self._x, self._y, processors).__hash__()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         The number of processors in this core subset.
         """
         return len(self._processor_ids)
 
-    def intersect(self, other):
+    def intersect(self, other: 'CoreSubset') -> 'CoreSubset':
         """
         Returns a new CoreSubset which is an intersect of this and the other.
 

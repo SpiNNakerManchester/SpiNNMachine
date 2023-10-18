@@ -11,13 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import annotations
 import logging
-from spinn_utilities.abstract_base import (
-    AbstractBase, abstractmethod, abstractproperty)
+from typing import Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
+from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
+from spinn_utilities.typing.coords import XY
 from spinn_machine.exceptions import SpinnMachineException
+if TYPE_CHECKING:
+    from spinn_machine.machine import Machine
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -33,18 +36,17 @@ class AbstractVersion(object, metaclass=AbstractBase):
     on the version.
     """
 
-    __slots__ = [
+    __slots__ = (
         # the board address associated with this tag
         "_max_cores_per_chip",
-        "_max_sdram_per_chip"
-    ]
+        "_max_sdram_per_chip")
 
-    def __init__(self, max_cores_per_chip, max_sdram_per_chip):
+    def __init__(self, max_cores_per_chip: int, max_sdram_per_chip: int):
         self.__verify_config_width_height()
         self.__set_max_cores_per_chip(max_cores_per_chip)
         self.__set_max_sdram_per_chip(max_sdram_per_chip)
 
-    def __verify_config_width_height(self):
+    def __verify_config_width_height(self) -> None:
         """
         Check that if there is a cfg width or height the values are valid
 
@@ -66,7 +68,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
             else:
                 self.verify_size(width, height)
 
-    def __set_max_cores_per_chip(self, max_cores_per_chip):
+    def __set_max_cores_per_chip(self, max_cores_per_chip: int):
         self._max_cores_per_chip = max_cores_per_chip
         max_machine_core = get_config_int_or_none(
             "Machine", "max_machine_core")
@@ -83,7 +85,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
                     f"due to cfg setting [Machine]max_machine_core")
                 self._max_cores_per_chip = max_machine_core
 
-    def __set_max_sdram_per_chip(self, max_sdram_per_chip):
+    def __set_max_sdram_per_chip(self, max_sdram_per_chip: int):
         self._max_sdram_per_chip = max_sdram_per_chip
         max_sdram = get_config_int_or_none(
             "Machine", "max_sdram_allowed_per_chip")
@@ -97,59 +99,64 @@ class AbstractVersion(object, metaclass=AbstractBase):
                     f"{self.name} board ")
             if max_sdram < self._max_sdram_per_chip:
                 logger.warning(
-                    f"Max sdram per chip reduced to {max_sdram_per_chip} "
+                    f"Max SDRAM per chip reduced to {max_sdram_per_chip} "
                     f"due to cfg setting [Machine]max_sdram_allowed_per_chip")
                 self._max_sdram_per_chip = max_sdram
 
-    @abstractproperty
-    def name(self):
+    @property
+    @abstractmethod
+    def name(self) -> str:
         """
-        The name of the Specific version
+        The name of the specific version.
 
         :rtype: str
         """
+        raise NotImplementedError
 
-    @abstractproperty
-    def number(self):
+    @property
+    @abstractmethod
+    def number(self) -> int:
         """
-        The version number that produced this Version
+        The version number that produced this Version.
 
         :rtype: int
         """
-
-    @abstractproperty
-    def board_shape(self):
-        """
-        The width and height of a single board of this type
-
-        :return:
-        """
+        raise NotImplementedError
 
     @property
-    def max_cores_per_chip(self):
+    @abstractmethod
+    def board_shape(self) -> Tuple[int, int]:
         """
-        Gets the max core per chip for the whole system.
+        The width and height of a single board of this type
+        """
+        raise NotImplementedError
 
-        There is no guarantee that there will be any Chips with this many
+    @property
+    def max_cores_per_chip(self) -> int:
+        """
+        Gets the maximum number of cores per chip for the whole system.
+
+        There is no guarantee that there will be any chips with this many
         cores, only that there will be no cores with more.
 
-        :return: the default cores per chip
         :rtype: int
         """
         return self._max_cores_per_chip
 
-    @abstractproperty
-    def n_non_user_cores(self):
+    @property
+    @abstractmethod
+    def n_non_user_cores(self) -> int:
         """
-        The number of user cores per chip
+        The number of system cores per chip.
 
         :rtype: int
         """
+        raise NotImplementedError
 
     @property
-    def max_sdram_per_chip(self):
+    def max_sdram_per_chip(self) -> int:
         """
-        Gets the max SDRAM per chip for the whole system.
+        Gets the maximum SDRAM per chip for the whole system.
 
         While it is likely that all Chips will have this SDRAM
         this should not be counted on. Ask each Chip for its SDRAM.
@@ -160,66 +167,73 @@ class AbstractVersion(object, metaclass=AbstractBase):
         return self._max_sdram_per_chip
 
     @property
-    def n_chips_per_board(self):
+    def n_chips_per_board(self) -> int:
         """
-        The normal number of Chips on each board of this version
+        The normal number of chips on each board of this version.
 
-        Remember that will the board may have dead or excluded chips
+        Remember that will the board may have dead or excluded chips.
 
         :rtype: int
         """
         return len(self.chip_core_map)
 
-    @abstractproperty
-    def n_router_entries(self):
+    @property
+    @abstractmethod
+    def n_router_entries(self) -> int:
         """
         The standard number of router entries in a router table.
 
-        While it is likely that all Chips will have this number it should
-        not be counted on. Ask each Chip's Router for the correct value
+        While it is likely that all chips will have this number it should
+        not be counted on. Ask each chip's router for the correct value.
 
         :rtype: int
         """
+        raise NotImplementedError
 
     @property
-    def expected_xys(self):
+    def expected_xys(self) -> Sequence[XY]:
         """
-        List of the standard x y coordinates of Chips for this version
+        List of the standard x,y coordinates of chips for this version.
 
-        Remember that will the board may have dead or excluded chips
+        Remember that will the board may have dead or excluded chips.
 
         :return:
         """
         return list(self.chip_core_map.keys())
 
-    @abstractproperty
-    def chip_core_map(self):
+    @property
+    @abstractmethod
+    def chip_core_map(self) -> Mapping[XY, int]:
         """
         A map off the expected x,y coordinates on a standard board to
         the most likely number of cores on that chip.
 
         :rtype: dict((int, int), int)
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def get_potential_ethernet_chips(self, width, height):
+    def get_potential_ethernet_chips(
+            self, width: int, height: int) -> Sequence[XY]:
         """
-        Get the coordinates of chips that should be Ethernet chips
+        Get the coordinates of chips that should be Ethernet chips.
 
-        This may well be passed down to SpiNNakerTriadGeometry
+        This may well be passed down to SpiNNakerTriadGeometry.
 
         .. note::
-            This methods assumes that width and height would pass verify_size.
-            It not the results may be wrong
+            This methods assumes that width and height would pass
+            :py:meth:`verify_size`.
+            If not, the results may be wrong.
 
         :param int width: The width of the machine to find the chips in
         :param int height: The height of the machine to find the chips in
         :rtype: list(tuple(int, int))
         """
+        raise NotImplementedError
 
-    def verify_size(self, width, height):
+    def verify_size(self, width: Optional[int], height: Optional[int]):
         """
-        Checks that the width and height are allowed for this version
+        Checks that the width and height are allowed for this version.
 
         :param int width:
         :param int height:
@@ -230,51 +244,56 @@ class AbstractVersion(object, metaclass=AbstractBase):
         if height is None:
             raise SpinnMachineException("Height can not be None")
         if width <= 0:
-            raise SpinnMachineException("Unexpected {width=}")
+            raise SpinnMachineException(f"Unexpected width={width}")
         if height <= 0:
-            raise SpinnMachineException("Unexpected {height=}")
+            raise SpinnMachineException(f"Unexpected height={height}")
         self._verify_size(width, height)
 
     @abstractmethod
-    def _verify_size(self, width, height):
+    def _verify_size(self, width: int, height: int):
         """
-        Adds the width and height checks that depend on the version
+        Implements the width and height checks that depend on the version.
 
         :param int width:
         :param int height:
         :raise SpinnMachineException:
             If the size is unexpected
         """
+        raise NotImplementedError
 
-    def create_machine(self, width, height, origin=None):
+    def create_machine(
+            self, width: Optional[int], height: Optional[int],
+            origin: Optional[str] = None) -> Machine:
         """
-        Creates a new Empty machine based on the width, height and version
+        Creates a new empty machine based on the width, height and version.
 
         :param int width: The width of the machine excluding any virtual chips
         :param int height:
             The height of the machine excluding any virtual chips
         :param origin: Extra information about how this machine was created
-            to be used in the str method. Example "``Virtual``" or "``Json``"
+            to be used in ``str(version)``. Example "``Virtual``" or "``Json``"
         :type origin: str or None
-        :return: A subclass of Machine with no Chips in it
+        :return: A subclass of Machine with no chips in it
         :rtype: ~spinn_machine.Machine
         :raises SpinnMachineInvalidParameterException:
             If the size is unexpected
         """
         self.verify_size(width, height)
-        return self._create_machine(width, height, origin)
+        return self._create_machine(width or 0, height or 0, origin or "")
 
     @abstractmethod
-    def _create_machine(self, width, height, origin):
+    def _create_machine(self, width: int, height: int, origin: str) -> Machine:
         """
-        Creates a new Empty machine based on the width, height and version
+        Create a new empty machine based on the width, height and version.
+        The width and height will have been validated.
 
         :param int width: The width of the machine excluding any virtual chips
         :param int height:
             The height of the machine excluding any virtual chips
         :param origin: Extra information about how this machine was created
             to be used in the str method. Example "``Virtual``" or "``Json``"
-        :type origin: str or None
+        :type origin: str
         :return: A subclass of Machine with no Chips in it
         :rtype: ~spinn_machine.Machine
         """
+        raise NotImplementedError

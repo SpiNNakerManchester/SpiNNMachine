@@ -18,21 +18,22 @@ from .abstract_version import AbstractVersion
 
 
 class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
+    # pylint: disable=abstract-method
     """
     Shared code for all Spin1 board versions
     """
 
-    __slots__ = []
+    __slots__ = ()
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(max_cores_per_chip=18, max_sdram_per_chip=123469792)
 
     @property
     @overrides(AbstractVersion.n_non_user_cores)
-    def n_non_user_cores(self):
+    def n_non_user_cores(self) -> int:
         return 1
 
     @property
     @overrides(AbstractVersion.n_router_entries)
-    def n_router_entries(self):
+    def n_router_entries(self) -> int:
         return 1023

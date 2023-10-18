@@ -11,17 +11,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import annotations
+import logging
+from typing import (
+    Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Union,
+    TYPE_CHECKING)
+from typing_extensions import TypeAlias
+from spinn_utilities.abstract_base import AbstractBase, abstractmethod
+from spinn_utilities.typing.coords import XY
 
 from collections import Counter
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
 from spinn_machine.data import MachineDataView
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
-from spinn_utilities.abstract_base import (
-    AbstractBase, abstractproperty, abstractmethod)
-import logging
+if TYPE_CHECKING:
+    from .chip import Chip
 
 logger = logging.getLogger(__name__)
+_SpinLinkKey: TypeAlias = Tuple[Union[str, XY], int]
+_FpgaLinkKey: TypeAlias = Tuple[Union[str, XY], int, int]
 
 
 class Machine(object, metaclass=AbstractBase):
@@ -68,7 +77,8 @@ class Machine(object, metaclass=AbstractBase):
         "_width"
     )
 
-    def __init__(self, width, height, chip_core_map, origin=None):
+    def __init__(self, width: int, height: int, chip_core_map: Dict[XY, int],
+                 origin: str = ""):
         """
         :param int width: The width of the machine excluding
         :param int height:
@@ -88,32 +98,29 @@ class Machine(object, metaclass=AbstractBase):
         self._chip_core_map = chip_core_map
 
         # The list of chips with Ethernet connections
-        self._ethernet_connected_chips = list()
+        self._ethernet_connected_chips: List[Chip] = list()
 
         # The dictionary of SpiNNaker links by board address and "ID" (int)
-        self._spinnaker_links = dict()
+        self._spinnaker_links: Dict[_SpinLinkKey, SpinnakerLinkData] = dict()
 
         # The dictionary of FPGA links by board address, FPGA and link ID
-        self._fpga_links = dict()
+        self._fpga_links: Dict[_FpgaLinkKey, FPGALinkData] = dict()
 
         # Store the boot chip information
-        self._boot_ethernet_address = None
+        self._boot_ethernet_address: Optional[str] = None
 
         # The dictionary of chips
-        self._chips = dict()
+        self._chips: Dict[XY, Chip] = dict()
 
-        if origin is None:
-            self._origin = ""
-        else:
-            self._origin = origin
+        self._origin = origin
 
-        self._n_cores_counter = Counter()
-        self._n_links_counter = Counter()
-        self._n_router_entries_counter = Counter()
-        self._sdram_counter = Counter()
+        self._n_cores_counter: Counter[int] = Counter()
+        self._n_links_counter: Counter[int] = Counter()
+        self._n_router_entries_counter: Counter[int] = Counter()
+        self._sdram_counter: Counter[int] = Counter()
 
     @abstractmethod
-    def multiple_48_chip_boards(self):
+    def multiple_48_chip_boards(self) -> bool:
         """
         Checks that the width and height correspond to the expected size for a
         multi-board machine made up of more than one 48 chip board.
@@ -125,9 +132,11 @@ class Machine(object, metaclass=AbstractBase):
         :return: True if this machine can have multiple 48 chip boards
         :rtype: bool
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def get_xys_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_xys_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
         """
         Yields the potential x,y locations of all the chips on the board
         with this Ethernet-enabled chip. Including the Ethernet-enabled chip
@@ -152,9 +161,12 @@ class Machine(object, metaclass=AbstractBase):
             this board.
         :rtype: iterable(tuple(int,int))
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def get_xy_cores_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_xy_cores_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[
+                Tuple[XY, int]]:
         """
         Yields the potential (x,y) locations and the typical number of cores
         of all the chips on the board with this Ethernet-enabled chip.
@@ -181,14 +193,16 @@ class Machine(object, metaclass=AbstractBase):
             The X coordinate of a (local 0,0) legal Ethernet-enabled chip
         :param int ethernet_y:
             The Y coordinate of a (local 0,0) legal Ethernet-enabled chip
-        :return: Yields (x, y, n_cores) where x , y are coordinates of all
-            the potential chips on this board, and n_cores is the typical
+        :return: Yields `((x, y), n_cores)` where `x, y` are coordinates of all
+            the potential chips on this board, and `n_cores` is the typical
             number of cores for a chip in that position.
-        :rtype: iterable(tuple(int,int))
+        :rtype: iterable(tuple(tuple(int,int),int))
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def get_down_xys_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_down_xys_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
         """
         Yields the (x,y) coordinates of the down chips on the board with this
         Ethernet-enabled chip.
@@ -207,8 +221,10 @@ class Machine(object, metaclass=AbstractBase):
         :return: Yields the (x, y) of the down chips on this board.
         :rtype: iterable(tuple(int,int))
         """
+        raise NotImplementedError
 
-    def get_chips_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_chips_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[Chip]:
         """
         Yields the actual chips on the board with this Ethernet-enabled chip.
         Including the Ethernet-enabled chip itself.
@@ -229,7 +245,8 @@ class Machine(object, metaclass=AbstractBase):
             yield self._chips[chip_xy]
 
     @abstractmethod
-    def get_existing_xys_by_ethernet(self, ethernet_x, ethernet_y):
+    def get_existing_xys_by_ethernet(
+            self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
         """
         Yields the (x,y)s of actual chips on the board with this
         Ethernet-enabled chip.
@@ -246,9 +263,10 @@ class Machine(object, metaclass=AbstractBase):
         :return: Yields the (x,y)s of chips on this board.
         :rtype: iterable(tuple(int,int))
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def xy_over_link(self, x, y, link):
+    def xy_over_link(self, x: int, y: int, link: int) -> XY:
         """
         Get the potential (x,y) location of the chip reached over this link.
 
@@ -278,9 +296,10 @@ class Machine(object, metaclass=AbstractBase):
             valid or some fictional (x,y) if not.
         :rtype: tuple(int,int)
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def get_local_xy(self, chip):
+    def get_local_xy(self, chip: Chip) -> XY:
         """
         Converts the x and y coordinates into the local coordinates on the
         board as if the Ethernet-enabled chip was at position 0,0.
@@ -294,8 +313,9 @@ class Machine(object, metaclass=AbstractBase):
         :return: Local (x, y) coordinates.
         :rtype: tuple(int,int)
         """
+        raise NotImplementedError
 
-    def where_is_chip(self, chip):
+    def where_is_chip(self, chip: Chip) -> str:
         """
         Returns global and local location for this chip.
 
@@ -306,14 +326,13 @@ class Machine(object, metaclass=AbstractBase):
         :return: A human-readable description of the location of a chip.
         :rtype: str
         """
-        chip00 = self.get_chip_at(0, 0)
-        local00 = self.get_chip_at(
-            chip.nearest_ethernet_x, chip.nearest_ethernet_y)
+        chip00 = self[0, 0]
+        local00 = self[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
         (localx, localy) = self.get_local_xy(chip)
         return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
                 f"is chip {localx}, {localy} on {local00.ip_address}")
 
-    def where_is_xy(self, x, y):
+    def where_is_xy(self, x: int, y: int) -> str:
         """
         Returns global and local location for this chip.
 
@@ -328,7 +347,9 @@ class Machine(object, metaclass=AbstractBase):
         return f"No chip {x}, {y} found"
 
     @abstractmethod
-    def get_global_xy(self, local_x, local_y, ethernet_x, ethernet_y):
+    def get_global_xy(
+            self, local_x: int, local_y: int,
+            ethernet_x: int, ethernet_y: int) -> XY:
         """
         Converts the local (X, Y) coordinates into global (x,y) coordinates,
         under the assumption that they are on the board with local (0,0) at
@@ -351,9 +372,10 @@ class Machine(object, metaclass=AbstractBase):
         :return: global (x,y) coordinates of the chip
         :rtype: tuple(int,int)
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def get_vector_length(self, source, destination):
+    def get_vector_length(self, source: XY, destination: XY) -> int:
         """
         Get the mathematical length of the shortest vector (x, y, z) from
         source to destination.
@@ -396,11 +418,15 @@ class Machine(object, metaclass=AbstractBase):
         :return: The distance in steps
         :rtype: int
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def get_vector(self, source, destination):
+    def get_vector(self, source: XY, destination: XY) -> Tuple[int, int, int]:
         """
         Get mathematical shortest vector (x, y, z) from source to destination.
+        The z direction uses the diagonal inter-chip links; (0,0,1) is
+        equivalent to (1,1,0) in terms of where it reaches but uses a more
+        efficient route.
 
         This method does not check if the chips and links it assumes to take
         actually exist.
@@ -421,9 +447,10 @@ class Machine(object, metaclass=AbstractBase):
         :type destination: tuple(int, int)
         :return: The vector
         """
+        raise NotImplementedError
 
     @abstractmethod
-    def concentric_xys(self, radius, start):
+    def concentric_xys(self, radius: int, start: XY) -> Iterable[XY]:
         """
         A generator that produces coordinates for concentric rings of
         possible chips based on the links of the chips.
@@ -436,10 +463,11 @@ class Machine(object, metaclass=AbstractBase):
 
         :param int radius: The radius of rings to produce (0 = start only)
         :param tuple(int,int) start: The start coordinate
-        :rtype: tuple(int,int)
+        :rtype: iterable(tuple(int,int))
         """
+        raise NotImplementedError
 
-    def validate(self):
+    def validate(self) -> None:
         """
         Validates the machine and raises an exception in unexpected conditions.
 
@@ -504,15 +532,17 @@ class Machine(object, metaclass=AbstractBase):
                     raise SpinnMachineException(
                         f"{chip} has an unexpected local xy of {local_xy}")
 
-    @abstractproperty
-    def wrap(self):
+    @property
+    @abstractmethod
+    def wrap(self) -> str:
         """
         A short string representing the type of wrap.
 
         :rtype: str
         """
+        raise NotImplementedError
 
-    def add_chip(self, chip):
+    def add_chip(self, chip: Chip):
         """
         Add a chip to the machine.
 
@@ -539,7 +569,7 @@ class Machine(object, metaclass=AbstractBase):
             if (chip.x == 0) and (chip.y == 0):
                 self._boot_ethernet_address = chip.ip_address
 
-    def add_chips(self, chips):
+    def add_chips(self, chips: Iterable[Chip]):
         """
         Add some chips to the machine.
 
@@ -552,16 +582,16 @@ class Machine(object, metaclass=AbstractBase):
             self.add_chip(next_chip)
 
     @property
-    def chips(self):
+    def chips(self) -> Iterator[Chip]:
         """
         An iterable of chips in the machine.
 
-        :rtype: iterable(:py:class:`~spinn_machine.Chip`)
+        :rtype: iterable(Chip)
         """
         return iter(self._chips.values())
 
     @property
-    def chip_coordinates(self):
+    def chip_coordinates(self) -> Iterator[XY]:
         """
         An iterable of chip coordinates in the machine.
 
@@ -569,7 +599,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return iter(self._chips.keys())
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Tuple[XY, Chip]]:
         """
         Get an iterable of the chip coordinates and chips.
 
@@ -582,7 +612,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return iter(self._chips.items())
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Get the total number of chips.
 
@@ -591,7 +621,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return len(self._chips)
 
-    def get_chip_at(self, x, y):
+    def get_chip_at(self, x: int, y: int) -> Optional[Chip]:
         """
         Get the chip at a specific (x, y) location.
         Also implemented as ``__getitem__((x, y))``
@@ -602,25 +632,21 @@ class Machine(object, metaclass=AbstractBase):
             or ``None`` if no such chip
         :rtype: ~spinn_machine.Chip or None
         """
-        chip_id = (x, y)
-        if chip_id in self._chips:
-            return self._chips[chip_id]
-        return None
+        return self._chips.get((x, y))
 
-    def __getitem__(self, x_y_tuple):
+    def __getitem__(self, x_y_tuple: XY) -> Chip:
         """
         Get the chip at a specific (x, y) location.
 
         :param tuple(int,int) x_y_tuple: A tuple of (x, y) where:
             * x is the x-coordinate of the chip to retrieve
             * y is the y-coordinate of the chip to retrieve
-        :return: the chip at the specified location, or `None` if no such chip
-        :rtype: ~spinn_machine.Chip or None
+        :return: the chip at the specified location
+        :rtype: ~spinn_machine.Chip
         """
-        x, y = x_y_tuple
-        return self.get_chip_at(x, y)
+        return self._chips[x_y_tuple]
 
-    def is_chip_at(self, x, y):
+    def is_chip_at(self, x: int, y: int) -> bool:
         """
         Determine if a chip exists at the given coordinates.
         Also implemented as ``__contains__((x, y))``
@@ -632,7 +658,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return (x, y) in self._chips
 
-    def is_link_at(self, x, y, link):
+    def is_link_at(self, x: int, y: int, link: int) -> bool:
         """
         Determine if a link exists at the given coordinates.
 
@@ -642,7 +668,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return (x, y) in self._chips and self._chips[x, y].router.is_link(link)
 
-    def __contains__(self, x_y_tuple):
+    def __contains__(self, x_y_tuple: XY):
         """
         Determine if a chip exists at the given coordinates.
 
@@ -653,11 +679,10 @@ class Machine(object, metaclass=AbstractBase):
         :return: True if the chip exists, False otherwise
         :rtype: bool
         """
-        x, y = x_y_tuple
-        return self.is_chip_at(x, y)
+        return x_y_tuple in self._chips
 
     @property
-    def width(self):
+    def width(self) -> int:
         """
         The width of the machine, in chips.
 
@@ -666,7 +691,7 @@ class Machine(object, metaclass=AbstractBase):
         return self._width
 
     @property
-    def height(self):
+    def height(self) -> int:
         """
         The height of the machine, in chips.
 
@@ -675,7 +700,7 @@ class Machine(object, metaclass=AbstractBase):
         return self._height
 
     @property
-    def n_chips(self):
+    def n_chips(self) -> int:
         """
         The number of chips in the machine.
 
@@ -684,7 +709,7 @@ class Machine(object, metaclass=AbstractBase):
         return len(self._chips)
 
     @property
-    def ethernet_connected_chips(self):
+    def ethernet_connected_chips(self) -> Sequence[Chip]:
         """
         The chips in the machine that have an Ethernet connection.
 
@@ -693,7 +718,8 @@ class Machine(object, metaclass=AbstractBase):
         return self._ethernet_connected_chips
 
     @property
-    def spinnaker_links(self):
+    def spinnaker_links(self) -> Iterator[
+            Tuple[_SpinLinkKey, SpinnakerLinkData]]:
         """
         The set of SpiNNaker links in the machine.
 
@@ -703,7 +729,8 @@ class Machine(object, metaclass=AbstractBase):
         return iter(self._spinnaker_links.items())
 
     def get_spinnaker_link_with_id(
-            self, spinnaker_link_id, board_address=None, chip_coords=None):
+            self, spinnaker_link_id: int, board_address: Optional[str] = None,
+            chip_coords: Optional[XY] = None) -> SpinnakerLinkData:
         """
         Get a SpiNNaker link with a given ID.
 
@@ -719,7 +746,7 @@ class Machine(object, metaclass=AbstractBase):
             with. If this is `None` and board_address is `None`, the boot board
             will be assumed.
         :type chip_coords: tuple(int, int) or None
-        :return: The SpiNNaker link data or `None` if no link
+        :return: The SpiNNaker link data
         :rtype: ~spinn_machine.link_data_objects.SpinnakerLinkData
         """
         # Try chip coordinates first
@@ -730,8 +757,8 @@ class Machine(object, metaclass=AbstractBase):
                     " are specified")
             if chip_coords not in self._chips:
                 raise KeyError(f"No chip {chip_coords} found!")
-            key = (chip_coords, spinnaker_link_id)
-            link_data = self._spinnaker_links.get(key, None)
+            c_key = (chip_coords, spinnaker_link_id)
+            link_data = self._spinnaker_links.get(c_key, None)
             if link_data is not None:
                 return link_data
             raise KeyError(
@@ -741,15 +768,18 @@ class Machine(object, metaclass=AbstractBase):
         # Otherwise try board address.
         if board_address is None:
             board_address = self._boot_ethernet_address
-        key = (board_address, spinnaker_link_id)
-        if key not in self._spinnaker_links:
+            assert board_address is not None
+        a_key = (board_address, spinnaker_link_id)
+        if a_key not in self._spinnaker_links:
             raise KeyError(
                 f"SpiNNaker Link {spinnaker_link_id} does not exist on board"
                 f" {board_address}")
-        return self._spinnaker_links[key]
+        return self._spinnaker_links[a_key]
 
     def get_fpga_link_with_id(
-            self, fpga_id, fpga_link_id, board_address=None, chip_coords=None):
+            self, fpga_id: int, fpga_link_id: int,
+            board_address: Optional[str] = None,
+            chip_coords: Optional[XY] = None) -> FPGALinkData:
         """
         Get an FPGA link data item that corresponds to the FPGA and FPGA
         link for a given board address.
@@ -773,7 +803,7 @@ class Machine(object, metaclass=AbstractBase):
             If this is `None` and board_address is `None`, the boot board
             will be assumed.
         :type chip_coords: tuple(int, int) or None
-        :return: the given FPGA link object or ``None`` if no such link
+        :return: the given FPGA link object
         :rtype: ~spinn_machine.link_data_objects.FPGALinkData
         """
         # Try chip coordinates first
@@ -784,8 +814,8 @@ class Machine(object, metaclass=AbstractBase):
                     " are specified")
             if chip_coords not in self._chips:
                 raise KeyError(f"No chip {chip_coords} found!")
-            key = (chip_coords, fpga_id, fpga_link_id)
-            link_data = self._fpga_links.get(key, None)
+            c_key = (chip_coords, fpga_id, fpga_link_id)
+            link_data = self._fpga_links.get(c_key, None)
             if link_data is not None:
                 return link_data
             raise KeyError(
@@ -795,40 +825,45 @@ class Machine(object, metaclass=AbstractBase):
         # Otherwise try board address
         if board_address is None:
             board_address = self._boot_ethernet_address
-        key = (board_address, fpga_id, fpga_link_id)
-        if key not in self._fpga_links:
+            assert board_address is not None
+        b_key = (board_address, fpga_id, fpga_link_id)
+        if b_key not in self._fpga_links:
             raise KeyError(
                 f"FPGA Link {fpga_id}:{fpga_link_id} does not exist on board"
                 f" {board_address}")
-        return self._fpga_links[key]
+        return self._fpga_links[b_key]
 
-    def add_spinnaker_links(self):
+    def add_spinnaker_links(self) -> None:
         """
         Add SpiNNaker links that are on a given machine depending on the
         version of the board.
         """
         if self._width == self._height == 2:
-            chip_0_0 = self.get_chip_at(0, 0)
+            chip_0_0 = self[0, 0]
+            ip_0_0 = chip_0_0.ip_address
+            assert ip_0_0 is not None
             if not chip_0_0.router.is_link(3):
-                self._add_spinnaker_link(0, 0, 0, 3, chip_0_0.ip_address)
+                self._add_spinnaker_link(0, 0, 0, 3, ip_0_0)
             chip = self.get_chip_at(1, 0)
-            if not chip.router.is_link(0):
-                self._add_spinnaker_link(1, 1, 0, 0, chip_0_0.ip_address)
+            if chip is not None and not chip.router.is_link(0):
+                self._add_spinnaker_link(1, 1, 0, 0, ip_0_0)
         elif (self._width == self._height == 8) or \
                 self.multiple_48_chip_boards():
             for chip in self._ethernet_connected_chips:
                 if not chip.router.is_link(4):
-                    self._add_spinnaker_link(
-                        0, chip.x, chip.y, 4, chip.ip_address)
+                    ip = chip.ip_address
+                    assert ip is not None
+                    self._add_spinnaker_link(0, chip.x, chip.y, 4, ip)
 
     def _add_spinnaker_link(
-            self, spinnaker_link_id, x, y, link, board_address):
+            self, spinnaker_link_id: int, x: int, y: int, link: int,
+            board_address: str):
         link_data = SpinnakerLinkData(
             spinnaker_link_id, x, y, link, board_address)
         self._spinnaker_links[board_address, spinnaker_link_id] = link_data
         self._spinnaker_links[(x, y), spinnaker_link_id] = link_data
 
-    def add_fpga_links(self):
+    def add_fpga_links(self) -> None:
         """
         Add FPGA links that are on a given machine depending on the
         version of the board.
@@ -856,6 +891,7 @@ class Machine(object, metaclass=AbstractBase):
                 ex = ethernet_connected_chip.x
                 ey = ethernet_connected_chip.y
                 ip = ethernet_connected_chip.ip_address
+                assert ip is not None
 
                 # List of x, y, l1, l2, dx, dy where:
                 #     x = start x
@@ -890,9 +926,10 @@ class Machine(object, metaclass=AbstractBase):
                             x += dx
                             y += dy
 
-    # pylint: disable=too-many-arguments
-    def _add_fpga_link(self, fpga_id, fpga_link, x, y, link, board_address,
-                       ex, ey):
+    def _add_fpga_link(
+            self, fpga_id: int, fpga_link: int, x: int, y: int, link: int,
+            board_address: str, ex: int, ey: int):
+        # pylint: disable=too-many-arguments
         if self.is_chip_at(x, y):
             link_data = FPGALinkData(
                 fpga_link_id=fpga_link, fpga_id=fpga_id,
@@ -905,19 +942,19 @@ class Machine(object, metaclass=AbstractBase):
             self._fpga_links[(ex, ey), fpga_id, fpga_link] = link_data
 
     @staticmethod
-    def _next_fpga_link(fpga_id, fpga_link):
+    def _next_fpga_link(fpga_id: int, fpga_link: int) -> Tuple[int, int]:
         if fpga_link == 15:
             return fpga_id + 1, 0
         return fpga_id, fpga_link + 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (f"[{self._origin}{self.wrap}Machine: width={self._width}, "
                 f"height={self._height}, n_chips={len(self._chips)}]")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
-    def get_cores_count(self):
+    def get_cores_count(self) -> int:
         """
         Get the number of cores from the machine.
 
@@ -926,7 +963,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return sum(n * count for n, count in self._n_cores_counter.items())
 
-    def get_links_count(self):
+    def get_links_count(self) -> float:
         """
         Get the number of links from the machine.
 
@@ -935,13 +972,13 @@ class Machine(object, metaclass=AbstractBase):
 
         SpiNNaker and FPGA links are not included.
 
-        :return: n_links
-        :rtype: int
+        :return: n_links; fractional parts indicate partial link problems
+        :rtype: float
         """
         return sum(n * count for n, count in self._n_links_counter.items()) / 2
 
     @property
-    def min_n_router_enteries(self):
+    def min_n_router_enteries(self) -> int:
         """
         The minimum number of router_enteries found on any Chip
 
@@ -950,7 +987,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return sorted(self._n_router_entries_counter.keys())[-1]
 
-    def summary_string(self):
+    def summary_string(self) -> str:
         """
         Gets a summary of the Machine and logs warnings for weirdness
 
@@ -1009,7 +1046,7 @@ class Machine(object, metaclass=AbstractBase):
             f"Chips have {sdram_st}, {routers_st}, {cores_st} and {links_st}.")
 
     @property
-    def boot_chip(self):
+    def boot_chip(self) -> Chip:
         """
         The chip used to boot the machine.
 
@@ -1017,7 +1054,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return self._chips[0, 0]
 
-    def get_existing_xys_on_board(self, chip):
+    def get_existing_xys_on_board(self, chip: Chip) -> Iterable[XY]:
         """
         Get the chips that are on the same board as the given chip.
 
@@ -1029,7 +1066,7 @@ class Machine(object, metaclass=AbstractBase):
             chip.nearest_ethernet_x, chip.nearest_ethernet_y)
 
     @property
-    def total_available_user_cores(self):
+    def total_available_user_cores(self) -> int:
         """
         The total number of cores on the machine which are not
         monitor cores.
@@ -1039,7 +1076,7 @@ class Machine(object, metaclass=AbstractBase):
         return sum(chip.n_user_processors for chip in self.chips)
 
     @property
-    def total_cores(self):
+    def total_cores(self) -> int:
         """
         The total number of cores on the machine, including monitors.
 
@@ -1048,7 +1085,7 @@ class Machine(object, metaclass=AbstractBase):
         return sum(
             1 for chip in self.chips for _processor in chip.processors)
 
-    def unreachable_outgoing_chips(self):
+    def unreachable_outgoing_chips(self) -> List[XY]:
         """
         Detects chips that can not reach any of their neighbours.
 
@@ -1058,19 +1095,17 @@ class Machine(object, metaclass=AbstractBase):
             unreachable chips.
         :rtype: list(tuple(int,int))
         """
-        removable_coords = list()
+        removable_coords: List[XY] = list()
         for (x, y) in self.chip_coordinates:
             # If no links out of the chip work, remove it
-            is_link = False
             for link in range(6):
                 if self.is_link_at(x, y, link):
-                    is_link = True
                     break
-            if not is_link:
+            else:
                 removable_coords.append((x, y))
         return removable_coords
 
-    def unreachable_incoming_chips(self):
+    def unreachable_incoming_chips(self) -> List[XY]:
         """
         Detects chips that are not reachable from any of their neighbours.
 
@@ -1080,23 +1115,21 @@ class Machine(object, metaclass=AbstractBase):
             unreachable chips.
         :rtype: list(tuple(int,int))
         """
-        removable_coords = list()
+        removable_coords: List[XY] = list()
         for (x, y) in self.chip_coordinates:
             # Go through all the chips that surround this one
             moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
-            is_link = False
             for link, (x_move, y_move) in enumerate(moves):
                 opposite = (link + 3) % 6
                 next_x = x + x_move
                 next_y = y + y_move
                 if self.is_link_at(next_x, next_y, opposite):
-                    is_link = True
                     break
-            if not is_link:
+            else:
                 removable_coords.append((x, y))
         return removable_coords
 
-    def unreachable_outgoing_local_chips(self):
+    def unreachable_outgoing_local_chips(self) -> List[XY]:
         """
         Detects chips that can not reach any of their *local* neighbours.
 
@@ -1106,13 +1139,11 @@ class Machine(object, metaclass=AbstractBase):
             unreachable chips.
         :rtype: list(tuple(int,int))
         """
-        removable_coords = list()
+        removable_coords: List[XY] = list()
         for chip in self._chips.values():
             # If no links out of the chip work, remove it
-            is_link = False
             moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
-            x = chip.x
-            y = chip.y
+            x, y = chip.x, chip.y
             nearest_ethernet_x = chip.nearest_ethernet_x
             nearest_ethernet_y = chip.nearest_ethernet_y
             for link, (x_move, y_move) in enumerate(moves):
@@ -1124,13 +1155,12 @@ class Machine(object, metaclass=AbstractBase):
                                 nearest_ethernet_x and
                             neighbour.nearest_ethernet_y ==
                                 nearest_ethernet_y):
-                            is_link = True
                             break
-            if not is_link:
+            else:
                 removable_coords.append((x, y))
         return removable_coords
 
-    def unreachable_incoming_local_chips(self):
+    def unreachable_incoming_local_chips(self) -> List[XY]:
         """
         Detects chips that are not reachable from any of their *local*
         neighbours.
@@ -1141,15 +1171,13 @@ class Machine(object, metaclass=AbstractBase):
             unreachable chips.
         :rtype: list(tuple(int,int))
         """
-        removable_coords = list()
+        removable_coords: List[XY] = list()
         for chip in self._chips.values():
-            x = chip.x
-            y = chip.y
+            x, y = chip.x, chip.y
             nearest_ethernet_x = chip.nearest_ethernet_x
             nearest_ethernet_y = chip.nearest_ethernet_y
             # Go through all the chips that surround this one
             moves = [(-1, 0), (-1, -1), (0, -1), (1, 0), (1, 1), (0, 1)]
-            is_link = False
             for opposite, (x_move, y_move) in enumerate(moves):
                 n_x_y = (x + x_move, y + y_move)
                 if n_x_y in self._chips:
@@ -1159,13 +1187,12 @@ class Machine(object, metaclass=AbstractBase):
                                 nearest_ethernet_x and
                             neighbour.nearest_ethernet_y ==
                                 nearest_ethernet_y):
-                            is_link = True
                             break
-            if not is_link:
+            else:
                 removable_coords.append((x, y))
         return removable_coords
 
-    def one_way_links(self):
+    def one_way_links(self) -> Iterable[Tuple[int, int, int, int]]:
         """
         :rtype: iterable(tuple(int,int,int))
         """
@@ -1178,7 +1205,8 @@ class Machine(object, metaclass=AbstractBase):
                             link.destination_x, link.destination_y, back):
                         yield chip.x, chip.y, out, back
 
-    def _minimize_vector(self, x, y):
+    @staticmethod
+    def _minimize_vector(x: int, y: int) -> Tuple[int, int, int]:
         """
         Minimizes an (x, y, 0) vector.
 
@@ -1218,7 +1246,7 @@ class Machine(object, metaclass=AbstractBase):
                     return (x - y, 0, -y)
 
     @property
-    def local_xys(self):
+    def local_xys(self) -> Iterable[XY]:
         """
         Provides a list of local (x,y) coordinates for a perfect board on this
         machine.
@@ -1233,7 +1261,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return self._chip_core_map.keys()
 
-    def get_unused_xy(self):
+    def get_unused_xy(self) -> XY:
         """
         Finds an unused (x,y) coordinate on this machine.
 
@@ -1250,7 +1278,7 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: (int, int)
         """
         # get a set of xys that could be connected to any existing ethernet
-        xys_by_ethernet = set()
+        xys_by_ethernet: Set[XY] = set()
         for ethernet in self.ethernet_connected_chips:
             xys_by_ethernet.update(
                 self.get_xys_by_ethernet(ethernet.x, ethernet.y))
@@ -1262,7 +1290,8 @@ class Machine(object, metaclass=AbstractBase):
                     return xy
             x += 1
 
-    def _basic_concentric_xys(self, radius, start):
+    @staticmethod
+    def _basic_concentric_xys(radius: int, start: XY) -> Iterator[XY]:
         """
         Generates concentric (x,y)s from start without accounting for wrap
         around or checking if the chip exists.

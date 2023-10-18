@@ -11,10 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import (
+    Any, Collection, Dict, Iterable, Iterator, Optional, Tuple)
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine.data import MachineDataView
 from .processor import Processor
+from .router import Router
 
 standard_processors = {}
 
@@ -40,10 +42,13 @@ class Chip(object):
     )
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
-    def __init__(self, x, y, n_processors, router, sdram, nearest_ethernet_x,
-                 nearest_ethernet_y, ip_address=None,
-                 tag_ids=None, down_cores=None, parent_link=None,
-                 v_to_p_map=None):
+    def __init__(self, x: int, y: int, n_processors: int, router: Router,
+                 sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
+                 ip_address: Optional[str] = None,
+                 tag_ids: Optional[Iterable[int]] = None,
+                 down_cores: Optional[Collection[int]] = None,
+                 parent_link: Optional[int] = None,
+                 v_to_p_map: Optional[bytes] = None):
         """
         :param int x: the x-coordinate of the chip's position in the
             two-dimensional grid of chips
@@ -52,7 +57,7 @@ class Chip(object):
         :param int n_processors:
             the number of processors including monitor processors.
         :param ~spinn_machine.Router router: a router for the chip
-        :param ~spinn_machine.SDRAM sdram: an SDRAM for the chip
+        :param int sdram: an SDRAM for the chip
         :param ip_address:
             the IP address of the chip, or ``None`` if no Ethernet attached
         :type ip_address: str or None
@@ -83,9 +88,9 @@ class Chip(object):
         self._sdram = sdram
         self._ip_address = ip_address
         if tag_ids is not None:
-            self._tag_ids = tag_ids
+            self._tag_ids = OrderedSet(tag_ids)
         elif self._ip_address is None:
-            self._tag_ids = []
+            self._tag_ids = OrderedSet()
         else:
             self._tag_ids = self._IPTAG_IDS
         self._nearest_ethernet_x = nearest_ethernet_x
@@ -93,7 +98,9 @@ class Chip(object):
         self._parent_link = parent_link
         self._v_to_p_map = v_to_p_map
 
-    def __generate_processors(self, n_processors, down_cores):
+    def __generate_processors(
+            self, n_processors: int,
+            down_cores: Optional[Collection[int]]) -> Dict[int, Processor]:
         if down_cores is None:
             if n_processors not in standard_processors:
                 processors = dict()
@@ -117,7 +124,7 @@ class Chip(object):
                     MachineDataView.get_machine_version().n_non_user_cores)
             return processors
 
-    def is_processor_with_id(self, processor_id):
+    def is_processor_with_id(self, processor_id: int) -> bool:
         """
         Determines if a processor with the given ID exists in the chip.
         Also implemented as ``__contains__(processor_id)``
@@ -128,7 +135,7 @@ class Chip(object):
         """
         return processor_id in self._p
 
-    def get_processor_with_id(self, processor_id):
+    def get_processor_with_id(self, processor_id: int) -> Optional[Processor]:
         """
         Return the processor with the specified ID, or ``None`` if the
         processor does not exist.
@@ -139,12 +146,10 @@ class Chip(object):
             or ``None`` if no such processor
         :rtype: Processor or None
         """
-        if processor_id in self._p:
-            return self._p[processor_id]
-        return None
+        return self._p.get(processor_id)
 
     @property
-    def x(self):
+    def x(self) -> int:
         """
         The X-coordinate of the chip in the two-dimensional grid of chips.
 
@@ -153,7 +158,7 @@ class Chip(object):
         return self._x
 
     @property
-    def y(self):
+    def y(self) -> int:
         """
         The Y-coordinate of the chip in the two-dimensional grid of chips.
 
@@ -162,7 +167,7 @@ class Chip(object):
         return self._y
 
     @property
-    def processors(self):
+    def processors(self) -> Iterator[Processor]:
         """
         An iterable of available processors.
 
@@ -171,7 +176,7 @@ class Chip(object):
         return iter(self._p.values())
 
     @property
-    def n_processors(self):
+    def n_processors(self) -> int:
         """
         The total number of processors.
 
@@ -180,7 +185,7 @@ class Chip(object):
         return len(self._p)
 
     @property
-    def n_user_processors(self):
+    def n_user_processors(self) -> int:
         """
         The total number of processors that are not monitors.
 
@@ -189,7 +194,7 @@ class Chip(object):
         return self._n_user_processors
 
     @property
-    def router(self):
+    def router(self) -> Router:
         """
         The router object associated with the chip.
 
@@ -198,16 +203,16 @@ class Chip(object):
         return self._router
 
     @property
-    def sdram(self):
+    def sdram(self) -> int:
         """
         The SDRAM associated with the chip.
 
-        :rtype: SDRAM
+        :rtype: int
         """
         return self._sdram
 
     @property
-    def ip_address(self):
+    def ip_address(self) -> Optional[str]:
         """
         The IP address of the chip, or ``None`` if there is no Ethernet
         connected to the chip.
@@ -217,7 +222,7 @@ class Chip(object):
         return self._ip_address
 
     @property
-    def nearest_ethernet_x(self):
+    def nearest_ethernet_x(self) -> int:
         """
         The X-coordinate of the nearest Ethernet chip.
 
@@ -226,7 +231,7 @@ class Chip(object):
         return self._nearest_ethernet_x
 
     @property
-    def nearest_ethernet_y(self):
+    def nearest_ethernet_y(self) -> int:
         """
         The Y-coordinate of the nearest Ethernet chip.
 
@@ -235,7 +240,7 @@ class Chip(object):
         return self._nearest_ethernet_y
 
     @property
-    def tag_ids(self):
+    def tag_ids(self) -> Iterable[int]:
         """
         The tag IDs supported by this chip.
 
@@ -243,7 +248,7 @@ class Chip(object):
         """
         return self._tag_ids
 
-    def get_first_none_monitor_processor(self):
+    def get_first_none_monitor_processor(self) -> Optional[Processor]:
         """
         Get the first processor in the list which is not a monitor core.
 
@@ -255,7 +260,7 @@ class Chip(object):
         return None
 
     @property
-    def parent_link(self):
+    def parent_link(self) -> Optional[int]:
         """
         The link down which the parent is found in the tree of chips rooted
         at the machine root chip (probably 0, 0 in most cases).  This will
@@ -265,7 +270,7 @@ class Chip(object):
         """
         return self._parent_link
 
-    def get_physical_core_id(self, virtual_p):
+    def get_physical_core_id(self, virtual_p: int) -> Optional[int]:
         """
         Get the physical core ID from a virtual core ID.
 
@@ -277,7 +282,7 @@ class Chip(object):
             return None
         return self._v_to_p_map[virtual_p]
 
-    def get_physical_core_string(self, virtual_p):
+    def get_physical_core_string(self, virtual_p: int) -> str:
         """
         Get a string that can be appended to a core to show the physical
         core, or an empty string if not possible.
@@ -290,7 +295,7 @@ class Chip(object):
             return ""
         return f" (ph: {physical_p})"
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Tuple[int, Processor]]:
         """
         Get an iterable of processor identifiers and processors
 
@@ -301,7 +306,7 @@ class Chip(object):
         """
         return iter(self._p.items())
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         The number of processors associated with this chip.
 
@@ -310,17 +315,17 @@ class Chip(object):
         """
         return len(self._p)
 
-    def __getitem__(self, processor_id):
+    def __getitem__(self, processor_id: int) -> Processor:
         if processor_id in self._p:
             return self._p[processor_id]
         # Note difference from get_processor_with_id(); this is to conform to
         # standard Python semantics
         raise KeyError(processor_id)
 
-    def __contains__(self, processor_id):
+    def __contains__(self, processor_id: int) -> bool:
         return self.is_processor_with_id(processor_id)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"[Chip: x={self._x}, y={self._y}, "
             f"sdram={self.sdram // (1024 * 1024)} MB, "
@@ -329,14 +334,14 @@ class Chip(object):
             f"nearest_ethernet={self._nearest_ethernet_x}:"
             f"{self._nearest_ethernet_y}]")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         # Equality just on X,Y; that's most useful
         if not isinstance(other, Chip):
             return NotImplemented
         return self._x == other.x and self._y == other.y
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return self._x * 256 + self._y

@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import re
+from typing import Any, Iterable, List, Optional, Set, Union
+from typing_extensions import TypeAlias
+_Intable: TypeAlias = Union[int, str]
 
 TYPICAL_PHYSICAL_VIRTUAL_MAP = {
     0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 0, 11: 12,
@@ -27,7 +30,8 @@ class IgnoreCore(object):
 
     __slots__ = ["x", "y", "p", "ip_address"]
 
-    def __init__(self, x, y, p, ip_address=None):
+    def __init__(self, x: _Intable, y: _Intable, p: _Intable,
+                 ip_address: Optional[str] = None):
         """
         :param x: X coordinate of a core to ignore
         :type x: int or str
@@ -52,7 +56,7 @@ class IgnoreCore(object):
         self.ip_address = ip_address
 
     @property
-    def virtual_p(self):
+    def virtual_p(self) -> int:
         """
         The virtual processor ID.
 
@@ -66,7 +70,7 @@ class IgnoreCore(object):
             return TYPICAL_PHYSICAL_VIRTUAL_MAP[0-self.p]
 
     @staticmethod
-    def parse_cores(core_string):
+    def parse_cores(core_string: str) -> Iterable[int]:
         """
         Parses the "core" part of a string, which might be a single core,
         or otherwise is a range of cores
@@ -78,10 +82,10 @@ class IgnoreCore(object):
         result = CORE_RANGE.fullmatch(core_string)
         if result is not None:
             return range(int(result.group(1)), int(result.group(2)) + 1)
-        return [int(core_string)]
+        return (int(core_string),)
 
     @staticmethod
-    def parse_single_string(downed_core):
+    def parse_single_string(downed_core: str) -> List['IgnoreCore']:
         """
         Converts a string into an :py:class:`IgnoreCore` object.
 
@@ -121,7 +125,7 @@ class IgnoreCore(object):
             raise ValueError(f"Unexpected downed_core: {downed_core}")
 
     @staticmethod
-    def parse_string(downed_cores):
+    def parse_string(downed_cores: Optional[str]) -> Set['IgnoreCore']:
         """
         Converts a string into a (possibly empty) set of
         :py:class:`IgnoreCore` objects.
@@ -152,7 +156,7 @@ class IgnoreCore(object):
         :return: Set (possibly empty) of IgnoreCores
         :rtype: set(IgnoreCore)
         """
-        ignored_cores = set()
+        ignored_cores: Set['IgnoreCore'] = set()
         if downed_cores is None:
             return ignored_cores
         if downed_cores.lower() == "none":
@@ -160,3 +164,12 @@ class IgnoreCore(object):
         for downed_chip in downed_cores.split(":"):
             ignored_cores.update(IgnoreCore.parse_single_string(downed_chip))
         return ignored_cores
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, IgnoreCore):
+            return False
+        return (self.x == other.x) and (self.y == other.y) and (
+            self.p == other.p) and (self.ip_address == other.ip_address)
+
+    def __hash__(self) -> int:
+        return (self.x << 16) | (self.y << 8) | self.p

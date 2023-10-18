@@ -11,6 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Any, Optional, Set, Union
+from typing_extensions import TypeAlias
+_Intable: TypeAlias = Union[int, str]
 
 
 class IgnoreChip(object):
@@ -21,7 +24,8 @@ class IgnoreChip(object):
 
     __slots__ = ["x", "y", "ip_address"]
 
-    def __init__(self, x, y, ip_address=None):
+    def __init__(self, x: _Intable, y: _Intable,
+                 ip_address: Optional[str] = None):
         """
         :param x: X coordinate of a Chip to ignore
         :type x: int or str
@@ -40,7 +44,7 @@ class IgnoreChip(object):
         self.ip_address = ip_address
 
     @staticmethod
-    def parse_single_string(downed_chip):
+    def parse_single_string(downed_chip: str) -> 'IgnoreChip':
         """
         Converts a string into an :py:class:`IgnoreChip` object.
 
@@ -76,7 +80,7 @@ class IgnoreChip(object):
                 f"Unexpected downed_chip: {downed_chip}")
 
     @staticmethod
-    def parse_string(downed_chips):
+    def parse_string(downed_chips: Optional[str]) -> Set['IgnoreChip']:
         """
         Converts a string into a (possibly empty) set of
         :py:class:`IgnoreChip` objects.
@@ -104,7 +108,7 @@ class IgnoreChip(object):
         :return: Set (possibly empty) of IgnoreChips
         :rtype: set(IgnoreChip)
         """
-        ignored_chips = set()
+        ignored_chips: Set['IgnoreChip'] = set()
         if downed_chips is None:
             return ignored_chips
         if downed_chips.lower() == "none":
@@ -112,3 +116,12 @@ class IgnoreChip(object):
         for downed_chip in downed_chips.split(":"):
             ignored_chips.add(IgnoreChip.parse_single_string(downed_chip))
         return ignored_chips
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, IgnoreChip):
+            return False
+        return (self.x == other.x) and (self.y == other.y) and (
+            self.ip_address == other.ip_address)
+
+    def __hash__(self) -> int:
+        return (self.x << 8) | self.y
