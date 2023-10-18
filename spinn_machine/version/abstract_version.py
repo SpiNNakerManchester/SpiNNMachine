@@ -313,7 +313,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
 
     @abstractmethod
-    def illegal_ethernet_message(self, x:int, y:int) -> Optional[str]:
+    def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
         """
         Checks if x and y could be for an ethernet
 
