@@ -311,6 +311,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :return: The lowest number of cores to accept before flagging a
             Chip to be blacklisted
         """
+        raise NotImplementedError
 
     @abstractmethod
     def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
@@ -328,3 +329,4 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :param int y:
         :return: An explanation that the x and y can never be an ethernet
         """
+        raise NotImplementedError
