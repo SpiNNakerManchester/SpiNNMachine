@@ -316,17 +316,18 @@ class AbstractVersion(object, metaclass=AbstractBase):
     @abstractmethod
     def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
         """
-        Checks if x and y could be for an ethernet
+        Checks if x and y could be for an Ethernet
 
         This method will return an explanation if the values for x and y are
         known be illegal for an ethernet chip.
 
-        Due to the limited inforamtion available this method will generate
-        False negatives. Ie x, y that for this machine which can
-        not be ethernets generating no explanation.
+        Due to the limited information available this method will generate
+        False negatives.
+        So this method returning None does not imply that x, y is an
+        Ethernet location
 
         :param int x:
         :param int y:
-        :return: An explanation that the x and y can never be an ethernet
+        :return: An explanation that the x and y can never be an Ethernet
         """
         raise NotImplementedError
