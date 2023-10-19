@@ -297,3 +297,37 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :rtype: ~spinn_machine.Machine
         """
         raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def minimum_cores_expected(self) -> int:
+        """
+        The minimum number of Chip that we expect from a Chip
+
+        If there are less that this number of Cores Machine.validate and
+        other methods are allowed to raise an exception
+
+        :rtype: int
+        :return: The lowest number of cores to accept before flagging a
+            Chip to be blacklisted
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
+        """
+        Checks if x and y could be for an Ethernet.
+
+        This method will return an explanation if the values for x and y are
+        known be illegal for an Ethernet chip.
+
+        Due to the limited information available this method will generate
+        False negatives.
+        So this method returning None does not imply that x, y is an
+        Ethernet location
+
+        :param int x:
+        :param int y:
+        :return: An explanation that the x and y can never be an Ethernet
+        """
+        raise NotImplementedError

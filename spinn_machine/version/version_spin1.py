@@ -37,3 +37,8 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     @overrides(AbstractVersion.n_router_entries)
     def n_router_entries(self) -> int:
         return 1023
+
+    @property
+    @overrides(AbstractVersion.minimum_cores_expected)
+    def minimum_cores_expected(self) -> int:
+        return 5
