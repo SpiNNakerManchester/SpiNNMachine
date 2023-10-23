@@ -14,7 +14,7 @@
 
 from collections import defaultdict
 import logging
-from typing import Collection, Iterable, Set, Tuple
+from typing import Collection, Iterable, Optional, Set, Tuple
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
@@ -200,14 +200,14 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
     return machine_repair(new_machine)
 
 
-def __bad_message(issue: str, xp: XY, address: str) -> str:
+def __bad_message(issue: str, xp: XY, address: Optional[str]) -> str:
     return f"Your machine has {issue} at {xp} on board {address} " \
            f"which will cause algorithms to fail. " \
            f"Please report this to spinnakerusers@googlegroups.com \n\n"
 
 
 def __one_link_same_board_msg(
-        link: int, source: Chip, target: Chip, address: str,
+        link: int, source: Chip, target: Chip, address: Optional[str],
         source_x: int, source_y: int, target_x: int, target_y: int) -> str:
     return f"Link {link} from {source} to {target} does not exist, " \
            f"but the opposite does. Both chips live on the same board under " \
@@ -218,8 +218,8 @@ def __one_link_same_board_msg(
 
 def one_link_different_boards_msg(
         link: int, source: Chip, target: Chip, source_x: int, source_y: int,
-        source_address: str, target_x: int, target_y: int,
-        target_address: str) -> str:
+        source_address: Optional[str], target_x: int, target_y: int,
+        target_address: Optional[str]) -> str:
     return f"Link {link} from {source} to {target} does not exist, " \
            f"but the opposite does. The chips live on different boards. " \
            f"chip {source.x}:{source.y} resides on board with ip address " \
@@ -230,15 +230,15 @@ def one_link_different_boards_msg(
 
 
 def __link_dead_chip(link: int, source: Chip, target_x: int, target_y: int,
-                     address: str) -> str:
+                     address: Optional[str]) -> str:
     return f"Link {link} from {source} to {target_x}:{target_y} " \
            f"points to a dead chip. Chip {source.x}:" \
            f"{source.y} resides on board with ip address {address}. " \
            f"Please report this to spinnakerusers@googlegroups.com \n\n"
 
 
-def __chip_dead_parent_msg(
-        source: Chip, parent_x: int, parent_y: int, address: str) -> str:
+def __chip_dead_parent_msg(source: Chip, parent_x: int, parent_y: int,
+                           address: Optional[str]) -> str:
     return f"The {source: Chip} will fail to receive signals because its " \
            f"parent {parent_x}:{parent_y} in the signal tree has " \
            f"disappeared from the machine since it was booted. " \
