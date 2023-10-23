@@ -56,38 +56,9 @@ class TestingChip(unittest.TestCase):
             self.assertIsNone(new_chip[42])
         print(new_chip.__repr__())
         self.assertEqual(
-            new_chip.__repr__(),
-            "[Chip: x=0, y=1, sdram=0 MB, ip_address=192.162.240.253, "
-            "router=[Router: "
-            "available_entries=1024, links=["
-            "[Link: source_x=0, source_y=0, source_link_id=0, "
-            "destination_x=1, destination_y=1], "
-            "[Link: source_x=0, source_y=1, source_link_id=1, "
-            "destination_x=1, destination_y=0], "
-            "[Link: source_x=1, source_y=1, source_link_id=2, "
-            "destination_x=0, destination_y=0], "
-            "[Link: source_x=1, source_y=0, source_link_id=3, "
-            "destination_x=0, destination_y=1]"
-            "]], processors=["
-            "[CPU: id=0, clock_speed=200 MHz, monitor=True], "
-            "[CPU: id=1, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=2, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=3, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=4, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=5, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=6, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=7, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=8, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=9, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=10, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=11, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=12, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=13, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=14, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=15, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=16, clock_speed=200 MHz, monitor=False], "
-            "[CPU: id=17, clock_speed=200 MHz, monitor=False]], "
-            "nearest_ethernet=0:0]")
+            "[Chip: x=0, y=1, ip_address=192.162.240.253 "
+            "n_cores=18, mon=None]",
+            new_chip.__repr__(),)
         self.assertEqual(new_chip.tag_ids, OrderedSet([1, 2, 3, 4, 5, 6, 7]))
         self.assertEqual(
             [p[0] for p in new_chip],
