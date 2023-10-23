@@ -14,7 +14,7 @@
 
 from collections import defaultdict
 import logging
-from typing import Collection, Iterable, Optional, Set, Tuple
+from typing import Collection, Iterable, Set, Tuple
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
@@ -191,17 +191,14 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
             parent_x, parent_y = original.xy_over_link(
                 chip.x, chip.y, chip.parent_link)
             if not original.is_chip_at(parent_x, parent_y):
-                ethernet_chip = original[
-                    chip.nearest_ethernet_x, chip.nearest_ethernet_y]
-                return f"The {source: Chip} will fail to receive signals " \
-                       f"because its parent {parent_x}:{parent_y} in the " \
-                       f"signal tree has disappeared from the machine since " \
-                       f"it was booted. This occurred on board with " \
-                       f"ip address {address} Please report this to " \
-                       f"spinnakerusers@googlegroups.com \n\n"
-
-                msg = __chip_dead_parent_msg(
-                    chip, parent_x, parent_y, ethernet_chip.ip_address)
+                ethernet = original[chip.nearest_ethernet_x,
+                                    chip.nearest_ethernet_y].ip_address
+                msg = f"The source: {Chip} will fail to receive signals " \
+                      f"because its parent {parent_x}:{parent_y} in the " \
+                      f"signal tree has disappeared from the machine since " \
+                      f"it was booted. This occurred on board with " \
+                      f"ip address {ethernet} Please report this to " \
+                      f"spinnakerusers@googlegroups.com \n\n"
                 if repair_machine:
                     dead_chips.add((chip.x, chip.y))
                     logger.warning(msg)
