@@ -230,7 +230,7 @@ def one_link_different_boards_msg(
 
 
 def __link_dead_chip(link: int, source: Chip, target_x: int, target_y: int,
-                      address: str) -> str:
+                     address: str) -> str:
     return f"Link {link} from {source} to {target_x}:{target_y} " \
            f"points to a dead chip. Chip {source.x}:" \
            f"{source.y} resides on board with ip address {address}. " \
@@ -238,7 +238,7 @@ def __link_dead_chip(link: int, source: Chip, target_x: int, target_y: int,
 
 
 def __chip_dead_parent_msg(
-        source: Chip, parent_x: int, parent_y: int, address : str) -> str:
+        source: Chip, parent_x: int, parent_y: int, address: str) -> str:
     return f"The {source: Chip} will fail to receive signals because its " \
            f"parent {parent_x}:{parent_y} in the signal tree has " \
            f"disappeared from the machine since it was booted. " \
