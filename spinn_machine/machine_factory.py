@@ -77,7 +77,7 @@ def _machine_ignore(
 
 
 def _generate_uni_direction_link_error(
-        dest_x: int, dest_y: int, src_x: int, src_y: int, back: int,
+        dest_x: int, dest_y: int, src_x: int, src_y: int, out: int, back: int,
         original: Machine) -> str:
     # get the chips so we can find ethernet's and local ids
     dest_chip = original.get_chip_at(dest_x, dest_y)
@@ -87,7 +87,10 @@ def _generate_uni_direction_link_error(
 
     # if the dest chip is dead. Only report src chip ip address.
     if dest_chip is None:
-        return __link_dead_chip(back, src_chip, dest_x, dest_y, src_ethernet)
+        return f"Link {out} from {src_chip} to {dest_x}:{dest_y} points to " \
+               f"a dead chip. Chip {src_x}:{src_y} resides on board with ip " \
+               f"address {src_ethernet}. " \
+               f"Please report this to spinnakerusers@googlegroups.com \n\n"
 
     # got working chips, so get the separate ethernet's
     dest_ethernet = original[
@@ -100,14 +103,21 @@ def _generate_uni_direction_link_error(
     # generate bespoke error message based off if they both reside on same
     # board.
     if src_ethernet == dest_ethernet:
-        return __one_link_same_board_msg(
-            back, dest_chip, src_chip, src_ethernet, local_dest_chip_x,
-            local_dest_chip_y, local_src_chip_x, local_src_chip_y)
+        return f"Link {back} from {dest_chip} to {src_chip} does not exist, " \
+               f"but the opposite does. Both chips live on the same board " \
+               f"under ip address {src_ethernet} and are local chip " \
+               f"ids {local_dest_chip_x}:{local_dest_chip_y} and " \
+               f"{local_src_chip_x}:{local_src_chip_y}. " \
+               f"Please report this to spinnakerusers@googlegroups.com \n\n"
     else:
-        return one_link_different_boards_msg(
-            back, dest_chip, src_chip,  dest_ethernet, local_dest_chip_x,
-            local_dest_chip_y,   src_ethernet, local_src_chip_x,
-            local_src_chip_y)
+        return f"Link {back} from {dest_chip} to {src_chip} does not exist, " \
+               f"but the opposite does. The chips live on different boards. " \
+               f"chip {dest_x}:{dest_y} resides on board with ip address " \
+               f"{dest_ethernet} with local id {local_dest_chip_x}:" \
+               f"{local_dest_chip_y} and chip {src_x}:{src_y} resides on " \
+               f"board with ip address {src_ethernet} with local id " \
+               f"{local_src_chip_x}:{local_src_chip_y}. " \
+               f"Please report this to spinnakerusers@googlegroups.com \n\n"
 
 
 def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
@@ -140,8 +150,9 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
         chip = original[xy[0], xy[1]]
         error_xy = original.get_local_xy(chip)
         ethernet = original[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
-        msg = __bad_message(
-            "unreachable incoming chips", error_xy, ethernet.ip_address)
+        msg = f"Your machine has unreachable incoming chips at {error_xy} " \
+              f"on board {ethernet} which will cause algorithms to fail. " \
+              f"Please report this to spinnakerusers@googlegroups.com \n\n"
         if repair_machine:
             dead_chips.add(xy)
             logger.warning(msg)
@@ -152,8 +163,9 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
         chip = original[xy[0], xy[1]]
         error_xy = original.get_local_xy(chip)
         ethernet = original[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
-        msg = __bad_message(
-            "unreachable outgoing chips", error_xy, ethernet.ip_address)
+        msg = f"Your machine has unreachable outgoing chips at {error_xy} " \
+              f"on board {ethernet} which will cause algorithms to fail. " \
+              f"Please report this to spinnakerusers@googlegroups.com \n\n"
         if repair_machine:
             dead_chips.add(xy)
             logger.warning(msg)
@@ -166,7 +178,7 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
             dead_links.add((source_x, source_y, out, back))
         else:
             uni_direction_link_message = _generate_uni_direction_link_error(
-                dest_x, dest_y, source_x, source_y, back, original)
+                dest_x, dest_y, source_x, source_y, out, back, original)
             if repair_machine:
                 dead_links.add((source_x, source_y, out, back))
                 logger.warning(uni_direction_link_message)
@@ -181,6 +193,13 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
             if not original.is_chip_at(parent_x, parent_y):
                 ethernet_chip = original[
                     chip.nearest_ethernet_x, chip.nearest_ethernet_y]
+                return f"The {source: Chip} will fail to receive signals " \
+                       f"because its parent {parent_x}:{parent_y} in the " \
+                       f"signal tree has disappeared from the machine since " \
+                       f"it was booted. This occurred on board with " \
+                       f"ip address {address} Please report this to " \
+                       f"spinnakerusers@googlegroups.com \n\n"
+
                 msg = __chip_dead_parent_msg(
                     chip, parent_x, parent_y, ethernet_chip.ip_address)
                 if repair_machine:
@@ -198,49 +217,3 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
 
     new_machine = _machine_ignore(original, dead_chips, dead_links)
     return machine_repair(new_machine)
-
-
-def __bad_message(issue: str, xp: XY, address: Optional[str]) -> str:
-    return f"Your machine has {issue} at {xp} on board {address} " \
-           f"which will cause algorithms to fail. " \
-           f"Please report this to spinnakerusers@googlegroups.com \n\n"
-
-
-def __one_link_same_board_msg(
-        link: int, source: Chip, target: Chip, address: Optional[str],
-        source_x: int, source_y: int, target_x: int, target_y: int) -> str:
-    return f"Link {link} from {source} to {target} does not exist, " \
-           f"but the opposite does. Both chips live on the same board under " \
-           f"ip address {address} and are local chip ids " \
-           f"{source_x}:{source_y} and {target_x}:{target_y}. " \
-           f"Please report this to spinnakerusers@googlegroups.com \n\n"
-
-
-def one_link_different_boards_msg(
-        link: int, source: Chip, target: Chip, source_x: int, source_y: int,
-        source_address: Optional[str], target_x: int, target_y: int,
-        target_address: Optional[str]) -> str:
-    return f"Link {link} from {source} to {target} does not exist, " \
-           f"but the opposite does. The chips live on different boards. " \
-           f"chip {source.x}:{source.y} resides on board with ip address " \
-           f"{source_address} with local id {source_x}:{source_y} and " \
-           f"chip {target.x}:{target.y} resides on board with ip address " \
-           f"{target_address} with local id {target_x}:{target_y}. " \
-           f"Please report this to spinnakerusers@googlegroups.com \n\n"
-
-
-def __link_dead_chip(link: int, source: Chip, target_x: int, target_y: int,
-                     address: Optional[str]) -> str:
-    return f"Link {link} from {source} to {target_x}:{target_y} " \
-           f"points to a dead chip. Chip {source.x}:" \
-           f"{source.y} resides on board with ip address {address}. " \
-           f"Please report this to spinnakerusers@googlegroups.com \n\n"
-
-
-def __chip_dead_parent_msg(source: Chip, parent_x: int, parent_y: int,
-                           address: Optional[str]) -> str:
-    return f"The {source: Chip} will fail to receive signals because its " \
-           f"parent {parent_x}:{parent_y} in the signal tree has " \
-           f"disappeared from the machine since it was booted. " \
-           f"This occurred on board with ip address {address} " \
-           f"Please report this to spinnakerusers@googlegroups.com \n\n"
