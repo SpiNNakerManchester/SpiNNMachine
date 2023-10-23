@@ -192,12 +192,13 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
                 chip.x, chip.y, chip.parent_link)
             if not original.is_chip_at(parent_x, parent_y):
                 ethernet = original[chip.nearest_ethernet_x,
-                                    chip.nearest_ethernet_y].ip_address
+                                    chip.nearest_ethernet_y]
                 msg = f"The source: {Chip} will fail to receive signals " \
                       f"because its parent {parent_x}:{parent_y} in the " \
                       f"signal tree has disappeared from the machine since " \
                       f"it was booted. This occurred on board with " \
-                      f"ip address {ethernet} Please report this to " \
+                      f"ip address {ethernet.ip_address} " \
+                      f"Please report this to " \
                       f"spinnakerusers@googlegroups.com \n\n"
                 if repair_machine:
                     dead_chips.add((chip.x, chip.y))
