@@ -28,23 +28,23 @@ BAD_MSG = (
     "Your machine has {} at {} on board {} which will cause algorithms to "
     "fail. Please report this to spinnakerusers@googlegroups.com \n\n")
 ONE_LINK_SAME_BOARD_MSG = (
-    "Link {} from global chip id {}:{} to global chip id {}:{} does not "
+    "Link {} from {} to {} does not "
     "exist, but the opposite does. Both chips live on the same board under "
     "ip address {} and are local chip ids {}:{} and {}:{}. "
     "Please report this to spinnakerusers@googlegroups.com \n\n")
 ONE_LINK_DIFFERENT_BOARDS_MSG = (
-    "Link {} from global chip id {}:{} to global chip id {}:{} does not "
+    "Link {} from {} to {} does not "
     "exist, but the opposite does. The chips live on different boards. "
     "chip {}:{} resides on board with ip address {} with local id {}:{} and "
     "chip {}:{} resides on board with ip address {} with local id {}:{}. "
     "Please report this to spinnakerusers@googlegroups.com \n\n")
 ONE_LINK_DEAD_CHIP = (
-    "Link {} from global dead chip id {}:{} to global chip id {}:{} does not "
+    "Link {} from {} to {} does not "
     "exist, but the opposite does. chip {}:{} resides on board with ip "
     "address {} but as chip {}:{} is dead, we cannot report its ip address. "
     "Please report this to spinnakerusers@googlegroups.com \n\n")
 CHIP_REMOVED_BY_DEAD_PARENT = (
-    "The chip {}:{} will fail to receive signals because its parent {}:{} in"
+    "The {} will fail to receive signals because its parent {}:{} in"
     " the signal tree has disappeared from the machine since it was booted. "
     "This occurred on board with ip address {} Please report this to "
     "spinnakerusers@googlegroups.com \n\n")
@@ -101,6 +101,7 @@ def _machine_ignore(
     return new_machine
 
 
+
 def _generate_uni_direction_link_error(
         dest_x: int, dest_y: int, src_x: int, src_y: int, back: int,
         original: Machine) -> str:
@@ -113,7 +114,7 @@ def _generate_uni_direction_link_error(
     # if the dest chip is dead. Only report src chip ip address.
     if dest_chip is None:
         return ONE_LINK_DEAD_CHIP.format(
-            back, dest_x, dest_y, src_x, src_y, src_x, src_y, src_ethernet,
+            back, dest_chip, src_chip, src_x, src_y, src_ethernet,
             dest_x, dest_y)
 
     # got working chips, so get the separate ethernet's
@@ -128,12 +129,12 @@ def _generate_uni_direction_link_error(
     # board.
     if src_ethernet == dest_ethernet:
         return ONE_LINK_SAME_BOARD_MSG.format(
-            back, dest_x, dest_y, src_x, src_y, src_ethernet,
+            back, dest_chip, src_chip, src_ethernet,
             local_dest_chip_x, local_dest_chip_y, local_src_chip_x,
             local_src_chip_y)
     else:
         return ONE_LINK_DIFFERENT_BOARDS_MSG.format(
-            back, dest_x, dest_y, src_x, src_y, dest_x, dest_y, dest_ethernet,
+            back, dest_chip, src_chip, dest_x, dest_y, dest_ethernet,
             local_dest_chip_x, local_dest_chip_y, src_x, src_y, src_ethernet,
             local_src_chip_x, local_src_chip_y)
 
@@ -210,7 +211,7 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
                 ethernet_chip = original[
                     chip.nearest_ethernet_x, chip.nearest_ethernet_y]
                 msg = CHIP_REMOVED_BY_DEAD_PARENT.format(
-                    chip.x, chip.y, parent_x, parent_y,
+                    chip, parent_x, parent_y,
                     ethernet_chip.ip_address)
                 if repair_machine:
                     dead_chips.add((chip.x, chip.y))
