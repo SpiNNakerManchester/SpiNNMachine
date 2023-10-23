@@ -333,7 +333,7 @@ class Chip(object):
         return (
             f"[Chip: x={self._x}, y={self._y}, {ip_info}"
             f"n_cores={self.n_processors}, "
-            f"mon={self.get_physical_core_id([0])}]")
+            f"mon={self.get_physical_core_id(0)}]")
 
     def __repr__(self) -> str:
         return self.__str__()
