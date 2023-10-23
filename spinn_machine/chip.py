@@ -326,13 +326,14 @@ class Chip(object):
         return self.is_processor_with_id(processor_id)
 
     def __str__(self) -> str:
+        if self._ip_address:
+            ip_info = f"ip_address={self.ip_address} "
+        else:
+            ip_info = ""
         return (
-            f"[Chip: x={self._x}, y={self._y}, "
-            f"sdram={self.sdram // (1024 * 1024)} MB, "
-            f"ip_address={self.ip_address}, router={self.router}, "
-            f"processors={list(self._p.values())}, "
-            f"nearest_ethernet={self._nearest_ethernet_x}:"
-            f"{self._nearest_ethernet_y}]")
+            f"[Chip: x={self._x}, y={self._y}, {ip_info}"
+            f"n_cores={self.n_processors}, "
+            f"mon={self.get_physical_core_id([0])}]")
 
     def __repr__(self) -> str:
         return self.__str__()
