@@ -338,7 +338,7 @@ class Machine(object, metaclass=AbstractBase):
             return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
                     f"is chip {localx}, {localy} {ip_address}")
         except Exception:  # pylint: disable=broad-except
-            return str(Chip)
+            return str(chip)
 
     def where_is_xy(self, x: int, y: int) -> str:
         """

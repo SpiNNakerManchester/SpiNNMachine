@@ -91,6 +91,6 @@ class TestSimulatorData(unittest.TestCase):
             "global chip 2, 8 on 127.0.0.0 is chip 6, 4 on 127.0.8.4",
             MachineDataView.where_is_chip(machine.get_chip_at(2, 8)))
         self.assertEqual(
-            "'NoneType' object has no attribute 'nearest_ethernet_x'",
+            "None",
             MachineDataView.where_is_chip(None)
         )
