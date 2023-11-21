@@ -386,6 +386,13 @@ class SpinnMachineTestCase(unittest.TestCase):
             (2, 4), (1, 3), (0, 2), (0, 1), (0, 0), (1, 0)]
         self.assertListEqual(expected, found)
 
+    def test_too_few_cores(self):
+        machine = virtual_machine(8, 8)
+        # Hack to get n_processors return a low number
+        machine.get_chip_at(0, 1)._p = [1, 2, 3]
+        with self.assertRaises(SpinnMachineException):
+            machine.validate()
+
 
 if __name__ == '__main__':
     unittest.main()
