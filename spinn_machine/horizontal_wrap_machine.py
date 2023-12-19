@@ -26,7 +26,7 @@ class HorizontalWrapMachine(Machine):
 
     @overrides(Machine.get_xys_by_ethernet)
     def get_xys_by_ethernet(
-            self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
+            self, ethernet_x: int, ethernet_y) -> Iterable[XY]:
         for (x, y) in self._chip_core_map:
             chip_x = (x + ethernet_x) % self._width
             chip_y = (y + ethernet_y)
