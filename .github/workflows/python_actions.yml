@@ -67,7 +67,6 @@ jobs:
       with: 
         package: spinn_machine
         exitcheck: 31 # Action fails on any message
-        exitcheck: 31 # Action fails on any message
         language: en_GB
     - name: Lint with mypy
       run: mypy spinn_machine
