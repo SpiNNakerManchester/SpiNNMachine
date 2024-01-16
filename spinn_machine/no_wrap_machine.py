@@ -35,7 +35,7 @@ class NoWrapMachine(Machine):
             self, ethernet_x: int, ethernet_y: int
             ) -> Iterable[Tuple[XY, int]]:
         for (x, y), n_cores in self._chip_core_map.items():
-            # if ethernet_x/y != 0 GIGO mode so ignore ethernet
+            # if Ethernet_x/y != 0 GIGO mode so ignore Ethernet
             yield ((x + ethernet_x, y + ethernet_y), n_cores)
 
     @overrides(Machine.get_existing_xys_by_ethernet)

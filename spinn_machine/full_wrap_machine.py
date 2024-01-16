@@ -91,15 +91,15 @@ class FullWrapMachine(Machine):
         y_right = (destination[1] - source[1]) % h
         y_left = y_right - h
 
-        # Both possitve so greater
+        # Both positive so greater
         length = x_up if x_up > y_right else y_right
 
-        # negative x possitive y so sum of abs
+        # negative x positive y so sum of abs
         negative_x = y_right - x_down
         if negative_x < length:
             length = negative_x
 
-        # possitive x negative Y so sum of abs
+        # positive x negative Y so sum of abs
         negative_y = x_up - y_left
         if negative_y < length:
             length = negative_y
@@ -124,18 +124,18 @@ class FullWrapMachine(Machine):
         y_right = (destination[1] - source[1]) % h
         y_left = y_right - h
 
-        # Both possitve so greater
+        # Both positive so greater
         length = x_up if x_up > y_right else y_right
         dx = x_up
         dy = y_right
 
-        # negative x possitive y so sum of abs
+        # negative x positive y so sum of abs
         negative_x = y_right - x_down
         if negative_x < length:
             length = negative_x
             dx = x_down
 
-        # possitive x negative Y so sum of abs
+        # positive x negative Y so sum of abs
         negative_y = x_up - y_left
         if negative_y < length:
             length = negative_y
