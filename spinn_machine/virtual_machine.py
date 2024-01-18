@@ -18,12 +18,12 @@ from typing import Dict, List, Optional, Set, Tuple
 from spinn_utilities.config_holder import get_config_str_or_none
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
+from spinn_machine.data import MachineDataView
+from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from .chip import Chip
 from .router import Router
 from .link import Link
 from .machine import Machine
-from spinn_machine.data import MachineDataView
-from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 
 logger = FormatAdapter(logging.getLogger(__name__))
 

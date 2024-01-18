@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
+from collections import Counter
 import logging
 from typing import (
     Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Union,
@@ -19,12 +20,11 @@ from typing import (
 from typing_extensions import TypeAlias
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.typing.coords import XY
-
-from collections import Counter
-from .exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineException)
 from spinn_machine.data import MachineDataView
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
+from .exceptions import (
+    SpinnMachineAlreadyExistsException, SpinnMachineException)
+
 if TYPE_CHECKING:
     from .chip import Chip
 

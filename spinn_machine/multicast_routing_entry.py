@@ -13,8 +13,8 @@
 # limitations under the License.
 from __future__ import annotations
 from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
-from .exceptions import SpinnMachineInvalidParameterException
 from spinn_machine.router import Router
+from .exceptions import SpinnMachineInvalidParameterException
 
 
 class MulticastRoutingEntry(object):
