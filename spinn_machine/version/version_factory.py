@@ -33,6 +33,7 @@ def version_factory() -> AbstractVersion:
     :raises SpinnMachineException: If the cfg version is not set correctly
     """
     # Delayed import to avoid circular imports
+    # pylint: disable=import-outside-toplevel
     from .version_3 import Version3
     from .version_5 import Version5
 
