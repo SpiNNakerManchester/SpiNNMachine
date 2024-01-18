@@ -118,6 +118,16 @@ class Processor(object):
 
     @staticmethod
     def factory(processor_id: int, is_monitor: bool = False) -> 'Processor':
+        """
+        Retrieves or creates a Processor with this id and monitor setting
+
+        To keep the memory usage down this class keeps a cache of
+        Processor objects and reuses these as much as possible.
+
+        :param int processor_id:
+        :param bool is_monitor:
+        :rtype: Processor
+        """
         if is_monitor:
             if processor_id not in monitor:
                 monitor[processor_id] = Processor(

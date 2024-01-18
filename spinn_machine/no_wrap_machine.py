@@ -19,6 +19,13 @@ from .chip import Chip
 
 
 class NoWrapMachine(Machine):
+    """
+    This is a Machine that uses a subsection of the whole Machine.
+
+    It will therefore have no wrap in either directions.
+
+    This class provides the simpler maths that do not deal with wraps.
+    """
 
     @overrides(Machine.multiple_48_chip_boards)
     def multiple_48_chip_boards(self) -> bool:

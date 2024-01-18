@@ -137,6 +137,11 @@ class _VirtualMachine(object):
 
     @property
     def machine(self) -> Machine:
+        """
+        The Machine object created by this Factory
+
+        :rtype: Machine
+        """
         return self._machine
 
     def _create_chip(self, xy: XY, configured_chips: Dict[XY, Tuple[XY, int]],

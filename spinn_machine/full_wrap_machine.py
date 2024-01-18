@@ -19,7 +19,13 @@ from .chip import Chip
 
 
 class FullWrapMachine(Machine):
+    """
+    This is a Machine that uses every single board available.
 
+    It will therefore wraps in both the Horizontal and vertical directions.
+
+    This class provides the more complex maths to deal with wraps.
+    """
     @overrides(Machine.multiple_48_chip_boards)
     def multiple_48_chip_boards(self) -> bool:
         return self._width % 12 == 0 and self._height % 12 == 0
