@@ -238,7 +238,7 @@ def to_json() -> JsonObject:
     :rtype: dict
     """
     machine = MachineDataView.get_machine()
-    # Find the std values for one non-Ethernet chip to use as standard
+    # Find the standard values for any non-Ethernet chip to use by default
     std = None
     for chip in machine.chips:
         if chip.ip_address is None:
@@ -250,7 +250,6 @@ def to_json() -> JsonObject:
                 tags=list(chip.tag_ids))
             break
     else:
-        # Probably ought to warn if std is unpopulated
         raise ValueError("could not compute standard resources")
 
     # find the nth values to use for Ethernet chips

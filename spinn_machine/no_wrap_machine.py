@@ -100,7 +100,7 @@ class NoWrapMachine(Machine):
 
         # This can be farther optimised with then knowledge that z is always 0
         # An x and y having the same sign they can be replaced with a z
-        #     IE: Replace a North and an East with a NorthEast
+        #     I.E. Replace a North and an East with a NorthEast
         # So the length is the greater absolute value of x or y
         # If the are opposite use the sum of the absolute values
 
