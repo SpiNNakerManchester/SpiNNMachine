@@ -13,10 +13,6 @@
 # limitations under the License.
 
 # Our abbreviations/names
-CoreSubset
 IgnoreChip
 IgnoreCore
 IgnoreLink
-
-# Our special words ("wrap-arounds" gets split up)
-arounds
