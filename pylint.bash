@@ -22,9 +22,4 @@
 # requires the spelling dicts
 # sudo apt-get -o Dpkg::Use-Pty=0 install --fix-missing enchant-2 hunspell hunspell-en-gb
 
-dict=/tmp/dict.txt
-
-cat "../SupportScripts/actions/pylint/default_dict.txt" >$dict
-cat ".pylint_dict.txt" >>$dict
-
-pylint --output-format=colorized --disable=R --persistent=no --jobs=1 --rcfile=../SupportScripts/actions/pylint/strict_rcfile --spelling-dict=en_GB --spelling-private-dict-file=$dict	spinn_machine
+pylint --output-format=colorized --disable=R --persistent=no --jobs=1 --rcfile=../SupportScripts/actions/pylint/strict_rcfile --spelling-dict=en_GB --spelling-private-dict-file="../SupportScripts/actions/pylint/default_dict.txt"	spinn_machine

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Our abbreviations/names
-IgnoreChip
-IgnoreCore
-IgnoreLink
+# We use a single exception files for all the main repsitories
+# It can be found at:
+# https://github.com/SpiNNakerManchester/SupportScripts/blob/master/actions/pylint/default_dict.txt
