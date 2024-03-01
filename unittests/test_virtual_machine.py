@@ -21,7 +21,7 @@ from spinn_machine.exceptions import (
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.machine_factory import machine_repair
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD
-from .geometry import (to_xyz, shortest_mesh_path_length,
+from geometry import (to_xyz, shortest_mesh_path_length,
                        shortest_torus_path_length, minimise_xyz)
 
 
@@ -173,15 +173,10 @@ class TestVirtualMachine(unittest.TestCase):
         vm = virtual_machine(2, 2, n_cpus_per_chip=n_cpus, validate=True)
         _chip = vm[1, 1]
         self.assertEqual(n_cpus, _chip.n_processors)
-        monitors = 0
-        normal = 0
-        for core in _chip.processors:
-            if core.is_monitor:
-                monitors += 1
-            else:
-                normal += 1
-        self.assertEqual(n_cpus - 1, normal)
-        self.assertEqual(1, monitors)
+        self.assertEqual(n_cpus - 1, _chip.n_user_processors)
+        self.assertEqual(1, _chip.n_monitor_processors)
+        self.assertEqual(n_cpus - 1, len(list(_chip.user_processors)))
+        self.assertEqual(1, len(list(_chip.monitor_processors)))
 
     def test_iter_chips(self):
         set_config("Machine", "version", 2)

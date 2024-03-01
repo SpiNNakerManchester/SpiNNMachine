@@ -19,6 +19,7 @@ from .processor import Processor
 from .router import Router
 
 standard_processors = {}
+standard_monitor_processors = None
 
 
 class Chip(object):
@@ -36,9 +37,9 @@ class Chip(object):
     _IPTAG_IDS = OrderedSet(range(1, 8))
 
     __slots__ = (
-        "_x", "_y", "_p", "_router", "_sdram", "_ip_address",
+        "_x", "_y", "_router", "_sdram", "_ip_address",
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
-        "_n_user_processors", "_parent_link", "_v_to_p_map"
+        "_user_processors", "_monitor_processors", "_parent_link", "_v_to_p_map"
     )
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
@@ -83,7 +84,9 @@ class Chip(object):
         """
         self._x = x
         self._y = y
-        self._p = self.__generate_processors(n_processors, down_cores)
+        self._monitor_processors = self.__generate_monitors()
+        self._user_processors = self.__generate_processors(
+            n_processors, down_cores)
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
@@ -98,30 +101,40 @@ class Chip(object):
         self._parent_link = parent_link
         self._v_to_p_map = v_to_p_map
 
+    def __generate_monitors(self):
+        """
+        Generates the monitors assuming all Chips have the same monitor cores
+
+        :return:  Dict[int, Processor]
+        """
+        global standard_monitor_processors
+        if standard_monitor_processors is None:
+            standard_monitor_processors = dict()
+            for i in range(
+                    MachineDataView.get_machine_version().n_non_user_cores):
+                standard_monitor_processors[i] = Processor.factory(i, True)
+        return standard_monitor_processors
+
     def __generate_processors(
             self, n_processors: int,
             down_cores: Optional[Collection[int]]) -> Dict[int, Processor]:
+        n_monitors = MachineDataView.get_machine_version().n_non_user_cores
         if down_cores is None:
             if n_processors not in standard_processors:
                 processors = dict()
-                processors[0] = Processor.factory(0, True)
-                for i in range(1, n_processors):
+                for i in range(n_monitors, n_processors):
                     processors[i] = Processor.factory(i)
                 standard_processors[n_processors] = processors
-            self._n_user_processors = n_processors - 1
             return standard_processors[n_processors]
         else:
             processors = dict()
-            if 0 in down_cores:
-                raise NotImplementedError(
-                    "Declaring core 0 as down is not supported")
-            processors[0] = Processor.factory(0, True)
-            for i in range(1, n_processors):
+            for i in range(n_monitors):
+                if i in down_cores:
+                    raise NotImplementedError(
+                        f"Declaring monitor core {i} as down is not supported")
+            for i in range(n_monitors, n_processors):
                 if i not in down_cores:
                     processors[i] = Processor.factory(i)
-            self._n_user_processors = (
-                    n_processors - len(down_cores) -
-                    MachineDataView.get_machine_version().n_non_user_cores)
             return processors
 
     def is_processor_with_id(self, processor_id: int) -> bool:
@@ -133,7 +146,9 @@ class Chip(object):
         :return: Whether the processor with the given ID exists
         :rtype: bool
         """
-        return processor_id in self._p
+        if processor_id in self._user_processors:
+            return True
+        return processor_id in self._monitor_processors
 
     def get_processor_with_id(self, processor_id: int) -> Optional[Processor]:
         """
@@ -146,7 +161,9 @@ class Chip(object):
             or ``None`` if no such processor
         :rtype: Processor or None
         """
-        return self._p.get(processor_id)
+        if processor_id in self._user_processors:
+            return self._user_processors[processor_id]
+        return self._monitor_processors.get(processor_id)
 
     @property
     def x(self) -> int:
@@ -169,11 +186,30 @@ class Chip(object):
     @property
     def processors(self) -> Iterator[Processor]:
         """
-        An iterable of available processors.
+        An iterable of available all processors.
+
+        Deprecated: There are many more efficient methods instead.
+        - all_processor_id
+        - n_processors
+        - n_user_processors
+        - user_processors
+        - n_monitor_processors
+        - monitor_processors
 
         :rtype: iterable(Processor)
         """
-        return iter(self._p.values())
+        yield from self._monitor_processors.values()
+        yield from self._user_processors.values()
+
+    @property
+    def all_processor_ids(self) -> Iterator[int]:
+        """
+        An iterable of id's of all available processors
+
+        :rtype: iterable(int)
+        """
+        yield from self._monitor_processors.keys()
+        yield from self._user_processors.keys()
 
     @property
     def n_processors(self) -> int:
@@ -182,7 +218,16 @@ class Chip(object):
 
         :rtype: int
         """
-        return len(self._p)
+        return len(self._monitor_processors) + len(self._user_processors)
+
+    @property
+    def user_processors(self) -> Iterator[Processor]:
+        """
+        An iterable of available user processors.
+
+        :rtype: iterable(Processor)
+        """
+        return self._user_processors.values()
 
     @property
     def n_user_processors(self) -> int:
@@ -191,7 +236,25 @@ class Chip(object):
 
         :rtype: int
         """
-        return self._n_user_processors
+        return len(self._user_processors)
+
+    @property
+    def monitor_processors(self) -> Iterator[Processor]:
+        """
+        An iterable of available monitor processors.
+
+        :rtype: iterable(Processor)
+        """
+        return self._monitor_processors.values()
+
+    @property
+    def n_monitor_processors(self) -> int:
+        """
+        The total number of processors that are not monitors.
+
+        :rtype: int
+        """
+        return len(self._monitor_processors)
 
     @property
     def router(self) -> Router:
@@ -248,16 +311,15 @@ class Chip(object):
         """
         return self._tag_ids
 
-    def get_first_none_monitor_processor(self) -> Optional[Processor]:
+    def get_first_none_monitor_processor(self) -> Processor:
         """
         Get the first processor in the list which is not a monitor core.
 
-        :rtype: Processor or None
+        :rtype: Processor
+        ;raises StopIteration: If there is no user processor
         """
-        for processor in self.processors:
-            if not processor.is_monitor:
-                return processor
-        return None
+        return next(iter(self._user_processors.values()))
+
 
     @property
     def parent_link(self) -> Optional[int]:
@@ -304,7 +366,8 @@ class Chip(object):
             * ``processor`` is the processor with the ID
         :rtype: iterable(tuple(int,Processor))
         """
-        return iter(self._p.items())
+        yield from self._monitor_processors.items()
+        yield from self._user_processors.items()
 
     def __len__(self) -> int:
         """
@@ -313,11 +376,13 @@ class Chip(object):
         :return: The number of items in the underlying iterator.
         :rtype: int
         """
-        return len(self._p)
+        return len(self._monitor_processors) + len(self._user_processors)
 
     def __getitem__(self, processor_id: int) -> Processor:
-        if processor_id in self._p:
-            return self._p[processor_id]
+        if processor_id in self._user_processors:
+            return self._user_processors[processor_id]
+        if processor_id in self._monitor_processors:
+            return self._monitor_processors[processor_id]
         # Note difference from get_processor_with_id(); this is to conform to
         # standard Python semantics
         raise KeyError(processor_id)
