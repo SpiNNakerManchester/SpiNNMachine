@@ -108,7 +108,7 @@ class Chip(object):
 
         :return:  Dict[int, Processor]
         """
-        global standard_monitor_processors
+        global standard_monitor_processors  # pylint: disable=global-statement
         if standard_monitor_processors is None:
             standard_monitor_processors = dict()
             for i in range(
