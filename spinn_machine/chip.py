@@ -232,7 +232,7 @@ class Chip(object):
         yield from self._user_processors.values()
 
     @property
-    def user_processors_ids(self) -> Iterator[Processor]:
+    def user_processors_ids(self) -> Iterator[int]:
         """
         An iterable of available user processors.
 
