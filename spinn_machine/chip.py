@@ -228,7 +228,7 @@ class Chip(object):
 
         :rtype: iterable(Processor)
         """
-        return self._user_processors.values()
+        yield from self._user_processors.values()
 
     @property
     def n_user_processors(self) -> int:
