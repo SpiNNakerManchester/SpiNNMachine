@@ -21,7 +21,7 @@ from spinn_machine.exceptions import (
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.machine_factory import machine_repair
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD
-from geometry import (to_xyz, shortest_mesh_path_length,
+from .geometry import (to_xyz, shortest_mesh_path_length,
                        shortest_torus_path_length, minimise_xyz)
 
 
