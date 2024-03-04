@@ -13,8 +13,8 @@
 # limitations under the License.
 from __future__ import annotations
 from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
-from .exceptions import SpinnMachineInvalidParameterException
 from spinn_machine.router import Router
+from .exceptions import SpinnMachineInvalidParameterException
 
 
 class MulticastRoutingEntry(object):
@@ -227,10 +227,11 @@ class MulticastRoutingEntry(object):
 
     def __repr__(self) -> str:
         if not self.__repr:
-            self.__repr = "{}:{}:{}:{{{}}}:{{{}}}".format(
-                self._routing_entry_key, self._mask, self._defaultable,
-                ", ".join(map(str, sorted(self.processor_ids))),
-                ", ".join(map(str, sorted(self.link_ids))))
+            self.__repr = (
+                f"{self._routing_entry_key}:{self._mask}:{self._defaultable}"
+                f":{{{', '.join(map(str, sorted(self.processor_ids)))}}}:"
+                f"{{{', '.join(map(str, sorted(self.link_ids)))}}}")
+
         return self.__repr
 
     def __str__(self) -> str:

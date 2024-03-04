@@ -15,10 +15,10 @@
 from typing import Final, Mapping, Optional, Sequence, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
-from .version_spin1 import VersionSpin1
-from spinn_machine.machine import Machine
-from spinn_machine.full_wrap_machine import FullWrapMachine
 from spinn_machine.exceptions import SpinnMachineException
+from spinn_machine.full_wrap_machine import FullWrapMachine
+from spinn_machine.machine import Machine
+from .version_spin1 import VersionSpin1
 
 CHIPS_PER_BOARD: Final = {(0, 0): 18, (0, 1): 18, (1, 0): 18, (1, 1): 18}
 

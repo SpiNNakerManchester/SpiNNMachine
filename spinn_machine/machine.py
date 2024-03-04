@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
+from collections import Counter
 import logging
 from typing import (
     Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Union,
@@ -19,12 +20,11 @@ from typing import (
 from typing_extensions import TypeAlias
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.typing.coords import XY
-
-from collections import Counter
-from .exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineException)
 from spinn_machine.data import MachineDataView
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
+from .exceptions import (
+    SpinnMachineAlreadyExistsException, SpinnMachineException)
+
 if TYPE_CHECKING:
     from .chip import Chip
 
@@ -70,7 +70,7 @@ class Machine(object, metaclass=AbstractBase):
         # to be used in the str method
         "_origin",
         "_spinnaker_links",
-        # A Counter for sdram on each Chip
+        # A Counter for SDRAM on each Chip
         "_sdram_counter",
         # Declared width of the machine
         # This can not be changed
@@ -507,7 +507,7 @@ class Machine(object, metaclass=AbstractBase):
                     f"A {self.wrap} machine of size {self._width}, "
                     f"{self._height} can not handle multiple ethernet chips")
         # The fact that self._boot_ethernet_address is set means there is an
-        # ethernet chip and it is at 0,0 so no need to check that
+        # Ethernet chip and it is at 0,0 so no need to check that
 
         version = MachineDataView.get_machine_version()
         for chip in self.chips:
@@ -909,13 +909,8 @@ class Machine(object, metaclass=AbstractBase):
                 ip = ethernet_connected_chip.ip_address
                 assert ip is not None
 
-                # List of x, y, l1, l2, dx, dy where:
-                #     x = start x
-                #     y = start y
-                #     l1 = first link
-                #     l2 = second link
-                #     dx = change in x to next
-                #     dy = change in y to next
+                # List of start x, start y, first link, second link,
+                # change in x to next, change in y to next
                 chip_links = [(7, 3, 0, 5, -1, -1),  # Bottom Right
                               (4, 0, 4, 5, -1, 0),   # Bottom
                               (0, 0, 4, 3, 0, 1),    # Left
@@ -1224,7 +1219,7 @@ class Machine(object, metaclass=AbstractBase):
     @staticmethod
     def _minimize_vector(x: int, y: int) -> Tuple[int, int, int]:
         """
-        Minimizes an (x, y, 0) vector.
+        Minimises an (x, y, 0) vector.
 
         When vectors are minimised, (1,1,1) is added or subtracted from them.
         This process does not change the range of numbers in the vector.
@@ -1293,7 +1288,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: an unused (x,y) coordinate
         :rtype: (int, int)
         """
-        # get a set of xys that could be connected to any existing ethernet
+        # get a set of xys that could be connected to any existing Ethernet
         xys_by_ethernet: Set[XY] = set()
         for ethernet in self.ethernet_connected_chips:
             xys_by_ethernet.update(
