@@ -18,8 +18,11 @@ from spinn_machine.data import MachineDataView
 from .processor import Processor
 from .router import Router
 
+# global values so Chip objects can share processor dict objects
+# One dict for each number of processors (none dead)
 standard_processors = {}
-standard_monitor_processors = None
+# One dict for the standard monitor processors
+standard_monitor_processors = None  # pylint: disable=invalid-name
 
 
 class Chip(object):
