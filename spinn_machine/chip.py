@@ -190,10 +190,11 @@ class Chip(object):
         An iterable of available all processors.
 
         Deprecated: There are many more efficient methods instead.
-        - all_processor_id
+        - all_processor_ids
         - n_processors
         - n_user_processors
         - user_processors
+        - user_processors_ids
         - n_monitor_processors
         - monitor_processors
 
@@ -229,6 +230,15 @@ class Chip(object):
         :rtype: iterable(Processor)
         """
         yield from self._user_processors.values()
+
+    @property
+    def user_processors_ids(self) -> Iterator[Processor]:
+        """
+        An iterable of available user processors.
+
+        :rtype: iterable(Processor)
+        """
+        yield from self._user_processors
 
     @property
     def n_user_processors(self) -> int:
