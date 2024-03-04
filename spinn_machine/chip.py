@@ -39,7 +39,8 @@ class Chip(object):
     __slots__ = (
         "_x", "_y", "_router", "_sdram", "_ip_address",
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
-        "_user_processors", "_monitor_processors", "_parent_link", "_v_to_p_map"
+        "_user_processors", "_monitor_processors", "_parent_link",
+        "_v_to_p_map"
     )
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
@@ -319,7 +320,6 @@ class Chip(object):
         ;raises StopIteration: If there is no user processor
         """
         return next(iter(self._user_processors.values()))
-
 
     @property
     def parent_link(self) -> Optional[int]:
