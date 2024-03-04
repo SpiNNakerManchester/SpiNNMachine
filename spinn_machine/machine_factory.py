@@ -79,20 +79,20 @@ def _machine_ignore(
 def _generate_uni_direction_link_error(
         dest_x: int, dest_y: int, src_x: int, src_y: int, out: int, back: int,
         original: Machine) -> str:
-    # get the chips so we can find ethernet's and local ids
+    # get the chips so we can find Ethernet's and local ids
     dest_chip = original.get_chip_at(dest_x, dest_y)
     src_chip = original[src_x, src_y]
     src_ethernet = original[
         src_chip.nearest_ethernet_x, src_chip.nearest_ethernet_y].ip_address
 
-    # if the dest chip is dead. Only report src chip ip address.
+    # if the dest chip is dead. Only report src chip IP address.
     if dest_chip is None:
         return f"Link {out} from {src_chip} to {dest_x}:{dest_y} points to " \
                f"a dead chip. Chip {src_x}:{src_y} resides on board with ip " \
                f"address {src_ethernet}. " \
                f"Please report this to spinnakerusers@googlegroups.com \n\n"
 
-    # got working chips, so get the separate ethernet's
+    # got working chips, so get the separate Ethernet's
     dest_ethernet = original[
         dest_chip.nearest_ethernet_x, dest_chip.nearest_ethernet_y].ip_address
 

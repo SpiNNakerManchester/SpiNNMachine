@@ -19,6 +19,13 @@ from .chip import Chip
 
 
 class VerticalWrapMachine(Machine):
+    """
+    This is a Machine that uses every single board in at least some columns.
+
+    It will therefore wraps in both the vertical directions.
+
+    This class provides the more complex maths to deal with wraps.
+    """
 
     @overrides(Machine.multiple_48_chip_boards)
     def multiple_48_chip_boards(self) -> bool:
