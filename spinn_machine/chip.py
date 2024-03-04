@@ -200,6 +200,7 @@ class Chip(object):
         - user_processors_ids
         - n_monitor_processors
         - monitor_processors
+        - monitor_processors_ids
 
         :rtype: iterable(Processor)
         """
@@ -260,6 +261,15 @@ class Chip(object):
         :rtype: iterable(Processor)
         """
         return self._monitor_processors.values()
+
+    @property
+    def monitor_processors_ids(self) -> Iterator[int]:
+        """
+        An iterable of available user processors.
+
+        :rtype: iterable(Processor)
+        """
+        yield from self._monitor_processors
 
     @property
     def n_monitor_processors(self) -> int:
