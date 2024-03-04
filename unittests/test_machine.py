@@ -91,7 +91,6 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_summary(self):
         machine = virtual_machine(8, 8)
-        a = machine.summary_string()
         self.assertEqual(
             "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 links. "
             "Chips have sdram of 123469792 bytes, router table of size 1023, "
