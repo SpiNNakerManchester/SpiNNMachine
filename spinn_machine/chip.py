@@ -322,7 +322,6 @@ class Chip(object):
             return self._y
         raise IndexError(xy_id)
 
-
     def __str__(self) -> str:
         if self._ip_address:
             ip_info = f"ip_address={self.ip_address} "
