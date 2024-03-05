@@ -30,8 +30,8 @@ if TYPE_CHECKING:
     from .chip import Chip
 
 logger = logging.getLogger(__name__)
-_SpinLinkKey: TypeAlias = Tuple[Union[str, XY], int]
-_FpgaLinkKey: TypeAlias = Tuple[Union[str, XY], int, int]
+_SpinLinkKey: TypeAlias = Tuple[Union[str, XY, "Chip"], int]
+_FpgaLinkKey: TypeAlias = Tuple[Union[str, XY, "Chip"], int, int]
 
 
 class Machine(object, metaclass=AbstractBase):
