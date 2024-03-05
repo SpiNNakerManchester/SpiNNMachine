@@ -11,8 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import (
-    Collection, Dict, Iterable, Iterator, Optional, Tuple, Union)
+from typing import (Collection, Dict, Iterable, Iterator, Optional)
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine.data import MachineDataView
 from .processor import Processor
