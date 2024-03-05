@@ -47,6 +47,7 @@ class Chip(tuple, XY):
         return tuple.__new__(cls, (x, y))
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
+    # pylint: disable=unused-argument
     def __init__(self, x: int, y: int, n_processors: int, router: Router,
                  sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
                  ip_address: Optional[str] = None,
