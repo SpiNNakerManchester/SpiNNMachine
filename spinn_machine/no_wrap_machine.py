@@ -19,6 +19,13 @@ from .chip import Chip
 
 
 class NoWrapMachine(Machine):
+    """
+    This is a Machine that uses a subsection of the whole Machine.
+
+    It will therefore have no wrap in either directions.
+
+    This class provides the simpler maths that do not deal with wraps.
+    """
 
     @overrides(Machine.multiple_48_chip_boards)
     def multiple_48_chip_boards(self) -> bool:
@@ -35,7 +42,7 @@ class NoWrapMachine(Machine):
             self, ethernet_x: int, ethernet_y: int
             ) -> Iterable[Tuple[XY, int]]:
         for (x, y), n_cores in self._chip_core_map.items():
-            # if ethernet_x/y != 0 GIGO mode so ignore ethernet
+            # if Ethernet_x/y != 0 GIGO mode so ignore Ethernet
             yield ((x + ethernet_x, y + ethernet_y), n_cores)
 
     @overrides(Machine.get_existing_xys_by_ethernet)
@@ -93,7 +100,7 @@ class NoWrapMachine(Machine):
 
         # This can be farther optimised with then knowledge that z is always 0
         # An x and y having the same sign they can be replaced with a z
-        #     IE: Replace a North and an East with a NorthEast
+        #     I.E. Replace a North and an East with a NorthEast
         # So the length is the greater absolute value of x or y
         # If the are opposite use the sum of the absolute values
 
