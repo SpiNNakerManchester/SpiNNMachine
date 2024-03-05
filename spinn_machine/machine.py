@@ -1093,8 +1093,7 @@ class Machine(object, metaclass=AbstractBase):
 
         :rtype: int
         """
-        return sum(
-            1 for chip in self.chips for _processor in chip.processors)
+        return sum(chip.n_processors for chip in self.chips)
 
     def unreachable_outgoing_chips(self) -> List[XY]:
         """
