@@ -52,25 +52,14 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(new_chip.sdram, self._sdram)
         self.assertEqual(new_chip.router, self._router)
         self.assertEqual(new_chip.n_user_processors, self.n_processors - 1)
-        with self.assertRaises(KeyError):
-            self.assertIsNone(new_chip[42])
         print(new_chip.__repr__())
         self.assertEqual(
             "[Chip: x=0, y=1, ip_address=192.162.240.253 "
             "n_cores=18, mon=None]",
             new_chip.__repr__(),)
         self.assertEqual(new_chip.tag_ids, OrderedSet([1, 2, 3, 4, 5, 6, 7]))
-        self.assertEqual(
-            [p[0] for p in new_chip],
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
-        self.assertEqual(
-            [p[1].is_monitor for p in new_chip],
-            [True, False, False, False, False, False, False, False, False,
-             False, False, False, False, False, False, False, False, False])
         self.assertTrue(new_chip.is_processor_with_id(3))
         self.assertEqual(5, new_chip.get_processor_with_id(5).processor_id)
-        self.assertEqual(6, new_chip[6].processor_id)
-        self.assertTrue(7 in new_chip)
         self.assertIsNone(new_chip.get_processor_with_id(-1))
 
     def test_get_first_none_monitor_processor(self):
@@ -82,19 +71,6 @@ class TestingChip(unittest.TestCase):
                                      self._router, self._sdram, self._ip)
         non_monitor = new_chip.get_first_none_monitor_processor()
         self.assertFalse(non_monitor.is_monitor)
-
-    def test_getitem_and_contains(self):
-        """ test the __getitem__ an __contains__ methods
-
-        NOTE: Not sure if method being tested is required.
-        """
-        new_chip = self._create_chip(self._x, self._y, self.n_processors,
-                                     self._router, self._sdram, self._ip)
-        new_chip[3]
-        with self.assertRaises(KeyError):
-            new_chip[self.n_processors]
-        self.assertTrue(3 in new_chip)
-        self.assertFalse(self.n_processors in new_chip)
 
     def test_0_down(self):
         with self.assertRaises(NotImplementedError):
