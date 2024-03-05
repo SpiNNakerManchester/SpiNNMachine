@@ -38,12 +38,12 @@ class Chip(tuple, XY):
     _IPTAG_IDS = OrderedSet(range(1, 8))
 
     def __new__(cls, x: int, y: int, n_processors: int, router: Router,
-                 sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
-                 ip_address: Optional[str] = None,
-                 tag_ids: Optional[Iterable[int]] = None,
-                 down_cores: Optional[Collection[int]] = None,
-                 parent_link: Optional[int] = None,
-                 v_to_p_map: Optional[bytes] = None):
+                sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
+                ip_address: Optional[str] = None,
+                tag_ids: Optional[Iterable[int]] = None,
+                down_cores: Optional[Collection[int]] = None,
+                parent_link: Optional[int] = None,
+                v_to_p_map: Optional[bytes] = None):
         return tuple.__new__(cls, (x, y))
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
