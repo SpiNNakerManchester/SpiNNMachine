@@ -335,7 +335,7 @@ class Chip(object):
     def __repr__(self) -> str:
         return self.__str__()
 
-    def __eq__(self, other: Union["Chip", Tuple[int, int]]) -> bool:
+    def __eq__(self, other):
         """
         To allow a Chip and an X,Y tuple to be used interchangeably
 
