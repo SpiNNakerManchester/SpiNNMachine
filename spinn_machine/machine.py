@@ -22,6 +22,7 @@ from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.typing.coords import XY
 from spinn_machine.data import MachineDataView
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
+from .types import AS_XY
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineException)
 
@@ -110,7 +111,7 @@ class Machine(object, metaclass=AbstractBase):
         self._boot_ethernet_address: Optional[str] = None
 
         # The dictionary of chips
-        self._chips: Dict[XY, Chip] = dict()
+        self._chips: Dict[AS_XY, Chip] = dict()
 
         self._origin = origin
 
@@ -566,12 +567,11 @@ class Machine(object, metaclass=AbstractBase):
         :raise SpinnMachineAlreadyExistsException:
             If a chip with the same x and y coordinates already exists
         """
-        chip_id = (chip.x, chip.y)
-        if chip_id in self._chips:
+        if chip in self._chips:
             raise SpinnMachineAlreadyExistsException(
                 "chip", f"{chip.x}, {chip.y}")
 
-        self._chips[chip_id] = chip
+        self._chips[chip] = chip
 
         # keep some stats about the
         self._n_cores_counter[chip.n_processors] += 1
@@ -607,7 +607,7 @@ class Machine(object, metaclass=AbstractBase):
         return iter(self._chips.values())
 
     @property
-    def chip_coordinates(self) -> Iterator[XY]:
+    def chip_coordinates(self) -> Iterator[AS_XY]:
         """
         An iterable of chip coordinates in the machine.
 
@@ -615,7 +615,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return iter(self._chips.keys())
 
-    def __iter__(self) -> Iterator[Tuple[XY, Chip]]:
+    def __iter__(self) -> Iterator[Tuple[AS_XY, Chip]]:
         """
         Get an iterable of the chip coordinates and chips.
 
@@ -684,7 +684,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return (x, y) in self._chips and self._chips[x, y].router.is_link(link)
 
-    def __contains__(self, x_y_tuple: XY):
+    def __contains__(self, x_y_tuple: AS_XY):
         """
         Determine if a chip exists at the given coordinates.
 
@@ -746,7 +746,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def get_spinnaker_link_with_id(
             self, spinnaker_link_id: int, board_address: Optional[str] = None,
-            chip_coords: Optional[XY] = None) -> SpinnakerLinkData:
+            chip_coords: Optional[AS_XY] = None) -> SpinnakerLinkData:
         """
         Get a SpiNNaker link with a given ID.
 
@@ -1184,7 +1184,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         removable_coords: List[XY] = list()
         for chip in self._chips.values():
-            x, y = chip.x, chip.y
+            x, y = chip
             nearest_ethernet_x = chip.nearest_ethernet_x
             nearest_ethernet_y = chip.nearest_ethernet_y
             # Go through all the chips that surround this one
