@@ -169,8 +169,8 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_new_vm_with_monitor(self):
         set_config("Machine", "version", 2)
-        n_cpus = 13
-        vm = virtual_machine(2, 2, n_cpus_per_chip=n_cpus, validate=True)
+        n_cpus = 18
+        vm = virtual_machine(2, 2, validate=True)
         _chip = vm[1, 1]
         self.assertEqual(n_cpus, _chip.n_processors)
         monitors = 0
