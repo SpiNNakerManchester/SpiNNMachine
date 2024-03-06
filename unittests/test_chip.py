@@ -117,7 +117,9 @@ class TestingChip(unittest.TestCase):
         self.assertNotEqual((0, 0, 0), chip00)
         self.assertNotEqual(chip00, (0, 1))
         self.assertNotEqual((0, 1), chip00)
-        self.assertEqual([chip24, xy00, chip36], [chip24, (0,0), chip36])
+        self.assertEqual([chip24, chip00, chip36], [(2, 4), xy00, xy36])
+        self.assertEqual([(2, 4), xy00, xy36], [chip24, chip00, chip36])
+        self.assertEqual([chip24, xy00, chip36], [(2, 4), chip00, xy36])
 
 
 if __name__ == '__main__':
