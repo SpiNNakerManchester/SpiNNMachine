@@ -27,7 +27,7 @@ standard_processors = {}
 standard_monitor_processors = None  # pylint: disable=invalid-name
 
 
-class Chip(tuple, XY):
+class Chip(XY, tuple):
     """
     Represents a SpiNNaker chip with a number of cores, an amount of
     SDRAM shared between the cores, and a router.
