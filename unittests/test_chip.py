@@ -89,10 +89,9 @@ class TestingChip(unittest.TestCase):
     def test_processors(self):
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
-        all_p = set()
-        for id in new_chip.all_processor_ids:
-            all_p.add(new_chip[id])
+        all_p = set(new_chip.processors)
         self.assertEqual(len(all_p), new_chip.n_processors)
+        self.assertEqual(len(all_p), len(set(new_chip.processors_ids)))
         users = set(new_chip.user_processors)
         self.assertEqual(len(users), new_chip.n_user_processors)
         self.assertEqual(len(users), len(set(new_chip.user_processors_ids)))

@@ -384,36 +384,6 @@ class Chip(tuple, XY):
             return ""
         return f" (ph: {physical_p})"
 
-    def __iter__(self) -> Iterator[Tuple[int, Processor]]:
-        """
-        Get an iterable of processor identifiers and processors
-
-        :return: An iterable of ``(processor_id, processor)`` where:
-            * ``processor_id`` is the ID of a processor
-            * ``processor`` is the processor with the ID
-        :rtype: iterable(tuple(int,Processor))
-        """
-        return iter(self._p.items())
-
-    def __len__(self) -> int:
-        """
-        The number of processors associated with this chip.
-
-        :return: The number of items in the underlying iterator.
-        :rtype: int
-        """
-        return len(self._p)
-
-    def __getitem__(self, processor_id: int) -> Processor:
-        if processor_id in self._p:
-            return self._p[processor_id]
-        # Note difference from get_processor_with_id(); this is to conform to
-        # standard Python semantics
-        raise KeyError(processor_id)
-
-    def __contains__(self, processor_id: int) -> bool:
-        return self.is_processor_with_id(processor_id)
-
     def __str__(self) -> str:
         if self._ip_address:
             ip_info = f"ip_address={self.ip_address} "
