@@ -64,9 +64,9 @@ class TestJsonMachine(unittest.TestCase):
         chip02 = vm[0, 2]
         # Hack in an extra monitor
         users = dict(chip02._user_processors)
-        monitors = dict(chip02._monitor_processors)
+        monitors = dict(chip02._scamp_processors)
         monitors[1] = users.pop(1)
-        chip02._monitor_processors = monitors
+        chip02._scamp_processors = monitors
         chip02._user_processors = users
         jpath = mktemp("json")
         # Should still be able to write json even with more than one monitor

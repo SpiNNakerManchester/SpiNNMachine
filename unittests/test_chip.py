@@ -120,10 +120,10 @@ class TestingChip(unittest.TestCase):
         users = set(new_chip.user_processors)
         self.assertEqual(len(users), new_chip.n_user_processors)
         self.assertEqual(len(users), len(set(new_chip.user_processors_ids)))
-        monitors = set(new_chip.monitor_processors)
+        monitors = set(new_chip.scamp_processors)
         self.assertEqual(users.union(monitors), all_p)
         self.assertEqual(len(monitors),
-                         len(set(new_chip.monitor_processors_ids)))
+                         len(set(new_chip.scamp_processors_ids)))
 
 
 if __name__ == '__main__':

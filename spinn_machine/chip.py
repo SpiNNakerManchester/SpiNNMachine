@@ -22,7 +22,7 @@ from .router import Router
 # One dict for each number of processors (none dead)
 standard_processors = {}
 # One dict for the standard monitor processors
-standard_monitor_processors = None  # pylint: disable=invalid-name
+standard_scamp_processors = None  # pylint: disable=invalid-name
 
 
 class Chip(object):
@@ -42,7 +42,7 @@ class Chip(object):
     __slots__ = (
         "_x", "_y", "_router", "_sdram", "_ip_address",
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
-        "_user_processors", "_monitor_processors", "_parent_link",
+        "_user_processors", "_scamp_processors", "_parent_link",
         "_v_to_p_map"
     )
 
@@ -88,7 +88,7 @@ class Chip(object):
         """
         self._x = x
         self._y = y
-        self._monitor_processors = self.__generate_monitors()
+        self._scamp_processors = self.__generate_scamp()
         self._user_processors = self.__generate_processors(
             n_processors, down_cores)
         self._router = router
@@ -105,19 +105,19 @@ class Chip(object):
         self._parent_link = parent_link
         self._v_to_p_map = v_to_p_map
 
-    def __generate_monitors(self):
+    def __generate_scamp(self):
         """
-        Generates the monitors assuming all Chips have the same monitor cores
+        Generates the scamp assuming all Chips have the same scamp cores
 
         :return:  Dict[int, Processor]
         """
-        global standard_monitor_processors  # pylint: disable=global-statement
-        if standard_monitor_processors is None:
-            standard_monitor_processors = dict()
+        global standard_scamp_processors  # pylint: disable=global-statement
+        if standard_scamp_processors is None:
+            standard_scamp_processors = dict()
             for i in range(
                     MachineDataView.get_machine_version().n_scamp_cores):
-                standard_monitor_processors[i] = Processor.factory(i, True)
-        return standard_monitor_processors
+                standard_scamp_processors[i] = Processor.factory(i, True)
+        return standard_scamp_processors
 
     def __generate_processors(
             self, n_processors: int,
@@ -152,7 +152,7 @@ class Chip(object):
         """
         if processor_id in self._user_processors:
             return True
-        return processor_id in self._monitor_processors
+        return processor_id in self._scamp_processors
 
     def get_processor_with_id(self, processor_id: int) -> Optional[Processor]:
         """
@@ -167,7 +167,7 @@ class Chip(object):
         """
         if processor_id in self._user_processors:
             return self._user_processors[processor_id]
-        return self._monitor_processors.get(processor_id)
+        return self._scamp_processors.get(processor_id)
 
     @property
     def x(self) -> int:
@@ -204,7 +204,7 @@ class Chip(object):
 
         :rtype: iterable(Processor)
         """
-        yield from self._monitor_processors.values()
+        yield from self._scamp_processors.values()
         yield from self._user_processors.values()
 
     @property
@@ -214,7 +214,7 @@ class Chip(object):
 
         :rtype: iterable(int)
         """
-        yield from self._monitor_processors.keys()
+        yield from self._scamp_processors.keys()
         yield from self._user_processors.keys()
 
     @property
@@ -224,7 +224,7 @@ class Chip(object):
 
         :rtype: int
         """
-        return len(self._monitor_processors) + len(self._user_processors)
+        return len(self._scamp_processors) + len(self._user_processors)
 
     @property
     def user_processors(self) -> Iterator[Processor]:
@@ -247,38 +247,38 @@ class Chip(object):
     @property
     def n_user_processors(self) -> int:
         """
-        The total number of processors that are not monitors.
+        The total number of processors that are not used by scamp.
 
         :rtype: int
         """
         return len(self._user_processors)
 
     @property
-    def monitor_processors(self) -> Iterator[Processor]:
+    def scamp_processors(self) -> Iterator[Processor]:
         """
-        An iterable of available monitor processors.
+        An iterable of available scamp processors.
 
         :rtype: iterable(Processor)
         """
-        return self._monitor_processors.values()
+        return self._scamp_processors.values()
 
     @property
-    def monitor_processors_ids(self) -> Iterator[int]:
+    def scamp_processors_ids(self) -> Iterator[int]:
         """
-        An iterable of available user processors.
+        An iterable of available scamp processors.
 
         :rtype: iterable(Processor)
         """
-        yield from self._monitor_processors
+        yield from self._scamp_processors
 
     @property
     def n_monitor_processors(self) -> int:
         """
-        The total number of processors that are not monitors.
+        The total number of processors that are used by scamp.
 
         :rtype: int
         """
-        return len(self._monitor_processors)
+        return len(self._scamp_processors)
 
     @property
     def router(self) -> Router:
@@ -389,7 +389,7 @@ class Chip(object):
             * ``processor`` is the processor with the ID
         :rtype: iterable(tuple(int,Processor))
         """
-        yield from self._monitor_processors.items()
+        yield from self._scamp_processors.items()
         yield from self._user_processors.items()
 
     def __len__(self) -> int:
@@ -399,13 +399,13 @@ class Chip(object):
         :return: The number of items in the underlying iterator.
         :rtype: int
         """
-        return len(self._monitor_processors) + len(self._user_processors)
+        return len(self._scamp_processors) + len(self._user_processors)
 
     def __getitem__(self, processor_id: int) -> Processor:
         if processor_id in self._user_processors:
             return self._user_processors[processor_id]
-        if processor_id in self._monitor_processors:
-            return self._monitor_processors[processor_id]
+        if processor_id in self._scamp_processors:
+            return self._scamp_processors[processor_id]
         # Note difference from get_processor_with_id(); this is to conform to
         # standard Python semantics
         raise KeyError(processor_id)
