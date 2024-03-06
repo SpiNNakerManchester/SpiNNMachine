@@ -29,8 +29,8 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
         super().__init__(max_cores_per_chip=18, max_sdram_per_chip=123469792)
 
     @property
-    @overrides(AbstractVersion.n_non_user_cores)
-    def n_non_user_cores(self) -> int:
+    @overrides(AbstractVersion.n_scamp_cores)
+    def n_scamp_cores(self) -> int:
         return 1
 
     @property

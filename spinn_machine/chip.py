@@ -115,14 +115,14 @@ class Chip(object):
         if standard_monitor_processors is None:
             standard_monitor_processors = dict()
             for i in range(
-                    MachineDataView.get_machine_version().n_non_user_cores):
+                    MachineDataView.get_machine_version().n_scamp_cores):
                 standard_monitor_processors[i] = Processor.factory(i, True)
         return standard_monitor_processors
 
     def __generate_processors(
             self, n_processors: int,
             down_cores: Optional[Collection[int]]) -> Dict[int, Processor]:
-        n_monitors = MachineDataView.get_machine_version().n_non_user_cores
+        n_monitors = MachineDataView.get_machine_version().n_scamp_cores
         if down_cores is None:
             if n_processors not in standard_processors:
                 processors = dict()

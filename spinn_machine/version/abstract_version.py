@@ -145,9 +145,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def n_non_user_cores(self) -> int:
+    def n_scamp_cores(self) -> int:
         """
-        The number of system cores per chip.
+        The number of scamp cores per chip.
 
         :rtype: int
         """
