@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+from spinn_utilities.config_holder import set_config
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Link, Router, Chip
 from spinn_machine.config_setup import unittest_setup
@@ -22,6 +23,7 @@ class TestingChip(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
         self._x = 0
         self._y = 1
 
@@ -73,13 +75,31 @@ class TestingChip(unittest.TestCase):
         self.assertFalse(non_monitor.is_monitor)
 
     def test_0_down(self):
+        # Chip where 0 the monitor is down
         with self.assertRaises(NotImplementedError):
             Chip(1, 1, self.n_processors, self._router, self._sdram, 0, 0,
                  self._ip, down_cores=[0])
 
     def test_1_chip(self):
+        # Chip with just 1 processor
         new_chip = Chip(1, 1, 1, self._router, self._sdram, 0, 0, self._ip)
-        self.assertIsNone(new_chip.get_first_none_monitor_processor())
+        with self.assertRaises(Exception):
+            new_chip.get_first_none_monitor_processor()
+
+    def test_processors(self):
+        new_chip = self._create_chip(self._x, self._y, self.n_processors,
+                                     self._router, self._sdram, self._ip)
+        all_p = set()
+        for id in new_chip.all_processor_ids:
+            all_p.add(new_chip[id])
+        self.assertEqual(len(all_p), new_chip.n_processors)
+        users = set(new_chip.user_processors)
+        self.assertEqual(len(users), new_chip.n_user_processors)
+        self.assertEqual(len(users), len(set(new_chip.user_processors_ids)))
+        monitors = set(new_chip.monitor_processors)
+        self.assertEqual(users.union(monitors), all_p)
+        self.assertEqual(len(monitors),
+                         len(set(new_chip.monitor_processors_ids)))
 
 
 if __name__ == '__main__':

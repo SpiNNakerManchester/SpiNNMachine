@@ -20,7 +20,11 @@ from spinn_machine.data import MachineDataView
 from .processor import Processor
 from .router import Router
 
+# global values so Chip objects can share processor dict objects
+# One dict for each number of processors (none dead)
 standard_processors = {}
+# One dict for the standard monitor processors
+standard_monitor_processors = None  # pylint: disable=invalid-name
 
 
 class Chip(tuple, XY):
@@ -88,7 +92,9 @@ class Chip(tuple, XY):
             ``processor_id``
         """
         # X and Y set by new
-        self._p = self.__generate_processors(n_processors, down_cores)
+        self._monitor_processors = self.__generate_monitors()
+        self._user_processors = self.__generate_processors(
+            n_processors, down_cores)
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
@@ -103,30 +109,40 @@ class Chip(tuple, XY):
         self._parent_link = parent_link
         self._v_to_p_map = v_to_p_map
 
+    def __generate_monitors(self):
+        """
+        Generates the monitors assuming all Chips have the same monitor cores
+
+        :return:  Dict[int, Processor]
+        """
+        global standard_monitor_processors  # pylint: disable=global-statement
+        if standard_monitor_processors is None:
+            standard_monitor_processors = dict()
+            for i in range(
+                    MachineDataView.get_machine_version().n_non_user_cores):
+                standard_monitor_processors[i] = Processor.factory(i, True)
+        return standard_monitor_processors
+
     def __generate_processors(
             self, n_processors: int,
             down_cores: Optional[Collection[int]]) -> Dict[int, Processor]:
+        n_monitors = MachineDataView.get_machine_version().n_non_user_cores
         if down_cores is None:
             if n_processors not in standard_processors:
                 processors = dict()
-                processors[0] = Processor.factory(0, True)
-                for i in range(1, n_processors):
+                for i in range(n_monitors, n_processors):
                     processors[i] = Processor.factory(i)
                 standard_processors[n_processors] = processors
-            self._n_user_processors = n_processors - 1
             return standard_processors[n_processors]
         else:
             processors = dict()
-            if 0 in down_cores:
-                raise NotImplementedError(
-                    "Declaring core 0 as down is not supported")
-            processors[0] = Processor.factory(0, True)
-            for i in range(1, n_processors):
+            for i in range(n_monitors):
+                if i in down_cores:
+                    raise NotImplementedError(
+                        f"Declaring monitor core {i} as down is not supported")
+            for i in range(n_monitors, n_processors):
                 if i not in down_cores:
                     processors[i] = Processor.factory(i)
-            self._n_user_processors = (
-                    n_processors - len(down_cores) -
-                    MachineDataView.get_machine_version().n_non_user_cores)
             return processors
 
     def is_processor_with_id(self, processor_id: int) -> bool:
@@ -138,7 +154,9 @@ class Chip(tuple, XY):
         :return: Whether the processor with the given ID exists
         :rtype: bool
         """
-        return processor_id in self._p
+        if processor_id in self._user_processors:
+            return True
+        return processor_id in self._monitor_processors
 
     def get_processor_with_id(self, processor_id: int) -> Optional[Processor]:
         """
@@ -151,7 +169,9 @@ class Chip(tuple, XY):
             or ``None`` if no such processor
         :rtype: Processor or None
         """
-        return self._p.get(processor_id)
+        if processor_id in self._user_processors:
+            return self._user_processors[processor_id]
+        return self._monitor_processors.get(processor_id)
 
     @property
     def x(self) -> int:
@@ -174,11 +194,32 @@ class Chip(tuple, XY):
     @property
     def processors(self) -> Iterator[Processor]:
         """
-        An iterable of available processors.
+        An iterable of available all processors.
+
+        Deprecated: There are many more efficient methods instead.
+        - all_processor_ids
+        - n_processors
+        - n_user_processors
+        - user_processors
+        - user_processors_ids
+        - n_monitor_processors
+        - monitor_processors
+        - monitor_processors_ids
 
         :rtype: iterable(Processor)
         """
-        return iter(self._p.values())
+        yield from self._monitor_processors.values()
+        yield from self._user_processors.values()
+
+    @property
+    def all_processor_ids(self) -> Iterator[int]:
+        """
+        An iterable of id's of all available processors
+
+        :rtype: iterable(int)
+        """
+        yield from self._monitor_processors.keys()
+        yield from self._user_processors.keys()
 
     @property
     def n_processors(self) -> int:
@@ -187,7 +228,25 @@ class Chip(tuple, XY):
 
         :rtype: int
         """
-        return len(self._p)
+        return len(self._monitor_processors) + len(self._user_processors)
+
+    @property
+    def user_processors(self) -> Iterator[Processor]:
+        """
+        An iterable of available user processors.
+
+        :rtype: iterable(Processor)
+        """
+        yield from self._user_processors.values()
+
+    @property
+    def user_processors_ids(self) -> Iterator[int]:
+        """
+        An iterable of available user processors.
+
+        :rtype: iterable(Processor)
+        """
+        yield from self._user_processors
 
     @property
     def n_user_processors(self) -> int:
@@ -196,7 +255,34 @@ class Chip(tuple, XY):
 
         :rtype: int
         """
-        return self._n_user_processors
+        return len(self._user_processors)
+
+    @property
+    def monitor_processors(self) -> Iterator[Processor]:
+        """
+        An iterable of available monitor processors.
+
+        :rtype: iterable(Processor)
+        """
+        return self._monitor_processors.values()
+
+    @property
+    def monitor_processors_ids(self) -> Iterator[int]:
+        """
+        An iterable of available user processors.
+
+        :rtype: iterable(Processor)
+        """
+        yield from self._monitor_processors
+
+    @property
+    def n_monitor_processors(self) -> int:
+        """
+        The total number of processors that are not monitors.
+
+        :rtype: int
+        """
+        return len(self._monitor_processors)
 
     @property
     def router(self) -> Router:
@@ -253,16 +339,14 @@ class Chip(tuple, XY):
         """
         return self._tag_ids
 
-    def get_first_none_monitor_processor(self) -> Optional[Processor]:
+    def get_first_none_monitor_processor(self) -> Processor:
         """
         Get the first processor in the list which is not a monitor core.
 
-        :rtype: Processor or None
+        :rtype: Processor
+        ;raises StopIteration: If there is no user processor
         """
-        for processor in self.processors:
-            if not processor.is_monitor:
-                return processor
-        return None
+        return next(iter(self._user_processors.values()))
 
     @property
     def parent_link(self) -> Optional[int]:
@@ -299,6 +383,36 @@ class Chip(tuple, XY):
         if physical_p is None:
             return ""
         return f" (ph: {physical_p})"
+
+    def __iter__(self) -> Iterator[Tuple[int, Processor]]:
+        """
+        Get an iterable of processor identifiers and processors
+
+        :return: An iterable of ``(processor_id, processor)`` where:
+            * ``processor_id`` is the ID of a processor
+            * ``processor`` is the processor with the ID
+        :rtype: iterable(tuple(int,Processor))
+        """
+        return iter(self._p.items())
+
+    def __len__(self) -> int:
+        """
+        The number of processors associated with this chip.
+
+        :return: The number of items in the underlying iterator.
+        :rtype: int
+        """
+        return len(self._p)
+
+    def __getitem__(self, processor_id: int) -> Processor:
+        if processor_id in self._p:
+            return self._p[processor_id]
+        # Note difference from get_processor_with_id(); this is to conform to
+        # standard Python semantics
+        raise KeyError(processor_id)
+
+    def __contains__(self, processor_id: int) -> bool:
+        return self.is_processor_with_id(processor_id)
 
     def __str__(self) -> str:
         if self._ip_address:

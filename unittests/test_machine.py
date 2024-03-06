@@ -377,7 +377,9 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_too_few_cores(self):
         machine = virtual_machine(8, 8)
         # Hack to get n_processors return a low number
-        machine.get_chip_at(0, 1)._p = [1, 2, 3]
+        chip01 = machine.get_chip_at(0, 1)
+        chip01._user_processors = dict(
+            list(chip01._user_processors.items())[:2])
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
