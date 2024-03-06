@@ -91,7 +91,7 @@ class TestingChip(unittest.TestCase):
                                      self._router, self._sdram, self._ip)
         all_p = set(new_chip.processors)
         self.assertEqual(len(all_p), new_chip.n_processors)
-        self.assertEqual(len(all_p), len(set(new_chip.processors_ids)))
+        self.assertEqual(len(all_p), len(set(new_chip.all_processor_ids)))
         users = set(new_chip.user_processors)
         self.assertEqual(len(users), new_chip.n_user_processors)
         self.assertEqual(len(users), len(set(new_chip.user_processors_ids)))
@@ -99,6 +99,25 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(users.union(monitors), all_p)
         self.assertEqual(len(monitors),
                          len(set(new_chip.monitor_processors_ids)))
+
+    def test_is_xy(self):
+        chip24 = self._create_chip(
+            2, 4, self.n_processors, self._router, self._sdram, None)
+        chip36 = self._create_chip(
+            3, 6, self.n_processors, self._router, self._sdram, None)
+        chip00 = self._create_chip(
+            0, 0, self.n_processors, self._router, self._sdram, self._ip)
+        xy00 = (0, 0)
+        xy36 = (3, 6)
+        self.assertEqual(chip24, (2, 4))
+        self.assertEqual((2, 4), chip24)
+        self.assertEqual(chip00, xy00)
+        self.assertEqual(xy00, chip00)
+        self.assertNotEqual(chip00, (0, 0, 0))
+        self.assertNotEqual((0, 0, 0), chip00)
+        self.assertNotEqual(chip00, (0, 1))
+        self.assertNotEqual((0, 1), chip00)
+        self.assertEqual([chip24, xy00, chip36], [chip24, (0,0), chip36])
 
 
 if __name__ == '__main__':
