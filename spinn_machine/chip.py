@@ -13,7 +13,6 @@
 # limitations under the License.
 from typing import (
     Collection, Dict, Iterable, Iterator, Optional)
-import sys
 
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.typing.coords import XY
@@ -28,13 +27,8 @@ standard_processors = {}
 # One dict for the standard monitor processors
 standard_monitor_processors = None  # pylint: disable=invalid-name
 
-if sys.version_info.minor > 8:
-    SUPER = object
-else:
-    SUPER = tuple
 
-
-class Chip(XY, SUPER):
+class Chip(XY):
     """
     Represents a SpiNNaker chip with a number of cores, an amount of
     SDRAM shared between the cores, and a router.
