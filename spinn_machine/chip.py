@@ -29,12 +29,12 @@ standard_processors = {}
 standard_monitor_processors = None  # pylint: disable=invalid-name
 
 if sys.version_info.minor > 8:
-    SUPER = XY
+    SUPER = object
 else:
-    SUPER = (tuple, XY)
+    SUPER = tuple
 
 
-class Chip(SUPER):
+class Chip(XY, SUPER):
     """
     Represents a SpiNNaker chip with a number of cores, an amount of
     SDRAM shared between the cores, and a router.
