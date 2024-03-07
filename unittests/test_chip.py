@@ -119,7 +119,8 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(len(all_p), new_chip.n_processors)
         users = set(new_chip.placeable_processors)
         self.assertEqual(len(users), new_chip.n_placable_processors)
-        self.assertEqual(len(users), len(set(new_chip.placable_processors_ids)))
+        self.assertEqual(len(users),
+                         len(set(new_chip.placable_processors_ids)))
         monitors = set(new_chip.scamp_processors)
         self.assertEqual(users.union(monitors), all_p)
         self.assertEqual(len(monitors),
