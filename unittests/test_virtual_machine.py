@@ -178,8 +178,8 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(n_cpus, _chip.n_processors)
         self.assertEqual(n_cpus - 1, _chip.n_user_processors)
         self.assertEqual(1, _chip.n_monitor_processors)
-        self.assertEqual(n_cpus - 1, len(list(_chip.user_processors)))
-        self.assertEqual(1, len(list(_chip.monitor_processors)))
+        self.assertEqual(n_cpus - 1, len(list(_chip.user_processors_ids)))
+        self.assertEqual(1, len(list(_chip.monitor_processors_ids)))
         count = sum(_chip.n_processors for _chip in vm.chips)
         self.assertEqual(count, 4 * n_cpus)
 

@@ -113,17 +113,13 @@ class TestingChip(unittest.TestCase):
     def test_processors(self):
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
-        all_p = set()
-        for id in new_chip.all_processor_ids:
-            all_p.add(new_chip[id])
+        all_p = set(new_chip.all_processor_ids)
         self.assertEqual(len(all_p), new_chip.n_processors)
-        users = set(new_chip.user_processors)
+        users = set(new_chip.user_processors_ids)
         self.assertEqual(len(users), new_chip.n_user_processors)
-        self.assertEqual(len(users), len(set(new_chip.user_processors_ids)))
-        monitors = set(new_chip.monitor_processors)
+        monitors = set(new_chip.monitor_processors_ids)
         self.assertEqual(users.union(monitors), all_p)
-        self.assertEqual(len(monitors),
-                         len(set(new_chip.monitor_processors_ids)))
+        self.assertEqual(len(monitors), new_chip.n_monitor_processors)
 
 
 if __name__ == '__main__':

@@ -188,26 +188,6 @@ class Chip(object):
         return self._y
 
     @property
-    def processors(self) -> Iterator[Processor]:
-        """
-        An iterable of available all processors.
-
-        Deprecated: There are many more efficient methods instead.
-        - all_processor_ids
-        - n_processors
-        - n_user_processors
-        - user_processors
-        - user_processors_ids
-        - n_monitor_processors
-        - monitor_processors
-        - monitor_processors_ids
-
-        :rtype: iterable(Processor)
-        """
-        yield from self._monitor_processors.values()
-        yield from self._user_processors.values()
-
-    @property
     def all_processor_ids(self) -> Iterator[int]:
         """
         An iterable of id's of all available processors
@@ -227,15 +207,6 @@ class Chip(object):
         return len(self._monitor_processors) + len(self._user_processors)
 
     @property
-    def user_processors(self) -> Iterator[Processor]:
-        """
-        An iterable of available user processors.
-
-        :rtype: iterable(Processor)
-        """
-        yield from self._user_processors.values()
-
-    @property
     def user_processors_ids(self) -> Iterator[int]:
         """
         An iterable of available user processors.
@@ -252,15 +223,6 @@ class Chip(object):
         :rtype: int
         """
         return len(self._user_processors)
-
-    @property
-    def monitor_processors(self) -> Iterator[Processor]:
-        """
-        An iterable of available monitor processors.
-
-        :rtype: iterable(Processor)
-        """
-        return self._monitor_processors.values()
 
     @property
     def monitor_processors_ids(self) -> Iterator[int]:
