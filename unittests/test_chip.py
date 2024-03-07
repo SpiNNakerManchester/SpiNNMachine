@@ -87,20 +87,16 @@ class TestingChip(unittest.TestCase):
         with self.assertRaises(Exception):
             new_chip.get_first_none_monitor_processor()
 
+
     def test_processors(self):
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
-        all_p = set(new_chip.processors)
+        all_p = set(new_chip.all_processor_ids)
         self.assertEqual(len(all_p), new_chip.n_processors)
-        self.assertEqual(len(all_p), len(set(new_chip.all_processor_ids)))
-        users = set(new_chip.placeable_processors)
+        users = set(new_chip.placable_processors_ids)
         self.assertEqual(len(users), new_chip.n_placable_processors)
-        self.assertEqual(len(users),
-                         len(set(new_chip.placable_processors_ids)))
-        monitors = set(new_chip.scamp_processors)
+        monitors = set(new_chip.scamp_processors_ids)
         self.assertEqual(users.union(monitors), all_p)
-        self.assertEqual(len(monitors),
-                         len(set(new_chip.scamp_processors_ids)))
 
     def test_is_xy(self):
         chip24 = self._create_chip(

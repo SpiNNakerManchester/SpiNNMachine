@@ -193,26 +193,6 @@ class Chip(XY):
         return self[1]
 
     @property
-    def processors(self) -> Iterator[Processor]:
-        """
-        An iterable of available all processors.
-
-        Deprecated: There are many more efficient methods instead.
-        - all_processor_ids
-        - n_processors
-        - n_user_processors
-        - user_processors
-        - user_processors_ids
-        - n_monitor_processors
-        - monitor_processors
-        - monitor_processors_ids
-
-        :rtype: iterable(Processor)
-        """
-        yield from self._scamp_processors.values()
-        yield from self._placable_processors.values()
-
-    @property
     def all_processor_ids(self) -> Iterator[int]:
         """
         An iterable of id's of all available processors
@@ -232,15 +212,6 @@ class Chip(XY):
         return len(self._scamp_processors) + len(self._placable_processors)
 
     @property
-    def placeable_processors(self) -> Iterator[Processor]:
-        """
-        An iterable of available placable/ none scamp processors.
-
-        :rtype: iterable(Processor)
-        """
-        yield from self._placable_processors.values()
-
-    @property
     def placable_processors_ids(self) -> Iterator[int]:
         """
         An iterable of available placable/ non scamp processor ids.
@@ -257,15 +228,6 @@ class Chip(XY):
         :rtype: int
         """
         return len(self._placable_processors)
-
-    @property
-    def scamp_processors(self) -> Iterator[Processor]:
-        """
-        An iterable of available scamp processors.
-
-        :rtype: iterable(Processor)
-        """
-        return self._scamp_processors.values()
 
     @property
     def scamp_processors_ids(self) -> Iterator[int]:
