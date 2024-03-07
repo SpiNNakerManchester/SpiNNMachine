@@ -42,7 +42,7 @@ class Chip(object):
     __slots__ = (
         "_x", "_y", "_router", "_sdram", "_ip_address",
         "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
-        "_user_processors", "_scamp_processors", "_parent_link",
+        "_placable_processors", "_scamp_processors", "_parent_link",
         "_v_to_p_map"
     )
 
@@ -89,7 +89,7 @@ class Chip(object):
         self._x = x
         self._y = y
         self._scamp_processors = self.__generate_scamp()
-        self._user_processors = self.__generate_processors(
+        self._placable_processors = self.__generate_processors(
             n_processors, down_cores)
         self._router = router
         self._sdram = sdram
@@ -150,7 +150,7 @@ class Chip(object):
         :return: Whether the processor with the given ID exists
         :rtype: bool
         """
-        if processor_id in self._user_processors:
+        if processor_id in self._placable_processors:
             return True
         return processor_id in self._scamp_processors
 
@@ -165,8 +165,8 @@ class Chip(object):
             or ``None`` if no such processor
         :rtype: Processor or None
         """
-        if processor_id in self._user_processors:
-            return self._user_processors[processor_id]
+        if processor_id in self._placable_processors:
+            return self._placable_processors[processor_id]
         return self._scamp_processors.get(processor_id)
 
     @property
@@ -205,7 +205,7 @@ class Chip(object):
         :rtype: iterable(Processor)
         """
         yield from self._scamp_processors.values()
-        yield from self._user_processors.values()
+        yield from self._placable_processors.values()
 
     @property
     def all_processor_ids(self) -> Iterator[int]:
@@ -215,7 +215,7 @@ class Chip(object):
         :rtype: iterable(int)
         """
         yield from self._scamp_processors.keys()
-        yield from self._user_processors.keys()
+        yield from self._placable_processors.keys()
 
     @property
     def n_processors(self) -> int:
@@ -224,34 +224,34 @@ class Chip(object):
 
         :rtype: int
         """
-        return len(self._scamp_processors) + len(self._user_processors)
+        return len(self._scamp_processors) + len(self._placable_processors)
 
     @property
-    def user_processors(self) -> Iterator[Processor]:
+    def placeable_processors(self) -> Iterator[Processor]:
         """
-        An iterable of available user processors.
+        An iterable of available placable/ none scamp processors.
 
         :rtype: iterable(Processor)
         """
-        yield from self._user_processors.values()
+        yield from self._placable_processors.values()
 
     @property
-    def user_processors_ids(self) -> Iterator[int]:
+    def placable_processors_ids(self) -> Iterator[int]:
         """
-        An iterable of available user processors.
+        An iterable of available placable/ non scamp processor ids.
 
         :rtype: iterable(Processor)
         """
-        yield from self._user_processors
+        yield from self._placable_processors
 
     @property
-    def n_user_processors(self) -> int:
+    def n_placable_processors(self) -> int:
         """
-        The total number of processors that are not used by scamp.
+        The total number of processors that are placable / not used by scamp.
 
         :rtype: int
         """
-        return len(self._user_processors)
+        return len(self._placable_processors)
 
     @property
     def scamp_processors(self) -> Iterator[Processor]:
@@ -342,7 +342,7 @@ class Chip(object):
         :rtype: Processor
         ;raises StopIteration: If there is no user processor
         """
-        return next(iter(self._user_processors.values()))
+        return next(iter(self._placable_processors.values()))
 
     @property
     def parent_link(self) -> Optional[int]:
@@ -390,7 +390,7 @@ class Chip(object):
         :rtype: iterable(tuple(int,Processor))
         """
         yield from self._scamp_processors.items()
-        yield from self._user_processors.items()
+        yield from self._placable_processors.items()
 
     def __len__(self) -> int:
         """
@@ -399,11 +399,11 @@ class Chip(object):
         :return: The number of items in the underlying iterator.
         :rtype: int
         """
-        return len(self._scamp_processors) + len(self._user_processors)
+        return len(self._scamp_processors) + len(self._placable_processors)
 
     def __getitem__(self, processor_id: int) -> Processor:
-        if processor_id in self._user_processors:
-            return self._user_processors[processor_id]
+        if processor_id in self._placable_processors:
+            return self._placable_processors[processor_id]
         if processor_id in self._scamp_processors:
             return self._scamp_processors[processor_id]
         # Note difference from get_processor_with_id(); this is to conform to

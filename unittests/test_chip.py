@@ -53,7 +53,7 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(new_chip.ip_address, self._ip)
         self.assertEqual(new_chip.sdram, self._sdram)
         self.assertEqual(new_chip.router, self._router)
-        self.assertEqual(new_chip.n_user_processors, self.n_processors - 1)
+        self.assertEqual(new_chip.n_placable_processors, self.n_processors - 1)
         with self.assertRaises(KeyError):
             self.assertIsNone(new_chip[42])
         print(new_chip.__repr__())
@@ -117,9 +117,9 @@ class TestingChip(unittest.TestCase):
         for id in new_chip.all_processor_ids:
             all_p.add(new_chip[id])
         self.assertEqual(len(all_p), new_chip.n_processors)
-        users = set(new_chip.user_processors)
-        self.assertEqual(len(users), new_chip.n_user_processors)
-        self.assertEqual(len(users), len(set(new_chip.user_processors_ids)))
+        users = set(new_chip.placeable_processors)
+        self.assertEqual(len(users), new_chip.n_placable_processors)
+        self.assertEqual(len(users), len(set(new_chip.placable_processors_ids)))
         monitors = set(new_chip.scamp_processors)
         self.assertEqual(users.union(monitors), all_p)
         self.assertEqual(len(monitors),

@@ -390,8 +390,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         machine = virtual_machine(8, 8)
         # Hack to get n_processors return a low number
         chip01 = machine.get_chip_at(0, 1)
-        chip01._user_processors = dict(
-            list(chip01._user_processors.items())[:2])
+        chip01._placable_processors = dict(
+            list(chip01._placable_processors.items())[:2])
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 

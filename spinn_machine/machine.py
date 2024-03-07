@@ -1084,7 +1084,7 @@ class Machine(object, metaclass=AbstractBase):
 
         :rtype: int
         """
-        return sum(chip.n_user_processors for chip in self.chips)
+        return sum(chip.n_placable_processors for chip in self.chips)
 
     @property
     def total_cores(self) -> int:
