@@ -566,12 +566,11 @@ class Machine(object, metaclass=AbstractBase):
         :raise SpinnMachineAlreadyExistsException:
             If a chip with the same x and y coordinates already exists
         """
-        chip_id = (chip.x, chip.y)
-        if chip_id in self._chips:
+        if chip in self._chips:
             raise SpinnMachineAlreadyExistsException(
                 "chip", f"{chip.x}, {chip.y}")
 
-        self._chips[chip_id] = chip
+        self._chips[chip] = chip
 
         # keep some stats about the
         self._n_cores_counter[chip.n_processors] += 1

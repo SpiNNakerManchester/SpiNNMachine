@@ -337,18 +337,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_big_x(self):
-        machine = virtual_machine(8, 8)
-        machine.get_chip_at(1, 1)._x = 9
-        with self.assertRaises(SpinnMachineException):
-            machine.validate()
-
-    def test_big_y(self):
-        machine = virtual_machine(8, 8)
-        machine.get_chip_at(1, 1)._y = 9
-        with self.assertRaises(SpinnMachineException):
-            machine.validate()
-
     def test_weird_ethernet1(self):
         machine = virtual_machine(8, 8)
         machine.get_chip_at(1, 3)._ip_address = "1.2.3.4"

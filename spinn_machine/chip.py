@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import (
-    Any, Collection, Dict, Iterable, Iterator, Optional, Tuple)
+    Collection, Dict, Iterable, Iterator, Optional)
+
 from spinn_utilities.ordered_set import OrderedSet
+from spinn_utilities.typing.coords import XY
+
 from spinn_machine.data import MachineDataView
 from .processor import Processor
 from .router import Router
@@ -25,7 +28,7 @@ standard_processors = {}
 standard_scamp_processors = None  # pylint: disable=invalid-name
 
 
-class Chip(object):
+class Chip(XY):
     """
     Represents a SpiNNaker chip with a number of cores, an amount of
     SDRAM shared between the cores, and a router.
@@ -39,14 +42,17 @@ class Chip(object):
     # tag 0 is reserved for stuff like IO STD
     _IPTAG_IDS = OrderedSet(range(1, 8))
 
-    __slots__ = (
-        "_x", "_y", "_router", "_sdram", "_ip_address",
-        "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
-        "_placable_processors", "_scamp_processors", "_parent_link",
-        "_v_to_p_map"
-    )
+    def __new__(cls, x: int, y: int, n_processors: int, router: Router,
+                sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
+                ip_address: Optional[str] = None,
+                tag_ids: Optional[Iterable[int]] = None,
+                down_cores: Optional[Collection[int]] = None,
+                parent_link: Optional[int] = None,
+                v_to_p_map: Optional[bytes] = None):
+        return tuple.__new__(cls, (x, y))
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
+    # pylint: disable=unused-argument
     def __init__(self, x: int, y: int, n_processors: int, router: Router,
                  sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
                  ip_address: Optional[str] = None,
@@ -86,8 +92,7 @@ class Chip(object):
             If processors contains any two processors with the same
             ``processor_id``
         """
-        self._x = x
-        self._y = y
+        # X and Y set by new
         self._scamp_processors = self.__generate_scamp()
         self._placable_processors = self.__generate_processors(
             n_processors, down_cores)
@@ -176,7 +181,7 @@ class Chip(object):
 
         :rtype: int
         """
-        return self._x
+        return self[0]
 
     @property
     def y(self) -> int:
@@ -185,7 +190,7 @@ class Chip(object):
 
         :rtype: int
         """
-        return self._y
+        return self[1]
 
     @property
     def processors(self) -> Iterator[Processor]:
@@ -389,8 +394,8 @@ class Chip(object):
             * ``processor`` is the processor with the ID
         :rtype: iterable(tuple(int,Processor))
         """
-        yield from self._scamp_processors.items()
-        yield from self._placable_processors.items()
+        yield from self._monitor_processors.items()
+        yield from self._user_processors.items()
 
     def __len__(self) -> int:
         """
@@ -399,13 +404,13 @@ class Chip(object):
         :return: The number of items in the underlying iterator.
         :rtype: int
         """
-        return len(self._scamp_processors) + len(self._placable_processors)
+        return len(self._monitor_processors) + len(self._user_processors)
 
     def __getitem__(self, processor_id: int) -> Processor:
-        if processor_id in self._placable_processors:
-            return self._placable_processors[processor_id]
-        if processor_id in self._scamp_processors:
-            return self._scamp_processors[processor_id]
+        if processor_id in self._user_processors:
+            return self._user_processors[processor_id]
+        if processor_id in self._monitor_processors:
+            return self._monitor_processors[processor_id]
         # Note difference from get_processor_with_id(); this is to conform to
         # standard Python semantics
         raise KeyError(processor_id)
@@ -419,18 +424,9 @@ class Chip(object):
         else:
             ip_info = ""
         return (
-            f"[Chip: x={self._x}, y={self._y}, {ip_info}"
+            f"[Chip: x={self[0]}, y={self[1]}, {ip_info}"
             f"n_cores={self.n_processors}, "
             f"mon={self.get_physical_core_id(0)}]")
 
     def __repr__(self) -> str:
         return self.__str__()
-
-    def __eq__(self, other: Any) -> bool:
-        # Equality just on X,Y; that's most useful
-        if not isinstance(other, Chip):
-            return NotImplemented
-        return self._x == other.x and self._y == other.y
-
-    def __hash__(self) -> int:
-        return self._x * 256 + self._y
