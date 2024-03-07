@@ -272,7 +272,7 @@ class Chip(object):
         yield from self._scamp_processors
 
     @property
-    def n_monitor_processors(self) -> int:
+    def n_scamp_processors(self) -> int:
         """
         The total number of processors that are used by scamp.
 
