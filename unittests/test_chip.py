@@ -87,7 +87,6 @@ class TestingChip(unittest.TestCase):
         with self.assertRaises(Exception):
             new_chip.get_first_none_monitor_processor()
 
-
     def test_processors(self):
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
