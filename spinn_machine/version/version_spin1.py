@@ -52,4 +52,3 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     @overrides(AbstractVersion.dtch_bytes)
     def dtch_bytes(self) -> int:
         return 2 ** 16
-
