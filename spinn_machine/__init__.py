@@ -91,5 +91,4 @@ from .fixed_route_entry import FixedRouteEntry
 
 __all__ = ["Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
            "FrozenCoreSubsets", "Link", "Machine", "MulticastRoutingEntry",
-           "Processor", "Router", "SpiNNakerTriadGeometry",
-           "virtual_machine"]
+           "Router", "SpiNNakerTriadGeometry", "virtual_machine"]
