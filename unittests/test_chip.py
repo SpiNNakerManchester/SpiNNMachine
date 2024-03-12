@@ -17,7 +17,6 @@ from spinn_utilities.config_holder import set_config
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Link, Router, Chip
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.data import MachineDataView
 
 
 class TestingChip(unittest.TestCase):
