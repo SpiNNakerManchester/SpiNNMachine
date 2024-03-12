@@ -11,8 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import (
-    Collection, Dict, Iterable, Iterator, Optional)
+from typing import (Collection, Iterable, Iterator, Optional, Tuple)
 
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.typing.coords import XY
@@ -107,7 +106,7 @@ class Chip(XY):
 
     def __generate_processors(
             self, n_processors: int,
-            down_cores: Optional[Collection[int]]) -> tuple[int]:
+            down_cores: Optional[Collection[int]]) -> Tuple[int]:
         n_monitors = MachineDataView.get_machine_version().n_scamp_cores
         if down_cores is None:
             return tuple(range(n_monitors, n_processors))
@@ -173,7 +172,7 @@ class Chip(XY):
         return len(self._scamp_processors) + len(self._placable_processors)
 
     @property
-    def placable_processors_ids(self) -> tuple[int]:
+    def placable_processors_ids(self) -> Tuple[int]:
         """
         An iterable of available placable/ non scamp processor ids.
 
@@ -191,7 +190,7 @@ class Chip(XY):
         return len(self._placable_processors)
 
     @property
-    def scamp_processors_ids(self) -> tuple[int]:
+    def scamp_processors_ids(self) -> Tuple[int]:
         """
         An iterable of available scamp processors.
 
