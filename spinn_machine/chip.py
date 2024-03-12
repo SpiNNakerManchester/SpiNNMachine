@@ -18,7 +18,6 @@ from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.typing.coords import XY
 
 from spinn_machine.data import MachineDataView
-from .processor import Processor
 from .router import Router
 
 # global values so Chip objects can share processor dict objects
@@ -32,11 +31,6 @@ class Chip(XY):
     """
     Represents a SpiNNaker chip with a number of cores, an amount of
     SDRAM shared between the cores, and a router.
-    The chip is iterable over the processors, yielding
-    ``(processor_id, processor)`` where:
-
-        * ``processor_id`` is the ID of a processor
-        * ``processor`` is the :py:class:`Processor` with ``processor_id``
     """
 
     # tag 0 is reserved for stuff like IO STD
@@ -93,7 +87,8 @@ class Chip(XY):
             ``processor_id``
         """
         # X and Y set by new
-        self._scamp_processors = self.__generate_scamp()
+        self._scamp_processors = range(
+                    MachineDataView.get_machine_version().n_scamp_cores)
         self._placable_processors = self.__generate_processors(
             n_processors, down_cores)
         self._router = router
@@ -110,41 +105,22 @@ class Chip(XY):
         self._parent_link = parent_link
         self._v_to_p_map = v_to_p_map
 
-    def __generate_scamp(self):
-        """
-        Generates the scamp assuming all Chips have the same scamp cores
-
-        :return:  Dict[int, Processor]
-        """
-        global standard_scamp_processors  # pylint: disable=global-statement
-        if standard_scamp_processors is None:
-            standard_scamp_processors = dict()
-            for i in range(
-                    MachineDataView.get_machine_version().n_scamp_cores):
-                standard_scamp_processors[i] = Processor.factory(i, True)
-        return standard_scamp_processors
-
     def __generate_processors(
             self, n_processors: int,
-            down_cores: Optional[Collection[int]]) -> Dict[int, Processor]:
+            down_cores: Optional[Collection[int]]) -> tuple[int]:
         n_monitors = MachineDataView.get_machine_version().n_scamp_cores
         if down_cores is None:
-            if n_processors not in standard_processors:
-                processors = dict()
-                for i in range(n_monitors, n_processors):
-                    processors[i] = Processor.factory(i)
-                standard_processors[n_processors] = processors
-            return standard_processors[n_processors]
+            return tuple(range(n_monitors, n_processors))
         else:
-            processors = dict()
+            processors = list()
             for i in range(n_monitors):
                 if i in down_cores:
                     raise NotImplementedError(
                         f"Declaring monitor core {i} as down is not supported")
             for i in range(n_monitors, n_processors):
                 if i not in down_cores:
-                    processors[i] = Processor.factory(i)
-            return processors
+                    processors.append(i)
+            return tuple(processors)
 
     def is_processor_with_id(self, processor_id: int) -> bool:
         """
@@ -158,21 +134,6 @@ class Chip(XY):
         if processor_id in self._placable_processors:
             return True
         return processor_id in self._scamp_processors
-
-    def get_processor_with_id(self, processor_id: int) -> Optional[Processor]:
-        """
-        Return the processor with the specified ID, or ``None`` if the
-        processor does not exist.
-
-        :param int processor_id: the ID of the processor to return
-        :return:
-            the processor with the specified ID,
-            or ``None`` if no such processor
-        :rtype: Processor or None
-        """
-        if processor_id in self._placable_processors:
-            return self._placable_processors[processor_id]
-        return self._scamp_processors.get(processor_id)
 
     @property
     def x(self) -> int:
@@ -199,8 +160,8 @@ class Chip(XY):
 
         :rtype: iterable(int)
         """
-        yield from self._scamp_processors.keys()
-        yield from self._placable_processors.keys()
+        yield from self._scamp_processors
+        yield from self._placable_processors
 
     @property
     def n_processors(self) -> int:
@@ -212,13 +173,13 @@ class Chip(XY):
         return len(self._scamp_processors) + len(self._placable_processors)
 
     @property
-    def placable_processors_ids(self) -> Iterator[int]:
+    def placable_processors_ids(self) -> tuple[int]:
         """
         An iterable of available placable/ non scamp processor ids.
 
-        :rtype: iterable(Processor)
+        :rtype: iterable(int)
         """
-        yield from self._placable_processors
+        return self._placable_processors
 
     @property
     def n_placable_processors(self) -> int:
@@ -230,13 +191,13 @@ class Chip(XY):
         return len(self._placable_processors)
 
     @property
-    def scamp_processors_ids(self) -> Iterator[int]:
+    def scamp_processors_ids(self) -> tuple[int]:
         """
         An iterable of available scamp processors.
 
-        :rtype: iterable(Processor)
+        :rtype: iterable(int)
         """
-        yield from self._scamp_processors
+        return self._scamp_processors
 
     @property
     def n_scamp_processors(self) -> int:
@@ -302,14 +263,14 @@ class Chip(XY):
         """
         return self._tag_ids
 
-    def get_first_none_monitor_processor(self) -> Processor:
+    def get_first_none_monitor_processor_id(self) -> int:
         """
         Get the first processor in the list which is not a monitor core.
 
-        :rtype: Processor
-        ;raises StopIteration: If there is no user processor
+        :rtype: int
+        ;raises IndexError: If there is no user processors
         """
-        return next(iter(self._placable_processors.values()))
+        return self._placable_processors[0]
 
     @property
     def parent_link(self) -> Optional[int]:

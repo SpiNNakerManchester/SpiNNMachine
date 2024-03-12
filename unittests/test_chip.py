@@ -17,6 +17,7 @@ from spinn_utilities.config_holder import set_config
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Link, Router, Chip
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.data import MachineDataView
 
 
 class TestingChip(unittest.TestCase):
@@ -62,8 +63,6 @@ class TestingChip(unittest.TestCase):
             new_chip.__repr__(),)
         self.assertEqual(new_chip.tag_ids, OrderedSet([1, 2, 3, 4, 5, 6, 7]))
         self.assertTrue(new_chip.is_processor_with_id(3))
-        self.assertEqual(5, new_chip.get_processor_with_id(5).processor_id)
-        self.assertIsNone(new_chip.get_processor_with_id(-1))
 
     def test_get_first_none_monitor_processor(self):
         """ test the get_first_none_monitor_processor
@@ -72,8 +71,9 @@ class TestingChip(unittest.TestCase):
         """
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
-        non_monitor = new_chip.get_first_none_monitor_processor()
-        self.assertFalse(non_monitor.is_monitor)
+        non_monitor = new_chip.get_first_none_monitor_processor_id()
+        self.assertEqual(non_monitor,
+                         MachineDataView.get_machine_version().n_scamp_cores)
 
     def test_0_down(self):
         # Chip where 0 the monitor is down
