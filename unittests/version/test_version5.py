@@ -145,6 +145,11 @@ class TestVersion5(unittest.TestCase):
         machine = version.create_machine(12, 12)
         self.assertIsInstance(machine, FullWrapMachine)
 
+    def test_processor_info(self):
+        version = Version5()
+        self.assertEqual(200, version.clock_speed_hz)
+        self.assertEqual(65536, version.dtch_bytes)
+
 
 if __name__ == '__main__':
     unittest.main()

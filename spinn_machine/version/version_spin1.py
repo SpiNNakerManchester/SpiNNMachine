@@ -42,3 +42,14 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     @overrides(AbstractVersion.minimum_cores_expected)
     def minimum_cores_expected(self) -> int:
         return 5
+
+    @property
+    @overrides(AbstractVersion.clock_speed_hz)
+    def clock_speed_hz(self) -> int:
+        return 200
+
+    @property
+    @overrides(AbstractVersion.dtch_bytes)
+    def dtch_bytes(self) -> int:
+        return 2 ** 16
+

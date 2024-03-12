@@ -212,6 +212,24 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
+    @property
+    @abstractmethod
+    def clock_speed_hz(self) -> int:
+        """
+        The processor clock speed in Hz
+
+        :rtype: int
+        """
+
+    @property
+    @abstractmethod
+    def dtch_bytes(self) -> int:
+        """
+        The dth available on a processor in bytes
+
+        :rtype: int
+        """
+
     @abstractmethod
     def get_potential_ethernet_chips(
             self, width: int, height: int) -> Sequence[XY]:
