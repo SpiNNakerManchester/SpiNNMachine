@@ -19,12 +19,6 @@ from spinn_utilities.typing.coords import XY
 from spinn_machine.data import MachineDataView
 from .router import Router
 
-# global values so Chip objects can share processor dict objects
-# One dict for each number of processors (none dead)
-standard_processors = {}
-# One dict for the standard monitor processors
-standard_scamp_processors = None  # pylint: disable=invalid-name
-
 
 class Chip(XY):
     """
@@ -86,8 +80,8 @@ class Chip(XY):
             ``processor_id``
         """
         # X and Y set by new
-        self._scamp_processors = range(
-                    MachineDataView.get_machine_version().n_scamp_cores)
+        self._scamp_processors = tuple(range(
+                    MachineDataView.get_machine_version().n_scamp_cores))
         self._placable_processors = self.__generate_processors(
             n_processors, down_cores)
         self._router = router
@@ -106,7 +100,7 @@ class Chip(XY):
 
     def __generate_processors(
             self, n_processors: int,
-            down_cores: Optional[Collection[int]]) -> Tuple[int]:
+            down_cores: Optional[Collection[int]]) -> Tuple[int, ...]:
         n_monitors = MachineDataView.get_machine_version().n_scamp_cores
         if down_cores is None:
             return tuple(range(n_monitors, n_processors))
@@ -172,7 +166,7 @@ class Chip(XY):
         return len(self._scamp_processors) + len(self._placable_processors)
 
     @property
-    def placable_processors_ids(self) -> Tuple[int]:
+    def placable_processors_ids(self) -> Tuple[int, ...]:
         """
         An iterable of available placable/ non scamp processor ids.
 
@@ -190,7 +184,7 @@ class Chip(XY):
         return len(self._placable_processors)
 
     @property
-    def scamp_processors_ids(self) -> Tuple[int]:
+    def scamp_processors_ids(self) -> Tuple[int, ...]:
         """
         An iterable of available scamp processors.
 
