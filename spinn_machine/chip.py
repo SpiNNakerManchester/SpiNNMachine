@@ -262,15 +262,6 @@ class Chip(XY):
         """
         return self._tag_ids
 
-    def get_first_none_monitor_processor_id(self) -> int:
-        """
-        Get the first processor in the list which is not a monitor core.
-
-        :rtype: int
-        ;raises IndexError: If there is no user processors
-        """
-        return self._placable_processors[0]
-
     @property
     def parent_link(self) -> Optional[int]:
         """

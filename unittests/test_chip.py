@@ -64,17 +64,6 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(new_chip.tag_ids, OrderedSet([1, 2, 3, 4, 5, 6, 7]))
         self.assertTrue(new_chip.is_processor_with_id(3))
 
-    def test_get_first_none_monitor_processor(self):
-        """ test the get_first_none_monitor_processor
-
-        NOTE: Not sure if method being tested is required.
-        """
-        new_chip = self._create_chip(self._x, self._y, self.n_processors,
-                                     self._router, self._sdram, self._ip)
-        non_monitor = new_chip.get_first_none_monitor_processor_id()
-        self.assertEqual(non_monitor,
-                         MachineDataView.get_machine_version().n_scamp_cores)
-
     def test_0_down(self):
         # Chip where 0 the monitor is down
         with self.assertRaises(NotImplementedError):
