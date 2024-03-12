@@ -223,9 +223,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def dtch_bytes(self) -> int:
+    def dtcm_bytes(self) -> int:
         """
-        The dth available on a processor in bytes
+        The Data Tightly Coupled Memory available on a processor in bytes
 
         :rtype: int
         """

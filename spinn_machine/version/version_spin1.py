@@ -49,6 +49,6 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
         return 200
 
     @property
-    @overrides(AbstractVersion.dtch_bytes)
-    def dtch_bytes(self) -> int:
+    @overrides(AbstractVersion.dtcm_bytes)
+    def dtcm_bytes(self) -> int:
         return 2 ** 16
