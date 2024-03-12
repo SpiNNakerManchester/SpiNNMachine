@@ -49,6 +49,7 @@ class TestingChip(unittest.TestCase):
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
 
+        self.assertEqual(new_chip, (self._x, self._y))
         self.assertEqual(new_chip.x, self._x)
         self.assertEqual(new_chip.y, self._y)
         self.assertEqual(new_chip.ip_address, self._ip)
