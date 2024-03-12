@@ -1287,8 +1287,9 @@ class Machine(object, metaclass=AbstractBase):
         """
         # get a set of xys that could be connected to any existing Ethernet
         xys_by_ethernet: Set[XY] = set()
-        for ethernet in self.ethernet_connected_chips:
-            xys_by_ethernet.update(self.get_xys_by_ethernet(ethernet))
+        for ethernet_x, ethernet_y in self.ethernet_connected_chips:
+            xys_by_ethernet.update(self.get_xys_by_ethernet(
+                ethernet_x, ethernet_y))
         x = 0
         while (True):
             for y in range(self.height):
