@@ -38,8 +38,6 @@ class Router(object):
     # Number to add or sub from a link to get its opposite
     LINK_OPPOSITE = 3
 
-    MAX_CORES_PER_ROUTER = 18
-
     __slots__ = ("_links", "_n_available_multicast_entries")
 
     def __init__(
@@ -159,12 +157,6 @@ class Router(object):
         """
         route_entry = 0
         for processor_id in routing_table_entry.processor_ids:
-            if processor_id >= Router.MAX_CORES_PER_ROUTER or processor_id < 0:
-                raise SpinnMachineInvalidParameterException(
-                    "route.processor_ids",
-                    str(routing_table_entry.processor_ids),
-                    "Processor IDs must be between 0 and " +
-                    str(Router.MAX_CORES_PER_ROUTER - 1))
             route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
         for link_id in routing_table_entry.link_ids:
             if link_id >= Router.MAX_LINKS_PER_ROUTER or link_id < 0:
