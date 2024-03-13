@@ -14,7 +14,11 @@
 from __future__ import annotations
 from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
 from spinn_machine.router import Router
+from spinn_machine.data import MachineDataView
 from .exceptions import SpinnMachineInvalidParameterException
+
+# cache of MachineDataView.get_machine_version().max_cores_per_chip
+max_cores_per_chip: int = 0
 
 
 class MulticastRoutingEntry(object):
@@ -74,6 +78,10 @@ class MulticastRoutingEntry(object):
         :raise TypeError: if no spinnaker_route provided and either
             processor_ids or link_ids is missing or `None`
         """
+        global max_cores_per_chip
+        if max_cores_per_chip == 0:
+            max_cores_per_chip = \
+                MachineDataView.get_machine_version().max_cores_per_chip
         self._routing_entry_key: int = routing_entry_key
         self._mask: int = mask
         self._defaultable: bool = defaultable
@@ -271,7 +279,7 @@ class MulticastRoutingEntry(object):
 
         :rtype: tuple(frozenset(int), frozenset(int))
         """
-        processor_ids = (pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+        processor_ids = (pi for pi in range(0, max_cores_per_chip)
                          if self._spinnaker_route & 1 <<
                          (Router.MAX_LINKS_PER_ROUTER + pi))
         link_ids = (li for li in range(0, Router.MAX_LINKS_PER_ROUTER)

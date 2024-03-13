@@ -14,12 +14,16 @@
 from __future__ import annotations
 from typing import (
     Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
+from spinn_machine.data import MachineDataView
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 if TYPE_CHECKING:
     from .link import Link
     from .fixed_route_entry import FixedRouteEntry
     from .multicast_routing_entry import MulticastRoutingEntry
+
+# cache of MachineDataView.get_machine_version().max_cores_per_chip
+max_cores_per_chip: int = 0
 
 
 class Router(object):
@@ -50,6 +54,10 @@ class Router(object):
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If any two links have the same ``source_link_id``
         """
+        global max_cores_per_chip
+        if max_cores_per_chip == 0:
+            max_cores_per_chip = \
+                MachineDataView.get_machine_version().max_cores_per_chip
         self._links: Dict[int, Link] = dict()
         for link in links:
             self.add_link(link)
@@ -178,7 +186,7 @@ class Router(object):
         :return: The list of processor IDs, and the list of link IDs.
         :rtype: tuple(list(int), list(int))
         """
-        processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+        processor_ids = [pi for pi in range(0, max_cores_per_chip)
                          if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
         link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
                     if route & 1 << li]
