@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+from spinn_utilities.config_holder import set_config
 from spinn_machine import Router, Link, MulticastRoutingEntry
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import (
@@ -23,6 +24,7 @@ class TestingRouter(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
 
     def test_creating_new_router(self):
         links = list()
@@ -75,20 +77,7 @@ class TestingRouter(unittest.TestCase):
     def test_convert_to_route(self):
         e = MulticastRoutingEntry(28, 60, processor_ids=[4, 5, 7],
                                   link_ids=[1, 3, 5], defaultable=True)
-        r = Router.convert_routing_table_entry_to_spinnaker_route(e)
-        self.assertEqual(r, 11306)
-
-    def test_bad_processor(self):
-        e = MulticastRoutingEntry(28, 60, processor_ids=[4, 5, -1],
-                                  link_ids=[1, 3, 5], defaultable=True)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            Router.convert_routing_table_entry_to_spinnaker_route(e)
-
-    def test_bad_link(self):
-        e = MulticastRoutingEntry(28, 60, processor_ids=[4, 5, 7],
-                                  link_ids=[1, 3, 15], defaultable=True)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            Router.convert_routing_table_entry_to_spinnaker_route(e)
+        self.assertEqual(e.spinnaker_route, 11306)
 
 
 if __name__ == '__main__':

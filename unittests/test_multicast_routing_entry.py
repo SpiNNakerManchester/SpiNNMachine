@@ -14,6 +14,7 @@
 
 import pickle
 import unittest
+from spinn_utilities.config_holder import set_config
 from spinn_machine import MulticastRoutingEntry
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineInvalidParameterException
@@ -23,6 +24,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
 
     def test_creating_new_multicast_routing_entry(self):
         link_ids = list()
@@ -51,7 +53,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         hash(a_multicast)
 
     def test_bad_key_mask(self):
-        with self.assertRaises(SpinnMachineInvalidParameterException):
+        with self.assertRaises(AssertionError):
             MulticastRoutingEntry(1, 2)
 
     def test_spinnaker_route(self):

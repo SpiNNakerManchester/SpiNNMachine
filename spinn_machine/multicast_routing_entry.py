@@ -14,14 +14,11 @@
 from __future__ import annotations
 from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
 from spinn_machine.router import Router
-from spinn_machine.data import MachineDataView
+from .base_multicast_routing_entry import BaseMulticastRoutingEntry
 from .exceptions import SpinnMachineInvalidParameterException
 
-# cache of MachineDataView.get_machine_version().max_cores_per_chip
-max_cores_per_chip: int = 0
 
-
-class MulticastRoutingEntry(object):
+class MulticastRoutingEntry(BaseMulticastRoutingEntry):
     """
     Represents an entry in a SpiNNaker chip's multicast routing table.
     There can be up to 1024 such entries per chip, but some may be reserved
@@ -29,8 +26,7 @@ class MulticastRoutingEntry(object):
     """
 
     __slots__ = (
-        "_routing_entry_key", "_mask", "_defaultable", "_processor_ids",
-        "_link_ids", "_spinnaker_route", "__repr")
+        "_routing_entry_key", "_mask", "_defaultable", "__repr")
 
     @overload
     def __init__(self, routing_entry_key: int, mask: int, *,
@@ -72,16 +68,10 @@ class MulticastRoutingEntry(object):
         :param spinnaker_route:
             The processor_ids and link_ids expressed as a single int.
         :type spinnaker_route: int or None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
-            * If processor_ids contains the same ID more than once
-            * If link_ids contains the same ID more than once
-        :raise TypeError: if no spinnaker_route provided and either
+        :raise AssertionError: if no spinnaker_route provided and either
             processor_ids or link_ids is missing or `None`
         """
-        global max_cores_per_chip
-        if max_cores_per_chip == 0:
-            max_cores_per_chip = \
-                MachineDataView.get_machine_version().max_cores_per_chip
+        super().__init__(processor_ids, link_ids, spinnaker_route)
         self._routing_entry_key: int = routing_entry_key
         self._mask: int = mask
         self._defaultable: bool = defaultable
@@ -94,19 +84,6 @@ class MulticastRoutingEntry(object):
                 "The key combo is changed when masked with the mask. This"
                 " is determined to be an error in the tool chain. Please "
                 "correct this and try again.")
-
-        # Add processor IDs, ignore duplicates
-        if spinnaker_route is None:
-            assert processor_ids is not None
-            assert link_ids is not None
-            self._processor_ids: Optional[FrozenSet[int]] = \
-                frozenset(processor_ids)
-            self._link_ids: Optional[FrozenSet[int]] = frozenset(link_ids)
-            self._spinnaker_route: int = self._calc_spinnaker_route()
-        else:
-            self._spinnaker_route = spinnaker_route
-            self._processor_ids = None
-            self._link_ids = None
 
     @property
     def routing_entry_key(self) -> int:
@@ -127,28 +104,6 @@ class MulticastRoutingEntry(object):
         return self._mask
 
     @property
-    def processor_ids(self) -> FrozenSet[int]:
-        """
-        The destination processor IDs.
-
-        :rtype: frozenset(int)
-        """
-        if self._processor_ids is None:
-            self._processor_ids, self._link_ids = self._calc_routing_ids()
-        return self._processor_ids
-
-    @property
-    def link_ids(self) -> FrozenSet[int]:
-        """
-        The destination link IDs.
-
-        :rtype: frozenset(int)
-        """
-        if self._link_ids is None:
-            self._processor_ids, self._link_ids = self._calc_routing_ids()
-        return self._link_ids
-
-    @property
     def defaultable(self) -> bool:
         """
         Whether this entry is a defaultable entry. An entry is defaultable if
@@ -160,15 +115,6 @@ class MulticastRoutingEntry(object):
         :rtype: bool
         """
         return self._defaultable
-
-    @property
-    def spinnaker_route(self) -> int:
-        """
-        The encoded SpiNNaker route.
-
-        :rtype: int
-        """
-        return self._spinnaker_route
 
     def merge(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
@@ -197,9 +143,8 @@ class MulticastRoutingEntry(object):
 
         return MulticastRoutingEntry(
             self.routing_entry_key, self.mask,
-            processor_ids=(self.processor_ids | other.processor_ids),
-            link_ids=(self.link_ids | other.link_ids),
-            defaultable=(self._defaultable and other.defaultable))
+            defaultable=(self._defaultable and other.defaultable),
+            spinnaker_route=(self._spinnaker_route | other.spinnaker_route))
 
     def __add__(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
@@ -244,44 +189,3 @@ class MulticastRoutingEntry(object):
 
     def __str__(self) -> str:
         return self.__repr__()
-
-    def __getstate__(self):
-        return dict(
-            (slot, getattr(self, slot))
-            for slot in self.__slots__
-            if hasattr(self, slot)
-        )
-
-    def __setstate__(self, state):
-        for slot, value in state.items():
-            setattr(self, slot, value)
-
-    def _calc_spinnaker_route(self) -> int:
-        """
-        Convert a routing table entry represented in software to a
-        binary routing table entry usable on the machine.
-
-        :rtype: int
-        """
-        route_entry = 0
-        assert self._processor_ids is not None
-        for processor_id in self._processor_ids:
-            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
-        assert self._link_ids is not None
-        for link_id in self._link_ids:
-            route_entry |= (1 << link_id)
-        return route_entry
-
-    def _calc_routing_ids(self) -> Tuple[FrozenSet[int], FrozenSet[int]]:
-        """
-        Convert a binary routing table entry usable on the machine to lists of
-        route IDs usable in a routing table entry represented in software.
-
-        :rtype: tuple(frozenset(int), frozenset(int))
-        """
-        processor_ids = (pi for pi in range(0, max_cores_per_chip)
-                         if self._spinnaker_route & 1 <<
-                         (Router.MAX_LINKS_PER_ROUTER + pi))
-        link_ids = (li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
-                    if self._spinnaker_route & 1 << li)
-        return frozenset(processor_ids), frozenset(link_ids)
