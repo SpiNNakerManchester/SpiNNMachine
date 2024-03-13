@@ -35,8 +35,9 @@ class SpinnMachineTestCase(unittest.TestCase):
     def setUp(self):
         unittest_setup()
         set_config("Machine", "version", 5)
-
-        self._sdram = 123469792
+        version = MachineDataView.get_machine_version()
+        self.n_processors = version.max_cores_per_chip
+        self._sdram = version.max_sdram_per_chip
 
         links = list()
         links.append(Link(0, 0, 0, 1, 1))
@@ -51,10 +52,10 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def _create_chip(self, x, y):
         if x == y == 0:
-            return Chip(x, y, 18, self._router, self._sdram,
+            return Chip(x, y, self.n_processors, self._router, self._sdram,
                         self._nearest_ethernet_chip[0],
                         self._nearest_ethernet_chip[1], self._ip)
-        return Chip(x, y, 18, self._router, self._sdram,
+        return Chip(x, y, self.n_processors, self._router, self._sdram,
                     self._nearest_ethernet_chip[0],
                     self._nearest_ethernet_chip[1], None)
 
@@ -146,7 +147,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         machine = virtual_machine(8, 8)
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             machine.add_chip(Chip(
-                0, 0, 18, self._router, self._sdram,
+                0, 0, self.n_processors, self._router, self._sdram,
                 self._nearest_ethernet_chip[0],
                 self._nearest_ethernet_chip[1], self._ip))
 
