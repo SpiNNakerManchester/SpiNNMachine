@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
-from spinn_machine.router import Router
+from typing import Any, Iterable, Optional, overload
 from .base_multicast_routing_entry import BaseMulticastRoutingEntry
 from .exceptions import SpinnMachineInvalidParameterException
 
