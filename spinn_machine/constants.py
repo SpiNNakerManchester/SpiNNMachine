@@ -14,4 +14,3 @@
 
 # The maximum number of links/directions a router can handle
 MAX_LINKS_PER_ROUTER = 6
-

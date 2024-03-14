@@ -13,18 +13,11 @@
 # limitations under the License.
 from __future__ import annotations
 from typing import (
-    Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
+    Dict, Iterable, Iterator, List, Optional, Tuple, TYPE_CHECKING)
 from spinn_machine.constants import MAX_LINKS_PER_ROUTER
-from spinn_machine.data import MachineDataView
-from .exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from .exceptions import SpinnMachineAlreadyExistsException
 if TYPE_CHECKING:
     from .link import Link
-    from .fixed_route_entry import FixedRouteEntry
-    from .multicast_routing_entry import MulticastRoutingEntry
-
-# cache of MachineDataView.get_machine_version().max_cores_per_chip
-max_cores_per_chip: int = 0
 
 
 class Router(object):
@@ -52,10 +45,6 @@ class Router(object):
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If any two links have the same ``source_link_id``
         """
-        global max_cores_per_chip
-        if max_cores_per_chip == 0:
-            max_cores_per_chip = \
-                MachineDataView.get_machine_version().max_cores_per_chip
         self._links: Dict[int, Link] = dict()
         for link in links:
             self.add_link(link)

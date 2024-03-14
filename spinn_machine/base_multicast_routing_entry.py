@@ -16,9 +16,6 @@ from typing import Iterable, Optional, Set, Union
 from spinn_machine.constants import MAX_LINKS_PER_ROUTER
 from spinn_machine.data import MachineDataView
 
-# cache of MachineDataView.get_machine_version().max_cores_per_chip
-max_cores_per_chip: int = 0
-
 
 class BaseMulticastRoutingEntry(object):
     """
@@ -26,6 +23,9 @@ class BaseMulticastRoutingEntry(object):
     There can be up to 1024 such entries per chip, but some may be reserved
     for system purposes.
     """
+
+    # cache of MachineDataView.get_machine_version().max_cores_per_chip
+    max_cores_per_chip: int = 0
 
     __slots__ = ["_spinnaker_route"]
 
@@ -48,9 +48,8 @@ class BaseMulticastRoutingEntry(object):
         :raise AssertionError: if no spinnaker_route provided and either
             processor_ids or link_ids is missing or `None`
         """
-        global max_cores_per_chip
-        if max_cores_per_chip == 0:
-            max_cores_per_chip = \
+        if self.max_cores_per_chip == 0:
+            BaseMulticastRoutingEntry.max_cores_per_chip = \
                 MachineDataView.get_machine_version().max_cores_per_chip
 
         # Add processor IDs, ignore duplicates
@@ -67,8 +66,9 @@ class BaseMulticastRoutingEntry(object):
 
         :rtype: set(int)
         """
-        return set(pi for pi in range(0, max_cores_per_chip)
-                if self._spinnaker_route & 1 << (MAX_LINKS_PER_ROUTER + pi))
+        return set(pi for pi in range(
+            0, BaseMulticastRoutingEntry.max_cores_per_chip)
+                   if self._spinnaker_route & 1 << (MAX_LINKS_PER_ROUTER + pi))
 
     @property
     def link_ids(self) -> Set[int]:

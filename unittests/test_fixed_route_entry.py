@@ -25,7 +25,6 @@ class TestingFixedRouteEntries(unittest.TestCase):
         unittest_setup()
         set_config("Machine", "version", 5)
 
-
     def test_fixed_route_creation(self):
         fre = FixedRouteEntry([1, 2, 3], [2, 3, 4])
         self.assertEqual(fre.__repr__(), "{2, 3, 4}:{1, 2, 3}")
