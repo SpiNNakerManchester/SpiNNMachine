@@ -11,11 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import FrozenSet, Iterable, Optional
+from typing import FrozenSet, Iterable, List, Optional
+from .base_multicast_routing_entry import BaseMulticastRoutingEntry
 from .exceptions import SpinnMachineAlreadyExistsException
 
 
-class FixedRouteEntry(object):
+class FixedRouteEntry(BaseMulticastRoutingEntry):
     """
     Describes the sole entry in a SpiNNaker chip's fixed route routing table.
     There is only one fixed route entry per chip.
@@ -27,18 +28,14 @@ class FixedRouteEntry(object):
         "_link_ids",
         "__repr")
 
-    def __init__(self, processor_ids: Iterable[int], link_ids: Iterable[int]):
+    def __init__(self, processor_ids: List[int], link_ids: List[int]):
         """
         :param iterable(int) processor_ids:
         :param iterable(int) link_ids:
         """
+        super().__init__(processor_ids, link_ids, spinnaker_route=None)
         self.__repr: Optional[str] = None
-        # Add processor IDs, checking that there is only one of each
-        self._processor_ids = frozenset(processor_ids)
         self.__check_dupes(processor_ids, "processor ID")
-
-        # Add link IDs, checking that there is only one of each
-        self._link_ids = frozenset(link_ids)
         self.__check_dupes(link_ids, "link ID")
 
     @staticmethod

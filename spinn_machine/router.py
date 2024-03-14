@@ -147,32 +147,6 @@ class Router(object):
         """
         return self._n_available_multicast_entries
 
-    @staticmethod
-    def convert_routing_table_entry_to_spinnaker_route(
-            routing_table_entry: Union[
-                MulticastRoutingEntry, FixedRouteEntry]) -> int:
-        """
-        Convert a routing table entry represented in software to a
-        binary routing table entry usable on the machine.
-
-        :param routing_table_entry:
-            The entry to convert
-        :type routing_table_entry: ~spinn_machine.MulticastRoutingEntry or
-             ~spinn_machine.FixedRouteEntry
-        :rtype: int
-        """
-        route_entry = 0
-        for processor_id in routing_table_entry.processor_ids:
-            route_entry |= (1 << (MAX_LINKS_PER_ROUTER + processor_id))
-        for link_id in routing_table_entry.link_ids:
-            if link_id >= MAX_LINKS_PER_ROUTER or link_id < 0:
-                raise SpinnMachineInvalidParameterException(
-                    "route.link_ids", str(routing_table_entry.link_ids),
-                    "Link IDs must be between 0 and " +
-                    str(MAX_LINKS_PER_ROUTER - 1))
-            route_entry |= (1 << link_id)
-        return route_entry
-
     def get_neighbouring_chips_coords(self) -> List[Dict[str, int]]:
         """
         Utility method to convert links into x and y coordinates.
