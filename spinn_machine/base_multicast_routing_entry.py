@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import annotations
 from typing import Iterable, Optional, Set, Union
-from spinn_machine.router import Router
+from spinn_machine.constants import MAX_LINKS_PER_ROUTER
 from spinn_machine.data import MachineDataView
 
 # cache of MachineDataView.get_machine_version().max_cores_per_chip
@@ -67,9 +67,8 @@ class BaseMulticastRoutingEntry(object):
 
         :rtype: set(int)
         """
-        links = Router.MAX_LINKS_PER_ROUTER
         return set(pi for pi in range(0, max_cores_per_chip)
-                   if self._spinnaker_route & 1 << (links + pi))
+                if self._spinnaker_route & 1 << (MAX_LINKS_PER_ROUTER + pi))
 
     @property
     def link_ids(self) -> Set[int]:
@@ -78,7 +77,7 @@ class BaseMulticastRoutingEntry(object):
 
         :rtype: frozenset(int)
         """
-        return set(li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
+        return set(li for li in range(0, MAX_LINKS_PER_ROUTER)
                    if self._spinnaker_route & 1 << li)
 
     @property
@@ -102,10 +101,10 @@ class BaseMulticastRoutingEntry(object):
         if processor_ids is None:
             pass
         elif isinstance(processor_ids, int):
-            route |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_ids))
+            route |= (1 << (MAX_LINKS_PER_ROUTER + processor_ids))
         else:
             for processor_id in processor_ids:
-                route |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
+                route |= (1 << (MAX_LINKS_PER_ROUTER + processor_id))
         if link_ids is None:
             pass
         elif isinstance(link_ids, int):

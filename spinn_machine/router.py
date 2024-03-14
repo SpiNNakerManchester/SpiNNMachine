@@ -14,6 +14,7 @@
 from __future__ import annotations
 from typing import (
     Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
+from spinn_machine.constants import MAX_LINKS_PER_ROUTER
 from spinn_machine.data import MachineDataView
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
@@ -35,9 +36,6 @@ class Router(object):
         * ``source_link_id`` is the ID of a link
         * ``link`` is the :py:class:`Link` with ID ``source_link_id``
     """
-
-    # The maximum number of links/directions a router can handle
-    MAX_LINKS_PER_ROUTER = 6
 
     # Number to add or sub from a link to get its opposite
     LINK_OPPOSITE = 3
@@ -165,13 +163,13 @@ class Router(object):
         """
         route_entry = 0
         for processor_id in routing_table_entry.processor_ids:
-            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
+            route_entry |= (1 << (MAX_LINKS_PER_ROUTER + processor_id))
         for link_id in routing_table_entry.link_ids:
-            if link_id >= Router.MAX_LINKS_PER_ROUTER or link_id < 0:
+            if link_id >= MAX_LINKS_PER_ROUTER or link_id < 0:
                 raise SpinnMachineInvalidParameterException(
                     "route.link_ids", str(routing_table_entry.link_ids),
                     "Link IDs must be between 0 and " +
-                    str(Router.MAX_LINKS_PER_ROUTER - 1))
+                    str(MAX_LINKS_PER_ROUTER - 1))
             route_entry |= (1 << link_id)
         return route_entry
 
@@ -187,8 +185,8 @@ class Router(object):
         :rtype: tuple(list(int), list(int))
         """
         processor_ids = [pi for pi in range(0, max_cores_per_chip)
-                         if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
-        link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
+                         if route & 1 << (MAX_LINKS_PER_ROUTER + pi)]
+        link_ids = [li for li in range(0, MAX_LINKS_PER_ROUTER)
                     if route & 1 << li]
         return processor_ids, link_ids
 
@@ -225,4 +223,4 @@ class Router(object):
         :rtype: int
         """
         # Mod is faster than if
-        return (link_id + Router.LINK_OPPOSITE) % Router.MAX_LINKS_PER_ROUTER
+        return (link_id + Router.LINK_OPPOSITE) % MAX_LINKS_PER_ROUTER

@@ -17,6 +17,7 @@ import json
 from typing import NamedTuple, Union
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.json import JsonArray, JsonObject, JsonValue
+from spinn_machine.constants import MAX_LINKS_PER_ROUTER
 from spinn_machine.data import MachineDataView
 from .chip import Chip
 from .router import Router
@@ -192,7 +193,7 @@ def _describe_chip(chip: Chip, standard, ethernet) -> JsonArray:
 
     dead_links: JsonArray = [
         link_id
-        for link_id in range(Router.MAX_LINKS_PER_ROUTER)
+        for link_id in range(MAX_LINKS_PER_ROUTER)
         if not chip.router.is_link(link_id)]
     if dead_links:
         details["deadLinks"] = dead_links
