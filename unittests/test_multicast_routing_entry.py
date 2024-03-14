@@ -53,7 +53,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         hash(a_multicast)
 
     def test_bad_key_mask(self):
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(SpinnMachineInvalidParameterException):
             MulticastRoutingEntry(1, 2)
 
     def test_spinnaker_route(self):
