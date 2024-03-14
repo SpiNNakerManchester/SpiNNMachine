@@ -46,27 +46,9 @@ class FixedRouteEntry(BaseMulticastRoutingEntry):
                 raise SpinnMachineAlreadyExistsException(name, str(_id))
             check.add(_id)
 
-    @property
-    def processor_ids(self) -> FrozenSet[int]:
-        """
-        The destination processor IDs.
-
-        :rtype: frozenset(int)
-        """
-        return self._processor_ids
-
-    @property
-    def link_ids(self) -> FrozenSet[int]:
-        """
-        The destination link IDs.
-
-        :rtype: frozenset(int)
-        """
-        return self._link_ids
-
     def __repr__(self) -> str:
         if not self.__repr:
             self.__repr = ("{%s}:{%s}" % (
-                ", ".join(map(str, sorted(self._link_ids))),
-                ", ".join(map(str, sorted(self._processor_ids)))))
+                ", ".join(map(str, sorted(self.link_ids))),
+                ", ".join(map(str, sorted(self.processor_ids)))))
         return self.__repr

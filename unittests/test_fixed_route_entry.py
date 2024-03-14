@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+from spinn_utilities.config_holder import set_config
 from spinn_machine import FixedRouteEntry
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
@@ -22,6 +23,8 @@ class TestingFixedRouteEntries(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
+        set_config("Machine", "version", 5)
+
 
     def test_fixed_route_creation(self):
         fre = FixedRouteEntry([1, 2, 3], [2, 3, 4])
