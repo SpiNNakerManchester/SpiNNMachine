@@ -173,23 +173,6 @@ class Router(object):
             route_entry |= (1 << link_id)
         return route_entry
 
-    @staticmethod
-    def convert_spinnaker_route_to_routing_ids(route: int) -> Tuple[
-            List[int], List[int]]:
-        """
-        Convert a binary routing table entry usable on the machine to lists of
-        route IDs usable in a routing table entry represented in software.
-
-        :param int route: The routing table entry
-        :return: The list of processor IDs, and the list of link IDs.
-        :rtype: tuple(list(int), list(int))
-        """
-        processor_ids = [pi for pi in range(0, max_cores_per_chip)
-                         if route & 1 << (MAX_LINKS_PER_ROUTER + pi)]
-        link_ids = [li for li in range(0, MAX_LINKS_PER_ROUTER)
-                    if route & 1 << li]
-        return processor_ids, link_ids
-
     def get_neighbouring_chips_coords(self) -> List[Dict[str, int]]:
         """
         Utility method to convert links into x and y coordinates.
