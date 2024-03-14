@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Iterable, Optional, Set, overload
+from typing import Iterable, Optional, Set, Union
 from spinn_machine.router import Router
 from spinn_machine.data import MachineDataView
 
@@ -29,8 +29,8 @@ class BaseMulticastRoutingEntry(object):
 
     __slots__ = ["_spinnaker_route"]
 
-    def __init__(self, processor_ids: Optional[Iterable[int]],
-                 link_ids: Optional[Iterable[int]],
+    def __init__(self, processor_ids:  Union[int, Iterable[int], None],
+                 link_ids:  Union[int, Iterable[int], None],
                  spinnaker_route: Optional[int]):
         """
         .. note::
@@ -91,18 +91,26 @@ class BaseMulticastRoutingEntry(object):
         return self._spinnaker_route
 
     def _calc_spinnaker_route(
-            self, processor_ids: Optional[Iterable[int]],
-            link_ids: Optional[Iterable[int]]) -> int:
+            self, processor_ids: Union[int, Iterable[int], None],
+            link_ids: Union[int, Iterable[int], None]) -> int:
         """
         create a binary routing table entry usable on the machine.
 
         :rtype: int
         """
         route = 0
-        assert processor_ids is not None
-        for processor_id in processor_ids:
-            route |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
-        assert link_ids is not None
-        for link_id in link_ids:
-            route |= (1 << link_id)
+        if processor_ids is None:
+            pass
+        elif isinstance(processor_ids, int):
+            route |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_ids))
+        else:
+            for processor_id in processor_ids:
+                route |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
+        if link_ids is None:
+            pass
+        elif isinstance(link_ids, int):
+            route |= (1 << link_ids)
+        else:
+            for link_id in link_ids:
+                route |= (1 << link_id)
         return route
