@@ -11,42 +11,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import (
-    Any, Collection, Dict, Iterable, Iterator, Optional, Tuple)
+from typing import (Collection, Iterable, Iterator, Optional, Tuple)
+
 from spinn_utilities.ordered_set import OrderedSet
+from spinn_utilities.typing.coords import XY
+
 from spinn_machine.data import MachineDataView
-from .processor import Processor
 from .router import Router
 
-# global values so Chip objects can share processor dict objects
-# One dict for each number of processors (none dead)
-standard_processors = {}
-# One dict for the standard monitor processors
-standard_monitor_processors = None  # pylint: disable=invalid-name
 
-
-class Chip(object):
+class Chip(XY):
     """
     Represents a SpiNNaker chip with a number of cores, an amount of
     SDRAM shared between the cores, and a router.
-    The chip is iterable over the processors, yielding
-    ``(processor_id, processor)`` where:
-
-        * ``processor_id`` is the ID of a processor
-        * ``processor`` is the :py:class:`Processor` with ``processor_id``
     """
 
     # tag 0 is reserved for stuff like IO STD
     _IPTAG_IDS = OrderedSet(range(1, 8))
 
-    __slots__ = (
-        "_x", "_y", "_router", "_sdram", "_ip_address",
-        "_tag_ids", "_nearest_ethernet_x", "_nearest_ethernet_y",
-        "_user_processors", "_monitor_processors", "_parent_link",
-        "_v_to_p_map"
-    )
+    def __new__(cls, x: int, y: int, n_processors: int, router: Router,
+                sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
+                ip_address: Optional[str] = None,
+                tag_ids: Optional[Iterable[int]] = None,
+                down_cores: Optional[Collection[int]] = None,
+                parent_link: Optional[int] = None,
+                v_to_p_map: Optional[bytes] = None):
+        return tuple.__new__(cls, (x, y))
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
+    # pylint: disable=unused-argument
     def __init__(self, x: int, y: int, n_processors: int, router: Router,
                  sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
                  ip_address: Optional[str] = None,
@@ -86,10 +79,10 @@ class Chip(object):
             If processors contains any two processors with the same
             ``processor_id``
         """
-        self._x = x
-        self._y = y
-        self._monitor_processors = self.__generate_monitors()
-        self._user_processors = self.__generate_processors(
+        # X and Y set by new
+        self._scamp_processors = tuple(range(
+                    MachineDataView.get_machine_version().n_scamp_cores))
+        self._placable_processors = self.__generate_processors(
             n_processors, down_cores)
         self._router = router
         self._sdram = sdram
@@ -105,41 +98,22 @@ class Chip(object):
         self._parent_link = parent_link
         self._v_to_p_map = v_to_p_map
 
-    def __generate_monitors(self):
-        """
-        Generates the monitors assuming all Chips have the same monitor cores
-
-        :return:  Dict[int, Processor]
-        """
-        global standard_monitor_processors  # pylint: disable=global-statement
-        if standard_monitor_processors is None:
-            standard_monitor_processors = dict()
-            for i in range(
-                    MachineDataView.get_machine_version().n_non_user_cores):
-                standard_monitor_processors[i] = Processor.factory(i, True)
-        return standard_monitor_processors
-
     def __generate_processors(
             self, n_processors: int,
-            down_cores: Optional[Collection[int]]) -> Dict[int, Processor]:
-        n_monitors = MachineDataView.get_machine_version().n_non_user_cores
+            down_cores: Optional[Collection[int]]) -> Tuple[int, ...]:
+        n_monitors = MachineDataView.get_machine_version().n_scamp_cores
         if down_cores is None:
-            if n_processors not in standard_processors:
-                processors = dict()
-                for i in range(n_monitors, n_processors):
-                    processors[i] = Processor.factory(i)
-                standard_processors[n_processors] = processors
-            return standard_processors[n_processors]
+            return tuple(range(n_monitors, n_processors))
         else:
-            processors = dict()
+            processors = list()
             for i in range(n_monitors):
                 if i in down_cores:
                     raise NotImplementedError(
                         f"Declaring monitor core {i} as down is not supported")
             for i in range(n_monitors, n_processors):
                 if i not in down_cores:
-                    processors[i] = Processor.factory(i)
-            return processors
+                    processors.append(i)
+            return tuple(processors)
 
     def is_processor_with_id(self, processor_id: int) -> bool:
         """
@@ -150,24 +124,9 @@ class Chip(object):
         :return: Whether the processor with the given ID exists
         :rtype: bool
         """
-        if processor_id in self._user_processors:
+        if processor_id in self._placable_processors:
             return True
-        return processor_id in self._monitor_processors
-
-    def get_processor_with_id(self, processor_id: int) -> Optional[Processor]:
-        """
-        Return the processor with the specified ID, or ``None`` if the
-        processor does not exist.
-
-        :param int processor_id: the ID of the processor to return
-        :return:
-            the processor with the specified ID,
-            or ``None`` if no such processor
-        :rtype: Processor or None
-        """
-        if processor_id in self._user_processors:
-            return self._user_processors[processor_id]
-        return self._monitor_processors.get(processor_id)
+        return processor_id in self._scamp_processors
 
     @property
     def x(self) -> int:
@@ -176,7 +135,7 @@ class Chip(object):
 
         :rtype: int
         """
-        return self._x
+        return self[0]
 
     @property
     def y(self) -> int:
@@ -185,27 +144,7 @@ class Chip(object):
 
         :rtype: int
         """
-        return self._y
-
-    @property
-    def processors(self) -> Iterator[Processor]:
-        """
-        An iterable of available all processors.
-
-        Deprecated: There are many more efficient methods instead.
-        - all_processor_ids
-        - n_processors
-        - n_user_processors
-        - user_processors
-        - user_processors_ids
-        - n_monitor_processors
-        - monitor_processors
-        - monitor_processors_ids
-
-        :rtype: iterable(Processor)
-        """
-        yield from self._monitor_processors.values()
-        yield from self._user_processors.values()
+        return self[1]
 
     @property
     def all_processor_ids(self) -> Iterator[int]:
@@ -214,8 +153,8 @@ class Chip(object):
 
         :rtype: iterable(int)
         """
-        yield from self._monitor_processors.keys()
-        yield from self._user_processors.keys()
+        yield from self._scamp_processors
+        yield from self._placable_processors
 
     @property
     def n_processors(self) -> int:
@@ -224,61 +163,43 @@ class Chip(object):
 
         :rtype: int
         """
-        return len(self._monitor_processors) + len(self._user_processors)
+        return len(self._scamp_processors) + len(self._placable_processors)
 
     @property
-    def user_processors(self) -> Iterator[Processor]:
+    def placable_processors_ids(self) -> Tuple[int, ...]:
         """
-        An iterable of available user processors.
+        An iterable of available placable/ non scamp processor ids.
 
-        :rtype: iterable(Processor)
+        :rtype: iterable(int)
         """
-        yield from self._user_processors.values()
-
-    @property
-    def user_processors_ids(self) -> Iterator[int]:
-        """
-        An iterable of available user processors.
-
-        :rtype: iterable(Processor)
-        """
-        yield from self._user_processors
+        return self._placable_processors
 
     @property
-    def n_user_processors(self) -> int:
+    def n_placable_processors(self) -> int:
         """
-        The total number of processors that are not monitors.
+        The total number of processors that are placable / not used by scamp.
 
         :rtype: int
         """
-        return len(self._user_processors)
+        return len(self._placable_processors)
 
     @property
-    def monitor_processors(self) -> Iterator[Processor]:
+    def scamp_processors_ids(self) -> Tuple[int, ...]:
         """
-        An iterable of available monitor processors.
+        An iterable of available scamp processors.
 
-        :rtype: iterable(Processor)
+        :rtype: iterable(int)
         """
-        return self._monitor_processors.values()
-
-    @property
-    def monitor_processors_ids(self) -> Iterator[int]:
-        """
-        An iterable of available user processors.
-
-        :rtype: iterable(Processor)
-        """
-        yield from self._monitor_processors
+        return self._scamp_processors
 
     @property
-    def n_monitor_processors(self) -> int:
+    def n_scamp_processors(self) -> int:
         """
-        The total number of processors that are not monitors.
+        The total number of processors that are used by scamp.
 
         :rtype: int
         """
-        return len(self._monitor_processors)
+        return len(self._scamp_processors)
 
     @property
     def router(self) -> Router:
@@ -335,15 +256,6 @@ class Chip(object):
         """
         return self._tag_ids
 
-    def get_first_none_monitor_processor(self) -> Processor:
-        """
-        Get the first processor in the list which is not a monitor core.
-
-        :rtype: Processor
-        ;raises StopIteration: If there is no user processor
-        """
-        return next(iter(self._user_processors.values()))
-
     @property
     def parent_link(self) -> Optional[int]:
         """
@@ -380,57 +292,15 @@ class Chip(object):
             return ""
         return f" (ph: {physical_p})"
 
-    def __iter__(self) -> Iterator[Tuple[int, Processor]]:
-        """
-        Get an iterable of processor identifiers and processors
-
-        :return: An iterable of ``(processor_id, processor)`` where:
-            * ``processor_id`` is the ID of a processor
-            * ``processor`` is the processor with the ID
-        :rtype: iterable(tuple(int,Processor))
-        """
-        yield from self._monitor_processors.items()
-        yield from self._user_processors.items()
-
-    def __len__(self) -> int:
-        """
-        The number of processors associated with this chip.
-
-        :return: The number of items in the underlying iterator.
-        :rtype: int
-        """
-        return len(self._monitor_processors) + len(self._user_processors)
-
-    def __getitem__(self, processor_id: int) -> Processor:
-        if processor_id in self._user_processors:
-            return self._user_processors[processor_id]
-        if processor_id in self._monitor_processors:
-            return self._monitor_processors[processor_id]
-        # Note difference from get_processor_with_id(); this is to conform to
-        # standard Python semantics
-        raise KeyError(processor_id)
-
-    def __contains__(self, processor_id: int) -> bool:
-        return self.is_processor_with_id(processor_id)
-
     def __str__(self) -> str:
         if self._ip_address:
             ip_info = f"ip_address={self.ip_address} "
         else:
             ip_info = ""
         return (
-            f"[Chip: x={self._x}, y={self._y}, {ip_info}"
+            f"[Chip: x={self[0]}, y={self[1]}, {ip_info}"
             f"n_cores={self.n_processors}, "
             f"mon={self.get_physical_core_id(0)}]")
 
     def __repr__(self) -> str:
         return self.__str__()
-
-    def __eq__(self, other: Any) -> bool:
-        # Equality just on X,Y; that's most useful
-        if not isinstance(other, Chip):
-            return NotImplemented
-        return self._x == other.x and self._y == other.y
-
-    def __hash__(self) -> int:
-        return self._x * 256 + self._y

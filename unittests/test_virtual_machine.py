@@ -176,10 +176,10 @@ class TestVirtualMachine(unittest.TestCase):
         vm = virtual_machine(2, 2, validate=True)
         _chip = vm[1, 1]
         self.assertEqual(n_cpus, _chip.n_processors)
-        self.assertEqual(n_cpus - 1, _chip.n_user_processors)
-        self.assertEqual(1, _chip.n_monitor_processors)
-        self.assertEqual(n_cpus - 1, len(list(_chip.user_processors)))
-        self.assertEqual(1, len(list(_chip.monitor_processors)))
+        self.assertEqual(n_cpus - 1, _chip.n_placable_processors)
+        self.assertEqual(1, _chip.n_scamp_processors)
+        self.assertEqual(n_cpus - 1, len(list(_chip.placable_processors_ids)))
+        self.assertEqual(1, len(list(_chip.scamp_processors_ids)))
         count = sum(_chip.n_processors for _chip in vm.chips)
         self.assertEqual(count, 4 * n_cpus)
 

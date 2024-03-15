@@ -83,7 +83,6 @@ from .frozen_core_subsets import FrozenCoreSubsets
 from .link import Link
 from .machine import Machine
 from .multicast_routing_entry import MulticastRoutingEntry
-from .processor import Processor
 from .router import Router
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .virtual_machine import virtual_machine
@@ -92,5 +91,4 @@ from .fixed_route_entry import FixedRouteEntry
 
 __all__ = ["Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
            "FrozenCoreSubsets", "Link", "Machine", "MulticastRoutingEntry",
-           "Processor", "Router", "SpiNNakerTriadGeometry",
-           "virtual_machine"]
+           "Router", "SpiNNakerTriadGeometry", "virtual_machine"]

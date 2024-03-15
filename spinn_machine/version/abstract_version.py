@@ -145,9 +145,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def n_non_user_cores(self) -> int:
+    def n_scamp_cores(self) -> int:
         """
-        The number of system cores per chip.
+        The number of scamp cores per chip.
 
         :rtype: int
         """
@@ -209,6 +209,26 @@ class AbstractVersion(object, metaclass=AbstractBase):
         the most likely number of cores on that chip.
 
         :rtype: dict((int, int), int)
+        """
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def clock_speed_hz(self) -> int:
+        """
+        The processor clock speed in Hz
+
+        :rtype: int
+        """
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def dtcm_bytes(self) -> int:
+        """
+        The Data Tightly Coupled Memory available on a processor in bytes
+
+        :rtype: int
         """
         raise NotImplementedError
 

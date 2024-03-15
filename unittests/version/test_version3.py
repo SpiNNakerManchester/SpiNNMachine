@@ -33,7 +33,7 @@ class TestVersion3(unittest.TestCase):
         version = Version3()
         self.assertEqual(18, version.max_cores_per_chip)
         self.assertEqual(123469792, version.max_sdram_per_chip)
-        self.assertEqual(1, version.n_non_user_cores)
+        self.assertEqual(1, version.n_scamp_cores)
         self.assertEqual("Spin1 4 Chip", version.name)
         self.assertEqual(3, version.number)
         self.assertEqual((2, 2), version.board_shape)
@@ -134,6 +134,11 @@ class TestVersion3(unittest.TestCase):
 
         machine = version.create_machine(width=2, height=2)
         self.assertIsInstance(machine, FullWrapMachine)
+
+    def test_processor_info(self):
+        version = Version3()
+        self.assertEqual(200, version.clock_speed_hz)
+        self.assertEqual(65536, version.dtcm_bytes)
 
 
 if __name__ == '__main__':
