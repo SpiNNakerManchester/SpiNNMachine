@@ -205,9 +205,8 @@ def _describe_chip(chip: Chip, standard, ethernet) -> JsonArray:
     if chip.ip_address is not None:
         details['ipAddress'] = chip.ip_address
         # Write the Resources ONLY if different from the e_values
-        if (chip.n_processors - chip.n_user_processors) != ethernet.monitors:
-            exceptions["monitors"] = \
-                chip.n_processors - chip.n_user_processors
+        if (chip.n_scamp_processors) != ethernet.monitors:
+            exceptions["monitors"] = chip.n_scamp_processors
         if router_entries != ethernet.router_entries:
             exceptions["routerEntries"] = router_entries
         if chip.sdram != ethernet.sdram:
@@ -216,9 +215,8 @@ def _describe_chip(chip: Chip, standard, ethernet) -> JsonArray:
             exceptions["tags"] = tags
     else:
         # Write the Resources ONLY if different from the s_values
-        if (chip.n_processors - chip.n_user_processors) != standard.monitors:
-            exceptions["monitors"] = \
-                chip.n_processors - chip.n_user_processors
+        if (chip.n_scamp_processors) != standard.monitors:
+            exceptions["monitors"] = chip.n_scamp_processors
         if router_entries != standard.router_entries:
             exceptions["routerEntries"] = router_entries
         if chip.sdram != standard.sdram:
@@ -244,7 +242,7 @@ def to_json() -> JsonObject:
     for chip in machine.chips:
         if chip.ip_address is None:
             std = _Desc(
-                monitors=chip.n_processors - chip.n_user_processors,
+                monitors=chip.n_processors - chip.n_placable_processors,
                 router_entries=_int_value(
                     chip.router.n_available_multicast_entries),
                 sdram=chip.sdram,
@@ -256,7 +254,7 @@ def to_json() -> JsonObject:
     # find the nth values to use for Ethernet chips
     chip = machine.boot_chip
     eth = _Desc(
-        monitors=chip.n_processors - chip.n_user_processors,
+        monitors=chip.n_processors - chip.n_placable_processors,
         router_entries=_int_value(
             chip.router.n_available_multicast_entries),
         sdram=chip.sdram,
