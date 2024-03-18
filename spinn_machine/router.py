@@ -13,13 +13,11 @@
 # limitations under the License.
 from __future__ import annotations
 from typing import (
-    Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
-from .exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+    Dict, Iterable, Iterator, List, Optional, Tuple, TYPE_CHECKING)
+from spinn_machine.constants import MAX_LINKS_PER_ROUTER
+from .exceptions import SpinnMachineAlreadyExistsException
 if TYPE_CHECKING:
     from .link import Link
-    from .fixed_route_entry import FixedRouteEntry
-    from .multicast_routing_entry import MulticastRoutingEntry
 
 
 class Router(object):
@@ -32,13 +30,8 @@ class Router(object):
         * ``link`` is the :py:class:`Link` with ID ``source_link_id``
     """
 
-    # The maximum number of links/directions a router can handle
-    MAX_LINKS_PER_ROUTER = 6
-
     # Number to add or sub from a link to get its opposite
     LINK_OPPOSITE = 3
-
-    MAX_CORES_PER_ROUTER = 18
 
     __slots__ = ("_links", "_n_available_multicast_entries")
 
@@ -143,55 +136,6 @@ class Router(object):
         """
         return self._n_available_multicast_entries
 
-    @staticmethod
-    def convert_routing_table_entry_to_spinnaker_route(
-            routing_table_entry: Union[
-                MulticastRoutingEntry, FixedRouteEntry]) -> int:
-        """
-        Convert a routing table entry represented in software to a
-        binary routing table entry usable on the machine.
-
-        :param routing_table_entry:
-            The entry to convert
-        :type routing_table_entry: ~spinn_machine.MulticastRoutingEntry or
-             ~spinn_machine.FixedRouteEntry
-        :rtype: int
-        """
-        route_entry = 0
-        for processor_id in routing_table_entry.processor_ids:
-            if processor_id >= Router.MAX_CORES_PER_ROUTER or processor_id < 0:
-                raise SpinnMachineInvalidParameterException(
-                    "route.processor_ids",
-                    str(routing_table_entry.processor_ids),
-                    "Processor IDs must be between 0 and " +
-                    str(Router.MAX_CORES_PER_ROUTER - 1))
-            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
-        for link_id in routing_table_entry.link_ids:
-            if link_id >= Router.MAX_LINKS_PER_ROUTER or link_id < 0:
-                raise SpinnMachineInvalidParameterException(
-                    "route.link_ids", str(routing_table_entry.link_ids),
-                    "Link IDs must be between 0 and " +
-                    str(Router.MAX_LINKS_PER_ROUTER - 1))
-            route_entry |= (1 << link_id)
-        return route_entry
-
-    @staticmethod
-    def convert_spinnaker_route_to_routing_ids(route: int) -> Tuple[
-            List[int], List[int]]:
-        """
-        Convert a binary routing table entry usable on the machine to lists of
-        route IDs usable in a routing table entry represented in software.
-
-        :param int route: The routing table entry
-        :return: The list of processor IDs, and the list of link IDs.
-        :rtype: tuple(list(int), list(int))
-        """
-        processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
-                         if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
-        link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
-                    if route & 1 << li]
-        return processor_ids, link_ids
-
     def get_neighbouring_chips_coords(self) -> List[Dict[str, int]]:
         """
         Utility method to convert links into x and y coordinates.
@@ -225,4 +169,4 @@ class Router(object):
         :rtype: int
         """
         # Mod is faster than if
-        return (link_id + Router.LINK_OPPOSITE) % Router.MAX_LINKS_PER_ROUTER
+        return (link_id + Router.LINK_OPPOSITE) % MAX_LINKS_PER_ROUTER

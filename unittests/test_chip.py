@@ -17,6 +17,7 @@ from spinn_utilities.config_holder import set_config
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Link, Router, Chip
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.data import MachineDataView
 
 
 class TestingChip(unittest.TestCase):
@@ -27,8 +28,8 @@ class TestingChip(unittest.TestCase):
         self._x = 0
         self._y = 1
 
-        # create processor
-        self.n_processors = 18
+        self.n_processors = \
+            MachineDataView.get_machine_version().max_cores_per_chip
 
         # create router
         links = list()
