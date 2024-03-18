@@ -57,12 +57,12 @@ def _machine_ignore(
     for x, y, d, _ in dead_links:
         links_map[(x, y)].add(d)
     for chip in original.chips:
-        if (chip.x, chip.y) in dead_chips:
+        if chip in dead_chips:
             continue
-        if (chip.x, chip.y) in links_map:
+        if chip in links_map:
             links = []
             for link in chip.router.links:
-                if link.source_link_id not in links_map[(chip.x, chip.y)]:
+                if link.source_link_id not in links_map[chip]:
                     links.append(link)
             router = Router(links, chip.router.n_available_multicast_entries)
             chip = Chip(
@@ -201,7 +201,7 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
                       f"Please report this to " \
                       f"spinnakerusers@googlegroups.com \n\n"
                 if repair_machine:
-                    dead_chips.add((chip.x, chip.y))
+                    dead_chips.add(chip)
                     logger.warning(msg)
                 else:
                     logger.error(msg)

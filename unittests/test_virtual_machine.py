@@ -126,6 +126,8 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertFalse((0, 4) in list(vm.chip_coordinates))
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(240, count)
+        count = sum(_chip.n_processors for _chip in vm.chips)
+        self.assertEqual(count, 856)
 
     def test_version_5_12_by_12(self):
         set_config("Machine", "version", 5)
@@ -167,16 +169,19 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(48, len(list(vm.local_xys)))
         self.assertEqual((0, 4), vm.get_unused_xy())
 
-    def test_new_vm_with_monitor(self):
+    def test_new_vm_with_max_cores(self):
         set_config("Machine", "version", 2)
         n_cpus = 13
-        vm = virtual_machine(2, 2, n_cpus_per_chip=n_cpus, validate=True)
+        set_config("Machine", "max_machine_core", n_cpus)
+        vm = virtual_machine(2, 2, validate=True)
         _chip = vm[1, 1]
         self.assertEqual(n_cpus, _chip.n_processors)
-        self.assertEqual(n_cpus - 1, _chip.n_user_processors)
-        self.assertEqual(1, _chip.n_monitor_processors)
-        self.assertEqual(n_cpus - 1, len(list(_chip.user_processors)))
-        self.assertEqual(1, len(list(_chip.monitor_processors)))
+        self.assertEqual(n_cpus - 1, _chip.n_placable_processors)
+        self.assertEqual(1, _chip.n_scamp_processors)
+        self.assertEqual(n_cpus - 1, len(list(_chip.placable_processors_ids)))
+        self.assertEqual(1, len(list(_chip.scamp_processors_ids)))
+        count = sum(_chip.n_processors for _chip in vm.chips)
+        self.assertEqual(count, 4 * n_cpus)
 
     def test_iter_chips(self):
         set_config("Machine", "version", 2)

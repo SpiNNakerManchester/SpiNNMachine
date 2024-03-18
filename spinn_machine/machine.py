@@ -566,12 +566,11 @@ class Machine(object, metaclass=AbstractBase):
         :raise SpinnMachineAlreadyExistsException:
             If a chip with the same x and y coordinates already exists
         """
-        chip_id = (chip.x, chip.y)
-        if chip_id in self._chips:
+        if chip in self._chips:
             raise SpinnMachineAlreadyExistsException(
                 "chip", f"{chip.x}, {chip.y}")
 
-        self._chips[chip_id] = chip
+        self._chips[chip] = chip
 
         # keep some stats about the
         self._n_cores_counter[chip.n_processors] += 1
@@ -582,7 +581,7 @@ class Machine(object, metaclass=AbstractBase):
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
-            if (chip.x == 0) and (chip.y == 0):
+            if (chip == (0, 0)):
                 self._boot_ethernet_address = chip.ip_address
 
     def add_chips(self, chips: Iterable[Chip]):
@@ -904,8 +903,7 @@ class Machine(object, metaclass=AbstractBase):
                 #
 
                 # handle the first chip
-                ex = ethernet_connected_chip.x
-                ey = ethernet_connected_chip.y
+                (ex, ey) = ethernet_connected_chip
                 ip = ethernet_connected_chip.ip_address
                 assert ip is not None
 
@@ -1084,7 +1082,7 @@ class Machine(object, metaclass=AbstractBase):
 
         :rtype: int
         """
-        return sum(chip.n_user_processors for chip in self.chips)
+        return sum(chip.n_placable_processors for chip in self.chips)
 
     @property
     def total_cores(self) -> int:
@@ -1153,7 +1151,7 @@ class Machine(object, metaclass=AbstractBase):
         for chip in self._chips.values():
             # If no links out of the chip work, remove it
             moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
-            x, y = chip.x, chip.y
+            x, y = chip
             nearest_ethernet_x = chip.nearest_ethernet_x
             nearest_ethernet_y = chip.nearest_ethernet_y
             for link, (x_move, y_move) in enumerate(moves):
@@ -1183,7 +1181,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         removable_coords: List[XY] = list()
         for chip in self._chips.values():
-            x, y = chip.x, chip.y
+            x, y = chip
             nearest_ethernet_x = chip.nearest_ethernet_x
             nearest_ethernet_y = chip.nearest_ethernet_y
             # Go through all the chips that surround this one
@@ -1289,9 +1287,9 @@ class Machine(object, metaclass=AbstractBase):
         """
         # get a set of xys that could be connected to any existing Ethernet
         xys_by_ethernet: Set[XY] = set()
-        for ethernet in self.ethernet_connected_chips:
-            xys_by_ethernet.update(
-                self.get_xys_by_ethernet(ethernet.x, ethernet.y))
+        for ethernet_x, ethernet_y in self.ethernet_connected_chips:
+            xys_by_ethernet.update(self.get_xys_by_ethernet(
+                ethernet_x, ethernet_y))
         x = 0
         while (True):
             for y in range(self.height):
