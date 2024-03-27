@@ -87,10 +87,9 @@ from .router import Router
 from .routing_entry import RoutingEntry
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .virtual_machine import virtual_machine
-from .fixed_route_entry import FixedRouteEntry
 
 
-__all__ = ["Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
+__all__ = ["Chip", "CoreSubset", "CoreSubsets",
            "FrozenCoreSubsets", "Link", "Machine", "MulticastRoutingEntry",
            "Router", "RoutingEntry", "SpiNNakerTriadGeometry",
            "virtual_machine"]
