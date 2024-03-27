@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
+from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload, Union
 from spinn_machine.router import Router
-from .exceptions import SpinnMachineAlreadyExistsException
+from .exceptions import (SpinnMachineInvalidParameterException)
 
 
 class RoutingEntry(object):
@@ -27,23 +27,30 @@ class RoutingEntry(object):
         "_link_ids", "_spinnaker_route", "__repr")
 
     @overload
-    def __init__(self, *, processor_ids: Iterable[int],
-                 link_ids: Iterable[int],
-                 defaultable: bool = False,
+    def __init__(self, *, processor_ids: Union[int, Iterable[int]],
+                 link_ids: Union[int, Iterable[int]],
+                 incoming_processor: Optional[int] = None,
+                 incoming_link: Optional[int] = None,
+                 defaultable: None = None,
                  spinnaker_route: None = None):
         ...
 
     @overload
     def __init__(self, int, *, processor_ids: None = None,
                  link_ids: None = None,
-                 defaultable: bool = False,
+                 incoming_processor: None = None,
+                 incoming_link: None = None,
+                 defaultable: Optional[bool] = False,
                  spinnaker_route: int):
         ...
 
     # pylint: disable=too-many-arguments
-    def __init__(self, *, processor_ids: Optional[Iterable[int]] = None,
-                 link_ids: Optional[Iterable[int]] = None,
-                 defaultable: bool = False,
+    def __init__(self, *,
+                 processor_ids: Optional[Union[int, Iterable[int]]] = None,
+                 link_ids: Optional[Union[int, Iterable[int]]] = None,
+                 incoming_processor: Optional[int] = None,
+                 incoming_link: Optional[int] = None,
+                 defaultable: Optional[bool] = None,
                  spinnaker_route: Optional[int] = None) -> None:
         """
         .. note::
@@ -72,25 +79,37 @@ class RoutingEntry(object):
 
         # Add processor IDs, ignore duplicates
         if spinnaker_route is None:
-            assert processor_ids is not None
-            assert link_ids is not None
+            if isinstance(processor_ids, int):
+                processor_ids = [processor_ids]
+            if isinstance(link_ids, int):
+                link_ids = [link_ids]
             self._processor_ids: Optional[FrozenSet[int]] = \
                 frozenset(processor_ids)
             self._link_ids: Optional[FrozenSet[int]] = frozenset(link_ids)
             self._spinnaker_route: int = self._calc_spinnaker_route()
+            if incoming_link is None:
+                self._defaultable = False
+            else:
+                if incoming_processor is None:
+                    if len(self.link_ids) != 1:
+                        self._defaultable = False
+                    else:
+                        link_id = next(iter(link_ids))
+                        self._defaultable = (
+                                ((incoming_link + 3) % 6) == link_id)
+                else:
+                    raise SpinnMachineInvalidParameterException(
+                        "incoming_processor", incoming_processor,
+                        "The incoming direction for a path can only be from "
+                        "either one link or one processors, not both")
         else:
+            assert processor_ids is None
+            assert link_ids is None
+            assert incoming_link is None
+            assert incoming_processor is None
             self._spinnaker_route = spinnaker_route
             self._processor_ids = None
             self._link_ids = None
-
-    # TODO from FixedRouteEntry use or loose
-    @staticmethod
-    def __check_dupes(sequence: Iterable[int], name: str):
-        check = set()
-        for _id in sequence:
-            if _id in check:
-                raise SpinnMachineAlreadyExistsException(name, str(_id))
-            check.add(_id)
 
     @property
     def processor_ids(self) -> FrozenSet[int]:
