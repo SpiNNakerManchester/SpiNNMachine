@@ -75,6 +75,8 @@ class RoutingEntry(object):
             processor_ids or link_ids is missing or `None`
         """
         self.__repr: Optional[str] = None
+        self._link_ids: Optional[FrozenSet[int]]
+        self._processor_ids: Optional[FrozenSet[int]]
 
         # Add processor IDs, ignore duplicates
         if spinnaker_route is None:
@@ -85,9 +87,8 @@ class RoutingEntry(object):
                 processor_ids = [processor_ids]
             if isinstance(link_ids, int):
                 link_ids = [link_ids]
-            self._processor_ids: Optional[FrozenSet[int]] = \
-                frozenset(processor_ids)
-            self._link_ids: Optional[FrozenSet[int]] = frozenset(link_ids)
+            self._processor_ids = frozenset(processor_ids)
+            self._link_ids = frozenset(link_ids)
             self._spinnaker_route: int = self._calc_spinnaker_route()
             if incoming_link is None:
                 self._defaultable = False
@@ -112,7 +113,10 @@ class RoutingEntry(object):
             self._spinnaker_route = spinnaker_route
             self._processor_ids = None
             self._link_ids = None
-            self._defaultable = defaultable
+            if defaultable:
+                self._defaultable = True
+            else:
+                self._defaultable = False
 
     @property
     def processor_ids(self) -> FrozenSet[int]:
