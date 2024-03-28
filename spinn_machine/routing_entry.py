@@ -174,9 +174,11 @@ class RoutingEntry(object):
             If the key and mask of the other entry do not match
         """
         # 2 different merged routes can NEVER be defaultable
+        if self == other:
+            return self
         return RoutingEntry(
             spinnaker_route=self.spinnaker_route | other.spinnaker_route,
-            defaultable=self.defaultable and other.defaultable)
+            defaultable=False)
 
     def __eq__(self, other_entry: Any) -> bool:
         if not isinstance(other_entry, RoutingEntry):
