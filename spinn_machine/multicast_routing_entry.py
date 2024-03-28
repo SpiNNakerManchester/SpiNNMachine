@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
+from typing import Any, FrozenSet
 from .exceptions import SpinnMachineInvalidParameterException
 from .routing_entry import RoutingEntry
 
@@ -62,6 +62,24 @@ class MulticastRoutingEntry(object):
         :rtype: int
         """
         return self._mask
+
+    @property
+    def processor_ids(self) -> FrozenSet[int]:
+        """
+        The destination processor IDs.
+
+        :rtype: frozenset(int)
+        """
+        return self._routing_entry.processor_ids
+
+    @property
+    def link_ids(self) -> FrozenSet[int]:
+        """
+        The destination link IDs.
+
+        :rtype: frozenset(int)
+        """
+        return self._routing_entry.link_ids
 
     @property
     def defaultable(self) -> bool:
@@ -114,9 +132,9 @@ class MulticastRoutingEntry(object):
                 "other.mask", hex(other.mask),
                 f"The mask does not match 0x{self.mask:x}")
 
-        entry = self.entry.merge(other.entry)
+        routing_entry = self._routing_entry.merge(other._routing_entry)
         return MulticastRoutingEntry(
-            self.key, self.mask, entry)
+            self.key, self.mask, routing_entry)
 
     def __eq__(self, other_entry: Any) -> bool:
         if not isinstance(other_entry, MulticastRoutingEntry):
@@ -125,7 +143,7 @@ class MulticastRoutingEntry(object):
             return False
         if self.mask != other_entry.mask:
             return False
-        return (self.entry == other_entry.entry)
+        return (self._routing_entry == other_entry._routing_entry)
 
     def __hash__(self) -> int:
         return (self.key * 13 + self.mask * 19 +
@@ -135,7 +153,7 @@ class MulticastRoutingEntry(object):
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        return (f"{self._key}:{self._mask}:" 
+        return (f"{self._key}:{self._mask}:"
                 f"{repr(self._routing_entry)}")
 
     def __str__(self) -> str:
