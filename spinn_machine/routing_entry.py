@@ -78,6 +78,8 @@ class RoutingEntry(object):
 
         # Add processor IDs, ignore duplicates
         if spinnaker_route is None:
+            assert processor_ids is not None
+            assert link_ids is not None
             if isinstance(processor_ids, int):
                 processor_ids = [processor_ids]
             if isinstance(link_ids, int):
@@ -90,7 +92,7 @@ class RoutingEntry(object):
                 self._defaultable = False
             else:
                 if incoming_processor is None:
-                    if len(self.link_ids) != 1:
+                    if len(link_ids) != 1:
                         self._defaultable = False
                     else:
                         link_id = next(iter(link_ids))
