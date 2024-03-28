@@ -15,8 +15,7 @@
 import unittest
 from spinn_machine import Router, Link
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
 class TestingRouter(unittest.TestCase):

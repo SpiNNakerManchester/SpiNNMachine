@@ -103,10 +103,6 @@ class MulticastRoutingEntry(object):
         """
         return self._routing_entry.spinnaker_route
 
-    @property
-    def entry(self) -> RoutingEntry:
-        return self._routing_entry
-
     def merge(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
         Merges together two multicast routing entries.  The entry to merge
@@ -132,6 +128,7 @@ class MulticastRoutingEntry(object):
                 "other.mask", hex(other.mask),
                 f"The mask does not match 0x{self.mask:x}")
 
+        # pylint disable:protected-access
         routing_entry = self._routing_entry.merge(other._routing_entry)
         return MulticastRoutingEntry(
             self.key, self.mask, routing_entry)

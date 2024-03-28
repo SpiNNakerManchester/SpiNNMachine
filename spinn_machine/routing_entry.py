@@ -36,7 +36,7 @@ class RoutingEntry(object):
         ...
 
     @overload
-    def __init__(self, int, *, processor_ids: None = None,
+    def __init__(self, *, processor_ids: None = None,
                  link_ids: None = None,
                  incoming_processor: None = None,
                  incoming_link: None = None,

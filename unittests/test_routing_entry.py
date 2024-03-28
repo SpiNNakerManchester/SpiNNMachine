@@ -16,7 +16,6 @@ import pickle
 import unittest
 from spinn_machine import RoutingEntry
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 
 
 class TestRoutingEntry(unittest.TestCase):
