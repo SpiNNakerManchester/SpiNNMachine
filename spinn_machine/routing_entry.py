@@ -80,6 +80,7 @@ class RoutingEntry(object):
         if spinnaker_route is None:
             assert processor_ids is not None
             assert link_ids is not None
+            assert defaultable is None
             if isinstance(processor_ids, int):
                 processor_ids = [processor_ids]
             if isinstance(link_ids, int):
@@ -103,9 +104,6 @@ class RoutingEntry(object):
                         "incoming_processor", incoming_processor,
                         "The incoming direction for a path can only be from "
                         "either one link or one processors, not both")
-            # TODO remove this GIGO!
-            if defaultable is not None:
-                self._defaultable: bool = defaultable
         else:
             assert processor_ids is None
             assert link_ids is None

@@ -31,15 +31,28 @@ class TestRoutingEntry(unittest.TestCase):
         for i in range(18):
             proc_ids.append(i)
         a_multicast = RoutingEntry(
-            processor_ids=proc_ids, link_ids=link_ids,
-            defaultable=True)
+            processor_ids=proc_ids, link_ids=link_ids)
 
         self.assertEqual(a_multicast.link_ids, set(link_ids))
         self.assertEqual(a_multicast.processor_ids, set(proc_ids))
         # While we're here, let's check a few other basic operations
         self.assertEqual(str(a_multicast),
                          "{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, "
-                         "15, 16, 17}:{0, 1, 2, 3, 4, 5}(defaultable)")
+                         "15, 16, 17}:{0, 1, 2, 3, 4, 5}")
+        self.assertEqual(
+            a_multicast,
+            pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
+        hash(a_multicast)
+
+    def test_defualtable_routing_entry(self):
+        a_multicast = RoutingEntry(
+            processor_ids=[], link_ids=[4], incoming_link=1)
+
+        self.assertEqual(a_multicast.link_ids, set([4]))
+        self.assertEqual(a_multicast.processor_ids, set())
+        # While we're here, let's check a few other basic operations
+        self.assertEqual(str(a_multicast),
+                         "{}:{4}(defaultable)")
         self.assertEqual(
             a_multicast,
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
@@ -69,12 +82,8 @@ class TestRoutingEntry(unittest.TestCase):
             proc_ids.append(i)
         for i in range(9, 18):
             proc_ids2.append(i)
-        a_multicast = RoutingEntry(
-            processor_ids=proc_ids, link_ids=link_ids,
-            defaultable=True)
-        b_multicast = RoutingEntry(
-            processor_ids=proc_ids2, link_ids=link_ids2,
-            defaultable=True)
+        a_multicast = RoutingEntry(processor_ids=proc_ids, link_ids=link_ids)
+        b_multicast = RoutingEntry(processor_ids=proc_ids2, link_ids=link_ids2)
 
         result_multicast = a_multicast.merge(b_multicast)
         comparison_link_ids = list()
@@ -91,40 +100,17 @@ class TestRoutingEntry(unittest.TestCase):
                          set(comparison_proc_ids))
 
     def test_merger_with_different_defaultable(self):
-        link_ids = list()
-        link_ids2 = list()
-        proc_ids = list()
-        proc_ids2 = list()
-        for i in range(3):
-            link_ids.append(i)
-        for i in range(3, 6):
-            link_ids2.append(i)
-        for i in range(9):
-            proc_ids.append(i)
-        for i in range(9, 18):
-            proc_ids2.append(i)
         a_multicast = RoutingEntry(
-            processor_ids=proc_ids, link_ids=link_ids,
-            defaultable=True)
+            processor_ids=[], link_ids=[1], incoming_link=4)
         b_multicast = RoutingEntry(
-            processor_ids=proc_ids2, link_ids=link_ids2,
-            defaultable=False)
+            processor_ids=[], link_ids=[1], incoming_link=5)
 
         result_multicast = a_multicast.merge(b_multicast)
-        comparison_link_ids = list()
-        comparison_proc_ids = list()
-        for i in range(6):
-            comparison_link_ids.append(i)
-        self.assertEqual(link_ids + link_ids2, comparison_link_ids)
-        for i in range(18):
-            comparison_proc_ids.append(i)
-        self.assertEqual(proc_ids + proc_ids2, comparison_proc_ids)
 
-        self.assertEqual(result_multicast.link_ids, set(comparison_link_ids))
-        self.assertEqual(result_multicast.processor_ids,
-                         set(comparison_proc_ids))
+        self.assertEqual(result_multicast.link_ids, set([1]))
+        self.assertEqual(result_multicast.processor_ids, set())
         self.assertNotEqual(result_multicast, a_multicast)
-        self.assertNotEqual(result_multicast, b_multicast)
+        self.assertNotEqual(hash(result_multicast), hash(a_multicast))
 
     """
     From FixedRouteEntry use or loose
