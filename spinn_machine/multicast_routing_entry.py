@@ -24,35 +24,35 @@ class MulticastRoutingEntry(object):
     """
 
     __slots__ = (
-        "_routing_entry_key", "_mask", "_routing_entry")
+        "_key", "_mask", "_routing_entry")
 
-    def __init__(self, routing_entry_key: int, mask: int,
+    def __init__(self, key: int, mask: int,
                  routing_entry: RoutingEntry):
         """
-        :param int routing_entry_key: The routing key_combo
+        :param int key: The routing key_combo
         :param int mask: The route key_combo mask
         :param RoutingEntry: routing_entry
         """
-        self._routing_entry_key: int = routing_entry_key
+        self._key: int = key
         self._mask: int = mask
         self._routing_entry = routing_entry
 
-        if (routing_entry_key & mask) != routing_entry_key:
+        if (key & mask) != key:
             raise SpinnMachineInvalidParameterException(
                 "key_mask_combo and mask",
-                f"{routing_entry_key} and {mask}",
+                f"{key} and {mask}",
                 "The key combo is changed when masked with the mask. This"
                 " is determined to be an error in the tool chain. Please "
                 "correct this and try again.")
 
     @property
-    def routing_entry_key(self) -> int:
+    def key(self) -> int:
         """
         The routing key.
 
         :rtype: int
         """
-        return self._routing_entry_key
+        return self._key
 
     @property
     def mask(self) -> int:
@@ -105,10 +105,10 @@ class MulticastRoutingEntry(object):
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:
             If the key and mask of the other entry do not match
         """
-        if other.routing_entry_key != self.routing_entry_key:
+        if other.key != self.key:
             raise SpinnMachineInvalidParameterException(
-                "other.key", hex(other.routing_entry_key),
-                f"The key does not match 0x{self.routing_entry_key:x}")
+                "other.key", hex(other.key),
+                f"The key does not match 0x{self.key:x}")
         if other.mask != self.mask:
             raise SpinnMachineInvalidParameterException(
                 "other.mask", hex(other.mask),
@@ -116,26 +116,26 @@ class MulticastRoutingEntry(object):
 
         entry = self.entry.merge(other.entry)
         return MulticastRoutingEntry(
-            self.routing_entry_key, self.mask, entry)
+            self.key, self.mask, entry)
 
     def __eq__(self, other_entry: Any) -> bool:
         if not isinstance(other_entry, MulticastRoutingEntry):
             return False
-        if self.routing_entry_key != other_entry.routing_entry_key:
+        if self.key != other_entry.key:
             return False
         if self.mask != other_entry.mask:
             return False
         return (self.entry == other_entry.entry)
 
     def __hash__(self) -> int:
-        return (self.routing_entry_key * 13 + self.mask * 19 +
+        return (self.key * 13 + self.mask * 19 +
                 hash(self._routing_entry))
 
     def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        return (f"{self._routing_entry_key}:{self._mask}:" 
+        return (f"{self._key}:{self._mask}:" 
                 f"{repr(self._routing_entry)}")
 
     def __str__(self) -> str:
