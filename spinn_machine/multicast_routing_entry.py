@@ -13,71 +13,29 @@
 # limitations under the License.
 from __future__ import annotations
 from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload
-from spinn_machine.router import Router
 from .exceptions import SpinnMachineInvalidParameterException
+from .routing_entry import RoutingEntry
 
 
 class MulticastRoutingEntry(object):
     """
-    Represents an entry in a SpiNNaker chip's multicast routing table.
-    There can be up to 1024 such entries per chip, but some may be reserved
-    for system purposes.
+    Represents an entry in a SpiNNaker chip's routing table,
+    including the key and mask
     """
 
     __slots__ = (
-        "_routing_entry_key", "_mask", "_defaultable", "_processor_ids",
-        "_link_ids", "_spinnaker_route", "__repr")
+        "_routing_entry_key", "_mask", "_routing_entry")
 
-    @overload
-    def __init__(self, routing_entry_key: int, mask: int, *,
-                 processor_ids: Iterable[int],
-                 link_ids: Iterable[int],
-                 defaultable: bool = False,
-                 spinnaker_route: None = None):
-        ...
-
-    @overload
-    def __init__(self, routing_entry_key: int, mask: int, *,
-                 processor_ids: None = None,
-                 link_ids: None = None,
-                 defaultable: bool = False,
-                 spinnaker_route: int):
-        ...
-
-    # pylint: disable=too-many-arguments
-    def __init__(self, routing_entry_key: int, mask: int, *,
-                 processor_ids: Optional[Iterable[int]] = None,
-                 link_ids: Optional[Iterable[int]] = None,
-                 defaultable: bool = False,
-                 spinnaker_route: Optional[int] = None) -> None:
+    def __init__(self, routing_entry_key: int, mask: int,
+                 routing_entry: RoutingEntry):
         """
-        .. note::
-            The processor_ids and link_ids parameters are only optional if a
-            spinnaker_route is provided. If a spinnaker_route is provided
-            the processor_ids and link_ids parameters are ignored.
-
         :param int routing_entry_key: The routing key_combo
         :param int mask: The route key_combo mask
-        :param processor_ids: The destination processor IDs
-        :type processor_ids: iterable(int) or None
-        :param link_ids: The destination link IDs
-        :type link_ids: iterable(int) or None
-        :param bool defaultable:
-            If this entry is defaultable (it receives packets
-            from its directly opposite route position)
-        :param spinnaker_route:
-            The processor_ids and link_ids expressed as a single int.
-        :type spinnaker_route: int or None
-        :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
-            * If processor_ids contains the same ID more than once
-            * If link_ids contains the same ID more than once
-        :raise TypeError: if no spinnaker_route provided and either
-            processor_ids or link_ids is missing or `None`
+        :param RoutingEntry: routing_entry
         """
         self._routing_entry_key: int = routing_entry_key
         self._mask: int = mask
-        self._defaultable: bool = defaultable
-        self.__repr: Optional[str] = None
+        self._routing_entry = routing_entry
 
         if (routing_entry_key & mask) != routing_entry_key:
             raise SpinnMachineInvalidParameterException(
@@ -86,19 +44,6 @@ class MulticastRoutingEntry(object):
                 "The key combo is changed when masked with the mask. This"
                 " is determined to be an error in the tool chain. Please "
                 "correct this and try again.")
-
-        # Add processor IDs, ignore duplicates
-        if spinnaker_route is None:
-            assert processor_ids is not None
-            assert link_ids is not None
-            self._processor_ids: Optional[FrozenSet[int]] = \
-                frozenset(processor_ids)
-            self._link_ids: Optional[FrozenSet[int]] = frozenset(link_ids)
-            self._spinnaker_route: int = self._calc_spinnaker_route()
-        else:
-            self._spinnaker_route = spinnaker_route
-            self._processor_ids = None
-            self._link_ids = None
 
     @property
     def routing_entry_key(self) -> int:
@@ -119,28 +64,6 @@ class MulticastRoutingEntry(object):
         return self._mask
 
     @property
-    def processor_ids(self) -> FrozenSet[int]:
-        """
-        The destination processor IDs.
-
-        :rtype: frozenset(int)
-        """
-        if self._processor_ids is None:
-            self._processor_ids, self._link_ids = self._calc_routing_ids()
-        return self._processor_ids
-
-    @property
-    def link_ids(self) -> FrozenSet[int]:
-        """
-        The destination link IDs.
-
-        :rtype: frozenset(int)
-        """
-        if self._link_ids is None:
-            self._processor_ids, self._link_ids = self._calc_routing_ids()
-        return self._link_ids
-
-    @property
     def defaultable(self) -> bool:
         """
         Whether this entry is a defaultable entry. An entry is defaultable if
@@ -151,7 +74,7 @@ class MulticastRoutingEntry(object):
 
         :rtype: bool
         """
-        return self._defaultable
+        return self._routing_entry.defaultable
 
     @property
     def spinnaker_route(self) -> int:
@@ -160,7 +83,11 @@ class MulticastRoutingEntry(object):
 
         :rtype: int
         """
-        return self._spinnaker_route
+        return self._routing_entry.spinnaker_route
+
+    @property
+    def entry(self) -> RoutingEntry:
+        return self._routing_entry
 
     def merge(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
@@ -187,25 +114,9 @@ class MulticastRoutingEntry(object):
                 "other.mask", hex(other.mask),
                 f"The mask does not match 0x{self.mask:x}")
 
+        entry = self.entry.merge(other.entry)
         return MulticastRoutingEntry(
-            self.routing_entry_key, self.mask,
-            processor_ids=(self.processor_ids | other.processor_ids),
-            link_ids=(self.link_ids | other.link_ids),
-            defaultable=(self._defaultable and other.defaultable))
-
-    def __add__(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
-        """
-        Allows overloading of `+` to merge two entries together.
-        See :py:meth:`merge`
-        """
-        return self.merge(other)
-
-    def __or__(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
-        """
-        Allows overloading of `|` to merge two entries together.
-        See :py:meth:`merge`
-        """
-        return self.merge(other)
+            self.routing_entry_key, self.mask, entry)
 
     def __eq__(self, other_entry: Any) -> bool:
         if not isinstance(other_entry, MulticastRoutingEntry):
@@ -214,66 +125,18 @@ class MulticastRoutingEntry(object):
             return False
         if self.mask != other_entry.mask:
             return False
-        if self._spinnaker_route != other_entry._spinnaker_route:
-            return False
-        return (self._defaultable == other_entry.defaultable)
+        return (self.entry == other_entry.entry)
 
     def __hash__(self) -> int:
         return (self.routing_entry_key * 13 + self.mask * 19 +
-                self._spinnaker_route * 29 * int(self._defaultable) * 131)
+                hash(self._routing_entry))
 
     def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        if not self.__repr:
-            self.__repr = (
-                f"{self._routing_entry_key}:{self._mask}:{self._defaultable}"
-                f":{{{', '.join(map(str, sorted(self.processor_ids)))}}}:"
-                f"{{{', '.join(map(str, sorted(self.link_ids)))}}}")
-
-        return self.__repr
+        return (f"{self._routing_entry_key}:{self._mask}:" 
+                f"{repr(self._routing_entry)}")
 
     def __str__(self) -> str:
         return self.__repr__()
-
-    def __getstate__(self):
-        return dict(
-            (slot, getattr(self, slot))
-            for slot in self.__slots__
-            if hasattr(self, slot)
-        )
-
-    def __setstate__(self, state):
-        for slot, value in state.items():
-            setattr(self, slot, value)
-
-    def _calc_spinnaker_route(self) -> int:
-        """
-        Convert a routing table entry represented in software to a
-        binary routing table entry usable on the machine.
-
-        :rtype: int
-        """
-        route_entry = 0
-        assert self._processor_ids is not None
-        for processor_id in self._processor_ids:
-            route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
-        assert self._link_ids is not None
-        for link_id in self._link_ids:
-            route_entry |= (1 << link_id)
-        return route_entry
-
-    def _calc_routing_ids(self) -> Tuple[FrozenSet[int], FrozenSet[int]]:
-        """
-        Convert a binary routing table entry usable on the machine to lists of
-        route IDs usable in a routing table entry represented in software.
-
-        :rtype: tuple(frozenset(int), frozenset(int))
-        """
-        processor_ids = (pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
-                         if self._spinnaker_route & 1 <<
-                         (Router.MAX_LINKS_PER_ROUTER + pi))
-        link_ids = (li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
-                    if self._spinnaker_route & 1 << li)
-        return frozenset(processor_ids), frozenset(link_ids)

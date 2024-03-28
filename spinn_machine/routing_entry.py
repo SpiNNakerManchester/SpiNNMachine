@@ -74,7 +74,6 @@ class RoutingEntry(object):
         :raise TypeError: if no spinnaker_route provided and either
             processor_ids or link_ids is missing or `None`
         """
-        self._defaultable: bool = defaultable
         self.__repr: Optional[str] = None
 
         # Add processor IDs, ignore duplicates
@@ -102,6 +101,9 @@ class RoutingEntry(object):
                         "incoming_processor", incoming_processor,
                         "The incoming direction for a path can only be from "
                         "either one link or one processors, not both")
+            # TODO remove this GIGO!
+            if defaultable is not None:
+                self._defaultable: bool = defaultable
         else:
             assert processor_ids is None
             assert link_ids is None
@@ -110,6 +112,7 @@ class RoutingEntry(object):
             self._spinnaker_route = spinnaker_route
             self._processor_ids = None
             self._link_ids = None
+            self._defaultable = defaultable
 
     @property
     def processor_ids(self) -> FrozenSet[int]:
@@ -193,6 +196,8 @@ class RoutingEntry(object):
             self.__repr = (
                 f"{{{', '.join(map(str, sorted(self.processor_ids)))}}}:"
                 f"{{{', '.join(map(str, sorted(self.link_ids)))}}}")
+            if self._defaultable:
+                self.__repr += "(defaultable)"
         return self.__repr
 
     def __str__(self) -> str:
