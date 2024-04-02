@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Any, FrozenSet, Iterable, Optional, Tuple, overload, Union
+from typing import (Any, Collection, FrozenSet, Optional, overload, Tuple,
+                    Union)
 from spinn_machine.router import Router
 from .exceptions import (SpinnMachineInvalidParameterException)
 
@@ -27,8 +28,8 @@ class RoutingEntry(object):
         "_link_ids", "_spinnaker_route", "__repr")
 
     @overload
-    def __init__(self, *, processor_ids: Union[int, Iterable[int]],
-                 link_ids: Union[int, Iterable[int]],
+    def __init__(self, *, processor_ids: Union[int, Collection[int]],
+                 link_ids: Union[int, Collection[int]],
                  incoming_processor: Optional[int] = None,
                  incoming_link: Optional[int] = None,
                  defaultable: None = None,
@@ -46,8 +47,8 @@ class RoutingEntry(object):
 
     # pylint: disable=too-many-arguments
     def __init__(self, *,
-                 processor_ids: Optional[Union[int, Iterable[int]]] = None,
-                 link_ids: Optional[Union[int, Iterable[int]]] = None,
+                 processor_ids: Optional[Union[int, Collection[int]]] = None,
+                 link_ids: Optional[Union[int, Collection[int]]] = None,
                  incoming_processor: Optional[int] = None,
                  incoming_link: Optional[int] = None,
                  defaultable: Optional[bool] = None,
