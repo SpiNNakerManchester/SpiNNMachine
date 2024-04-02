@@ -42,7 +42,7 @@ class TestingChip(unittest.TestCase):
         self._ip = "192.162.240.253"
 
     def _create_chip(self, x, y, processors, r, sdram, ip):
-        return Chip(x, y, processors, r, sdram, 0, 0, ip)
+        return Chip(x, y, [0], range(1, processors), r, sdram, 0, 0, ip)
 
     def test_create_chip(self):
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
@@ -64,14 +64,12 @@ class TestingChip(unittest.TestCase):
         self.assertTrue(new_chip.is_processor_with_id(3))
 
     def test_0_down(self):
-        # Chip where 0 the monitor is down
-        with self.assertRaises(NotImplementedError):
-            Chip(1, 1, self.n_processors, self._router, self._sdram, 0, 0,
-                 self._ip, down_cores=[0])
+        Chip(1, 1, [1], range(3, self.n_processors), self._router,
+             self._sdram, 0, 0, self._ip)
 
     def test_1_chip(self):
         # Chip with just 1 processor
-        new_chip = Chip(1, 1, 1, self._router, self._sdram, 0, 0, self._ip)
+        new_chip = Chip(1, 1, [0], [], self._router, self._sdram, 0, 0, self._ip)
         with self.assertRaises(Exception):
             new_chip.get_first_none_monitor_processor()
 

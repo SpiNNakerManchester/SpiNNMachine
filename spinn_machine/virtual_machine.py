@@ -143,12 +143,14 @@ class _VirtualMachine(object):
 
         ((eth_x, eth_y), n_cores) = configured_chips[xy]
 
-        down_cores = self._unused_cores.get(xy, None)
         x, y = xy
         sdram = MachineDataView.get_machine_version().max_sdram_per_chip
+        cores = list(range(1, n_cores))
+        for down_core in self._unused_cores.get(xy, []):
+            if down_core in cores:
+                cores.remove(down_core)
         return Chip(
-            x, y, n_cores, chip_router, sdram, eth_x, eth_y,
-            ip_address, down_cores=down_cores)
+            x, y, [0], cores, chip_router, sdram, eth_x, eth_y, ip_address)
 
     def _calculate_links(
             self, xy: XY, configured_chips: Dict[XY, Tuple[XY, int]]

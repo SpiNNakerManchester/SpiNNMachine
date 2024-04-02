@@ -51,10 +51,10 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def _create_chip(self, x, y):
         if x == y == 0:
-            return Chip(x, y, 18, self._router, self._sdram,
+            return Chip(x, y, [0], range(1, 18), self._router, self._sdram,
                         self._nearest_ethernet_chip[0],
                         self._nearest_ethernet_chip[1], self._ip)
-        return Chip(x, y, 18, self._router, self._sdram,
+        return Chip(x, y, [0], range(1, 18), self._router, self._sdram,
                     self._nearest_ethernet_chip[0],
                     self._nearest_ethernet_chip[1], None)
 
@@ -146,7 +146,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         machine = virtual_machine(8, 8)
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             machine.add_chip(Chip(
-                0, 0, 18, self._router, self._sdram,
+                0, 0, [0], range(1, 18), self._router, self._sdram,
                 self._nearest_ethernet_chip[0],
                 self._nearest_ethernet_chip[1], self._ip))
 

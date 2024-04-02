@@ -155,8 +155,9 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
         router = Router(links, router_entries)
 
         # Create and add a chip with this router
+        n_cores = _int(details["cores"])
         chip = Chip(
-            source_x, source_y, _int(details["cores"]), router, sdram,
+            source_x, source_y, [0], range(1, n_cores), router, sdram,
             _int(board_x), _int(board_y), ip_address, [
                 _int(tag) for tag in tag_ids])
         machine.add_chip(chip)
