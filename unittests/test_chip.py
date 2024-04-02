@@ -69,7 +69,8 @@ class TestingChip(unittest.TestCase):
 
     def test_1_chip(self):
         # Chip with just 1 processor
-        new_chip = Chip(1, 1, [0], [], self._router, self._sdram, 0, 0, self._ip)
+        new_chip = Chip(1, 1, [0], [], self._router, self._sdram, 0, 0,
+                        self._ip)
         with self.assertRaises(Exception):
             new_chip.get_first_none_monitor_processor()
 
