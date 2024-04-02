@@ -34,8 +34,7 @@ class Chip(XY):
                 ip_address: Optional[str] = None,
                 tag_ids: Optional[Iterable[int]] = None,
                 down_cores: Optional[Collection[int]] = None,
-                parent_link: Optional[int] = None,
-                v_to_p_map: Optional[bytes] = None):
+                parent_link: Optional[int] = None):
         return tuple.__new__(cls, (x, y))
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
@@ -45,8 +44,7 @@ class Chip(XY):
                  ip_address: Optional[str] = None,
                  tag_ids: Optional[Iterable[int]] = None,
                  down_cores: Optional[Collection[int]] = None,
-                 parent_link: Optional[int] = None,
-                 v_to_p_map: Optional[bytes] = None):
+                 parent_link: Optional[int] = None):
         """
         :param int x: the x-coordinate of the chip's position in the
             two-dimensional grid of chips
@@ -96,7 +94,6 @@ class Chip(XY):
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
         self._parent_link = parent_link
-        self._v_to_p_map = v_to_p_map
 
     def __generate_processors(
             self, n_processors: int,
@@ -267,31 +264,6 @@ class Chip(XY):
         """
         return self._parent_link
 
-    def get_physical_core_id(self, virtual_p: int) -> Optional[int]:
-        """
-        Get the physical core ID from a virtual core ID.
-
-        :param int virtual_p: The virtual core ID
-        :rtype: int or None if core not in map
-        """
-        if (self._v_to_p_map is None or virtual_p >= len(self._v_to_p_map) or
-                self._v_to_p_map[virtual_p] == 0xFF):
-            return None
-        return self._v_to_p_map[virtual_p]
-
-    def get_physical_core_string(self, virtual_p: int) -> str:
-        """
-        Get a string that can be appended to a core to show the physical
-        core, or an empty string if not possible.
-
-        :param int virtual_p: The virtual core ID
-        :rtype: str
-        """
-        physical_p = self.get_physical_core_id(virtual_p)
-        if physical_p is None:
-            return ""
-        return f" (ph: {physical_p})"
-
     def __str__(self) -> str:
         if self._ip_address:
             ip_info = f"ip_address={self.ip_address} "
@@ -299,8 +271,7 @@ class Chip(XY):
             ip_info = ""
         return (
             f"[Chip: x={self[0]}, y={self[1]}, {ip_info}"
-            f"n_cores={self.n_processors}, "
-            f"mon={self.get_physical_core_id(0)}]")
+            f"n_cores={self.n_processors}]")
 
     def __repr__(self) -> str:
         return self.__str__()

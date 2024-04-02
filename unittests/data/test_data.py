@@ -19,6 +19,7 @@ from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
+from spinn_machine.exceptions import SpinnMachineException
 
 
 class TestSimulatorData(unittest.TestCase):
@@ -94,3 +95,26 @@ class TestSimulatorData(unittest.TestCase):
             "None",
             MachineDataView.where_is_chip(None)
         )
+
+    def test_v_to_p(self):
+        writer = MachineDataWriter.setup()
+        # Before setting
+        with self.assertRaises(SpinnMachineException):
+            writer.get_physical_core_id((1, 2), 3)
+        self.assertEqual("", writer.get_physical_core_string((1, 2), 3))
+
+        # Set a v_to_p
+        v_to_p = dict()
+        v_to_p[(1, 2)] = bytes([10, 11, 12, 13, 14])
+        writer.set_v_to_p_map(v_to_p)
+        # XY that exists
+        self.assertEqual(13, writer.get_physical_core_id((1, 2), 3))
+        self.assertEqual(" (ph: 13)",
+                         writer.get_physical_core_string((1, 2), 3))
+        # Xy that does not exist
+        self.assertEqual(None, writer.get_physical_core_id((1, 4), 3))
+        self.assertEqual("",
+                         writer.get_physical_core_string((1, 4), 3))
+        self.assertEqual(None, writer.get_physical_core_id((1, 2), 19))
+        self.assertEqual("",
+                         writer.get_physical_core_string((1, 2), 19))

@@ -58,8 +58,7 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(new_chip.n_placable_processors, self.n_processors - 1)
         print(new_chip.__repr__())
         self.assertEqual(
-            "[Chip: x=0, y=1, ip_address=192.162.240.253 "
-            "n_cores=18, mon=None]",
+            "[Chip: x=0, y=1, ip_address=192.162.240.253 n_cores=18]",
             new_chip.__repr__(),)
         self.assertEqual(new_chip.tag_ids, OrderedSet([1, 2, 3, 4, 5, 6, 7]))
         self.assertTrue(new_chip.is_processor_with_id(3))
