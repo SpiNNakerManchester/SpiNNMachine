@@ -36,6 +36,7 @@ def version_factory() -> AbstractVersion:
     # pylint: disable=import-outside-toplevel
     from .version_3 import Version3
     from .version_5 import Version5
+    from .version_201 import Version201
 
     version = get_config_int_or_none("Machine", "version")
     if version in [2, 3]:
@@ -43,6 +44,9 @@ def version_factory() -> AbstractVersion:
 
     if version in [4, 5]:
         return Version5()
+
+    if version == 201:
+        return Version201()
 
     spalloc_server = get_config_str_or_none("Machine", "spalloc_server")
     if spalloc_server is not None:
@@ -56,9 +60,11 @@ def version_factory() -> AbstractVersion:
     height = get_config_int_or_none("Machine", "height")
     width = get_config_int_or_none("Machine", "width")
     if height is not None and width is not None:
+        logger.info("Your cfg file does not have a version")
         if height == width == 2:
-            logger.info("Your cfg file does not have a ")
             return Version3()
+        elif height == width == 1:
+            return Version201()
         return Version5()
 
     if version is None:

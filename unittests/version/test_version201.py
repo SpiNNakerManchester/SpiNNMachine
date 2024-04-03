@@ -17,7 +17,7 @@ Testing Version5
 """
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine.full_wrap_machine import FullWrapMachine
+from spinn_machine.no_wrap_machine import NoWrapMachine
 from spinn_machine.version.version_201 import Version201
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineException
@@ -131,11 +131,11 @@ class TestVersion201(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             version.verify_size(16, 16)
 
-    def test_create_machin(self):
+    def test_create_machine(self):
         version = Version201()
 
         machine = version.create_machine(width=1, height=1)
-        self.assertIsInstance(machine, FullWrapMachine)
+        self.assertIsInstance(machine, NoWrapMachine)
 
     def test_processor_info(self):
         version = Version201()

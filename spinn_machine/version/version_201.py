@@ -19,7 +19,7 @@ from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
 
 from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.full_wrap_machine import FullWrapMachine
+from spinn_machine.no_wrap_machine import NoWrapMachine
 from spinn_machine.machine import Machine
 
 from .abstract_version import AbstractVersion
@@ -52,7 +52,7 @@ class Version201(AbstractVersion, metaclass=AbstractBase):
     @property
     @overrides(AbstractVersion.minimum_cores_expected)
     def minimum_cores_expected(self) -> int:
-        return 150
+        return 100
 
     @property
     @overrides(AbstractVersion.clock_speeds_hz)
@@ -98,7 +98,7 @@ class Version201(AbstractVersion, metaclass=AbstractBase):
 
     @overrides(AbstractVersion._create_machine)
     def _create_machine(self, width: int, height: int, origin: str) -> Machine:
-        return FullWrapMachine(width, height, CHIPS_PER_BOARD, origin)
+        return NoWrapMachine(width, height, CHIPS_PER_BOARD, origin)
 
     @overrides(AbstractVersion.illegal_ethernet_message)
     def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
