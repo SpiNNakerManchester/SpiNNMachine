@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, Mapping, Optional, Sequence, Tuple
+from typing import Final, List, Mapping, Optional, Sequence, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 from spinn_machine.exceptions import SpinnMachineException
@@ -107,3 +107,7 @@ class Version5(VersionSpin1):
             return "Only Chip with x + y divisible by 12 " \
                    "may be an Ethernet Chip"
         return None
+
+    @overrides(VersionSpin1.spinnaker_links)
+    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+        return [(0, 0, 4)]

@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import annotations
 import logging
-from typing import Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
+from typing import List, Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
@@ -349,5 +349,16 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :param int x:
         :param int y:
         :return: An explanation that the x and y can never be an Ethernet
+        """
+        raise NotImplementedError
+
+    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+        """
+        The list of Local X, Y and link Id to add spinnaker links to
+
+        These are applied local to each Ethernet Chip and only if the link is
+        not connected to another board
+
+        :rtype: List((int, int, int))
         """
         raise NotImplementedError
