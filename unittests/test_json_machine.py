@@ -25,9 +25,35 @@ class TestJsonMachine(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
-        set_config("Machine", "version", 5)
+
+    def test_json_version_3(self):
+        set_config("Machine", "version", 3)
+        vm = virtual_machine(width=2, height=2)
+        MachineDataWriter.mock().set_machine(vm)
+        jpath = mktemp("json")
+        to_json_path(jpath)
+        jm = machine_from_json(jpath)
+        vstr = str(vm).replace("Virtual", "")
+        jstr = str(jm).replace("Json", "")
+        self.assertEqual(vstr, jstr)
+        for vchip, jchip in zip(vm, jm):
+            self.assertEqual(str(vchip), str(jchip))
+
+    def test_json_version_201(self):
+        set_config("Machine", "version", 201)
+        vm = virtual_machine(width=1, height=1)
+        MachineDataWriter.mock().set_machine(vm)
+        jpath = mktemp("json")
+        to_json_path(jpath)
+        jm = machine_from_json(jpath)
+        vstr = str(vm).replace("Virtual", "")
+        jstr = str(jm).replace("Json", "")
+        self.assertEqual(vstr, jstr)
+        for vchip, jchip in zip(vm, jm):
+            self.assertEqual(str(vchip), str(jchip))
 
     def test_json_version_5_hole(self):
+        set_config("Machine", "version", 5)
         set_config("Machine", "down_chips", "3,3")
         vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
@@ -41,6 +67,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_exceptions(self):
+        set_config("Machine", "version", 5)
         vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
         chip22 = vm[2, 2]
@@ -59,6 +86,7 @@ class TestJsonMachine(unittest.TestCase):
         self.assertEqual(vchip33.tag_ids, chip33.tag_ids)
 
     def test_monitor_exceptions(self):
+        set_config("Machine", "version", 5)
         vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
         chip02 = vm[0, 2]
@@ -73,6 +101,7 @@ class TestJsonMachine(unittest.TestCase):
             machine_from_json(jpath)
 
     def test_ethernet_exceptions(self):
+        set_config("Machine", "version", 5)
         vm = virtual_machine(width=16, height=16)
         MachineDataWriter.mock().set_machine(vm)
         chip48 = vm[4, 8]
