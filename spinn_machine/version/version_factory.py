@@ -25,6 +25,9 @@ if TYPE_CHECKING:
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
+ANY_VERSION = -11
+FOUR_PLUS_CHIPS = -2
+
 
 def version_factory() -> AbstractVersion:
     """
@@ -41,11 +44,17 @@ def version_factory() -> AbstractVersion:
 
     version = get_config_int_or_none("Machine", "version")
 
-    if version == -1:
+    if version < 0:
         # test needs a version but ANY version will work
+        if version == ANY_VERSION:
+            options = [2, 5, 201]
+        elif version == FOUR_PLUS_CHIPS:
+            options = [2, 5]
+        else:
+            raise SpinnMachineException(
+                f"Unexpected cfg [Machine]version {version}")
         # Use the fact that we run actions against different python versions
         minor = sys.version_info.minor
-        options = [2, 5, 201]
         version = options[minor % len(options)]
 
     if version in [2, 3]:

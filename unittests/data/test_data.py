@@ -19,6 +19,7 @@ from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
+from spinn_machine.version import ANY_VERSION, FOUR_PLUS_CHIPS
 
 
 class TestSimulatorData(unittest.TestCase):
@@ -97,13 +98,28 @@ class TestSimulatorData(unittest.TestCase):
 
     def test_mock_any(self):
         # Should work with any version
-        set_config("Machine", "version", -1)
+        set_config("Machine", "version", ANY_VERSION)
         # check there is a value not what it is
-        MachineDataView.get_machine()
+        machine = MachineDataView.get_machine()
+        self.assertGreaterEqual(1, machine.n_chips)
+
+    def test_mock_4_or_more(self):
+        # Should work with any version
+        set_config("Machine", "version", FOUR_PLUS_CHIPS)
+        # check there is a value not what it is
+        machine = MachineDataView.get_machine()
+        self.assertGreaterEqual(machine.n_chips, 4)
+
+    def test_mockFourPlus(self):
+        # Should work with any version
+        set_config("Machine", "version", ANY_VERSION)
+        # check there is a value not what it is
+        machine = MachineDataView.get_machine()
+        self.assertGreaterEqual(4, machine.n_chips)
 
     def test_mock3(self):
         # Should work with any version
-        set_config("Machine", "version", -1)
+        set_config("Machine", "version", 3)
         # check there is a value not what it is
         MachineDataView.get_machine()
 
