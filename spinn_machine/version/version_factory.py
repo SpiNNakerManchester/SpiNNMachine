@@ -25,8 +25,9 @@ if TYPE_CHECKING:
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
-ANY_VERSION = -11
+ANY_VERSION = -1
 FOUR_PLUS_CHIPS = -2
+BIG_MACHINE = -3
 
 
 def version_factory() -> AbstractVersion:
@@ -50,6 +51,8 @@ def version_factory() -> AbstractVersion:
             options = [2, 5, 201]
         elif version == FOUR_PLUS_CHIPS:
             options = [2, 5]
+        elif version == BIG_MACHINE:
+            options = [5]
         else:
             raise SpinnMachineException(
                 f"Unexpected cfg [Machine]version {version}")

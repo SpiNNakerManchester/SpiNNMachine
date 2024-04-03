@@ -13,6 +13,6 @@
 # limitations under the License.
 
 from .version_factory import (
-    ANY_VERSION, FOUR_PLUS_CHIPS, version_factory)
+    ANY_VERSION, BIG_MACHINE, FOUR_PLUS_CHIPS, version_factory)
 
-__all__ = ["ANY_VERSION", "FOUR_PLUS_CHIPS", "version_factory"]
+__all__ = ["ANY_VERSION", "BIG_MACHINE", "FOUR_PLUS_CHIPS", "version_factory"]

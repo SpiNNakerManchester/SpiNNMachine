@@ -19,6 +19,7 @@ from spinn_machine import virtual_machine
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
+from spinn_machine.version import BIG_MACHINE, FOUR_PLUS_CHIPS
 
 
 class TestJsonMachine(unittest.TestCase):
@@ -29,6 +30,19 @@ class TestJsonMachine(unittest.TestCase):
     def test_json_version_3(self):
         set_config("Machine", "version", 3)
         vm = virtual_machine(width=2, height=2)
+        MachineDataWriter.mock().set_machine(vm)
+        jpath = mktemp("json")
+        to_json_path(jpath)
+        jm = machine_from_json(jpath)
+        vstr = str(vm).replace("Virtual", "")
+        jstr = str(jm).replace("Json", "")
+        self.assertEqual(vstr, jstr)
+        for vchip, jchip in zip(vm, jm):
+            self.assertEqual(str(vchip), str(jchip))
+
+    def test_json_version_5(self):
+        set_config("Machine", "version", 5)
+        vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
         to_json_path(jpath)
@@ -52,11 +66,13 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    def test_json_version_5_hole(self):
-        set_config("Machine", "version", 5)
+    def test_json_hole(self):
+        set_config("Machine", "version", BIG_MACHINE)
         set_config("Machine", "down_chips", "3,3")
-        vm = virtual_machine(width=8, height=8)
-        MachineDataWriter.mock().set_machine(vm)
+        writer = MachineDataWriter.mock()
+        width, heigth = writer.get_machine_version().board_shape
+        vm = virtual_machine(width, heigth)
+        writer.set_machine(vm)
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)
@@ -67,32 +83,36 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_exceptions(self):
-        set_config("Machine", "version", 5)
-        vm = virtual_machine(width=8, height=8)
-        MachineDataWriter.mock().set_machine(vm)
-        chip22 = vm[2, 2]
-        router22 = chip22.router
-        router22._n_available_multicast_entries =  \
-            router22._n_available_multicast_entries - 20
-        chip33 = vm[3, 3]
-        chip33._sdram = 50000000
-        chip33._tag_ids = [2, 3]
+        set_config("Machine", "version", FOUR_PLUS_CHIPS)
+        writer = MachineDataWriter.mock()
+        width, heigth = writer.get_machine_version().board_shape
+        vm = virtual_machine(width, heigth)
+        writer.set_machine(vm)
+        chip01 = vm[0, 1]
+        router01 = chip01.router
+        router01._n_available_multicast_entries =  \
+            router01._n_available_multicast_entries - 20
+        chip10 = vm[1, 0]
+        chip10._sdram = 50000000
+        chip10._tag_ids = [2, 3]
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
-        vchip33 = jm[3, 3]
-        self.assertEqual(vchip33.tag_ids, chip33.tag_ids)
+        vchip10 = jm[1, 0]
+        self.assertEqual(vchip10.tag_ids, chip10.tag_ids)
 
     def test_monitor_exceptions(self):
-        set_config("Machine", "version", 5)
-        vm = virtual_machine(width=8, height=8)
-        MachineDataWriter.mock().set_machine(vm)
-        chip02 = vm[0, 2]
+        set_config("Machine", "version", FOUR_PLUS_CHIPS)
+        writer = MachineDataWriter.mock()
+        width, heigth = writer.get_machine_version().board_shape
+        vm = virtual_machine(width, heigth)
+        writer.set_machine(vm)
+        chip01 = vm[0, 1]
         # Hack in an extra monitor
-        chip02._scamp_processors = tuple([0, 1])
-        chip02._placable_processors = tuple([2, 3, 4, 5, 6, 7, 8, 9])
+        chip01._scamp_processors = tuple([0, 1])
+        chip01._placable_processors = tuple([2, 3, 4, 5, 6, 7, 8, 9])
         jpath = mktemp("json")
         # Should still be able to write json even with more than one monitor
         to_json_path(jpath)
@@ -101,22 +121,24 @@ class TestJsonMachine(unittest.TestCase):
             machine_from_json(jpath)
 
     def test_ethernet_exceptions(self):
-        set_config("Machine", "version", 5)
-        vm = virtual_machine(width=16, height=16)
-        MachineDataWriter.mock().set_machine(vm)
-        chip48 = vm[4, 8]
-        router48 = chip48.router
-        router48._n_available_multicast_entries =  \
-            router48._n_available_multicast_entries - 20
-        chip48._sdram = 50000000
-        chip48._tag_ids = [2, 3]
+        set_config("Machine", "version", BIG_MACHINE)
+        writer = MachineDataWriter.mock()
+        width, heigth = writer.get_machine_version().board_shape
+        vm = virtual_machine(width*2, heigth*2)
+        writer.set_machine(vm)
+        chip_e_1 = vm.ethernet_connected_chips[1]
+        router_e_1= chip_e_1.router
+        router_e_1._n_available_multicast_entries =  \
+            router_e_1._n_available_multicast_entries - 20
+        chip_e_1._sdram = 50000000
+        chip_e_1._tag_ids = [2, 3]
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
-        vchip48 = jm[4, 8]
-        self.assertEqual(vchip48.tag_ids, chip48.tag_ids)
+        vchip_e_1 = jm.ethernet_connected_chips[1]
+        self.assertEqual(vchip_e_1.tag_ids, chip_e_1.tag_ids)
 
 
 if __name__ == '__main__':
