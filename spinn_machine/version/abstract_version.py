@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import annotations
 import logging
-from typing import Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
+from typing import List, Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
@@ -214,9 +214,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def clock_speed_hz(self) -> int:
+    def clock_speeds_hz(self) -> List[int]:
         """
-        The processor clock speed in Hz
+        The processor clock speeds in Hz this processor can run at
 
         :rtype: int
         """
