@@ -116,4 +116,3 @@ class TestSimulatorData(unittest.TestCase):
         set_config("Machine", "version", 201)
         # check there is a value not what it is
         MachineDataView.get_machine()
-
