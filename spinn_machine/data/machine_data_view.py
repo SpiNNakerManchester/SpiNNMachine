@@ -296,8 +296,7 @@ class MachineDataView(UtilsDataView):
         if cls.__data._v_to_p_map is None:
             version = cls.get_machine_version()
             if isinstance(version, VersionSpin1):
-                raise SpinnMachineException(
-                    "Virtual to physical mapping to yet read")
+                return None
             else:
                 raise SpinnMachineException(
                     f"This call is not supported when using Version {version}")
