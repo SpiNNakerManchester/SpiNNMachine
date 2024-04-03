@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 import logging
+import sys
 from typing import TYPE_CHECKING
 from spinn_utilities.config_holder import (
     get_config_int_or_none, get_config_str_or_none)
@@ -39,6 +40,14 @@ def version_factory() -> AbstractVersion:
     from .version_201 import Version201
 
     version = get_config_int_or_none("Machine", "version")
+
+    if version == -1:
+        # test needs a version but which would CAN not metter
+        # Use the fact that we run actions against different python versions
+        minor = sys.version_info.minor
+        options = [2, 5, 201]
+        version = options[minor % len(options)]
+
     if version in [2, 3]:
         return Version3()
 

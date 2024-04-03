@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.ordered_set import OrderedSet
@@ -23,7 +24,7 @@ class TestingChip(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
-        set_config("Machine", "version", 5)
+        set_config("Machine", "version", -1)
         self._x = 0
         self._y = 1
 
