@@ -42,7 +42,7 @@ def version_factory() -> AbstractVersion:
     version = get_config_int_or_none("Machine", "version")
 
     if version == -1:
-        # test needs a version but which would CAN not metter
+        # test needs a version but ANY version will work
         # Use the fact that we run actions against different python versions
         minor = sys.version_info.minor
         options = [2, 5, 201]
