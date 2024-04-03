@@ -99,8 +99,7 @@ class TestSimulatorData(unittest.TestCase):
     def test_v_to_p(self):
         writer = MachineDataWriter.setup()
         # Before setting
-        with self.assertRaises(SpinnMachineException):
-            writer.get_physical_core_id((1, 2), 3)
+        self.assertEqual(None, writer.get_physical_core_id((1, 2), 3))
         self.assertEqual("", writer.get_physical_core_string((1, 2), 3))
 
         # Set a v_to_p
