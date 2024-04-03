@@ -94,3 +94,26 @@ class TestSimulatorData(unittest.TestCase):
             "None",
             MachineDataView.where_is_chip(None)
         )
+
+    def test_mock_any(self):
+        # Should work with any version
+        set_config("Machine", "version", -1)
+        # check there is a value not what it is
+        MachineDataView.get_machine()
+
+    def test_mock3(self):
+        # Should work with any version
+        set_config("Machine", "version", -1)
+        # check there is a value not what it is
+        MachineDataView.get_machine()
+
+    def test_mock5(self):
+        set_config("Machine", "version", 5)
+        # check there is a value not what it is
+        MachineDataView.get_machine()
+
+    def test_mock201(self):
+        set_config("Machine", "version", 201)
+        # check there is a value not what it is
+        MachineDataView.get_machine()
+
