@@ -19,7 +19,6 @@ from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
-from spinn_machine.exceptions import SpinnMachineException
 
 
 class TestSimulatorData(unittest.TestCase):
