@@ -862,7 +862,7 @@ class Machine(object, metaclass=AbstractBase):
                 global_x, global_y = self.get_global_xy(
                     local_x, local_y, ethernet.x, ethernet.y)
                 chip = self.get_chip_at(global_x, global_y)
-                if not chip.router.is_link(link):
+                if chip is not None and not chip.router.is_link(link):
                     self._add_spinnaker_link(
                         s_id, global_x, global_y, link, ip)
 
