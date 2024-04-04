@@ -19,6 +19,7 @@ from spinn_machine import Chip, Link, Router, virtual_machine
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
+from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.machine_factory import machine_repair
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD
 from .geometry import (to_xyz, shortest_mesh_path_length,
@@ -115,6 +116,15 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
         self.assertEqual(4, count)
         self.assertEqual((2, 0), vm.get_unused_xy())
+        spinnaker_links = (list(vm.spinnaker_links))
+        expected = []
+        sp = SpinnakerLinkData(0, 0, 0, 3, '127.0.0.0')
+        expected.append((('127.0.0.0', 0), sp))
+        expected.append((((0, 0), 0), sp))
+        sp = SpinnakerLinkData(1, 1, 0, 0, '127.0.0.0')
+        expected.append((('127.0.0.0', 1), sp))
+        expected.append((((1, 0), 1), sp))
+        self.assertEqual(expected, spinnaker_links)
 
     def test_version_5_8_by_8(self):
         set_config("Machine", "version", 5)
@@ -128,6 +138,12 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(240, count)
         count = sum(_chip.n_processors for _chip in vm.chips)
         self.assertEqual(count, 856)
+        spinnaker_links = (list(vm.spinnaker_links))
+        expected = []
+        sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
+        expected.append((('127.0.0.0', 0), sp))
+        expected.append((((0, 0), 0), sp))
+        self.assertEqual(expected, spinnaker_links)
 
     def test_version_5_12_by_12(self):
         set_config("Machine", "version", 5)
@@ -141,6 +157,31 @@ class TestVirtualMachine(unittest.TestCase):
             count += 1
         self.assertEqual(48, count)
         self.assertEqual((12, 0), vm.get_unused_xy())
+        spinnaker_links = (list(vm.spinnaker_links))
+        expected = []
+        self.assertEqual(expected, spinnaker_links)
+
+    def test_version_5_16_by_16(self):
+        set_config("Machine", "version", 5)
+        vm = virtual_machine(height=16, width=16, validate=True)
+        self.assertEqual(144, vm.n_chips)
+        self.assertEqual(3, len(vm.ethernet_connected_chips))
+        count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
+        self.assertEqual(768, count)
+        count = 0
+        for _chip in vm.get_existing_xys_on_board(vm[1, 1]):
+            count += 1
+        self.assertEqual(48, count)
+        self.assertEqual((0, 4), vm.get_unused_xy())
+        spinnaker_links = (list(vm.spinnaker_links))
+        expected = []
+        sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
+        expected.append((('127.0.0.0', 0), sp))
+        expected.append((((0, 0), 0), sp))
+        sp = SpinnakerLinkData(0, 4, 8, 4, '127.0.4.8')
+        expected.append((('127.0.4.8', 0), sp))
+        expected.append((((4, 8), 0), sp))
+        self.assertEqual(expected, spinnaker_links)
 
     def test_version_5_hole(self):
         set_config("Machine", "version", 5)
