@@ -14,8 +14,9 @@
 
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine.config_setup import unittest_setup
 from spinn_machine import Chip, Link, Router, virtual_machine
+from spinn_machine.config_setup import unittest_setup
+from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
 
@@ -112,6 +113,16 @@ class TestVirtualMachine3(unittest.TestCase):
             count += 1
         self.assertEqual(4, count)
         self.assertEqual((2, 0), vm.get_unused_xy())
+        spinnaker_links = (list(vm.spinnaker_links))
+        expected = []
+        sp = SpinnakerLinkData(0, 0, 0, 3, '127.0.0.0')
+        expected.append((('127.0.0.0', 0), sp))
+        expected.append((((0, 0), 0), sp))
+        sp = SpinnakerLinkData(1, 1, 0, 0, '127.0.0.0')
+        expected.append((('127.0.0.0', 1), sp))
+        expected.append((((1, 0), 1), sp))
+        self.assertEqual(expected, spinnaker_links)
+        self.assertEqual(0, len(vm._fpga_links))
 
     def test_new_vm_with_max_cores(self):
         set_config("Machine", "version", 2)

@@ -89,6 +89,8 @@ class TestVirtualMachine201(unittest.TestCase):
             count += 1
         self.assertEqual(1, count)
         self.assertEqual((1, 0), vm.get_unused_xy())
+        self.assertEqual(0, len(list(vm.spinnaker_links)))
+        self.assertEqual(0, len(vm._fpga_links))
 
     def test_new_vm_with_max_cores(self):
         set_config("Machine", "version", 201)

@@ -105,3 +105,11 @@ class Version201(AbstractVersion, metaclass=AbstractBase):
         if x != 0 or y != 0:
             return "Only Chip 0, 0 may be an Ethernet Chip"
         return None
+
+    @overrides(AbstractVersion.spinnaker_links)
+    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+        return []
+
+    @overrides(AbstractVersion.fpga_links)
+    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
+        return []
