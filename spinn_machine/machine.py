@@ -876,7 +876,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def add_fpga_links(self) -> None:
         """
-        Add fpga links that are on a given machine depending on the
+        Add FPGA links that are on a given machine depending on the
         version of the board.
         """
         version = MachineDataView.get_machine_version()
