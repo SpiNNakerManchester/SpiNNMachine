@@ -351,3 +351,25 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :return: An explanation that the x and y can never be an Ethernet
         """
         raise NotImplementedError
+
+    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+        """
+        The list of Local X, Y and link Id to add spinnaker links to
+
+        These are applied local to each Ethernet Chip and only if the link is
+        not connected to another board
+
+        :rtype: List((int, int, int))
+        """
+        raise NotImplementedError
+
+    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
+        """
+        The list of Local X, Y, link, fpga_link_id and fpga_id
+
+        These are applied local to each Ethernet Chip and even if the link is
+        connected to another board
+
+        :rtype: List((int, int, int, int, int))
+        """
+        raise NotImplementedError

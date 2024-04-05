@@ -853,22 +853,18 @@ class Machine(object, metaclass=AbstractBase):
         Add SpiNNaker links that are on a given machine depending on the
         version of the board.
         """
-        if self._width == self._height == 2:
-            chip_0_0 = self[0, 0]
-            ip_0_0 = chip_0_0.ip_address
-            assert ip_0_0 is not None
-            if not chip_0_0.router.is_link(3):
-                self._add_spinnaker_link(0, 0, 0, 3, ip_0_0)
-            chip = self.get_chip_at(1, 0)
-            if chip is not None and not chip.router.is_link(0):
-                self._add_spinnaker_link(1, 1, 0, 0, ip_0_0)
-        elif (self._width == self._height == 8) or \
-                self.multiple_48_chip_boards():
-            for chip in self._ethernet_connected_chips:
-                if not chip.router.is_link(4):
-                    ip = chip.ip_address
-                    assert ip is not None
-                    self._add_spinnaker_link(0, chip.x, chip.y, 4, ip)
+        version = MachineDataView.get_machine_version()
+        for ethernet in self._ethernet_connected_chips:
+            ip = ethernet.ip_address
+            assert ip is not None
+            for (s_id, (local_x, local_y, link)) in enumerate(
+                    version.spinnaker_links()):
+                global_x, global_y = self.get_global_xy(
+                    local_x, local_y, ethernet.x, ethernet.y)
+                chip = self.get_chip_at(global_x, global_y)
+                if chip is not None and not chip.router.is_link(link):
+                    self._add_spinnaker_link(
+                        s_id, global_x, global_y, link, ip)
 
     def _add_spinnaker_link(
             self, spinnaker_link_id: int, x: int, y: int, link: int,
@@ -883,72 +879,32 @@ class Machine(object, metaclass=AbstractBase):
         Add FPGA links that are on a given machine depending on the
         version of the board.
         """
-        if self._width == self._height == 8 or self.multiple_48_chip_boards():
-
-            for ethernet_connected_chip in self._ethernet_connected_chips:
-
-                # the sides of the hexagonal shape of the board are as follows
-                #
-                #
-                #                 Top
-                #                 ####
-                #                #####
-                #  Top Left     ###### Right
-                #              #######
-                #             ########
-                #             #######
-                #    Left     ###### Bottom Right
-                #             #####
-                #             Bottom
-                #
-
-                # handle the first chip
-                (ex, ey) = ethernet_connected_chip
-                ip = ethernet_connected_chip.ip_address
-                assert ip is not None
-
-                # List of start x, start y, first link, second link,
-                # change in x to next, change in y to next
-                chip_links = [(7, 3, 0, 5, -1, -1),  # Bottom Right
-                              (4, 0, 4, 5, -1, 0),   # Bottom
-                              (0, 0, 4, 3, 0, 1),    # Left
-                              (0, 3, 2, 3, 1, 1),    # Top Left
-                              (4, 7, 2, 1, 1, 0),    # Top
-                              (7, 7, 0, 1, 0, -1)]   # Right
-
-                f = 0
-                lk = 0
-                for i, (x, y, l1, l2, dx, dy) in enumerate(chip_links):
-                    for _ in range(4):
-                        fx = (x + ex) % (self._width)
-                        fy = (y + ey) % (self._height)
-                        self._add_fpga_link(f, lk, fx, fy, l1, ip, ex, ey)
-                        f, lk = self._next_fpga_link(f, lk)
-                        if i % 2 == 1:
-                            x += dx
-                            y += dy
-                        fx = (x + ex) % (self._width)
-                        fy = (y + ey) % (self._height)
-                        self._add_fpga_link(f, lk, fx, fy, l2, ip, ex, ey)
-                        f, lk = self._next_fpga_link(f, lk)
-                        if i % 2 == 0:
-                            x += dx
-                            y += dy
+        version = MachineDataView.get_machine_version()
+        for ethernet in self._ethernet_connected_chips:
+            ip = ethernet.ip_address
+            assert ip is not None
+            for (local_x, local_y, link, fpga_id, fpga_link) in \
+                    version.fpga_links():
+                global_x, global_y = self.get_global_xy(
+                    local_x, local_y, ethernet.x, ethernet.y)
+                chip = self.get_chip_at(global_x, global_y)
+                if chip is not None:
+                    self._add_fpga_link(fpga_id, fpga_link, chip.x, chip.y,
+                                        link, ip, ethernet.x, ethernet.y)
 
     def _add_fpga_link(
             self, fpga_id: int, fpga_link: int, x: int, y: int, link: int,
             board_address: str, ex: int, ey: int):
         # pylint: disable=too-many-arguments
-        if self.is_chip_at(x, y):
-            link_data = FPGALinkData(
-                fpga_link_id=fpga_link, fpga_id=fpga_id,
-                connected_chip_x=x, connected_chip_y=y,
-                connected_link=link, board_address=board_address)
-            self._fpga_links[board_address, fpga_id, fpga_link] = link_data
-            # Add for the exact chip coordinates
-            self._fpga_links[(x, y), fpga_id, fpga_link] = link_data
-            # Add for the Ethernet chip coordinates to allow this to work too
-            self._fpga_links[(ex, ey), fpga_id, fpga_link] = link_data
+        link_data = FPGALinkData(
+            fpga_link_id=fpga_link, fpga_id=fpga_id,
+            connected_chip_x=x, connected_chip_y=y,
+            connected_link=link, board_address=board_address)
+        self._fpga_links[board_address, fpga_id, fpga_link] = link_data
+        # Add for the exact chip coordinates
+        self._fpga_links[(x, y), fpga_id, fpga_link] = link_data
+        # Add for the Ethernet chip coordinates to allow this to work too
+        self._fpga_links[(ex, ey), fpga_id, fpga_link] = link_data
 
     @staticmethod
     def _next_fpga_link(fpga_id: int, fpga_link: int) -> Tuple[int, int]:

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, Mapping, Optional, Sequence, Tuple
+from typing import Final, List, Mapping, Optional, Sequence, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 from spinn_machine.exceptions import SpinnMachineException
@@ -72,3 +72,11 @@ class Version3(VersionSpin1):
         if x != 0 or y != 0:
             return "Only Chip 0, 0 may be an Ethernet Chip"
         return None
+
+    @overrides(VersionSpin1.spinnaker_links)
+    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+        return [(0, 0, 3), (1, 0, 0)]
+
+    @overrides(VersionSpin1.fpga_links)
+    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
+        return []
