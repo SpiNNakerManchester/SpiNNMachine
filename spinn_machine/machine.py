@@ -892,7 +892,6 @@ class Machine(object, metaclass=AbstractBase):
                     self._add_fpga_link(fpga_id, fpga_link, chip.x, chip.y,
                                         link, ip, ethernet.x, ethernet.y)
 
-
     def _add_fpga_link(
             self, fpga_id: int, fpga_link: int, x: int, y: int, link: int,
             board_address: str, ex: int, ey: int):

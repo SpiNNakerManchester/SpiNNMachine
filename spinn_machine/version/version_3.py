@@ -78,5 +78,5 @@ class Version3(VersionSpin1):
         return [(0, 0, 3), (1, 0, 0)]
 
     @overrides(VersionSpin1.fpga_links)
-    def fpga_links(self) ->  List[Tuple[int, int, int, int, int]]:
+    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
         return []
