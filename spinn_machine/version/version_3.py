@@ -76,3 +76,7 @@ class Version3(VersionSpin1):
     @overrides(VersionSpin1.spinnaker_links)
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         return [(0, 0, 3), (1, 0, 0)]
+
+    @overrides(VersionSpin1.fpga_links)
+    def fpga_links(self) ->  List[Tuple[int, int, int, int, int]]:
+        return []
