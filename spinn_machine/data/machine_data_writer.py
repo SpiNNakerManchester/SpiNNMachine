@@ -46,12 +46,8 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         Method to create a virtual machine in mock mode.
         """
-        if self.get_machine_version().number == 3:
-            self.set_machine(virtual_machine(width=2, height=2))
-        elif self.get_machine_version().number == 5:
-            self.set_machine(virtual_machine(width=8, height=8))
-        else:
-            raise NotImplementedError("Please set machine version")
+        width, height = self.get_machine_version().board_shape
+        self.set_machine(virtual_machine(width=width, height=height))
 
     @overrides(UtilsDataWriter._setup)
     def _setup(self) -> None:
