@@ -140,6 +140,13 @@ class TestVersion3(unittest.TestCase):
         self.assertEqual(200, version.clock_speed_hz)
         self.assertEqual(65536, version.dtcm_bytes)
 
+    def test_size_from_n_cores(self):
+        version = Version3()
+        self.assertEqual((2, 2), version.size_from_n_cores(10))
+        self.assertEqual((2, 2), version.size_from_n_cores(18 * 4))
+        with self.assertRaises(SpinnMachineException):
+            self.assertEqual((2, 2), version.size_from_n_cores(18 * 4 + 1))
+
 
 if __name__ == '__main__':
     unittest.main()
