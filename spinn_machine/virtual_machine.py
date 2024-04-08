@@ -90,7 +90,7 @@ class _VirtualMachine(object):
         version = MachineDataView.get_machine_version()
         if n_cores:
             width, height = version.size_from_n_cores(n_cores)
-        version.verify_size(height, width)
+        version.verify_size(width, height)
         max_cores = version.max_cores_per_chip
         self._n_router_entries = version.n_router_entries
         self._machine = version.create_machine(

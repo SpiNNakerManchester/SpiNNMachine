@@ -361,7 +361,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         Designed for use with virtual boards.
         Does not include a safety factor for blacklisted boards.
-        For real machines a slighlty bigger Machine may be needed.
+        For real machines a slightly bigger Machine may be needed.
 
         :param int n_cores: Number of None Scamp and monitor cores needed
         :rtype: (int, int)
