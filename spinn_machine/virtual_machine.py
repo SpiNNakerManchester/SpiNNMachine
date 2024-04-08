@@ -14,7 +14,7 @@
 
 from collections import defaultdict
 import logging
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, overload, Set, Tuple
 from spinn_utilities.config_holder import get_config_str_or_none
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
@@ -28,18 +28,39 @@ from .machine import Machine
 logger = FormatAdapter(logging.getLogger(__name__))
 
 
+@overload
 def virtual_machine(
-        width: int, height: int, validate: bool = True):
+        width: int, height: int,
+        validate: bool = True, n_cores: None = None):
+    ...
+
+
+@overload
+def virtual_machine(
+        width: None = None, height: None = None,
+        validate: bool = True, n_cores: int = 0):
+    ...
+
+
+def virtual_machine(
+        width: Optional[int] = None, height: Optional[int] = None,
+        validate: bool = True, n_cores: Optional[int] = None):
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
-    :param int width: the width of the virtual machine in chips
-    :param int height: the height of the virtual machine in chips
+    :param width: the width of the virtual machine in chips
+    :type width: int or None
+    :param height: the height of the virtual machine in chips
+    :type height: int or None
     :param bool validate: if True will call the machine validate function
+    :param n_cores:
+        If provided will be used to calculate the size of Machine needed.
+        In which case width and height are ignored!
+
     :returns: a virtual machine (that cannot execute code)
     :rtype: ~spinn_machine.Machine
     """
-    factory = _VirtualMachine(width, height, validate)
+    factory = _VirtualMachine(width, height, validate, n_cores)
     return factory.machine
 
 
@@ -64,8 +85,11 @@ class _VirtualMachine(object):
     ORIGIN = "Virtual"
 
     def __init__(
-            self, width: int, height: int, validate: bool = True):
+            self, width: Optional[int] = None, height: Optional[int] = None,
+            validate: bool = True, n_cores: Optional[int] = None):
         version = MachineDataView.get_machine_version()
+        if n_cores:
+            width, height = version.size_from_n_cores(n_cores)
         version.verify_size(height, width)
         max_cores = version.max_cores_per_chip
         self._n_router_entries = version.n_router_entries
