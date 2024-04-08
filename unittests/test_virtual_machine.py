@@ -1094,8 +1094,14 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_2_2_by_cores_too_many(self):
         set_config("Machine", "version", 2)
+        version = MachineDataView.get_machine_version()
+        n_cores = sum(version.chip_core_map.values())
+        n_cores -= version.n_chips_per_board
         with self.assertRaises(SpinnMachineException):
             machine = virtual_machine(n_cores=100)
+            self.assertEqual(2, machine.width)
+            self.assertEqual(2, machine.height)
+            self.assertEqual(n_cores, machine.total_available_user_cores)
 
     def test_8_8_by_cores_1_board(self):
         set_config("Machine", "version", 5)

@@ -152,7 +152,7 @@ class TestVersion5(unittest.TestCase):
 
     def test_size_from_n_cores(self):
         version = Version5()
-        #self.assertEqual((8, 8), version.size_from_n_cores(10))
+        self.assertEqual((8, 8), version.size_from_n_cores(10))
         # standard for there to be 8 17 core Chips and each has 1 scamp core
         n_cores = 17 * 48 - 8
         self.assertEqual((8, 8), version.size_from_n_cores(n_cores))
@@ -165,7 +165,6 @@ class TestVersion5(unittest.TestCase):
         self.assertEqual((40, 28), version.size_from_n_cores(n_cores * 13))
         self.assertEqual((40, 28), version.size_from_n_cores(n_cores * 18))
         self.assertEqual((40, 40), version.size_from_n_cores(n_cores * 18 + 1))
-
 
 
 if __name__ == '__main__':
