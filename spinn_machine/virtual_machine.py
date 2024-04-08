@@ -84,12 +84,26 @@ class _VirtualMachine(object):
 
     ORIGIN = "Virtual"
 
+    @overload
+    def __init__(
+            self, width: int, height: int,
+            validate: bool = True, n_cores: None = None):
+        ...
+
+    @overload
+    def __init__(
+            self, width: None = None, height: None = None,
+            validate: bool = True, n_cores: int = 0):
+        ...
+
     def __init__(
             self, width: Optional[int] = None, height: Optional[int] = None,
             validate: bool = True, n_cores: Optional[int] = None):
         version = MachineDataView.get_machine_version()
         if n_cores:
             width, height = version.size_from_n_cores(n_cores)
+        assert width is not None
+        assert height is not None
         version.verify_size(width, height)
         max_cores = version.max_cores_per_chip
         self._n_router_entries = version.n_router_entries
