@@ -109,3 +109,22 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         if not callable(machine_generator):
             raise TypeError("machine_generator must be callable")
         self.__data._machine_generator = machine_generator
+
+    def add_monitor_core(self, all_cores: bool):
+        """
+        Accepts a simple of the monitor cores to be added.
+
+        Called by PacmanDataWriter add_sample_monitor_vertex.
+
+        Only affect is to change the numbers reported by the
+        get_all/ethernet_monitor methods.
+
+        :param bool all_cores:
+            If True assumes that this Vertex will be placed on all cores
+            including Ethernet ones.
+            If False assumes that this Vertex type will only be placed on
+            Ethernet Vertices
+        """
+        self.__data._ethernet_monitor_cores += 1
+        if all_cores:
+            self.__data._all_monitor_cores += 1
