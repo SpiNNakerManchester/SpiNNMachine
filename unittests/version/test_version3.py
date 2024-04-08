@@ -143,9 +143,9 @@ class TestVersion3(unittest.TestCase):
     def test_size_from_n_cores(self):
         version = Version3()
         self.assertEqual((2, 2), version.size_from_n_cores(10))
-        self.assertEqual((2, 2), version.size_from_n_cores(18 * 4))
+        self.assertEqual((2, 2), version.size_from_n_cores(17 * 4))
         with self.assertRaises(SpinnMachineException):
-            self.assertEqual((2, 2), version.size_from_n_cores(18 * 4 + 1))
+            self.assertEqual((2, 2), version.size_from_n_cores(17 * 4 + 1))
 
 
 if __name__ == '__main__':
