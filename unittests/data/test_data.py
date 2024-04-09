@@ -101,7 +101,7 @@ class TestSimulatorData(unittest.TestCase):
         set_config("Machine", "version", ANY_VERSION)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
-        self.assertGreaterEqual(1, machine.n_chips)
+        self.assertGreaterEqual(machine.n_chips, 1)
 
     def test_mock_4_or_more(self):
         # Should work with any version
@@ -110,12 +110,12 @@ class TestSimulatorData(unittest.TestCase):
         machine = MachineDataView.get_machine()
         self.assertGreaterEqual(machine.n_chips, 4)
 
-    def test_mockFourPlus(self):
+    def test_mockAny(self):
         # Should work with any version
         set_config("Machine", "version", ANY_VERSION)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
-        self.assertGreaterEqual(4, machine.n_chips)
+        self.assertGreaterEqual(machine.n_chips, 1)
 
     def test_mock3(self):
         # Should work with any version
