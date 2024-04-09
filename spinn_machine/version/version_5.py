@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
+from typing import Final, Mapping, Optional, Sequence, Tuple
 from typing import Final, List, Mapping, Optional, Sequence, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -107,6 +109,17 @@ class Version5(VersionSpin1):
             return "Only Chip with x + y divisible by 12 " \
                    "may be an Ethernet Chip"
         return None
+
+    @overrides(VersionSpin1.size_from_n_boards)
+    def size_from_n_boards(self, n_boards: int) -> Tuple[int, int]:
+        if n_boards <= 1:
+            return 8, 8
+        # This replicates how spalloc does it
+        # returning a rectangle of triads
+        triads = math.ceil(n_boards / 3)
+        width = math.ceil(math.sqrt(triads))
+        height = math.ceil(triads / width)
+        return width * 12 + 4, height * 12 + 4
 
     @overrides(VersionSpin1.spinnaker_links)
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:

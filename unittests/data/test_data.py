@@ -132,3 +132,15 @@ class TestSimulatorData(unittest.TestCase):
         set_config("Machine", "version", 201)
         # check there is a value not what it is
         MachineDataView.get_machine()
+
+    def test_get_monitors(self):
+        writer = MachineDataWriter.setup()
+        self.assertEqual(0, MachineDataView.get_all_monitor_cores())
+        self.assertEqual(0, MachineDataView.get_ethernet_monitor_cores())
+        writer.add_monitor_core(True)
+        self.assertEqual(1, MachineDataView.get_all_monitor_cores())
+        self.assertEqual(1, MachineDataView.get_ethernet_monitor_cores())
+        writer.add_monitor_core(False)
+        writer.add_monitor_core(True)
+        self.assertEqual(2, MachineDataView.get_all_monitor_cores())
+        self.assertEqual(3, MachineDataView.get_ethernet_monitor_cores())

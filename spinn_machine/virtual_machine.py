@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import math
 from collections import defaultdict
 import logging
 from typing import Dict, List, Optional, Set, Tuple
@@ -28,19 +28,93 @@ from .machine import Machine
 logger = FormatAdapter(logging.getLogger(__name__))
 
 
-def virtual_machine(
-        width: int, height: int, validate: bool = True):
+def virtual_machine(width: int, height: int, validate: bool = True):
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
     :param int width: the width of the virtual machine in chips
     :param int height: the height of the virtual machine in chips
     :param bool validate: if True will call the machine validate function
+
     :returns: a virtual machine (that cannot execute code)
     :rtype: ~spinn_machine.Machine
     """
     factory = _VirtualMachine(width, height, validate)
     return factory.machine
+
+
+def virtual_machine_by_min_size(
+        width: int, height: int, validate: bool = True):
+    """
+    Create a virtual SpiNNaker machine, used for planning execution.
+
+    :param int width: the minimum width of the virtual machine in chips
+    :param int height: the minimum height of the virtual machine in chips
+    :param bool validate: if True will call the machine validate function
+
+    :returns: a virtual machine (that cannot execute code)
+    :rtype: ~spinn_machine.Machine
+    """
+    version = MachineDataView.get_machine_version()
+    w_board, h_board = version.board_shape
+    # check for edge case
+    if width <= w_board and height > h_board:
+        width = w_board * 2
+    if height <= h_board and width > w_board:
+        height = h_board * 2
+    width = w_board * math.ceil(width / w_board)
+    height = h_board * math.ceil(height / h_board)
+    return virtual_machine(width, height, validate)
+
+
+def virtual_machine_by_cores(n_cores: int, validate: bool = True):
+    """
+    Create a virtual SpiNNaker machine, used for planning execution.
+
+    Semantic sugar for
+
+    MachineDataView.get_machine_version()
+
+    width, height = version.size_from_n_cores(n_cores)
+
+    return virtual_machine(width, height, validate)
+
+    :param n_cores: Minimum number of user cores
+    :param bool validate: if True will call the machine validate function
+
+    :returns: a virtual machine (that cannot execute code)
+    :rtype: ~spinn_machine.Machine
+    :raises SpinnMachineException:
+        If multiple boards are needed but not supported
+    """
+    version = MachineDataView.get_machine_version()
+    width, height = version.size_from_n_cores(n_cores)
+    return virtual_machine(width, height, validate)
+
+
+def virtual_machine_by_boards(n_boards: int, validate: bool = True):
+    """
+    Create a virtual SpiNNaker machine, used for planning execution.
+
+    semantic sugar for:
+
+    version = MachineDataView.get_machine_version()
+
+    width, height = version.size_from_n_boards(n_boards)
+
+    return virtual_machine(width, height, validate)
+
+    :param n_boards: Minimum number of boards
+    :param bool validate: if True will call the machine validate function
+
+    :returns: a virtual machine (that cannot execute code)
+    :rtype: ~spinn_machine.Machine
+    :raises SpinnMachineException:
+        If multiple boards are needed but not supported
+    """
+    version = MachineDataView.get_machine_version()
+    width, height = version.size_from_n_boards(n_boards)
+    return virtual_machine(width, height, validate)
 
 
 class _VirtualMachine(object):
@@ -63,10 +137,9 @@ class _VirtualMachine(object):
 
     ORIGIN = "Virtual"
 
-    def __init__(
-            self, width: int, height: int, validate: bool = True):
+    def __init__(self, width: int, height: int, validate: bool = True):
         version = MachineDataView.get_machine_version()
-        version.verify_size(height, width)
+        version.verify_size(width, height)
         max_cores = version.max_cores_per_chip
         self._n_router_entries = version.n_router_entries
         self._machine = version.create_machine(

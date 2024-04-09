@@ -18,6 +18,7 @@ from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
 from spinn_utilities.typing.coords import XY
+from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
 if TYPE_CHECKING:
     from spinn_machine.machine import Machine
@@ -351,6 +352,42 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :return: An explanation that the x and y can never be an Ethernet
         """
         raise NotImplementedError
+
+    def size_from_n_cores(self, n_cores: int) -> Tuple[int, int]:
+        """
+        Returns the size needed to support this many cores.
+
+        Takes into consideration scamp and monitor cores.
+
+        Designed for use with virtual boards.
+        Does not include a safety factor for blacklisted boards.
+        For real machines a slightly bigger Machine may be needed.
+
+        :param int n_cores: Number of None Scamp and monitor cores needed
+        :rtype: (int, int)
+        """
+        cores_per_board = sum(self.chip_core_map.values())
+        cores_per_board -= MachineDataView.get_ethernet_monitor_cores()
+        cores_per_board -= (
+                (MachineDataView.get_all_monitor_cores() + self.n_scamp_cores)
+                * self.n_chips_per_board)
+        # Double minus to round up
+        return self.size_from_n_boards(-(-n_cores // cores_per_board))
+
+    def size_from_n_boards(self, n_boards: int) -> Tuple[int, int]:
+        """
+        Returns the size needed to support this many boards.
+
+        :param int n_boards:
+        :rtype: (int, int)
+        :raises SpinnMachineException:
+            If multiple boards are needed but not supported
+        """
+        # Override for versions that support multiple boards
+        if n_boards == 1:
+            return self.board_shape
+        raise SpinnMachineException(
+            f"Version {self} does not support multiple boards")
 
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         """
