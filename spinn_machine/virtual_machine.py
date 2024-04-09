@@ -14,7 +14,7 @@
 import math
 from collections import defaultdict
 import logging
-from typing import Dict, List, Optional, overload, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 from spinn_utilities.config_holder import get_config_str_or_none
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
@@ -43,7 +43,8 @@ def virtual_machine(width: int, height: int, validate: bool = True):
     return factory.machine
 
 
-def virtual_machine_by_min_size(width: int, height: int, validate: bool = True):
+def virtual_machine_by_min_size(
+        width: int, height: int, validate: bool = True):
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
