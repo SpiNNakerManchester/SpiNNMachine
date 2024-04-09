@@ -357,7 +357,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Returns the size needed to support this many cores.
 
-        Takes into consideration monitor cores.
+        Takes into consideration scamp and monitor cores.
 
         Designed for use with virtual boards.
         Does not include a safety factor for blacklisted boards.

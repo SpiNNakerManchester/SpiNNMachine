@@ -15,7 +15,8 @@
 from tempfile import mktemp
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine import virtual_machine
+from spinn_machine.virtual_machine import (
+    virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
@@ -29,7 +30,7 @@ class TestJsonMachine(unittest.TestCase):
 
     def test_json_version_5_hole(self):
         set_config("Machine", "down_chips", "3,3")
-        vm = virtual_machine(width=8, height=8)
+        vm = virtual_machine_by_min_size(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
         to_json_path(jpath)
@@ -41,7 +42,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_exceptions(self):
-        vm = virtual_machine(width=8, height=8)
+        vm = virtual_machine_by_min_size(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
         chip22 = vm[2, 2]
         router22 = chip22.router
@@ -73,21 +74,21 @@ class TestJsonMachine(unittest.TestCase):
             machine_from_json(jpath)
 
     def test_ethernet_exceptions(self):
-        vm = virtual_machine(width=16, height=16)
+        vm = virtual_machine_by_boards(2)
         MachineDataWriter.mock().set_machine(vm)
-        chip48 = vm[4, 8]
-        router48 = chip48.router
-        router48._n_available_multicast_entries =  \
-            router48._n_available_multicast_entries - 20
-        chip48._sdram = 50000000
-        chip48._tag_ids = [2, 3]
+        eth2 = vm.ethernet_connected_chips[1]
+        router2 = eth2.router
+        router2._n_available_multicast_entries =  \
+            router2._n_available_multicast_entries - 20
+        eth2._sdram = 50000000
+        eth2._tag_ids = [2, 3]
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
-        vchip48 = jm[4, 8]
-        self.assertEqual(vchip48.tag_ids, chip48.tag_ids)
+        jeth2 = jm.ethernet_connected_chips[1]
+        self.assertEqual(jeth2.tag_ids, eth2.tag_ids)
 
 
 if __name__ == '__main__':

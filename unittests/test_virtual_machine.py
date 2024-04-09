@@ -15,7 +15,9 @@
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine import Chip, Link, Router, virtual_machine
+from spinn_machine import (Chip, Link, Router, virtual_machine,
+                           virtual_machine_by_boards, virtual_machine_by_cores)
+from spinn_machine.virtual_machine import virtual_machine_by_min_size
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
@@ -1089,26 +1091,34 @@ class TestVirtualMachine(unittest.TestCase):
 
     def test_2_2_by_cores(self):
         set_config("Machine", "version", 2)
-        machine = virtual_machine(n_cores=40)
+        n_cores = 40
+        machine = virtual_machine_by_cores(n_cores)
         self.assertEqual(4, machine.n_chips)
+        self.assertEqual(2, machine.width)
+        self.assertEqual(2, machine.height)
+        self.assertGreaterEqual(machine.total_available_user_cores, n_cores)
+        machine2 = virtual_machine_by_boards(1)
+        self.assertEqual(4, machine2.n_chips)
+        self.assertEqual(2, machine2.width)
+        self.assertEqual(2, machine2.height)
 
     def test_2_2_by_cores_too_many(self):
         set_config("Machine", "version", 2)
-        version = MachineDataView.get_machine_version()
-        n_cores = sum(version.chip_core_map.values())
-        n_cores -= version.n_chips_per_board
         with self.assertRaises(SpinnMachineException):
-            machine = virtual_machine(n_cores=100)
-            self.assertEqual(2, machine.width)
-            self.assertEqual(2, machine.height)
-            self.assertEqual(n_cores, machine.total_available_user_cores)
+            virtual_machine_by_cores(100)
+        with self.assertRaises(SpinnMachineException):
+            virtual_machine_by_boards(2)
 
     def test_8_8_by_cores_1_board(self):
         set_config("Machine", "version", 5)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board
-        machine = virtual_machine(n_cores=n_cores)
+        machine = virtual_machine_by_cores(n_cores)
+        self.assertEqual(8, machine.width)
+        self.assertEqual(8, machine.height)
+        self.assertEqual(n_cores, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(1)
         self.assertEqual(8, machine.width)
         self.assertEqual(8, machine.height)
         self.assertEqual(n_cores, machine.total_available_user_cores)
@@ -1118,7 +1128,12 @@ class TestVirtualMachine(unittest.TestCase):
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board
-        machine = virtual_machine(n_cores=n_cores * 2)
+        machine = virtual_machine_by_cores(n_cores * 2)
+        # despite asking for two boards you get a triad
+        self.assertEqual(16, machine.width)
+        self.assertEqual(16, machine.height)
+        self.assertEqual(n_cores*3, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(2)
         # despite asking for two boards you get a triad
         self.assertEqual(16, machine.width)
         self.assertEqual(16, machine.height)
@@ -1129,7 +1144,11 @@ class TestVirtualMachine(unittest.TestCase):
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board
-        machine = virtual_machine(n_cores=n_cores * 5)
+        machine = virtual_machine_by_cores(n_cores * 5)
+        self.assertEqual(28, machine.width)
+        self.assertEqual(16, machine.height)
+        self.assertEqual(n_cores * 6, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(4)
         self.assertEqual(28, machine.width)
         self.assertEqual(16, machine.height)
         self.assertEqual(n_cores * 6, machine.total_available_user_cores)
@@ -1139,7 +1158,11 @@ class TestVirtualMachine(unittest.TestCase):
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board
-        machine = virtual_machine(n_cores=n_cores * 9)
+        machine = virtual_machine_by_cores(n_cores * 9)
+        self.assertEqual(28, machine.width)
+        self.assertEqual(28, machine.height)
+        self.assertEqual(n_cores * 12, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(10)
         self.assertEqual(28, machine.width)
         self.assertEqual(28, machine.height)
         self.assertEqual(n_cores * 12, machine.total_available_user_cores)
@@ -1149,10 +1172,28 @@ class TestVirtualMachine(unittest.TestCase):
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board
-        machine = virtual_machine(n_cores=n_cores * 12 + 1)
+        machine = virtual_machine_by_cores(n_cores * 12 + 1)
         self.assertEqual(40, machine.width)
         self.assertEqual(28, machine.height)
         self.assertEqual(n_cores * 18, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(15)
+        self.assertEqual(40, machine.width)
+        self.assertEqual(28, machine.height)
+        self.assertEqual(n_cores * 18, machine.total_available_user_cores)
+
+    def test_by_min_size(self):
+        set_config("Machine", "version", 5)
+        machine = virtual_machine_by_min_size(15, 21)
+        self.assertGreaterEqual(machine.width, 15)
+        self.assertGreaterEqual(machine.height, 21)
+
+    def test_by_min_size_edge_case(self):
+        set_config("Machine", "version", 5)
+        version = MachineDataView.get_machine_version()
+        width, height = version.board_shape
+        machine = virtual_machine_by_min_size(width, height + 1)
+        self.assertGreaterEqual(machine.width, width)
+        self.assertGreaterEqual(machine.height, height + 1)
 
 
 if __name__ == '__main__':
