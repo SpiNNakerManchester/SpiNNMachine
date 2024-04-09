@@ -92,9 +92,9 @@ class Version201(AbstractVersion, metaclass=AbstractBase):
     @overrides(AbstractVersion._verify_size)
     def _verify_size(self, width: int, height: int):
         if width != 1:
-            raise SpinnMachineException("Unexpected {width=}")
+            raise SpinnMachineException(f"Unexpected {width=}")
         if height != 1:
-            raise SpinnMachineException("Unexpected {height=}")
+            raise SpinnMachineException(f"Unexpected {height=}")
 
     @overrides(AbstractVersion._create_machine)
     def _create_machine(self, width: int, height: int, origin: str) -> Machine:
