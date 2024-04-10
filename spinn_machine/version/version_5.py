@@ -121,6 +121,11 @@ class Version5(VersionSpin1):
         height = math.ceil(triads / width)
         return width * 12 + 4, height * 12 + 4
 
+    @property
+    @overrides(VersionSpin1.supports_multiple_boards)
+    def supports_multiple_boards(self) -> bool:
+        return True
+
     @overrides(VersionSpin1.spinnaker_links)
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         return [(0, 0, 4)]

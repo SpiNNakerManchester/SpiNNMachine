@@ -73,6 +73,11 @@ class Version3(VersionSpin1):
             return "Only Chip 0, 0 may be an Ethernet Chip"
         return None
 
+    @property
+    @overrides(VersionSpin1.supports_multiple_boards)
+    def supports_multiple_boards(self) -> bool:
+        return False
+
     @overrides(VersionSpin1.spinnaker_links)
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         return [(0, 0, 3), (1, 0, 0)]

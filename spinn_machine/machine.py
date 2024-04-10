@@ -120,21 +120,6 @@ class Machine(object, metaclass=AbstractBase):
         self._sdram_counter: Counter[int] = Counter()
 
     @abstractmethod
-    def multiple_48_chip_boards(self) -> bool:
-        """
-        Checks that the width and height correspond to the expected size for a
-        multi-board machine made up of more than one 48 chip board.
-
-        The assumption is that any size machine can be supported but that
-        only ones with an expected 48 chip board size can have more than one
-        Ethernet-enabled chip.
-
-        :return: True if this machine can have multiple 48 chip boards
-        :rtype: bool
-        """
-        raise NotImplementedError
-
-    @abstractmethod
     def get_xys_by_ethernet(
             self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
         """
@@ -501,15 +486,15 @@ class Machine(object, metaclass=AbstractBase):
         if self._boot_ethernet_address is None:
             raise SpinnMachineException(
                 "no ethernet chip at 0, 0 found")
+        version = MachineDataView.get_machine_version()
         if len(self._ethernet_connected_chips) > 1:
-            if not self.multiple_48_chip_boards():
+            if not version.supports_multiple_boards:
                 raise SpinnMachineException(
                     f"A {self.wrap} machine of size {self._width}, "
                     f"{self._height} can not handle multiple ethernet chips")
         # The fact that self._boot_ethernet_address is set means there is an
         # Ethernet chip and it is at 0,0 so no need to check that
 
-        version = MachineDataView.get_machine_version()
         for chip in self.chips:
             if chip.x < 0:
                 raise SpinnMachineException(

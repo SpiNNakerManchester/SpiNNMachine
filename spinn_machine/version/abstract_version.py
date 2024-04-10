@@ -386,8 +386,20 @@ class AbstractVersion(object, metaclass=AbstractBase):
         # Override for versions that support multiple boards
         if n_boards == 1:
             return self.board_shape
+        if self.supports_multiple_boards:
+            raise NotImplementedError
         raise SpinnMachineException(
             f"Version {self} does not support multiple boards")
+
+    @property
+    @abstractmethod
+    def supports_multiple_boards(self) -> bool:
+        """
+        Specifies if this version allows machines of more than one board
+
+        :return:
+        """
+        raise NotImplementedError
 
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         """

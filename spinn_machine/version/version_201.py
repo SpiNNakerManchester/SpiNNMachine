@@ -106,6 +106,11 @@ class Version201(AbstractVersion, metaclass=AbstractBase):
             return "Only Chip 0, 0 may be an Ethernet Chip"
         return None
 
+    @property
+    @overrides(AbstractVersion.supports_multiple_boards)
+    def supports_multiple_boards(self) -> bool:
+        return False
+
     @overrides(AbstractVersion.spinnaker_links)
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         return []
