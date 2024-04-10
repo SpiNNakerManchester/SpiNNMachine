@@ -18,6 +18,7 @@ from spinn_machine.config_setup import unittest_setup
 from spinn_machine import Chip, Link, Router, virtual_machine
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
+from spinn_machine.version import SPIN2_1CHIP
 
 
 class TestVirtualMachine201(unittest.TestCase):
@@ -51,7 +52,7 @@ class TestVirtualMachine201(unittest.TestCase):
                         nearest_ethernet_chip[1], None)
 
     def test_illegal_vms(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         with self.assertRaises(SpinnMachineException):
             virtual_machine(width=-1, height=2)
         with self.assertRaises(SpinnMachineException):
@@ -63,8 +64,8 @@ class TestVirtualMachine201(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             virtual_machine(width=2, height=2)
 
-    def test_version_201(self):
-        set_config("Machine", "version", 201)
+    def test_version_SPIN2_1CHIP(self):
+        set_config("Machine", "version", SPIN2_1CHIP)
         vm = virtual_machine(width=1, height=1)
         self.assertEqual(1, vm.n_chips)
         self.assertTrue(vm.is_chip_at(0, 0))
@@ -93,7 +94,7 @@ class TestVirtualMachine201(unittest.TestCase):
         self.assertEqual(0, len(vm._fpga_links))
 
     def test_new_vm_with_max_cores(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         n_cpus = 105
         set_config("Machine", "max_machine_core", n_cpus)
         vm = virtual_machine(1, 1, validate=True)
@@ -107,7 +108,7 @@ class TestVirtualMachine201(unittest.TestCase):
         self.assertEqual(count, 1 * n_cpus)
 
     def test_iter_chips(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         vm = virtual_machine(1, 1)
         self.assertEqual(1, vm.n_chips)
         count = 0
@@ -116,14 +117,14 @@ class TestVirtualMachine201(unittest.TestCase):
         self.assertEqual(1, count)
 
     def test_add_existing_chip(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         vm = virtual_machine(1, 1)
         _chip = self._create_chip(0, 0)
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             vm.add_chip(_chip)
 
     def test_chips(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         vm = virtual_machine(1, 1)
         count = 0
         for _chip in vm.chips:
@@ -131,7 +132,7 @@ class TestVirtualMachine201(unittest.TestCase):
         self.assertEqual(count, 1)
 
     def test_ethernet_chips_exist(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         vm = virtual_machine(width=1, height=1)
         for eth_chip in vm._ethernet_connected_chips:
             self.assertTrue(vm.get_chip_at(eth_chip.x, eth_chip.y),
@@ -140,13 +141,13 @@ class TestVirtualMachine201(unittest.TestCase):
                             .format(eth_chip.x, eth_chip.y))
 
     def test_boot_chip(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         vm = virtual_machine(1, 1)
         # as Chip == its XY
         self.assertEqual(vm.boot_chip, (0, 0))
 
     def test_get_chips_on_boards(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         vm = virtual_machine(width=1, height=1)
         # check each chip appears only once on the entire board
         count00 = 0

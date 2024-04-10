@@ -15,11 +15,13 @@
 from tempfile import mktemp
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine import virtual_machine, virtual_machine_by_boards
+from spinn_machine.virtual_machine import (
+    virtual_machine, virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
-from spinn_machine.version import BIG_MACHINE, FOUR_PLUS_CHIPS
+from spinn_machine.version import (
+    BIG_MACHINE, FOUR_PLUS_CHIPS, FIVE, MULTIPLE_BOARDS, SPIN2_1CHIP, THREE)
 
 
 class TestJsonMachine(unittest.TestCase):
@@ -28,7 +30,7 @@ class TestJsonMachine(unittest.TestCase):
         unittest_setup()
 
     def test_json_version_3(self):
-        set_config("Machine", "version", 3)
+        set_config("Machine", "version", THREE)
         vm = virtual_machine(width=2, height=2)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
@@ -41,7 +43,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_json_version_5(self):
-        set_config("Machine", "version", 5)
+        set_config("Machine", "version", FIVE)
         vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
@@ -54,7 +56,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_json_version_201(self):
-        set_config("Machine", "version", 201)
+        set_config("Machine", "version", SPIN2_1CHIP)
         vm = virtual_machine(width=1, height=1)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
@@ -70,7 +72,7 @@ class TestJsonMachine(unittest.TestCase):
         set_config("Machine", "version", BIG_MACHINE)
         set_config("Machine", "down_chips", "3,3")
         writer = MachineDataWriter.mock()
-        vm = virtual_machine_by_boards(1)
+        vm = virtual_machine_by_min_size(5, 5)
         writer.set_machine(vm)
         jpath = mktemp("json")
         to_json_path(jpath)
@@ -102,7 +104,7 @@ class TestJsonMachine(unittest.TestCase):
         self.assertEqual(vchip10.tag_ids, chip10.tag_ids)
 
     def test_monitor_exceptions(self):
-        set_config("Machine", "version", BIG_MACHINE)
+        set_config("Machine", "version", FOUR_PLUS_CHIPS)
         vm = virtual_machine_by_boards(1)
         MachineDataWriter.mock().set_machine(vm)
         for chip in vm.chips:
@@ -119,7 +121,7 @@ class TestJsonMachine(unittest.TestCase):
             machine_from_json(jpath)
 
     def test_ethernet_exceptions(self):
-        set_config("Machine", "version", BIG_MACHINE)
+        set_config("Machine", "version", MULTIPLE_BOARDS)
         vm = virtual_machine_by_boards(2)
         MachineDataWriter.mock().set_machine(vm)
         eth2 = vm.ethernet_connected_chips[1]

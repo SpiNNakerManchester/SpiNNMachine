@@ -13,6 +13,9 @@
 # limitations under the License.
 
 from .version_factory import (
-    ANY_VERSION, BIG_MACHINE, FOUR_PLUS_CHIPS, version_factory)
+    ANY_VERSION, BIG_MACHINE, FIVE, FOUR_PLUS_CHIPS, MULTIPLE_BOARDS,
+    SPIN2_1CHIP, THREE, version_factory, WRAPPABLE)
 
-__all__ = ["ANY_VERSION", "BIG_MACHINE", "FOUR_PLUS_CHIPS", "version_factory"]
+__all__ = ["ANY_VERSION", "BIG_MACHINE", "FIVE", "FOUR_PLUS_CHIPS",
+           "MULTIPLE_BOARDS", "SPIN2_1CHIP", "THREE", "version_factory",
+           "WRAPPABLE"]

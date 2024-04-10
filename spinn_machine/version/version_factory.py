@@ -25,9 +25,27 @@ if TYPE_CHECKING:
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
+# Constant when wanting a specific version
+THREE = 3
+FIVE = 5
+# New value subject to change
+SPIN2_1CHIP = 201
+
+# Flaks to test multiple versions including future ones
 ANY_VERSION = -1
+
 FOUR_PLUS_CHIPS = -2
-BIG_MACHINE = -3
+
+# A Machine which support multiple boards
+# Size of boards does nt matter
+MULTIPLE_BOARDS = -3
+
+# A Machine with at least 8 * 8 including ones typical on a Version 5 board
+BIG_MACHINE = -4
+
+# A Machine with multiple boards that could wrap
+# Will have hard coded assumption of board size 8 * 8
+WRAPPABLE = -5
 
 
 def version_factory() -> AbstractVersion:
@@ -48,11 +66,11 @@ def version_factory() -> AbstractVersion:
     if version < 0:
         # test needs a version but ANY version will work
         if version == ANY_VERSION:
-            options = [2, 5, 201]
+            options = [THREE, FIVE, SPIN2_1CHIP]
         elif version == FOUR_PLUS_CHIPS:
-            options = [2, 5]
-        elif version == BIG_MACHINE:
-            options = [5]
+            options = [THREE]
+        elif version in [BIG_MACHINE, MULTIPLE_BOARDS, WRAPPABLE]:
+            options = [FIVE]
         else:
             raise SpinnMachineException(
                 f"Unexpected cfg [Machine]version {version}")
