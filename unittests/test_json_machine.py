@@ -138,5 +138,6 @@ class TestJsonMachine(unittest.TestCase):
         jeth2 = jm.ethernet_connected_chips[1]
         self.assertEqual(jeth2.tag_ids, eth2.tag_ids)
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import math
-from typing import Final, Mapping, Optional, Sequence, Tuple
 from typing import Final, List, Mapping, Optional, Sequence, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
