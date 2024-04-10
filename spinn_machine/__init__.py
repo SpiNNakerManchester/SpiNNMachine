@@ -85,12 +85,10 @@ from .machine import Machine
 from .multicast_routing_entry import MulticastRoutingEntry
 from .router import Router
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
-from .virtual_machine import (
-    virtual_machine, virtual_machine_by_boards, virtual_machine_by_cores)
+from .virtual_machine import virtual_machine
 from .fixed_route_entry import FixedRouteEntry
 
 
 __all__ = ["Chip", "CoreSubset", "CoreSubsets", "FixedRouteEntry",
            "FrozenCoreSubsets", "Link", "Machine", "MulticastRoutingEntry",
-           "Router", "SpiNNakerTriadGeometry", "virtual_machine",
-           "virtual_machine_by_boards", "virtual_machine_by_cores"]
+           "Router", "SpiNNakerTriadGeometry", "virtual_machine"]

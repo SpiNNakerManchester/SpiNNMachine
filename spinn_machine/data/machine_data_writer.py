@@ -17,7 +17,8 @@ from typing import Callable
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
-from spinn_machine import Machine, virtual_machine_by_boards
+from spinn_machine import Machine
+from spinn_machine.virtual_machine import virtual_machine_by_boards
 from .machine_data_view import MachineDataView, _MachineDataModel
 logger = FormatAdapter(logging.getLogger(__name__))
 __temp_dir = None
