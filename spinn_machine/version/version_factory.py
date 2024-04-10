@@ -37,7 +37,7 @@ ANY_VERSION = -1
 FOUR_PLUS_CHIPS = -2
 
 # A Machine which support multiple boards
-# Size of boards does nt matter
+# Size of boards does not matter
 MULTIPLE_BOARDS = -3
 
 # A Machine with at least 8 * 8 including ones typical on a Version 5 board
