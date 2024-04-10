@@ -63,8 +63,7 @@ def version_factory() -> AbstractVersion:
 
     version = get_config_int_or_none("Machine", "version")
 
-    if version < 0:
-        # test needs a version but ANY version will work
+    if version is not None and version < 0:
         if version == ANY_VERSION:
             options = [THREE, FIVE, SPIN2_1CHIP]
         elif version == FOUR_PLUS_CHIPS:
