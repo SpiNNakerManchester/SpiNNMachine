@@ -15,9 +15,10 @@
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine import (Chip, Link, Router, virtual_machine,
-                           virtual_machine_by_boards, virtual_machine_by_cores)
-from spinn_machine.virtual_machine import virtual_machine_by_min_size
+from spinn_machine import (Chip, Link, Router, virtual_machine)
+from spinn_machine.virtual_machine import (
+    virtual_machine_by_boards, virtual_machine_by_chips,
+    virtual_machine_by_cores, virtual_machine_by_min_size)
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
@@ -1101,6 +1102,10 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(4, machine2.n_chips)
         self.assertEqual(2, machine2.width)
         self.assertEqual(2, machine2.height)
+        machine = virtual_machine_by_chips(3)
+        self.assertEqual(4, machine.n_chips)
+        self.assertEqual(2, machine.width)
+        self.assertEqual(2, machine.height)
 
     def test_2_2_by_cores_too_many(self):
         set_config("Machine", "version", 2)
@@ -1134,6 +1139,11 @@ class TestVirtualMachine(unittest.TestCase):
         self.assertEqual(16, machine.height)
         self.assertEqual(n_cores*3, machine.total_available_user_cores)
         machine = virtual_machine_by_boards(2)
+        # despite asking for two boards you get a triad
+        self.assertEqual(16, machine.width)
+        self.assertEqual(16, machine.height)
+        self.assertEqual(n_cores*3, machine.total_available_user_cores)
+        machine = virtual_machine_by_chips(100)
         # despite asking for two boards you get a triad
         self.assertEqual(16, machine.width)
         self.assertEqual(16, machine.height)

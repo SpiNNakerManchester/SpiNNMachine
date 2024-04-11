@@ -145,7 +145,15 @@ class TestVersion3(unittest.TestCase):
         self.assertEqual((2, 2), version.size_from_n_cores(10))
         self.assertEqual((2, 2), version.size_from_n_cores(17 * 4))
         with self.assertRaises(SpinnMachineException):
-            self.assertEqual((2, 2), version.size_from_n_cores(17 * 4 + 1))
+            version.size_from_n_cores(17 * 4 + 1)
+
+
+    def test_size_from_n_chips(self):
+        version = Version3()
+        self.assertEqual((2, 2), version.size_from_n_chips(1))
+        self.assertEqual((2, 2), version.size_from_n_chips(4))
+        with self.assertRaises(SpinnMachineException):
+            version.size_from_n_chips(5)
 
 
 if __name__ == '__main__':

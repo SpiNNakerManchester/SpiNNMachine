@@ -92,6 +92,31 @@ def virtual_machine_by_cores(n_cores: int, validate: bool = True):
     return virtual_machine(width, height, validate)
 
 
+def virtual_machine_by_chips(n_chips: int, validate: bool = True):
+    """
+    Create a virtual SpiNNaker machine, used for planning execution.
+
+    Semantic sugar for
+
+    MachineDataView.get_machine_version()
+
+    width, height = version.size_from_n_cchips(n_cores)
+
+    return virtual_machine(width, height, validate)
+
+    :param n_chips: Minimum number of chips
+    :param bool validate: if True will call the machine validate function
+
+    :returns: a virtual machine (that cannot execute code)
+    :rtype: ~spinn_machine.Machine
+    :raises SpinnMachineException:
+        If multiple boards are needed but not supported
+    """
+    version = MachineDataView.get_machine_version()
+    width, height = version.size_from_n_chips(n_chips)
+    return virtual_machine(width, height, validate)
+
+
 def virtual_machine_by_boards(n_boards: int, validate: bool = True):
     """
     Create a virtual SpiNNaker machine, used for planning execution.
