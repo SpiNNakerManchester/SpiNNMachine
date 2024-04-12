@@ -147,7 +147,6 @@ class TestVersion3(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             version.size_from_n_cores(17 * 4 + 1)
 
-
     def test_size_from_n_chips(self):
         version = Version3()
         self.assertEqual((2, 2), version.size_from_n_chips(1))
