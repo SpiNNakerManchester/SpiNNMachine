@@ -59,7 +59,7 @@ class TestSimulatorData(unittest.TestCase):
         self.assertTrue(MachineDataView.has_machine())
 
     def test_where_is_mocked(self):
-        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.value)
+        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
         writer = MachineDataWriter.mock()
         self.assertEqual(
             "No Machine created yet",
@@ -77,7 +77,7 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.where_is_chip(machine.get_chip_at(2, 8)))
 
     def test_where_is_setup(self):
-        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.value)
+        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
         writer = MachineDataWriter.setup()
         self.assertEqual(
             "No Machine created yet",
@@ -100,21 +100,21 @@ class TestSimulatorData(unittest.TestCase):
 
     def test_mock_any(self):
         # Should work with any version
-        set_config("Machine", "versions", VersionStrings.ANY.value)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
         self.assertGreaterEqual(machine.n_chips, 1)
 
     def test_mock_4_or_more(self):
         # Should work with any version
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.value)
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
         self.assertGreaterEqual(machine.n_chips, 4)
 
     def test_mock_big(self):
         # Should work with any version
-        set_config("Machine", "versions", VersionStrings.BIG.value)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
         self.assertGreaterEqual(machine.n_chips, 48)

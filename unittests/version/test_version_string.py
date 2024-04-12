@@ -28,9 +28,9 @@ class TestVersionString(unittest.TestCase):
 
     def test_names(self):
         vs = VersionStrings.from_String("any")
-        self.assertEqual(vs.value, "Any")
+        self.assertEqual(vs.text, "Any")
         vs = VersionStrings.from_String("FourPlus")
-        self.assertEqual(vs.value, "Four plus")
+        self.assertEqual(vs.text, "Four plus")
         with self.assertRaises(SpinnMachineException):
             vs = VersionStrings.from_String("Foo")
 

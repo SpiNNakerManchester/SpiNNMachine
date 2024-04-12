@@ -24,7 +24,7 @@ class TestingChip(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
-        set_config("Machine", "versions", VersionStrings.ANY.value)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
         self._x = 0
         self._y = 1
 

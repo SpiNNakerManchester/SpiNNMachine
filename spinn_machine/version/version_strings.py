@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from enum import StrEnum
+from enum import Enum
 from typing import List
 from spinn_machine.exceptions import SpinnMachineException
 
 
-class VersionStrings(StrEnum):
+class VersionStrings(Enum):
     """
     A description of strings in cfg settings to say test versions
 
@@ -25,30 +25,31 @@ class VersionStrings(StrEnum):
     as far as possible.
     """
 
-    ANY = ("Any", [3, 5, 201])
-    FOUR_PLUS = ("Four plus", [3, 5])
+    ANY = (1, "Any", [3, 5, 201])
+    FOUR_PLUS = (2, "Four plus", [3, 5])
     # To test stuff with more than four chips.
-    BIG = ("Big", [5])
+    BIG = (3, "Big", [5])
     # Specifically to test stuff over multiple boards
-    MULTIPLE_BOARDS = ("Multiple boards", [5])
+    MULTIPLE_BOARDS = (4, "Multiple boards", [5])
     # Specifically to test the various wrapping Machine classes
-    WRAPPABLE = ("Wrappable", [5])
+    WRAPPABLE = (5, "Wrappable", [5])
 
     def __new__(cls, *args, **kwds):
-        s = str.__new__(cls)
-        s._value_ = args[0]
-        return s
+        vs = object.__new__(cls)
+        vs._value_ = args[0]
+        return vs
 
     # ignore the first param since it's already set by __new__
-    def __init__(self, _: str, versions: List[int]):
+    def __init__(self, _: str, text: str, versions: List[int]):
+        self.text = text
         self._versions = versions
 
     def __str__(self):
-        return self.value
+        return self.text
 
     @property
     def short_str(self):
-        return self.shorten(self.value)
+        return self.shorten(self.text)
 
     # this makes sure that the description is read-only
     @property

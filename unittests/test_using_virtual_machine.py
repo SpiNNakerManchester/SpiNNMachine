@@ -61,7 +61,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                         nearest_ethernet_chip[1], None)
 
     def test_new_vm_with_max_cores(self):
-        set_config("Machine", "versions", VersionStrings.ANY.value)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
         version = MachineDataView.get_machine_version()
         n_cpus = version.max_cores_per_chip - 5
         set_config("Machine", "max_machine_core", n_cpus)
@@ -80,7 +80,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                              len(list(chip.scamp_processors_ids)))
 
     def test_iter_chips(self):
-        set_config("Machine", "versions", VersionStrings.ANY.value)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
         vm = virtual_machine_by_boards(1)
         n_chips = MachineDataView.get_machine_version().n_chips_per_board
         self.assertEqual(n_chips, vm.n_chips)
@@ -90,7 +90,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertEqual(n_chips, count)
 
     def test_down_chip(self):
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.value)
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         down_chips = set()
         down_chips.add((1, 1))
         set_config("Machine", "down_chips", "1,1")
@@ -109,7 +109,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertEqual(target, new_target, "{}{}".format(source, path))
 
     def test_nowrap_shortest_path(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         machine = virtual_machine(16, 28, validate=True)
         for source in machine.chip_coordinates:
             for target in machine.chip_coordinates:
@@ -123,7 +123,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, 1000000, 1000000)
 
     def test_fullwrap_shortest_path(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         width = 12
         height = 24
         machine = virtual_machine(width, height, validate=True)
@@ -140,7 +140,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     def test_hoizontal_wrap_shortest_path(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         width = 12
         height = 16
         machine = virtual_machine(width, height, validate=False)
@@ -165,7 +165,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     def test_vertical_wrap_shortest_path(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         width = 16
         height = 12
         machine = virtual_machine(width, height, validate=False)
@@ -190,7 +190,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     def test_minimize(self):
-        set_config("Machine", "versions", VersionStrings.ANY.value)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
         machine = virtual_machine_by_boards(1)
         for x in range(-3, 3):
             for y in range(-3, 3):
@@ -199,7 +199,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self.assertEqual(min1, min2)
 
     def test_unreachable_incoming_chips(self):
-        set_config("Machine", "versions", VersionStrings.BIG.value)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         machine = virtual_machine_by_min_size(6, 6)
 
         # Delete links incoming to 3, 3
@@ -212,7 +212,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(3, 3)], unreachable)
 
     def test_unreachable_outgoing_chips(self):
-        set_config("Machine", "versions", VersionStrings.BIG.value)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         machine = virtual_machine_by_min_size(6, 6)
 
         # Delete links outgoing from 3, 3
@@ -223,7 +223,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(3, 3)], unreachable)
 
     def test_unreachable_incoming_local_chips(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -233,7 +233,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(8, 7)], unreachable)
 
     def test_unreachable_outgoing_local_chips(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -243,7 +243,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(8, 7)], unreachable)
 
     def test_repair_with_local_orphan(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -258,7 +258,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertFalse(repaired.is_chip_at(8, 7))
 
     def test_repair_with_one_way_links_different_boards(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         machine = virtual_machine(12, 12)
         # Assumes boards of exactly size 8,8
         # Delete some links between boards
@@ -274,7 +274,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertIsNotNone(new_machine)
 
     def test_oneway_link_no_repair(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.value)
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         machine = virtual_machine(8, 8)
 
         # Delete some random links
@@ -291,7 +291,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertIsNotNone(new_machine)
 
     def test_removed_chip_repair(self):
-        set_config("Machine", "versions", VersionStrings.BIG.value)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         machine = virtual_machine_by_boards(1)
 
         del machine._chips[(3, 3)]
@@ -301,7 +301,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertFalse(new_machine.is_link_at(2, 2, 1))
 
     def test_ignores(self):
-        set_config("Machine", "versions", VersionStrings.BIG.value)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         set_config("Machine", "down_chips", "2,2:4,4:6,6,ignored_ip")
         set_config("Machine", "down_cores",
                    "1,1,1:3,3,3: 5,5,-5:7,7,7,ignored_ip:0,0,5-10")
