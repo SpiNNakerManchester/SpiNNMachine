@@ -32,22 +32,6 @@ FIVE = 5
 # New value subject to change
 SPIN2_1CHIP = 201
 
-# Flaks to test multiple versions including future ones
-ANY_VERSION = -1
-
-FOUR_PLUS_CHIPS = -2
-
-# A Machine which support multiple boards
-# Size of boards does not matter
-MULTIPLE_BOARDS = -3
-
-# A Machine with at least 8 * 8 including ones typical on a Version 5 board
-BIG_MACHINE = -4
-
-# A Machine with multiple boards that could wrap
-# Will have hard coded assumption of board size 8 * 8
-WRAPPABLE = -5
-
 
 def version_factory() -> AbstractVersion:
     """
