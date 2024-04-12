@@ -68,7 +68,7 @@ def version_factory() -> AbstractVersion:
         if version is not None:
             raise SpinnMachineException(
                 f"Both {version=} and {versions=} found in cfg")
-        vs = VersionStrings.from_String(versions)
+        vs = VersionStrings.from_string(versions)
         options = vs.options
         # Use the fact that we run actions against different python versions
         minor = sys.version_info.minor

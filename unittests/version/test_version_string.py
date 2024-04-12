@@ -27,12 +27,12 @@ class TestVersionString(unittest.TestCase):
         unittest_setup()
 
     def test_names(self):
-        vs = VersionStrings.from_String("any")
+        vs = VersionStrings.from_string("any")
         self.assertEqual(vs.text, "Any")
-        vs = VersionStrings.from_String("FourPlus")
+        vs = VersionStrings.from_string("FourPlus")
         self.assertEqual(vs.text, "Four plus")
         with self.assertRaises(SpinnMachineException):
-            vs = VersionStrings.from_String("Foo")
+            vs = VersionStrings.from_string("Foo")
 
 
 if __name__ == '__main__':

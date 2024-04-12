@@ -48,20 +48,46 @@ class VersionStrings(Enum):
         return self.text
 
     @property
-    def short_str(self):
+    def short_str(self) -> str:
+        """
+        The text but in a shortened version
+
+        This makes the text lower case and removes some special characters
+
+        :rtype: str
+        """
         return self.shorten(self.text)
 
     # this makes sure that the description is read-only
     @property
     def options(self) -> List[int]:
+        """
+        The list of the versions covered by this string
+
+        This list can grow as new versions are added
+
+        :rtype: list(int)
+        """
         return self._versions
 
     @classmethod
-    def shorten(cls, value):
+    def shorten(cls, value: str) -> str:
+        """
+        Makes the String lower case and removes some special characters
+
+        :param str value:
+        :rtype: str
+        """
         return value.lower().replace("_", "").replace("-", "").replace(" ", "")
 
     @classmethod
-    def from_String(cls, value):
+    def from_string(cls, value: str) -> "VersionStrings":
+        """
+        Gets a VersionString object from a String
+
+        :param str value:
+        :rtype: VersionStrings
+        """
         value_short = cls.shorten(value)
         for vs in cls:
             if value_short == vs.short_str:
