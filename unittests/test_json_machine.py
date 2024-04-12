@@ -20,8 +20,8 @@ from spinn_machine.virtual_machine import (
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
-from spinn_machine.version import (
-    BIG_MACHINE, FOUR_PLUS_CHIPS, FIVE, MULTIPLE_BOARDS, SPIN2_1CHIP, THREE)
+from spinn_machine.version import (FIVE, SPIN2_1CHIP, THREE)
+from spinn_machine.version.version_strings import VersionStrings
 
 
 class TestJsonMachine(unittest.TestCase):
@@ -69,7 +69,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_json_hole(self):
-        set_config("Machine", "version", BIG_MACHINE)
+        set_config("Machine", "versions", VersionStrings.BIG.value)
         set_config("Machine", "down_chips", "3,3")
         writer = MachineDataWriter.mock()
         vm = virtual_machine_by_min_size(5, 5)
@@ -84,7 +84,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_exceptions(self):
-        set_config("Machine", "version", FOUR_PLUS_CHIPS)
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.value)
         writer = MachineDataWriter.mock()
         vm = virtual_machine_by_boards(1)
         writer.set_machine(vm)
@@ -104,7 +104,7 @@ class TestJsonMachine(unittest.TestCase):
         self.assertEqual(vchip10.tag_ids, chip10.tag_ids)
 
     def test_monitor_exceptions(self):
-        set_config("Machine", "version", FOUR_PLUS_CHIPS)
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.value)
         vm = virtual_machine_by_boards(1)
         MachineDataWriter.mock().set_machine(vm)
         for chip in vm.chips:
@@ -121,7 +121,7 @@ class TestJsonMachine(unittest.TestCase):
             machine_from_json(jpath)
 
     def test_ethernet_exceptions(self):
-        set_config("Machine", "version", MULTIPLE_BOARDS)
+        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.value)
         vm = virtual_machine_by_boards(2)
         MachineDataWriter.mock().set_machine(vm)
         eth2 = vm.ethernet_connected_chips[1]

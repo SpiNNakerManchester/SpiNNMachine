@@ -1,4 +1,4 @@
-# Copyright (c) 2015 The University of Manchester
+# Copyright (c) 2024 The University of Manchester
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ from spinn_machine.exceptions import SpinnMachineException
 
 
 class TestVersion201(unittest.TestCase):
-    """ Tests of IPTag
-    """
+
     def setUp(self):
         unittest_setup()
 

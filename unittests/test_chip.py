@@ -17,14 +17,14 @@ from spinn_utilities.config_holder import set_config
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Link, Router, Chip
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.version import ANY_VERSION
+from spinn_machine.version.version_strings import VersionStrings
 
 
 class TestingChip(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
-        set_config("Machine", "version", ANY_VERSION)
+        set_config("Machine", "versions", VersionStrings.ANY.value)
         self._x = 0
         self._y = 1
 

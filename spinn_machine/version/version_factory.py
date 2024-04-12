@@ -20,6 +20,7 @@ from spinn_utilities.config_holder import (
     get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
+from .version_strings import VersionStrings
 if TYPE_CHECKING:
     from .abstract_version import AbstractVersion
 
@@ -62,17 +63,13 @@ def version_factory() -> AbstractVersion:
     from .version_201 import Version201
 
     version = get_config_int_or_none("Machine", "version")
-
-    if version is not None and version < 0:
-        if version == ANY_VERSION:
-            options = [THREE, FIVE, SPIN2_1CHIP]
-        elif version == FOUR_PLUS_CHIPS:
-            options = [THREE]
-        elif version in [BIG_MACHINE, MULTIPLE_BOARDS, WRAPPABLE]:
-            options = [FIVE]
-        else:
+    versions = get_config_str_or_none("Machine", "versions")
+    if versions is not None:
+        if version is not None:
             raise SpinnMachineException(
-                f"Unexpected cfg [Machine]version {version}")
+                f"Both {version=} and {versions=} found in cfg")
+        vs = VersionStrings.from_String(versions)
+        options = vs.options
         # Use the fact that we run actions against different python versions
         minor = sys.version_info.minor
         version = options[minor % len(options)]

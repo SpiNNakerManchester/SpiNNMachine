@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .version_factory import (
-    ANY_VERSION, BIG_MACHINE, FIVE, FOUR_PLUS_CHIPS, MULTIPLE_BOARDS,
-    SPIN2_1CHIP, THREE, version_factory, WRAPPABLE)
+from .version_factory import FIVE, SPIN2_1CHIP, THREE, version_factory
 
-__all__ = ["ANY_VERSION", "BIG_MACHINE", "FIVE", "FOUR_PLUS_CHIPS",
-           "MULTIPLE_BOARDS", "SPIN2_1CHIP", "THREE", "version_factory",
-           "WRAPPABLE"]
+__all__ = ["FIVE", "SPIN2_1CHIP", "THREE", "version_factory"]
