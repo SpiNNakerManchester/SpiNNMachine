@@ -19,6 +19,9 @@ from spinn_machine.config_setup import unittest_setup
 from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
+from spinn_machine.virtual_machine import (
+    virtual_machine_by_boards, virtual_machine_by_chips,
+    virtual_machine_by_cores)
 
 
 class TestVirtualMachine3(unittest.TestCase):
@@ -270,6 +273,30 @@ class TestVirtualMachine3(unittest.TestCase):
         self.assertEqual(n_cores, 4 * 18)
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, 4 * 18)
+
+    def test_2_2_by(self):
+        set_config("Machine", "version", 2)
+        n_cores = 40
+        machine = virtual_machine_by_cores(n_cores)
+        self.assertEqual(4, machine.n_chips)
+        self.assertEqual(2, machine.width)
+        self.assertEqual(2, machine.height)
+        self.assertGreaterEqual(machine.total_available_user_cores, n_cores)
+        machine2 = virtual_machine_by_boards(1)
+        self.assertEqual(4, machine2.n_chips)
+        self.assertEqual(2, machine2.width)
+        self.assertEqual(2, machine2.height)
+        machine = virtual_machine_by_chips(3)
+        self.assertEqual(4, machine.n_chips)
+        self.assertEqual(2, machine.width)
+        self.assertEqual(2, machine.height)
+
+    def test_2_2_by_cores_too_many(self):
+        set_config("Machine", "version", 2)
+        with self.assertRaises(SpinnMachineException):
+            virtual_machine_by_cores(100)
+        with self.assertRaises(SpinnMachineException):
+            virtual_machine_by_boards(2)
 
 
 if __name__ == '__main__':

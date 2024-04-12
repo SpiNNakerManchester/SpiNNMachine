@@ -17,9 +17,13 @@ from spinn_utilities.config_holder import set_config
 
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD
+from spinn_machine.virtual_machine import (
+    virtual_machine_by_boards, virtual_machine_by_chips,
+    virtual_machine_by_cores, virtual_machine_by_min_size)
 
 
 class TestVirtualMachine5(unittest.TestCase):
@@ -724,6 +728,97 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD)
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, self.VERSION_5_N_CORES_PER_BOARD)
+
+    def test_8_8_by_cores_1_board(self):
+        set_config("Machine", "version", 5)
+        version = MachineDataView.get_machine_version()
+        n_cores = sum(version.chip_core_map.values())
+        n_cores -= version.n_chips_per_board
+        machine = virtual_machine_by_cores(n_cores)
+        self.assertEqual(8, machine.width)
+        self.assertEqual(8, machine.height)
+        self.assertEqual(n_cores, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(1)
+        self.assertEqual(8, machine.width)
+        self.assertEqual(8, machine.height)
+        self.assertEqual(n_cores, machine.total_available_user_cores)
+
+    def test_8_8_by_cores_3_boards(self):
+        set_config("Machine", "version", 5)
+        version = MachineDataView.get_machine_version()
+        n_cores = sum(version.chip_core_map.values())
+        n_cores -= version.n_chips_per_board
+        machine = virtual_machine_by_cores(n_cores * 2)
+        # despite asking for two boards you get a triad
+        self.assertEqual(16, machine.width)
+        self.assertEqual(16, machine.height)
+        self.assertEqual(n_cores*3, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(2)
+        # despite asking for two boards you get a triad
+        self.assertEqual(16, machine.width)
+        self.assertEqual(16, machine.height)
+        self.assertEqual(n_cores*3, machine.total_available_user_cores)
+        machine = virtual_machine_by_chips(100)
+        # despite asking for two boards you get a triad
+        self.assertEqual(16, machine.width)
+        self.assertEqual(16, machine.height)
+        self.assertEqual(n_cores*3, machine.total_available_user_cores)
+
+    def test_8_8_by_cores_6_boards(self):
+        set_config("Machine", "version", 5)
+        version = MachineDataView.get_machine_version()
+        n_cores = sum(version.chip_core_map.values())
+        n_cores -= version.n_chips_per_board
+        machine = virtual_machine_by_cores(n_cores * 5)
+        self.assertEqual(28, machine.width)
+        self.assertEqual(16, machine.height)
+        self.assertEqual(n_cores * 6, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(4)
+        self.assertEqual(28, machine.width)
+        self.assertEqual(16, machine.height)
+        self.assertEqual(n_cores * 6, machine.total_available_user_cores)
+
+    def test_8_8_by_cores_12_boards(self):
+        set_config("Machine", "version", 5)
+        version = MachineDataView.get_machine_version()
+        n_cores = sum(version.chip_core_map.values())
+        n_cores -= version.n_chips_per_board
+        machine = virtual_machine_by_cores(n_cores * 9)
+        self.assertEqual(28, machine.width)
+        self.assertEqual(28, machine.height)
+        self.assertEqual(n_cores * 12, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(10)
+        self.assertEqual(28, machine.width)
+        self.assertEqual(28, machine.height)
+        self.assertEqual(n_cores * 12, machine.total_available_user_cores)
+
+    def test_8_8_by_cores_18_boards(self):
+        set_config("Machine", "version", 5)
+        version = MachineDataView.get_machine_version()
+        n_cores = sum(version.chip_core_map.values())
+        n_cores -= version.n_chips_per_board
+        machine = virtual_machine_by_cores(n_cores * 12 + 1)
+        self.assertEqual(40, machine.width)
+        self.assertEqual(28, machine.height)
+        self.assertEqual(n_cores * 18, machine.total_available_user_cores)
+        machine = virtual_machine_by_boards(15)
+        self.assertEqual(40, machine.width)
+        self.assertEqual(28, machine.height)
+        self.assertEqual(n_cores * 18, machine.total_available_user_cores)
+
+    def test_by_min_size(self):
+        set_config("Machine", "version", 5)
+        machine = virtual_machine_by_min_size(15, 21)
+        self.assertGreaterEqual(machine.width, 15)
+        self.assertGreaterEqual(machine.height, 21)
+
+    def test_by_min_size_edge_case(self):
+        set_config("Machine", "version", 5)
+        version = MachineDataView.get_machine_version()
+        width, height = version.board_shape
+        machine = virtual_machine_by_min_size(width, height + 1)
+        self.assertGreaterEqual(machine.width, width)
+        self.assertGreaterEqual(machine.height, height + 1)
 
 
 if __name__ == '__main__':

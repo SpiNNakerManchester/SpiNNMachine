@@ -19,6 +19,9 @@ from spinn_machine import Chip, Link, Router, virtual_machine
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
 from spinn_machine.version import SPIN2_1CHIP
+from spinn_machine.virtual_machine import (
+    virtual_machine_by_boards, virtual_machine_by_chips,
+    virtual_machine_by_cores)
 
 
 class TestVirtualMachine201(unittest.TestCase):
@@ -219,13 +222,37 @@ class TestVirtualMachine201(unittest.TestCase):
         self.assertEqual(target, new_target, "{}{}".format(source, path))
 
     def test_n_cores_2_2(self):
-        set_config("Machine", "version", 2)
-        machine = virtual_machine(2, 2)
+        set_config("Machine", "version", SPIN2_1CHIP)
+        machine = virtual_machine(1, 1)
         n_cores = sum(
             cores for (_, cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEqual(n_cores, 4 * 18)
+        self.assertEqual(n_cores, 152)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, 4 * 18)
+        self.assertEqual(n_cores, 152)
+
+    def test_by(self):
+        set_config("Machine", "version", SPIN2_1CHIP)
+        n_cores = 40
+        machine = virtual_machine_by_cores(n_cores)
+        self.assertEqual(1, machine.n_chips)
+        self.assertEqual(1, machine.width)
+        self.assertEqual(1, machine.height)
+        self.assertGreaterEqual(machine.total_available_user_cores, n_cores)
+        machine2 = virtual_machine_by_boards(1)
+        self.assertEqual(1, machine2.n_chips)
+        self.assertEqual(1, machine2.width)
+        self.assertEqual(1, machine2.height)
+        machine = virtual_machine_by_chips(1)
+        self.assertEqual(1, machine.n_chips)
+        self.assertEqual(1, machine.width)
+        self.assertEqual(1, machine.height)
+
+    def test_by_cores_too_many(self):
+        set_config("Machine", "version", SPIN2_1CHIP)
+        with self.assertRaises(SpinnMachineException):
+            virtual_machine_by_cores(200)
+        with self.assertRaises(SpinnMachineException):
+            virtual_machine_by_boards(2)
 
 
 if __name__ == '__main__':
