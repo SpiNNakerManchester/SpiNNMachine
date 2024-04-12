@@ -360,7 +360,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Takes into consideration scamp and monitor cores.
 
         Designed for use with virtual boards.
-        Does not include a safety factor for blacklisted boards.
+        Does not include a safety factor for blacklisted cores or chips.
         For real machines a slightly bigger Machine may be needed.
 
         :param int n_cores: Number of None Scamp and monitor cores needed
@@ -373,6 +373,22 @@ class AbstractVersion(object, metaclass=AbstractBase):
                 * self.n_chips_per_board)
         # Double minus to round up
         return self.size_from_n_boards(-(-n_cores // cores_per_board))
+
+    def size_from_n_chips(self, n_chips: int) -> Tuple[int, int]:
+        """
+        Returns the size needed to support this many chips.
+
+        Designed for use with virtual boards.
+        Does not include a safety factor for blacklisted Chips.
+        For real machines a slightly bigger Machine may be needed.
+
+        :param int n_boards:
+        :rtype: (int, int)
+        :raises SpinnMachineException:
+            If multiple boards are needed but not supported
+        """
+        # Double minus to round up
+        return self.size_from_n_boards(-(-n_chips // self.n_chips_per_board))
 
     def size_from_n_boards(self, n_boards: int) -> Tuple[int, int]:
         """

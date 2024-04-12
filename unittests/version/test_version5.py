@@ -166,6 +166,12 @@ class TestVersion5(unittest.TestCase):
         self.assertEqual((40, 28), version.size_from_n_cores(n_cores * 18))
         self.assertEqual((40, 40), version.size_from_n_cores(n_cores * 18 + 1))
 
+    def test_size_from_n_chips(self):
+        version = Version5()
+        self.assertEqual((8, 8), version.size_from_n_chips(1))
+        self.assertEqual((8, 8), version.size_from_n_chips(48))
+        self.assertEqual((16, 16), version.size_from_n_chips(49))
+
 
 if __name__ == '__main__':
     unittest.main()
