@@ -13,10 +13,9 @@
 # limitations under the License.
 
 import unittest
-from spinn_machine import Router, Link, MulticastRoutingEntry
+from spinn_machine import Router, Link
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 
 class TestingRouter(unittest.TestCase):
@@ -71,24 +70,6 @@ class TestingRouter(unittest.TestCase):
         links.append(Link(0, 1, 0, 0, 1))
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             Router(links, 1024)
-
-    def test_convert_to_route(self):
-        e = MulticastRoutingEntry(28, 60, processor_ids=[4, 5, 7],
-                                  link_ids=[1, 3, 5], defaultable=True)
-        r = Router.convert_routing_table_entry_to_spinnaker_route(e)
-        self.assertEqual(r, 11306)
-
-    def test_bad_processor(self):
-        e = MulticastRoutingEntry(28, 60, processor_ids=[4, 5, -1],
-                                  link_ids=[1, 3, 5], defaultable=True)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            Router.convert_routing_table_entry_to_spinnaker_route(e)
-
-    def test_bad_link(self):
-        e = MulticastRoutingEntry(28, 60, processor_ids=[4, 5, 7],
-                                  link_ids=[1, 3, 15], defaultable=True)
-        with self.assertRaises(SpinnMachineInvalidParameterException):
-            Router.convert_routing_table_entry_to_spinnaker_route(e)
 
 
 if __name__ == '__main__':
