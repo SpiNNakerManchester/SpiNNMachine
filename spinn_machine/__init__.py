@@ -90,4 +90,5 @@ from .virtual_machine import virtual_machine
 
 __all__ = ["Chip", "CoreSubset", "CoreSubsets",
            "FrozenCoreSubsets", "Link", "Machine", "MulticastRoutingEntry",
-           "Router", "SpiNNakerTriadGeometry", "virtual_machine"]
+           "Router", "RoutingEntry", "SpiNNakerTriadGeometry",
+           "virtual_machine"]
