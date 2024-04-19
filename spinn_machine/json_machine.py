@@ -237,21 +237,7 @@ def to_json() -> JsonObject:
     :rtype: dict
     """
     machine = MachineDataView.get_machine()
-    # Find the standard values for any non-Ethernet chip to use by default
-    std = None
-    for chip in machine.chips:
-        if chip.ip_address is None:
-            std = _Desc(
-                monitors=chip.n_processors - chip.n_placable_processors,
-                router_entries=_int_value(
-                    chip.router.n_available_multicast_entries),
-                sdram=chip.sdram,
-                tags=list(chip.tag_ids))
-            break
-    else:
-        raise ValueError("could not compute standard resources")
-
-    # find the nth values to use for Ethernet chips
+    # find the standard values to use for Ethernet chips
     chip = machine.boot_chip
     eth = _Desc(
         monitors=chip.n_processors - chip.n_placable_processors,
@@ -259,6 +245,22 @@ def to_json() -> JsonObject:
             chip.router.n_available_multicast_entries),
         sdram=chip.sdram,
         tags=list(chip.tag_ids))
+
+    # Find the standard values for any non-Ethernet chip to use by default
+    if machine.n_chips > 1:
+        for chip in machine.chips:
+            if chip.ip_address is None:
+                std = _Desc(
+                    monitors=chip.n_processors - chip.n_placable_processors,
+                    router_entries=_int_value(
+                        chip.router.n_available_multicast_entries),
+                    sdram=chip.sdram,
+                    tags=list(chip.tag_ids))
+                break
+        else:
+            raise ValueError("could not compute standard resources")
+    else:
+        std = eth
 
     # write basic stuff
     return {

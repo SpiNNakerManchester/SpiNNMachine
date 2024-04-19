@@ -17,7 +17,6 @@ from spinn_utilities.typing.coords import XY
 from spinn_utilities.data import UtilsDataView
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version.version_factory import version_factory
-from spinn_machine.version.version_spin1 import VersionSpin1
 if TYPE_CHECKING:
     from spinn_machine.chip import Chip
     from spinn_machine.machine import Machine
@@ -44,6 +43,8 @@ class _MachineDataModel(object):
 
     __slots__ = [
         # Data values cached
+        "_all_monitor_cores",
+        "_ethernet_monitor_cores",
         "_machine",
         "_machine_generator",
         "_machine_version",
@@ -75,6 +76,8 @@ class _MachineDataModel(object):
         This does NOT clear the machine as it may have been asked for before
         """
         self._soft_reset()
+        self._all_monitor_cores: int = 0
+        self._ethernet_monitor_cores: int = 0
         self._machine: Optional[Machine] = None
         self._v_to_p_map: Optional[Dict[XY, bytes]] = None
         self._user_accessed_machine = False
@@ -295,9 +298,13 @@ class MachineDataView(UtilsDataView):
         """
         if cls.__data._v_to_p_map is None:
             version = cls.get_machine_version()
+            # delayed import to avoid vicular reference
+            # pylint: disable=import-outside-toplevel
+            from spinn_machine.version.version_spin1 import VersionSpin1
             if isinstance(version, VersionSpin1):
                 return None
             else:
+                # TODO Spin2
                 raise SpinnMachineException(
                     f"This call is not supported when using Version {version}")
         if xy in cls.__data._v_to_p_map:
@@ -324,3 +331,32 @@ class MachineDataView(UtilsDataView):
             return f" (ph: {physical_p})"
         else:
             return ""
+
+    @classmethod
+    def get_all_monitor_cores(cls) -> int:
+        """
+        The number of cores on every chip reported to be used by \
+        monitor vertices.
+
+        Ethernet-enabled chips may have more.
+
+        Does not include the system core reserved by the machine/ scamp.
+
+        :rtype: int
+        """
+        return cls.__data._all_monitor_cores
+
+    @classmethod
+    def get_ethernet_monitor_cores(cls) -> int:
+        """
+        The number of cores on every Ethernet chip reported to be used by \
+        monitor vertices.
+
+        This includes the one returned by get_all_monitor_cores unless for
+        some reason these are not on Ethernet chips.
+
+        Does not include the system core reserved by the machine/ scamp.
+
+        :rtype: int
+        """
+        return cls.__data._ethernet_monitor_cores

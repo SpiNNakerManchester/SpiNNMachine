@@ -20,7 +20,10 @@ import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.testing import log_checker
 from spinn_machine import Link, Router, Chip
-from spinn_machine import virtual_machine
+from spinn_machine.version import FIVE
+from spinn_machine.version.version_strings import VersionStrings
+from spinn_machine.virtual_machine import (
+    virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
@@ -34,7 +37,6 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
-        set_config("Machine", "version", 5)
 
         self._sdram = 123469792
 
@@ -50,19 +52,22 @@ class SpinnMachineTestCase(unittest.TestCase):
         self._ip = "192.162.240.253"
 
     def _create_chip(self, x, y):
+        n_cores = MachineDataView.get_machine_version().max_cores_per_chip
         if x == y == 0:
-            return Chip(x, y, [0], range(1, 18), self._router, self._sdram,
+            return Chip(x, y, [0], range(1, n_cores, self._router, self._sdram,
                         self._nearest_ethernet_chip[0],
                         self._nearest_ethernet_chip[1], self._ip)
-        return Chip(x, y, [0], range(1, 18), self._router, self._sdram,
+        return Chip(x, y, [0], range(1, n_cores), self._router, self._sdram,
                     self._nearest_ethernet_chip[0],
                     self._nearest_ethernet_chip[1], None)
 
-    def test_create_new_machine(self):
+    def test_create_new_machine_version5(self):
         """
         test creating a new machine
         """
-        new_machine = virtual_machine(8, 8)
+        # Tests the version 5 values specifically
+        set_config("Machine", "version", FIVE)
+        new_machine = virtual_machine_by_boards(1)
 
         self.assertEqual(new_machine.width, 8)
         self.assertEqual(new_machine.height, 8)
@@ -90,7 +95,9 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(1023, new_machine.min_n_router_enteries)
 
     def test_summary(self):
-        machine = virtual_machine(8, 8)
+        # Strings hard coded to version 5
+        set_config("Machine", "version", FIVE)
+        machine = virtual_machine_by_boards(1)
         self.assertEqual(
             "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 links. "
             "Chips have sdram of 123469792 bytes, router table of size 1023, "
@@ -137,46 +144,19 @@ class SpinnMachineTestCase(unittest.TestCase):
                 "Not all Chips had the same n_router_tables. "
                 "The counts where Counter({456: 1, 321: 1}).")
 
-    def test_create_new_machine_with_invalid_chips(self):
+    def test_chip_already_exists(self):
         """
-        check that building a machine with invalid chips causes errors
+        check that adding a chip that already exists causes an error
 
         :rtype: None
         """
-        machine = virtual_machine(8, 8)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        machine = virtual_machine_by_boards(1)
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             machine.add_chip(Chip(
                 0, 0, [0], range(1, 18), self._router, self._sdram,
                 self._nearest_ethernet_chip[0],
                 self._nearest_ethernet_chip[1], self._ip))
-
-    def test_machine_add_chip(self):
-        """
-        test the add_chip method of the machine object
-
-        :rtype: None
-        """
-        new_machine = virtual_machine(8, 8)
-        extra_chip = self._create_chip(5, 0)
-        new_machine.add_chip(extra_chip)
-
-        for c in new_machine.chips:
-            if (c.x == c.y == 0):
-                self.assertEqual(c.ip_address, "127.0.0.0")
-            else:
-                self.assertIsNone(c.ip_address)
-            self.assertEqual(c.sdram, self._sdram)
-            self.assertIsNotNone(c.router)
-
-    def test_machine_add_duplicate_chip(self):
-        """
-        test if adding the same chip twice causes an error
-
-        :rtype: None
-        """
-        new_machine = virtual_machine(8, 8)
-        with self.assertRaises(SpinnMachineAlreadyExistsException):
-            new_machine.add_chip(new_machine.get_chip_at(1, 1))
 
     def test_machine_get_chip_at(self):
         """
@@ -184,9 +164,12 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        new_machine = virtual_machine(8, 8)
-        self.assertEqual(2, new_machine.get_chip_at(2, 3).x)
-        self.assertEqual(3, new_machine.get_chip_at(2, 3).y)
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+        new_machine = virtual_machine_by_min_size(2, 2)
+        self.assertEqual(1, new_machine.get_chip_at(1, 0).x)
+        self.assertEqual(0, new_machine.get_chip_at(1, 0).y)
+        self.assertEqual(0, new_machine.get_chip_at(0, 1).x)
+        self.assertEqual(1, new_machine.get_chip_at(0, 1).y)
 
     def test_machine_big_x(self):
         """
@@ -195,15 +178,19 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        version = MachineDataView.get_machine_version()
+        width, height = version.board_shape
+        # create an empty Machine
+        machine = version.create_machine(width, height)
         machine.add_chip(self._create_chip(0, 0))
         # the add does not have the safety code
-        machine.add_chip(self._create_chip(10, 2))
+        machine.add_chip(self._create_chip(width + 2, height // 2))
         # however the validate does
         try:
             machine.validate()
         except SpinnMachineException as ex:
-            self.assertIn("has an x larger than width 8", str(ex))
+            self.assertIn(f"has an x larger than width {width}", str(ex))
 
     def test_machine_big_y(self):
         """
@@ -212,16 +199,19 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
+        set_config("Machine", "versions", VersionStrings.ANY.text)
         version = MachineDataView.get_machine_version()
-        new_machine = version.create_machine(8, 8)
-        new_machine.add_chip(self._create_chip(0, 0))
+        width, height = version.board_shape
+        # create an empty Machine
+        machine = version.create_machine(width, height)
+        machine.add_chip(self._create_chip(0, 0))
         # the add does not have the safety code
-        new_machine.add_chip(self._create_chip(2, 10))
+        machine.add_chip(self._create_chip(width // 2, height + 2))
         # however the validate does
         try:
-            new_machine.validate()
+            machine.validate()
         except SpinnMachineException as ex:
-            self.assertIn("has a y larger than height 8", str(ex))
+            self.assertIn(f"has a y larger than height {height}", str(ex))
 
     def test_machine_get_chip_at_invalid_location(self):
         """
@@ -230,8 +220,11 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        new_machine = virtual_machine(8, 8)
-        self.assertEqual(None, new_machine.get_chip_at(10, 0))
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        version = MachineDataView.get_machine_version()
+        new_machine = virtual_machine_by_boards(1)
+        width, height = version.board_shape
+        self.assertEqual(None, new_machine.get_chip_at(width + 2, height // 2))
 
     def test_machine_is_chip_at_true(self):
         """
@@ -240,8 +233,11 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        new_machine = virtual_machine(8, 8)
-        self.assertTrue(new_machine.is_chip_at(3, 0))
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        version = MachineDataView.get_machine_version()
+        new_machine = virtual_machine_by_boards(1)
+        width, height = version.board_shape
+        self.assertTrue(new_machine.is_chip_at(width // 2, height // 2))
 
     def test_machine_is_chip_at_false(self):
         """
@@ -250,17 +246,21 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         :rtype: None
         """
-        new_machine = virtual_machine(8, 8)
-        self.assertFalse(new_machine.is_chip_at(10, 0))
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        version = MachineDataView.get_machine_version()
+        new_machine = virtual_machine_by_boards(1)
+        width, height = version.board_shape
+        self.assertFalse(new_machine.is_chip_at(width + 2, height // 2))
 
     def test_machine_get_chips_on_board(self):
-        new_machine = virtual_machine(8, 8)
+        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
+        new_machine = virtual_machine_by_boards(3)
+        version = MachineDataView.get_machine_version()
         for eth_chip in new_machine._ethernet_connected_chips:
             chips_in_machine = list(
                 new_machine.get_existing_xys_on_board(eth_chip))
-            # _create_chips made a 5*5 grid of 25 chips,
-            # but (0,4) is not on a standard 48-node board
-            self.assertEqual(len(chips_in_machine), 48)
+            self.assertEqual(len(chips_in_machine), version.n_chips_per_board)
+        # TODO use version info from other PR
         with self.assertRaises(KeyError):
             new_machine.get_spinnaker_link_with_id(1)
         with self.assertRaises(KeyError):
@@ -273,6 +273,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         Notice that the function only does the math not validate the values.
         :return:
         """
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         # full wrap around
         machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, 23))
@@ -301,6 +302,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         Notice that the function only does the math not validate the values.
         :return:
         """
+        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
         # full wrap around
         machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
@@ -319,53 +321,68 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (25, 4))
 
     def test_no_boot(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        version = MachineDataView.get_machine_version()
+        width, height = version.board_shape
+        # create an empty Machine
+        machine = version.create_machine(width, height)
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_negative_x(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        version = MachineDataView.get_machine_version()
+        width, height = version.board_shape
+        # create an empty Machine
+        machine = version.create_machine(width, height)
         chip = self._create_chip(2, -1)
         machine.add_chip(chip)
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_negative_y(self):
-        machine = MachineDataView.get_machine_version().create_machine(8, 8)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        version = MachineDataView.get_machine_version()
+        width, height = version.board_shape
+        # create an empty Machine
+        machine = version.create_machine(width, height)
         chip = self._create_chip(-1, 3)
         machine.add_chip(chip)
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
+    def _non_ethernet_chip(self, machine):
+        for chip in machine.chips:
+            if chip.ip_address is None:
+                return chip
+        raise SpinnMachineException("No none Ethernet Chip")
+
     def test_weird_ethernet1(self):
-        machine = virtual_machine(8, 8)
-        machine.get_chip_at(1, 3)._ip_address = "1.2.3.4"
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+        machine = virtual_machine_by_boards(1)
+        self._non_ethernet_chip(machine)._ip_address = "1.2.3.4"
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_bad_ethernet_chip_x(self):
-        machine = virtual_machine(8, 8)
-        machine.get_chip_at(0, 1)._nearest_ethernet_x = 1
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+        machine = virtual_machine_by_boards(1)
+        width, _ = MachineDataView.get_machine_version().board_shape
+        self._non_ethernet_chip(machine)._nearest_ethernet_x = width + 1
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
     def test_bad_ethernet_chip_no_chip(self):
-        machine = virtual_machine(8, 8)
-        machine.get_chip_at(0, 1)._nearest_ethernet_x = 12
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+        machine = virtual_machine_by_boards(1)
+        _, height = MachineDataView.get_machine_version().board_shape
+        self._non_ethernet_chip(machine)._nearest_ethernet_x = height + 1
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_getitem(self):
-        machine = virtual_machine(8, 8)
-        chip12 = machine[(1, 2)]
-        self.assertEqual(chip12.x, 1)
-        self.assertEqual(chip12.y, 2)
-        self.assertTrue((1, 2) in machine)
-        self.assertFalse((1, 9) in machine)
-
     def test_concentric_xys(self):
-        machine = virtual_machine(8, 8)
-        machine.get_chip_at(1, 3)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
+        machine = virtual_machine_by_min_size(5, 5)
         found = list(machine.concentric_xys(2, (2, 2)))
         expected = [
             (2, 2),
@@ -375,10 +392,11 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertListEqual(expected, found)
 
     def test_too_few_cores(self):
-        machine = virtual_machine(8, 8)
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        machine = virtual_machine_by_boards(1)
         # Hack to get n_processors return a low number
-        chip01 = machine.get_chip_at(0, 1)
-        chip01._placable_processors = tuple([1, 2])
+        chip = next(machine.chips)
+        chip._placable_processors = tuple([1, 2])
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import List
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.overrides import overrides
 from .abstract_version import AbstractVersion
@@ -44,9 +45,9 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
         return 5
 
     @property
-    @overrides(AbstractVersion.clock_speed_hz)
-    def clock_speed_hz(self) -> int:
-        return 200
+    @overrides(AbstractVersion.clock_speeds_hz)
+    def clock_speeds_hz(self) -> List[int]:
+        return [200]
 
     @property
     @overrides(AbstractVersion.dtcm_bytes)
