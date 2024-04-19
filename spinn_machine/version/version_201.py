@@ -14,7 +14,6 @@
 
 from typing import Final, List, Mapping, Optional, Sequence, Tuple
 
-from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
 
