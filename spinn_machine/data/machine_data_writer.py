@@ -17,7 +17,8 @@ from typing import Callable
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
-from spinn_machine import Machine, virtual_machine
+from spinn_machine import Machine
+from spinn_machine.virtual_machine import virtual_machine_by_boards
 from .machine_data_view import MachineDataView, _MachineDataModel
 logger = FormatAdapter(logging.getLogger(__name__))
 __temp_dir = None
@@ -46,12 +47,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         Method to create a virtual machine in mock mode.
         """
-        if self.get_machine_version().number == 3:
-            self.set_machine(virtual_machine(width=2, height=2))
-        elif self.get_machine_version().number == 5:
-            self.set_machine(virtual_machine(width=8, height=8))
-        else:
-            raise NotImplementedError("Please set machine version")
+        self.set_machine(virtual_machine_by_boards(1))
 
     @overrides(UtilsDataWriter._setup)
     def _setup(self) -> None:
@@ -109,3 +105,22 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         if not callable(machine_generator):
             raise TypeError("machine_generator must be callable")
         self.__data._machine_generator = machine_generator
+
+    def add_monitor_core(self, all_chips: bool):
+        """
+        Accepts a simple of the monitor cores to be added.
+
+        Called by PacmanDataWriter add_sample_monitor_vertex.
+
+        Only affect is to change the numbers reported by the
+        get_all/ethernet_monitor methods.
+
+        :param bool all_chips:
+            If True assumes that this Vertex will be placed on all chips
+            including Ethernet ones.
+            If False assumes that this Vertex type will only be placed on
+            Ethernet Vertices
+        """
+        self.__data._ethernet_monitor_cores += 1
+        if all_chips:
+            self.__data._all_monitor_cores += 1

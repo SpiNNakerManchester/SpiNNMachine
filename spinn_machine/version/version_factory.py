@@ -14,15 +14,23 @@
 
 from __future__ import annotations
 import logging
+import sys
 from typing import TYPE_CHECKING
 from spinn_utilities.config_holder import (
     get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
+from .version_strings import VersionStrings
 if TYPE_CHECKING:
     from .abstract_version import AbstractVersion
 
 logger = FormatAdapter(logging.getLogger(__name__))
+
+# Constant when wanting a specific version
+THREE = 3
+FIVE = 5
+# New value subject to change
+SPIN2_1CHIP = 201
 
 
 def version_factory() -> AbstractVersion:
@@ -36,13 +44,28 @@ def version_factory() -> AbstractVersion:
     # pylint: disable=import-outside-toplevel
     from .version_3 import Version3
     from .version_5 import Version5
+    from .version_201 import Version201
 
     version = get_config_int_or_none("Machine", "version")
+    versions = get_config_str_or_none("Machine", "versions")
+    if versions is not None:
+        if version is not None:
+            raise SpinnMachineException(
+                f"Both {version=} and {versions=} found in cfg")
+        vs = VersionStrings.from_string(versions)
+        options = vs.options
+        # Use the fact that we run actions against different python versions
+        minor = sys.version_info.minor
+        version = options[minor % len(options)]
+
     if version in [2, 3]:
         return Version3()
 
     if version in [4, 5]:
         return Version5()
+
+    if version == 201:
+        return Version201()
 
     spalloc_server = get_config_str_or_none("Machine", "spalloc_server")
     if spalloc_server is not None:
@@ -56,9 +79,11 @@ def version_factory() -> AbstractVersion:
     height = get_config_int_or_none("Machine", "height")
     width = get_config_int_or_none("Machine", "width")
     if height is not None and width is not None:
+        logger.info("Your cfg file does not have a version")
         if height == width == 2:
-            logger.info("Your cfg file does not have a ")
             return Version3()
+        elif height == width == 1:
+            return Version201()
         return Version5()
 
     if version is None:
