@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .version_factory import FIVE, SPIN2_1CHIP, THREE, version_factory
+from .version_factory import FIVE, SPIN2_1CHIP, SPIN2_48CHIP, THREE,\
+    version_factory
 
-__all__ = ["FIVE", "SPIN2_1CHIP", "THREE", "version_factory"]
+__all__ = ["FIVE", "SPIN2_1CHIP", "SPIN2_48CHIP", "THREE", "version_factory"]

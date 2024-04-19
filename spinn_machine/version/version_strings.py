@@ -28,7 +28,7 @@ class VersionStrings(Enum):
     ANY = (1, "Any", [3, 5, 201])
     FOUR_PLUS = (2, "Four plus", [3, 5])
     # To test stuff with more than four chips.
-    BIG = (3, "Big", [5])
+    BIG = (3, "Big", [248])
     # Specifically to test stuff over multiple boards
     MULTIPLE_BOARDS = (4, "Multiple boards", [5])
     # Specifically to test the various wrapping Machine classes
