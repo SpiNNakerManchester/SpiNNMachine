@@ -38,7 +38,6 @@ class Version48Chips(AbstractVersion):
     def board_shape(self) -> Tuple[int, int]:
         return (8, 8)
 
-
     @overrides(AbstractVersion.get_potential_ethernet_chips)
     def get_potential_ethernet_chips(
             self, width: int, height: int) -> Sequence[XY]:

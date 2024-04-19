@@ -12,15 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, List, Mapping, Optional, Sequence, Tuple
+from typing import Final, List
 
 from spinn_utilities.abstract_base import AbstractBase
-from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
-
-from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.no_wrap_machine import NoWrapMachine
-from spinn_machine.machine import Machine
 
 from .abstract_version import AbstractVersion
 

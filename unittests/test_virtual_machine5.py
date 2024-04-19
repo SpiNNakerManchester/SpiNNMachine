@@ -17,13 +17,9 @@ from spinn_utilities.config_holder import set_config
 
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.data import MachineDataView
 from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.version import FIVE
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD
-from spinn_machine.virtual_machine import (
-    virtual_machine_by_boards, virtual_machine_by_chips,
-    virtual_machine_by_cores, virtual_machine_by_min_size)
 
 
 class TestVirtualMachine5(unittest.TestCase):

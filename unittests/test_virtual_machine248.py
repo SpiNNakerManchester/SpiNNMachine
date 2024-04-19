@@ -17,14 +17,9 @@ from spinn_utilities.config_holder import set_config
 
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.version import SPIN2_48CHIP
 from spinn_machine.version.version_248 import CHIPS_PER_BOARD
-from spinn_machine.virtual_machine import (
-    virtual_machine_by_boards, virtual_machine_by_chips,
-    virtual_machine_by_cores, virtual_machine_by_min_size)
 
 
 class TestVirtualMachine248(unittest.TestCase):
@@ -88,13 +83,13 @@ class TestVirtualMachine248(unittest.TestCase):
         count = sum(_chip.n_processors for _chip in vm.chips)
         # TODO check this is correct
         self.assertEqual(count, 7283)
+        # TODO LINKS
+        """
         spinnaker_links = (list(vm.spinnaker_links))
         expected = []
         sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))
         expected.append((((0, 0), 0), sp))
-        # TODO LINKS
-        """
         self.assertEqual(expected, spinnaker_links)
         # 8 links on each of the 6 sides recorded 3 times
         # Except for the Ethernet Chip's 3 links which are only recorded twice
@@ -323,6 +318,7 @@ class TestVirtualMachine248(unittest.TestCase):
         for ip, fpga, fpga_link, x, y, link in fpga_links:
             self._assert_fpga_link(machine, fpga, fpga_link, x, y, link, ip)
     """
+
 
 if __name__ == '__main__':
     unittest.main()

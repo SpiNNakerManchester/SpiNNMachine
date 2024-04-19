@@ -12,16 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, List, Mapping, Optional, Sequence, Tuple
+from typing import Final, List, Mapping, Tuple
 
-from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
-
-from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.no_wrap_machine import NoWrapMachine
-from spinn_machine.machine import Machine
-from spinn_machine import SpiNNakerTriadGeometry
 
 from .version_48_chips import Version48Chips
 from .version_factory import SPIN2_48CHIP
@@ -40,6 +34,7 @@ CHIPS_PER_BOARD: Final = {
     (6, 5): 152, (6, 6): 152, (6, 7): 152, (7, 3): 152, (7, 4): 152,
     (7, 5): 152, (7, 6): 152, (7, 7): 152
 }
+
 
 class Version248(VersionSpin2, Version48Chips):
     # pylint: disable=abstract-method
