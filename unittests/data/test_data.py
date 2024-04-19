@@ -106,7 +106,7 @@ class TestSimulatorData(unittest.TestCase):
         self.assertGreaterEqual(machine.n_chips, 1)
 
     def test_mock_4_or_more(self):
-        # Should work with any version
+        # Should work with any version that has 4 plus Chips
         set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
