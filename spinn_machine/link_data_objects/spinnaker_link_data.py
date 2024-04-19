@@ -55,3 +55,11 @@ class SpinnakerLinkData(AbstractLinkData):
         return hash((self._spinnaker_link_id,
                      self.connected_chip_x, self.connected_chip_y,
                      self.connected_link, self.board_address))
+
+    def __str__(self):
+        return (f"id:{self._spinnaker_link_id} x:{self.connected_chip_x} "
+                f"y:{self.connected_chip_y} link:{self._spinnaker_link_id} "
+                f"{self.board_address}")
+
+    def __repr__(self) -> str:
+        return self.__str__()

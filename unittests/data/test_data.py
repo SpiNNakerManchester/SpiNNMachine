@@ -19,13 +19,14 @@ from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
+from spinn_machine.version import FIVE, THREE
+from spinn_machine.version.version_strings import VersionStrings
 
 
 class TestSimulatorData(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()
-        set_config("Machine", "version", 5)
 
     def test_setup(self):
         # What happens before setup depends on the previous test
@@ -37,12 +38,12 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.get_chip_at(1, 1)
 
     def test_mock(self):
-        MachineDataWriter.mock()
+        set_config("Machine", "version", FIVE)
         self.assertEqual(3, MachineDataView.get_chip_at(3, 5).x)
         self.assertEqual(48, MachineDataView.get_machine().n_chips)
 
     def test_machine(self):
-        set_config("Machine", "version", 3)
+        set_config("Machine", "version", THREE)
         writer = MachineDataWriter.setup()
 
         with self.assertRaises(DataNotYetAvialable):
@@ -58,6 +59,7 @@ class TestSimulatorData(unittest.TestCase):
         self.assertTrue(MachineDataView.has_machine())
 
     def test_where_is_mocked(self):
+        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
         writer = MachineDataWriter.mock()
         self.assertEqual(
             "No Machine created yet",
@@ -75,6 +77,7 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.where_is_chip(machine.get_chip_at(2, 8)))
 
     def test_where_is_setup(self):
+        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
         writer = MachineDataWriter.setup()
         self.assertEqual(
             "No Machine created yet",
@@ -97,6 +100,8 @@ class TestSimulatorData(unittest.TestCase):
 
     def test_v_to_p(self):
         writer = MachineDataWriter.setup()
+        # TODO SPIN2
+        set_config("Machine", "version", FIVE)
         # Before setting
         self.assertEqual(None, writer.get_physical_core_id((1, 2), 3))
         self.assertEqual("", writer.get_physical_core_string((1, 2), 3))
@@ -116,3 +121,52 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(None, writer.get_physical_core_id((1, 2), 19))
         self.assertEqual("",
                          writer.get_physical_core_string((1, 2), 19))
+
+    def test_mock_any(self):
+        # Should work with any version
+        set_config("Machine", "versions", VersionStrings.ANY.text)
+        # check there is a value not what it is
+        machine = MachineDataView.get_machine()
+        self.assertGreaterEqual(machine.n_chips, 1)
+
+    def test_mock_4_or_more(self):
+        # Should work with any version
+        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+        # check there is a value not what it is
+        machine = MachineDataView.get_machine()
+        self.assertGreaterEqual(machine.n_chips, 4)
+
+    def test_mock_big(self):
+        # Should work with any version
+        set_config("Machine", "versions", VersionStrings.BIG.text)
+        # check there is a value not what it is
+        machine = MachineDataView.get_machine()
+        self.assertGreaterEqual(machine.n_chips, 48)
+
+    def test_mock3(self):
+        # Should work with any version
+        set_config("Machine", "version", 3)
+        # check there is a value not what it is
+        MachineDataView.get_machine()
+
+    def test_mock5(self):
+        set_config("Machine", "version", 5)
+        # check there is a value not what it is
+        MachineDataView.get_machine()
+
+    def test_mock201(self):
+        set_config("Machine", "version", 201)
+        # check there is a value not what it is
+        MachineDataView.get_machine()
+
+    def test_get_monitors(self):
+        writer = MachineDataWriter.setup()
+        self.assertEqual(0, MachineDataView.get_all_monitor_cores())
+        self.assertEqual(0, MachineDataView.get_ethernet_monitor_cores())
+        writer.add_monitor_core(True)
+        self.assertEqual(1, MachineDataView.get_all_monitor_cores())
+        self.assertEqual(1, MachineDataView.get_ethernet_monitor_cores())
+        writer.add_monitor_core(False)
+        writer.add_monitor_core(True)
+        self.assertEqual(2, MachineDataView.get_all_monitor_cores())
+        self.assertEqual(3, MachineDataView.get_ethernet_monitor_cores())

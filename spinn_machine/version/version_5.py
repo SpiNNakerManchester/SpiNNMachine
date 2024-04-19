@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, Mapping, Optional, Sequence, Tuple
+import math
+from typing import Final, List, Mapping, Optional, Sequence, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 from spinn_machine.exceptions import SpinnMachineException
@@ -107,3 +108,48 @@ class Version5(VersionSpin1):
             return "Only Chip with x + y divisible by 12 " \
                    "may be an Ethernet Chip"
         return None
+
+    @overrides(VersionSpin1.size_from_n_boards)
+    def size_from_n_boards(self, n_boards: int) -> Tuple[int, int]:
+        if n_boards <= 1:
+            return 8, 8
+        # This replicates how spalloc does it
+        # returning a rectangle of triads
+        triads = math.ceil(n_boards / 3)
+        width = math.ceil(math.sqrt(triads))
+        height = math.ceil(triads / width)
+        return width * 12 + 4, height * 12 + 4
+
+    @property
+    @overrides(VersionSpin1.supports_multiple_boards)
+    def supports_multiple_boards(self) -> bool:
+        return True
+
+    @overrides(VersionSpin1.spinnaker_links)
+    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+        return [(0, 0, 4)]
+
+    @overrides(VersionSpin1.fpga_links)
+    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
+        return [(0, 0, 3, 1, 1), (0, 0, 4, 1, 0), (0, 0, 5, 0, 15),
+                (0, 1, 3, 1, 3), (0, 1, 4, 1, 2),
+                (0, 2, 3, 1, 5), (0, 2, 4, 1, 4),
+                (0, 3, 2, 1, 8), (0, 3, 3, 1, 7), (0, 3, 4, 1, 6),
+                (1, 0, 4, 0, 14), (1, 0, 5, 0, 13),
+                (1, 4, 2, 1, 10), (1, 4, 3, 1, 9),
+                (2, 0, 4, 0, 12), (2, 0, 5, 0, 11),
+                (2, 5, 2, 1, 12), (2, 5, 3, 1, 11),
+                (3, 0, 4, 0, 10), (3, 0, 5, 0, 9),
+                (3, 6, 2, 1, 14), (3, 6, 3, 1, 13),
+                (4, 0, 0, 0, 6), (4, 0, 4, 0, 8),
+                (4, 0, 5, 0, 7), (4, 7, 1, 2, 1),
+                (4, 7, 2, 2, 0), (4, 7, 3, 1, 15),
+                (5, 1, 0, 0, 4), (5, 1, 5, 0, 5),
+                (5, 7, 1, 2, 3), (5, 7, 2, 2, 2),
+                (6, 2, 0, 0, 2), (6, 2, 5, 0, 3),
+                (6, 7, 1, 2, 5), (6, 7, 2, 2, 4),
+                (7, 3, 0, 0, 0), (7, 3, 1, 2, 15), (7, 3, 5, 0, 1),
+                (7, 4, 0, 2, 14), (7, 4, 1, 2, 13),
+                (7, 5, 0, 2, 12), (7, 5, 1, 2, 11),
+                (7, 6, 0, 2, 10), (7, 6, 1, 2, 9),
+                (7, 7, 0, 2, 8), (7, 7, 1, 2, 7), (7, 7, 2, 2, 6)]

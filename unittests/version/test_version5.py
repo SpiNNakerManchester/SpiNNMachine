@@ -1,4 +1,4 @@
-# Copyright (c) 2015 The University of Manchester
+# Copyright (c) 2023 The University of Manchester
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ from spinn_machine.exceptions import SpinnMachineException
 
 
 class TestVersion5(unittest.TestCase):
-    """ Tests of IPTag
-    """
+
     def setUp(self):
         unittest_setup()
 
@@ -147,8 +146,30 @@ class TestVersion5(unittest.TestCase):
 
     def test_processor_info(self):
         version = Version5()
-        self.assertEqual(200, version.clock_speed_hz)
+        self.assertEqual([200], version.clock_speeds_hz)
         self.assertEqual(65536, version.dtcm_bytes)
+
+    def test_size_from_n_cores(self):
+        version = Version5()
+        self.assertEqual((8, 8), version.size_from_n_cores(10))
+        # standard for there to be 8 17 core Chips and each has 1 scamp core
+        n_cores = 17 * 48 - 8
+        self.assertEqual((8, 8), version.size_from_n_cores(n_cores))
+        self.assertEqual((16, 16), version.size_from_n_cores(n_cores + 1))
+        self.assertEqual((16, 16), version.size_from_n_cores(n_cores * 3))
+        self.assertEqual((28, 16), version.size_from_n_cores(n_cores * 4))
+        self.assertEqual((28, 16), version.size_from_n_cores(n_cores * 6))
+        self.assertEqual((28, 28), version.size_from_n_cores(n_cores * 7))
+        self.assertEqual((28, 28), version.size_from_n_cores(n_cores * 12))
+        self.assertEqual((40, 28), version.size_from_n_cores(n_cores * 13))
+        self.assertEqual((40, 28), version.size_from_n_cores(n_cores * 18))
+        self.assertEqual((40, 40), version.size_from_n_cores(n_cores * 18 + 1))
+
+    def test_size_from_n_chips(self):
+        version = Version5()
+        self.assertEqual((8, 8), version.size_from_n_chips(1))
+        self.assertEqual((8, 8), version.size_from_n_chips(48))
+        self.assertEqual((16, 16), version.size_from_n_chips(49))
 
 
 if __name__ == '__main__':

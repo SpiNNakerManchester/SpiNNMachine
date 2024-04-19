@@ -13,11 +13,12 @@
 # limitations under the License.
 from __future__ import annotations
 import logging
-from typing import Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
+from typing import List, Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
 from spinn_utilities.typing.coords import XY
+from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
 if TYPE_CHECKING:
     from spinn_machine.machine import Machine
@@ -214,9 +215,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def clock_speed_hz(self) -> int:
+    def clock_speeds_hz(self) -> List[int]:
         """
-        The processor clock speed in Hz
+        The processor clock speeds in Hz this processor can run at
 
         :rtype: int
         """
@@ -349,5 +350,91 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :param int x:
         :param int y:
         :return: An explanation that the x and y can never be an Ethernet
+        """
+        raise NotImplementedError
+
+    def size_from_n_cores(self, n_cores: int) -> Tuple[int, int]:
+        """
+        Returns the size needed to support this many cores.
+
+        Takes into consideration scamp and monitor cores.
+
+        Designed for use with virtual boards.
+        Does not include a safety factor for blacklisted cores or chips.
+        For real machines a slightly bigger Machine may be needed.
+
+        :param int n_cores: Number of None Scamp and monitor cores needed
+        :rtype: (int, int)
+        """
+        cores_per_board = sum(self.chip_core_map.values())
+        cores_per_board -= MachineDataView.get_ethernet_monitor_cores()
+        cores_per_board -= (
+                (MachineDataView.get_all_monitor_cores() + self.n_scamp_cores)
+                * self.n_chips_per_board)
+        # Double minus to round up
+        return self.size_from_n_boards(-(-n_cores // cores_per_board))
+
+    def size_from_n_chips(self, n_chips: int) -> Tuple[int, int]:
+        """
+        Returns the size needed to support this many chips.
+
+        Designed for use with virtual boards.
+        Does not include a safety factor for blacklisted Chips.
+        For real machines a slightly bigger Machine may be needed.
+
+        :param int n_boards:
+        :rtype: (int, int)
+        :raises SpinnMachineException:
+            If multiple boards are needed but not supported
+        """
+        # Double minus to round up
+        return self.size_from_n_boards(-(-n_chips // self.n_chips_per_board))
+
+    def size_from_n_boards(self, n_boards: int) -> Tuple[int, int]:
+        """
+        Returns the size needed to support this many boards.
+
+        :param int n_boards:
+        :rtype: (int, int)
+        :raises SpinnMachineException:
+            If multiple boards are needed but not supported
+        """
+        # Override for versions that support multiple boards
+        if n_boards == 1:
+            return self.board_shape
+        if self.supports_multiple_boards:
+            raise NotImplementedError
+        raise SpinnMachineException(
+            f"Version {self} does not support multiple boards")
+
+    @property
+    @abstractmethod
+    def supports_multiple_boards(self) -> bool:
+        """
+        Specifies if this version allows machines of more than one board
+
+        :return:
+        """
+        raise NotImplementedError
+
+    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+        """
+        The list of Local X, Y and link Id to add spinnaker links to
+
+        These are applied local to each Ethernet Chip and only if the link is
+        not connected to another board
+
+        :rtype: List((int, int, int))
+        """
+        raise NotImplementedError
+
+    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
+        """
+        The list of Local X, Y, link, fpga_link_id and fpga_id
+
+        These are applied local to each Ethernet Chip and even if the link is
+        connected to another board
+
+        :rtype: List((int, int, int, int, int))
         """
         raise NotImplementedError
