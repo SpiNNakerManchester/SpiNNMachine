@@ -31,6 +31,8 @@ class Version48Chips(AbstractVersion):
     Code shared by 48 Chip boards
 
     """
+    # pylint: disable=abstract-method
+
     __slots__ = ()
 
     @property
