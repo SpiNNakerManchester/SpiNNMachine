@@ -298,7 +298,7 @@ class MachineDataView(UtilsDataView):
         """
         if cls.__data._v_to_p_map is None:
             version = cls.get_machine_version()
-            # delayed import to avoid vicular reference
+            # delayed import to avoid circular reference
             # pylint: disable=import-outside-toplevel
             from spinn_machine.version.version_spin1 import VersionSpin1
             if isinstance(version, VersionSpin1):
