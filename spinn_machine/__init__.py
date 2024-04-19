@@ -88,7 +88,6 @@ from .routing_entry import RoutingEntry
 from .spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from .virtual_machine import virtual_machine
 
-
 __all__ = ["Chip", "CoreSubset", "CoreSubsets",
            "FrozenCoreSubsets", "Link", "Machine", "MulticastRoutingEntry",
            "Router", "RoutingEntry", "SpiNNakerTriadGeometry",

@@ -59,9 +59,9 @@ class Version3(VersionSpin1):
     @overrides(VersionSpin1._verify_size)
     def _verify_size(self, width: int, height: int):
         if width != 2:
-            raise SpinnMachineException("Unexpected {width=}")
+            raise SpinnMachineException(f"Unexpected {width=}")
         if height != 2:
-            raise SpinnMachineException("Unexpected {height=}")
+            raise SpinnMachineException(f"Unexpected {height=}")
 
     @overrides(VersionSpin1._create_machine)
     def _create_machine(self, width: int, height: int, origin: str) -> Machine:
@@ -72,6 +72,11 @@ class Version3(VersionSpin1):
         if x != 0 or y != 0:
             return "Only Chip 0, 0 may be an Ethernet Chip"
         return None
+
+    @property
+    @overrides(VersionSpin1.supports_multiple_boards)
+    def supports_multiple_boards(self) -> bool:
+        return False
 
     @overrides(VersionSpin1.spinnaker_links)
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:

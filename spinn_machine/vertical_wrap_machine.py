@@ -27,10 +27,6 @@ class VerticalWrapMachine(Machine):
     This class provides the more complex maths to deal with wraps.
     """
 
-    @overrides(Machine.multiple_48_chip_boards)
-    def multiple_48_chip_boards(self) -> bool:
-        return (self._width - 4) % 12 == 0 and self._height % 12 == 0
-
     @overrides(Machine.get_xys_by_ethernet)
     def get_xys_by_ethernet(
             self, ethernet_x: int, ethernet_y: int) -> Iterable[XY]:
