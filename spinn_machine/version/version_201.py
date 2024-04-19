@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, List, Mapping, Optional, Sequence, Tuple
+from typing import Dict, Final, List, Optional, Sequence, Tuple
 
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
@@ -52,7 +52,7 @@ class Version201(VersionSpin2):
 
     @property
     @overrides(VersionSpin2.chip_core_map)
-    def chip_core_map(self) -> Mapping[XY, int]:
+    def chip_core_map(self) -> Dict[XY, int]:
         return CHIPS_PER_BOARD
 
     @overrides(VersionSpin2.get_potential_ethernet_chips)

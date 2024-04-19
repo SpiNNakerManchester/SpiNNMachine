@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import annotations
 import logging
-from typing import List, Mapping, Optional, Sequence, Tuple, TYPE_CHECKING
+from typing import Dict, List, Optional, Sequence, Tuple, TYPE_CHECKING
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
@@ -204,7 +204,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def chip_core_map(self) -> Mapping[XY, int]:
+    def chip_core_map(self) -> Dict[XY, int]:
         """
         A map off the expected x,y coordinates on a standard board to
         the most likely number of cores on that chip.
