@@ -18,8 +18,8 @@ from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 if TYPE_CHECKING:
     from .link import Link
-    from .fixed_route_entry import FixedRouteEntry
     from .multicast_routing_entry import MulticastRoutingEntry
+    from .routing_entry import RoutingEntry
 
 
 class Router(object):
@@ -146,7 +146,7 @@ class Router(object):
     @staticmethod
     def convert_routing_table_entry_to_spinnaker_route(
             routing_table_entry: Union[
-                MulticastRoutingEntry, FixedRouteEntry]) -> int:
+                MulticastRoutingEntry, RoutingEntry]) -> int:
         """
         Convert a routing table entry represented in software to a
         binary routing table entry usable on the machine.
@@ -154,7 +154,7 @@ class Router(object):
         :param routing_table_entry:
             The entry to convert
         :type routing_table_entry: ~spinn_machine.MulticastRoutingEntry or
-             ~spinn_machine.FixedRouteEntry
+             ~spinn_machine.RoutingEntry
         :rtype: int
         """
         route_entry = 0

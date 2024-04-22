@@ -43,6 +43,8 @@ class _MachineDataModel(object):
 
     __slots__ = [
         # Data values cached
+        "_all_monitor_cores",
+        "_ethernet_monitor_cores",
         "_machine",
         "_machine_generator",
         "_machine_version",
@@ -73,6 +75,8 @@ class _MachineDataModel(object):
         This does NOT clear the machine as it may have been asked for before
         """
         self._soft_reset()
+        self._all_monitor_cores: int = 0
+        self._ethernet_monitor_cores: int = 0
         self._machine: Optional[Machine] = None
         self._user_accessed_machine = False
 
@@ -263,3 +267,32 @@ class MachineDataView(UtilsDataView):
         if cls.__data._machine_version is None:
             cls.__data._machine_version = version_factory()
         return cls.__data._machine_version
+
+    @classmethod
+    def get_all_monitor_cores(cls) -> int:
+        """
+        The number of cores on every chip reported to be used by \
+        monitor vertices.
+
+        Ethernet-enabled chips may have more.
+
+        Does not include the system core reserved by the machine/ scamp.
+
+        :rtype: int
+        """
+        return cls.__data._all_monitor_cores
+
+    @classmethod
+    def get_ethernet_monitor_cores(cls) -> int:
+        """
+        The number of cores on every Ethernet chip reported to be used by \
+        monitor vertices.
+
+        This includes the one returned by get_all_monitor_cores unless for
+        some reason these are not on Ethernet chips.
+
+        Does not include the system core reserved by the machine/ scamp.
+
+        :rtype: int
+        """
+        return cls.__data._ethernet_monitor_cores
