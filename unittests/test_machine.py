@@ -273,7 +273,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         Notice that the function only does the math not validate the values.
         :return:
         """
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # full wrap around
         machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, 23))
@@ -302,7 +302,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         Notice that the function only does the math not validate the values.
         :return:
         """
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # full wrap around
         machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))

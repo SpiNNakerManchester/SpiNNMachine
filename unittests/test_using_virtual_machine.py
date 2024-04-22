@@ -109,7 +109,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertEqual(target, new_target, "{}{}".format(source, path))
 
     def test_nowrap_shortest_path(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         machine = virtual_machine(16, 28, validate=True)
         for source in machine.chip_coordinates:
             for target in machine.chip_coordinates:
@@ -123,7 +123,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, 1000000, 1000000)
 
     def test_fullwrap_shortest_path(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         width = 12
         height = 24
         machine = virtual_machine(width, height, validate=True)
@@ -140,7 +140,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     def test_hoizontal_wrap_shortest_path(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         width = 12
         height = 16
         machine = virtual_machine(width, height, validate=False)
@@ -165,7 +165,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     def test_vertical_wrap_shortest_path(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         width = 16
         height = 12
         machine = virtual_machine(width, height, validate=False)
@@ -223,7 +223,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(3, 3)], unreachable)
 
     def test_unreachable_incoming_local_chips(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -233,7 +233,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(8, 7)], unreachable)
 
     def test_unreachable_outgoing_local_chips(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -243,7 +243,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(8, 7)], unreachable)
 
     def test_repair_with_local_orphan(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -258,7 +258,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertFalse(repaired.is_chip_at(8, 7))
 
     def test_repair_with_one_way_links_different_boards(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         machine = virtual_machine(12, 12)
         # Assumes boards of exactly size 8,8
         # Delete some links between boards
@@ -274,7 +274,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertIsNotNone(new_machine)
 
     def test_oneway_link_no_repair(self):
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         machine = virtual_machine(8, 8)
 
         # Delete some random links
