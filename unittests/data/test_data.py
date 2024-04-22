@@ -59,7 +59,7 @@ class TestSimulatorData(unittest.TestCase):
         self.assertTrue(MachineDataView.has_machine())
 
     def test_where_is_mocked(self):
-        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         writer = MachineDataWriter.mock()
         self.assertEqual(
             "No Machine created yet",
@@ -77,7 +77,7 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.where_is_chip(machine.get_chip_at(2, 8)))
 
     def test_where_is_setup(self):
-        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         writer = MachineDataWriter.setup()
         self.assertEqual(
             "No Machine created yet",

@@ -253,7 +253,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertFalse(new_machine.is_chip_at(width + 2, height // 2))
 
     def test_machine_get_chips_on_board(self):
-        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         new_machine = virtual_machine_by_boards(3)
         version = MachineDataView.get_machine_version()
         for eth_chip in new_machine._ethernet_connected_chips:
