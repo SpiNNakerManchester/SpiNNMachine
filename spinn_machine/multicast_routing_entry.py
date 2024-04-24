@@ -150,7 +150,7 @@ class MulticastRoutingEntry(object):
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
-        return (f"{self._key}:{self._mask}:"
+        return (f"0x{self._key:08X}:0x{self._mask:08X}:"
                 f"{repr(self._routing_entry)}")
 
     def __str__(self) -> str:
