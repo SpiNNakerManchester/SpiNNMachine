@@ -66,7 +66,8 @@ def _machine_ignore(
                     links.append(link)
             router = Router(links, chip.router.n_available_multicast_entries)
             chip = Chip(
-                chip.x, chip.y, chip.n_processors, router, chip.sdram,
+                chip.x, chip.y, chip.scamp_processors_ids,
+                chip.placable_processors_ids, router, chip.sdram,
                 chip.nearest_ethernet_x, chip.nearest_ethernet_y,
                 chip.ip_address, chip.tag_ids)
         new_machine.add_chip(chip)

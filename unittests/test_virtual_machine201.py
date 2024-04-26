@@ -46,11 +46,11 @@ class TestVirtualMachine201(unittest.TestCase):
         _ip = "192.162.240.253"
 
         if (x == y == 0):
-            return Chip(x, y, n_processors, _router, _sdram,
+            return Chip(x, y, [0], range(1, n_processors), _router, _sdram,
                         nearest_ethernet_chip[0],
                         nearest_ethernet_chip[1], _ip)
         else:
-            return Chip(x, y, n_processors, _router, _sdram,
+            return Chip(x, y, [0], range(1, n_processors), _router, _sdram,
                         nearest_ethernet_chip[0],
                         nearest_ethernet_chip[1], None)
 
