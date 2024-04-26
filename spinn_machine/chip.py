@@ -11,12 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import (Collection, Iterable, Iterator, Optional, Tuple)
+from typing import (Iterable, Iterator, Optional, Tuple)
 
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.typing.coords import XY
 
-from spinn_machine.data import MachineDataView
 from .router import Router
 
 
@@ -29,31 +28,31 @@ class Chip(XY):
     # tag 0 is reserved for stuff like IO STD
     _IPTAG_IDS = OrderedSet(range(1, 8))
 
-    def __new__(cls, x: int, y: int, n_processors: int, router: Router,
+    def __new__(cls, x: int, y: int, scamp_processors: Iterable[int],
+                placable_processors: Iterable[int], router: Router,
                 sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
                 ip_address: Optional[str] = None,
                 tag_ids: Optional[Iterable[int]] = None,
-                down_cores: Optional[Collection[int]] = None,
-                parent_link: Optional[int] = None,
-                v_to_p_map: Optional[bytes] = None):
+                parent_link: Optional[int] = None):
         return tuple.__new__(cls, (x, y))
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
     # pylint: disable=unused-argument
-    def __init__(self, x: int, y: int, n_processors: int, router: Router,
+    def __init__(self, x: int, y: int, scamp_processors: Iterable[int],
+                 placable_processors: Iterable[int], router: Router,
                  sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
                  ip_address: Optional[str] = None,
                  tag_ids: Optional[Iterable[int]] = None,
-                 down_cores: Optional[Collection[int]] = None,
-                 parent_link: Optional[int] = None,
-                 v_to_p_map: Optional[bytes] = None):
+                 parent_link: Optional[int] = None):
         """
         :param int x: the x-coordinate of the chip's position in the
             two-dimensional grid of chips
         :param int y: the y-coordinate of the chip's position in the
             two-dimensional grid of chips
-        :param int n_processors:
-            the number of processors including monitor processors.
+        :param iterable(int) scamp_processors:
+            the ids of scamp processors
+        :param iterable(int) placable_processors:
+            the ids of processors excluding scamp processors.
         :param ~spinn_machine.Router router: a router for the chip
         :param int sdram: an SDRAM for the chip
         :param ip_address:
@@ -67,8 +66,6 @@ class Chip(XY):
         :type nearest_ethernet_x: int or None
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
         :type nearest_ethernet_y: int or None
-        :param down_cores: Ids of cores that are down for this Chip
-        :type down_cores: iterable(int) or None
         :param parent_link: The link down which the parent chips is found in
             the tree of chips towards the root (boot) chip
         :type parent_link: int or None
@@ -80,10 +77,8 @@ class Chip(XY):
             ``processor_id``
         """
         # X and Y set by new
-        self._scamp_processors = tuple(range(
-                    MachineDataView.get_machine_version().n_scamp_cores))
-        self._placable_processors = self.__generate_processors(
-            n_processors, down_cores)
+        self._scamp_processors = tuple(scamp_processors)
+        self._placable_processors = tuple(placable_processors)
         self._router = router
         self._sdram = sdram
         self._ip_address = ip_address
@@ -96,24 +91,6 @@ class Chip(XY):
         self._nearest_ethernet_x = nearest_ethernet_x
         self._nearest_ethernet_y = nearest_ethernet_y
         self._parent_link = parent_link
-        self._v_to_p_map = v_to_p_map
-
-    def __generate_processors(
-            self, n_processors: int,
-            down_cores: Optional[Collection[int]]) -> Tuple[int, ...]:
-        n_monitors = MachineDataView.get_machine_version().n_scamp_cores
-        if down_cores is None:
-            return tuple(range(n_monitors, n_processors))
-        else:
-            processors = list()
-            for i in range(n_monitors):
-                if i in down_cores:
-                    raise NotImplementedError(
-                        f"Declaring monitor core {i} as down is not supported")
-            for i in range(n_monitors, n_processors):
-                if i not in down_cores:
-                    processors.append(i)
-            return tuple(processors)
 
     def is_processor_with_id(self, processor_id: int) -> bool:
         """
@@ -267,31 +244,6 @@ class Chip(XY):
         """
         return self._parent_link
 
-    def get_physical_core_id(self, virtual_p: int) -> Optional[int]:
-        """
-        Get the physical core ID from a virtual core ID.
-
-        :param int virtual_p: The virtual core ID
-        :rtype: int or None if core not in map
-        """
-        if (self._v_to_p_map is None or virtual_p >= len(self._v_to_p_map) or
-                self._v_to_p_map[virtual_p] == 0xFF):
-            return None
-        return self._v_to_p_map[virtual_p]
-
-    def get_physical_core_string(self, virtual_p: int) -> str:
-        """
-        Get a string that can be appended to a core to show the physical
-        core, or an empty string if not possible.
-
-        :param int virtual_p: The virtual core ID
-        :rtype: str
-        """
-        physical_p = self.get_physical_core_id(virtual_p)
-        if physical_p is None:
-            return ""
-        return f" (ph: {physical_p})"
-
     def __str__(self) -> str:
         if self._ip_address:
             ip_info = f"ip_address={self.ip_address} "
@@ -299,8 +251,7 @@ class Chip(XY):
             ip_info = ""
         return (
             f"[Chip: x={self[0]}, y={self[1]}, {ip_info}"
-            f"n_cores={self.n_processors}, "
-            f"mon={self.get_physical_core_id(0)}]")
+            f"n_cores={self.n_processors}]")
 
     def __repr__(self) -> str:
         return self.__str__()
