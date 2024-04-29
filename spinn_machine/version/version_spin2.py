@@ -31,7 +31,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     __slots__ = ()
 
     def __init__(self) -> None:
-        super().__init__(max_cores_per_chip=152,
+        super().__init__(max_cores_per_chip=153,
                          max_sdram_per_chip=1073741824)
 
     @property

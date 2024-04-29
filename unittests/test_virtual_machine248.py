@@ -48,29 +48,7 @@ class TestVirtualMachine248(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             virtual_machine(size_x, size_y, validate=True)
 
-    def test_version_5(self):
-        set_config("Machine", "version", SPIN2_48CHIP)
-        vm = virtual_machine(width=8, height=8)
-        self.assertEqual(48, vm.n_chips)
-        self.assertEqual(1, len(vm.ethernet_connected_chips))
-
-        count = 0
-        for _chip in vm.chips:
-            for _link in _chip.router.links:
-                count += 1
-        self.assertEqual(240, count)
-        self.assertEqual(120, vm.get_links_count())
-#        self.assertEqual(str(vm),
-#                         "[VirtualMachine: max_x=1, max_y=1, n_chips=4]")
-        # TODO check this is correct
-        self.assertEqual(7283, vm.get_cores_count())
-        count = 0
-        for _chip in vm.get_existing_xys_on_board(vm[1, 1]):
-            count += 1
-        self.assertEqual(48, count)
-        self.assertEqual((0, 4), vm.get_unused_xy())
-
-    def test_version_5_8_by_8(self):
+    def test_version_248_8_by_8(self):
         set_config("Machine", "version", SPIN2_48CHIP)
         vm = virtual_machine(width=8, height=8, validate=True)
         self.assertEqual(48, vm.n_chips)
@@ -82,7 +60,7 @@ class TestVirtualMachine248(unittest.TestCase):
         self.assertEqual(240, count)
         count = sum(_chip.n_processors for _chip in vm.chips)
         # TODO check this is correct
-        self.assertEqual(count, 7283)
+        self.assertEqual(count, 7331)
         # TODO LINKS
         """
         spinnaker_links = (list(vm.spinnaker_links))
