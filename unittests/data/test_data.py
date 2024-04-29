@@ -98,6 +98,30 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.where_is_chip(None)
         )
 
+    def test_v_to_p(self):
+        writer = MachineDataWriter.setup()
+        # TODO SPIN2
+        set_config("Machine", "version", FIVE)
+        # Before setting
+        self.assertEqual(None, writer.get_physical_core_id((1, 2), 3))
+        self.assertEqual("", writer.get_physical_core_string((1, 2), 3))
+
+        # Set a v_to_p
+        v_to_p = dict()
+        v_to_p[(1, 2)] = bytes([10, 11, 12, 13, 14])
+        writer.set_v_to_p_map(v_to_p)
+        # XY that exists
+        self.assertEqual(13, writer.get_physical_core_id((1, 2), 3))
+        self.assertEqual(" (ph: 13)",
+                         writer.get_physical_core_string((1, 2), 3))
+        # Xy that does not exist
+        self.assertEqual(None, writer.get_physical_core_id((1, 4), 3))
+        self.assertEqual("",
+                         writer.get_physical_core_string((1, 4), 3))
+        self.assertEqual(None, writer.get_physical_core_id((1, 2), 19))
+        self.assertEqual("",
+                         writer.get_physical_core_string((1, 2), 19))
+
     def test_mock_any(self):
         # Should work with any version
         set_config("Machine", "versions", VersionStrings.ANY.text)

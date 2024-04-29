@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Callable, Optional, TYPE_CHECKING
+from typing import Callable, Dict, Optional, TYPE_CHECKING
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.data import UtilsDataView
 from spinn_machine.exceptions import SpinnMachineException
@@ -48,7 +48,8 @@ class _MachineDataModel(object):
         "_machine",
         "_machine_generator",
         "_machine_version",
-        "_user_accessed_machine"
+        "_user_accessed_machine",
+        "_v_to_p_map"
     ]
 
     def __new__(cls) -> '_MachineDataModel':
@@ -78,6 +79,7 @@ class _MachineDataModel(object):
         self._all_monitor_cores: int = 0
         self._ethernet_monitor_cores: int = 0
         self._machine: Optional[Machine] = None
+        self._v_to_p_map: Optional[Dict[XY, bytes]] = None
         self._user_accessed_machine = False
 
     def _soft_reset(self) -> None:
@@ -267,6 +269,68 @@ class MachineDataView(UtilsDataView):
         if cls.__data._machine_version is None:
             cls.__data._machine_version = version_factory()
         return cls.__data._machine_version
+
+    @classmethod
+    def set_v_to_p_map(cls, v_to_p_map: Dict[XY, bytes]):
+        """
+        Registers the mapping from Virtual to int physical core ids
+
+        Note: Only expected to be used in Version 1
+
+        :param dict((int, int), bytes) v_to_p_map:
+        """
+        if cls.__data._v_to_p_map is None:
+            cls.__data._v_to_p_map = v_to_p_map
+        else:
+            raise SpinnMachineException(
+                "Unexpected second call to set_v_to_p_map")
+
+    @classmethod
+    def get_physical_core_id(cls, xy: XY, virtual_p: int) -> Optional[int]:
+        """
+        Get the physical core ID from a virtual core ID.
+
+        Note: This call only works for Version 1
+
+        :param (int, int) xy: The Chip or its XY coordinates
+        :param int virtual_p: The virtual core ID
+        :rtype: int or None if core not in map
+        """
+        if cls.__data._v_to_p_map is None:
+            version = cls.get_machine_version()
+            # delayed import to avoid circular reference
+            # pylint: disable=import-outside-toplevel
+            from spinn_machine.version.version_spin1 import VersionSpin1
+            if isinstance(version, VersionSpin1):
+                return None
+            else:
+                # TODO Spin2
+                raise SpinnMachineException(
+                    f"This call is not supported when using Version {version}")
+        if xy in cls.__data._v_to_p_map:
+            v_to_p_map = cls.__data._v_to_p_map[xy]
+        else:
+            return None
+        if (virtual_p >= len(v_to_p_map) or v_to_p_map[virtual_p] == 0xFF):
+            return None
+        return v_to_p_map[virtual_p]
+
+    @classmethod
+    def get_physical_core_string(cls, xy: XY, virtual_p: int) -> str:
+        """
+        Returns a String representing the physical core
+
+        :param (int, int) xy: The Chip or its XY coordinates
+        :param virtual_p: The virtual (python) id for the core
+        :rtype: str
+        """
+        if cls.__data._v_to_p_map is not None:
+            physical_p = cls.get_physical_core_id(xy, virtual_p)
+            if physical_p is None:
+                return ""
+            return f" (ph: {physical_p})"
+        else:
+            return ""
 
     @classmethod
     def get_all_monitor_cores(cls) -> int:
