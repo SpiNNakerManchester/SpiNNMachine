@@ -285,7 +285,7 @@ class MachineDataView(UtilsDataView):
 
         :param dict((int, int), bytes) v_to_p_map:
         """
-        if  cls.__data._quad_map:
+        if cls.__data._quad_map:
             raise SpinnMachineException(
                 "Can not have both quad_map and v_to_p_map")
         if cls.__data._v_to_p_map is None:
