@@ -21,7 +21,7 @@ if __name__ == '__main__':
     with open(text_path, encoding="utf-8") as t_file:
         qpe = {}
         for line in t_file:
-            if line[0] =="#":
+            if line[0] == "#":
                 continue
             parts = line.split()
             v = int(parts[1])
