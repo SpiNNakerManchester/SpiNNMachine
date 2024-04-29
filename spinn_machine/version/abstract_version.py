@@ -438,3 +438,13 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :rtype: List((int, int, int, int, int))
         """
         raise NotImplementedError
+
+    def quads_maps(self) -> Optional[Dict[int, Tuple[int, int, int]]]:
+        """
+        If applicable returns a map of virtual id to quad qx, qy, qp
+
+        Spin 1 boards will return None!
+
+        :rtype: None or dict(int, (int, int, int)
+        """
+        raise NotImplementedError
