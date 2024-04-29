@@ -314,7 +314,7 @@ class MachineDataView(UtilsDataView):
         return cls.__data._v_to_p_map[xy][virtual_p]
 
     @classmethod
-    def get_physical_quad(cls, virtual_p: int) -> (int, int, int):
+    def get_physical_quad(cls, virtual_p: int) -> Tuple[int, int, int]:
         """
         Returns the quad qx, qy and qp for this virtual id
 
@@ -342,7 +342,7 @@ class MachineDataView(UtilsDataView):
         :param virtual_p: The virtual (python) id for the core
         :rtype: str
         """
-        physical_p = Union[int, Tuple[int, int, int]]
+        physical_p: Union[int, Tuple[int, int, int]]
         try:
             if cls.__data._v_to_p_map is not None:
                 physical_p = cls.get_physical_core_id(xy, virtual_p)
