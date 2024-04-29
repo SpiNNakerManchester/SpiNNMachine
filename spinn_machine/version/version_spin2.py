@@ -61,7 +61,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
 
     def quads_maps(self) -> Dict[int, Tuple[int, int, int]]:
         return (
-            {0: {0, 0, 0},
+            {0: (0, 0, 0),
              1: (7, 6, 0), 2: (7, 6, 1), 3: (7, 6, 2), 4: (7, 6, 3),
              5: (7, 5, 0), 6: (7, 5, 1), 7: (7, 5, 2), 8: (7, 5, 3),
              9: (6, 6, 0), 10: (6, 6, 1), 11: (6, 6, 2), 12: (6, 6, 3),
