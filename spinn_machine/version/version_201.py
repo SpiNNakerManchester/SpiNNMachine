@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, List, Mapping, Optional, Sequence, Tuple
+from typing import Dict, Final, List, Optional, Sequence, Tuple
 
-from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
 
@@ -22,12 +21,13 @@ from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.no_wrap_machine import NoWrapMachine
 from spinn_machine.machine import Machine
 
-from .abstract_version import AbstractVersion
+from .version_factory import SPIN2_1CHIP
+from .version_spin2 import VersionSpin2
 
-CHIPS_PER_BOARD: Final = {(0, 0): 152}
+CHIPS_PER_BOARD: Final = {(0, 0): 153}
 
 
-class Version201(AbstractVersion, metaclass=AbstractBase):
+class Version201(VersionSpin2):
     # pylint: disable=abstract-method
     """
     Code for the 1 Chip test Spin2 board versions
@@ -35,86 +35,57 @@ class Version201(AbstractVersion, metaclass=AbstractBase):
 
     __slots__ = ()
 
-    def __init__(self) -> None:
-        super().__init__(max_cores_per_chip=152,
-                         max_sdram_per_chip=1073741824)
-
     @property
-    @overrides(AbstractVersion.n_scamp_cores)
-    def n_scamp_cores(self) -> int:
-        return 1
-
-    @property
-    @overrides(AbstractVersion.n_router_entries)
-    def n_router_entries(self) -> int:
-        return 16384
-
-    @property
-    @overrides(AbstractVersion.minimum_cores_expected)
-    def minimum_cores_expected(self) -> int:
-        return 100
-
-    @property
-    @overrides(AbstractVersion.clock_speeds_hz)
-    def clock_speeds_hz(self) -> List[int]:
-        return [150, 300]
-
-    @property
-    @overrides(AbstractVersion.dtcm_bytes)
-    def dtcm_bytes(self) -> int:
-        raise NotImplementedError
-
-    @property
-    @overrides(AbstractVersion.name)
+    @overrides(VersionSpin2.name)
     def name(self) -> str:
         return "Spin2 1 Chip"
 
     @property
-    @overrides(AbstractVersion.number)
+    @overrides(VersionSpin2.number)
     def number(self) -> int:
-        return 201
+        return SPIN2_1CHIP
 
     @property
-    @overrides(AbstractVersion.board_shape)
+    @overrides(VersionSpin2.board_shape)
     def board_shape(self) -> Tuple[int, int]:
         return (1, 1)
 
     @property
-    @overrides(AbstractVersion.chip_core_map)
-    def chip_core_map(self) -> Mapping[XY, int]:
+    @overrides(VersionSpin2.chip_core_map)
+    def chip_core_map(self) -> Dict[XY, int]:
         return CHIPS_PER_BOARD
 
-    @overrides(AbstractVersion.get_potential_ethernet_chips)
+    @overrides(VersionSpin2.get_potential_ethernet_chips)
     def get_potential_ethernet_chips(
             self, width: int, height: int) -> Sequence[XY]:
         return [(0, 0)]
 
-    @overrides(AbstractVersion._verify_size)
+    @overrides(VersionSpin2._verify_size)
     def _verify_size(self, width: int, height: int):
         if width != 1:
             raise SpinnMachineException(f"Unexpected {width=}")
         if height != 1:
             raise SpinnMachineException(f"Unexpected {height=}")
 
-    @overrides(AbstractVersion._create_machine)
+    @overrides(VersionSpin2._create_machine)
     def _create_machine(self, width: int, height: int, origin: str) -> Machine:
         return NoWrapMachine(width, height, CHIPS_PER_BOARD, origin)
 
-    @overrides(AbstractVersion.illegal_ethernet_message)
+    @overrides(VersionSpin2.illegal_ethernet_message)
     def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
         if x != 0 or y != 0:
             return "Only Chip 0, 0 may be an Ethernet Chip"
         return None
 
     @property
-    @overrides(AbstractVersion.supports_multiple_boards)
+    @overrides(VersionSpin2.supports_multiple_boards)
     def supports_multiple_boards(self) -> bool:
         return False
 
-    @overrides(AbstractVersion.spinnaker_links)
+    @overrides(VersionSpin2.spinnaker_links)
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         return []
 
-    @overrides(AbstractVersion.fpga_links)
+    @overrides(VersionSpin2.fpga_links)
     def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
         return []

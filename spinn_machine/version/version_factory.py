@@ -31,6 +31,7 @@ THREE = 3
 FIVE = 5
 # New value subject to change
 SPIN2_1CHIP = 201
+SPIN2_48CHIP = 248
 
 
 def version_factory() -> AbstractVersion:
@@ -45,6 +46,7 @@ def version_factory() -> AbstractVersion:
     from .version_3 import Version3
     from .version_5 import Version5
     from .version_201 import Version201
+    from .version_248 import Version248
 
     version = get_config_int_or_none("Machine", "version")
     versions = get_config_str_or_none("Machine", "versions")
@@ -64,8 +66,11 @@ def version_factory() -> AbstractVersion:
     if version in [4, 5]:
         return Version5()
 
-    if version == 201:
+    if version == SPIN2_1CHIP:
         return Version201()
+
+    if version == SPIN2_48CHIP:
+        return Version248()
 
     spalloc_server = get_config_str_or_none("Machine", "spalloc_server")
     if spalloc_server is not None:

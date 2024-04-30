@@ -121,7 +121,7 @@ class TestJsonMachine(unittest.TestCase):
             machine_from_json(jpath)
 
     def test_ethernet_exceptions(self):
-        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         vm = virtual_machine_by_boards(2)
         MachineDataWriter.mock().set_machine(vm)
         eth2 = vm.ethernet_connected_chips[1]
