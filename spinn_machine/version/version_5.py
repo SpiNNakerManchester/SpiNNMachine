@@ -12,17 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import math
-from typing import Final, List, Mapping, Optional, Sequence, Tuple
+from typing import Dict, Final, List, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
-from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.machine import Machine
-from spinn_machine.full_wrap_machine import FullWrapMachine
-from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
-from spinn_machine.no_wrap_machine import NoWrapMachine
-from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
-from spinn_machine import SpiNNakerTriadGeometry
+
+from .version_48_chips import Version48Chips
 from .version_spin1 import VersionSpin1
 
 CHIPS_PER_BOARD: Final = {
@@ -37,7 +31,7 @@ CHIPS_PER_BOARD: Final = {
 }
 
 
-class Version5(VersionSpin1):
+class Version5(VersionSpin1, Version48Chips):
     """
     Code for the large Spin1 48 Chip boards
 
@@ -56,74 +50,9 @@ class Version5(VersionSpin1):
         return 5
 
     @property
-    @overrides(VersionSpin1.board_shape)
-    def board_shape(self) -> Tuple[int, int]:
-        return (8, 8)
-
-    @property
     @overrides(VersionSpin1.chip_core_map)
-    def chip_core_map(self) -> Mapping[XY, int]:
+    def chip_core_map(self) -> Dict[XY, int]:
         return CHIPS_PER_BOARD
-
-    @overrides(VersionSpin1.get_potential_ethernet_chips)
-    def get_potential_ethernet_chips(
-            self, width: int, height: int) -> Sequence[XY]:
-        geometry = SpiNNakerTriadGeometry.get_spinn5_geometry()
-        return geometry.get_potential_ethernet_chips(width, height)
-
-    @overrides(VersionSpin1._verify_size)
-    def _verify_size(self, width: int, height: int):
-        if width == height == 8:
-            # 1 board
-            return
-        if width % 12 not in [0, 4]:
-            raise SpinnMachineException(
-                f"{width=} must be a multiple of 12 "
-                f"or a multiple of 12 plus 4")
-        if height % 12 not in [0, 4]:
-            raise SpinnMachineException(
-                f"{height=} must be a multiple of 12 "
-                f"or a multiple of 12 plus 4")
-
-    @overrides(VersionSpin1._create_machine)
-    def _create_machine(self, width: int, height: int, origin: str) -> Machine:
-        if width % 12 == 0:
-            if height % 12 == 0:
-                return FullWrapMachine(width, height, CHIPS_PER_BOARD, origin)
-            else:
-                return HorizontalWrapMachine(
-                    width, height, CHIPS_PER_BOARD, origin)
-        else:
-            if height % 12 == 0:
-                return VerticalWrapMachine(
-                    width, height, CHIPS_PER_BOARD, origin)
-            else:
-                return NoWrapMachine(width, height, CHIPS_PER_BOARD, origin)
-
-    @overrides(VersionSpin1.illegal_ethernet_message)
-    def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
-        if x % 4 != 0:
-            return "Only Chip with X divisible by 4 may be an Ethernet Chip"
-        if (x + y) % 12 != 0:
-            return "Only Chip with x + y divisible by 12 " \
-                   "may be an Ethernet Chip"
-        return None
-
-    @overrides(VersionSpin1.size_from_n_boards)
-    def size_from_n_boards(self, n_boards: int) -> Tuple[int, int]:
-        if n_boards <= 1:
-            return 8, 8
-        # This replicates how spalloc does it
-        # returning a rectangle of triads
-        triads = math.ceil(n_boards / 3)
-        width = math.ceil(math.sqrt(triads))
-        height = math.ceil(triads / width)
-        return width * 12 + 4, height * 12 + 4
-
-    @property
-    @overrides(VersionSpin1.supports_multiple_boards)
-    def supports_multiple_boards(self) -> bool:
-        return True
 
     @overrides(VersionSpin1.spinnaker_links)
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:

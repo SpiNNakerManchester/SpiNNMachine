@@ -25,14 +25,15 @@ class VersionStrings(Enum):
     as far as possible.
     """
 
-    ANY = (1, "Any", [3, 5, 201])
-    FOUR_PLUS = (2, "Four plus", [3, 5])
+    ANY = (1, "Any", [3, 5, 201, 248])
+    FOUR_PLUS = (2, "Four plus", [3, 5, 248])
     # To test stuff with more than four chips.
-    BIG = (3, "Big", [5])
-    # Specifically to test stuff over multiple boards
-    MULTIPLE_BOARDS = (4, "Multiple boards", [5])
-    # Specifically to test the various wrapping Machine classes
-    WRAPPABLE = (5, "Wrappable", [5])
+    BIG = (3, "Big", [5, 248])
+    # Tests that specifically require 8 by 8 board(s)
+    # Could be changed but not worth the effort until needed
+    EIGHT_BY_EIGHT = (5, "eight by eigth", [5, 248])
+    # Tests for 8 by 8 boards with FPGAs defined
+    WITH_FPGAS = (6, "with fpgas", [5])
 
     def __new__(cls, *args, **kwds):
         vs = object.__new__(cls)

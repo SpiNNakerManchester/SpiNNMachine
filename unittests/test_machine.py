@@ -253,7 +253,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertFalse(new_machine.is_chip_at(width + 2, height // 2))
 
     def test_machine_get_chips_on_board(self):
-        set_config("Machine", "versions", VersionStrings.MULTIPLE_BOARDS.text)
+        set_config("Machine", "versions", VersionStrings.BIG.text)
         new_machine = virtual_machine_by_boards(3)
         version = MachineDataView.get_machine_version()
         for eth_chip in new_machine._ethernet_connected_chips:
@@ -273,7 +273,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         Notice that the function only does the math not validate the values.
         :return:
         """
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # full wrap around
         machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, 23))
@@ -302,7 +302,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         Notice that the function only does the math not validate the values.
         :return:
         """
-        set_config("Machine", "versions", VersionStrings.WRAPPABLE.text)
+        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # full wrap around
         machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
