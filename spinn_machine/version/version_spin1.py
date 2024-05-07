@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Iterable
+from typing import List, Iterable, Tuple
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.overrides import overrides
 from spinn_machine.exceptions import SpinnMachineInvalidParameterException
@@ -55,9 +55,22 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     def dtcm_bytes(self) -> int:
         return 2 ** 16
 
+    @overrides(AbstractVersion.quads_maps)
     def quads_maps(self) -> None:
         return None
 
+    @overrides(AbstractVersion.qx_qy_qp_to_virtual)
+    def qx_qy_qp_to_virtual(self, qx:int, qy:int, qp:int) -> int:
+        raise NotImplementedError("Not supported in Version 1")
+
+    @overrides(AbstractVersion.virtual_to_qx_qy_qp)
+    def virtual_to_qx_qy_qp(self, virtual:int) -> Tuple[int, int, int]:
+        raise NotImplementedError("Not supported in Version 1")
+
+    @overrides(AbstractVersion.version_parse_cores_string)
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
+        if result is not None:
+            return range(int(result.group(1)), int(result.group(2)) + 1)
+
         raise SpinnMachineInvalidParameterException(
             f"{core_string} does not represent cores for Version 1 boards")

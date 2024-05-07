@@ -16,6 +16,8 @@ import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
+from spinn_machine.version import SPIN2_1CHIP
+from spinn_machine.version.version_201 import Version201
 from spinn_machine.version.version_strings import VersionStrings
 
 class TestDownCores(unittest.TestCase):
@@ -44,3 +46,13 @@ class TestDownCores(unittest.TestCase):
         except Exception as ex:
             self.assertTrue("downed_link" in str(ex))
 
+    def test_qx_qy_qp_to_virtual(self):
+        version = Version201()
+        self.assertEqual(75, version.qx_qy_qp_to_virtual(3, 4, 2))
+        self.assertEqual((3, 4, 2), version.virtual_to_qx_qy_qp(75))
+
+    def test_version_401(self):
+        set_config("Machine", "version", SPIN2_1CHIP)
+        ignore = IgnoreCore.parse_string("3,3,3.4.2,4")
+        self.assertEqual(75, ignore.p)
+        self.assertEqual(75, ignore.virtual_p)

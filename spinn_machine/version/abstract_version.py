@@ -423,6 +423,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         """
         The list of Local X, Y and link Id to add spinnaker links to
@@ -434,6 +435,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
         """
         The list of Local X, Y, link, fpga_link_id and fpga_id
@@ -445,6 +447,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def quads_maps(self) -> Optional[Dict[int, Tuple[int, int, int]]]:
         """
         If applicable returns a map of virtual id to quad qx, qy, qp
@@ -452,6 +455,33 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Spin 1 boards will return None!
 
         :rtype: None or dict(int, (int, int, int)
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def qx_qy_qp_to_virtual(self, qx:int, qy:int, qp:int) -> int:
+        """
+        Converts quad coordinates to virtual p
+
+        :param int qx: quad x coordinate of the core
+        :param int qy: quad y coordinate of the core
+        :param int qp: quad p coordinate of the core
+        :rtype: int
+        :raises NotImplementedError:
+            If called on a version that does not support quads
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def virtual_to_qx_qy_qp(self, virtual:int) -> Tuple[int, int, int]:
+        """
+        Converts  virtual p to quad coordinates
+
+        :param int virtual: Virtual id
+        :return: (qx, qy, qp)
+        :rtype: (int, int, int)
+        :raises NotImplementedError:
+            If called on a version that does not support quads
         """
         raise NotImplementedError
 
@@ -484,6 +514,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         result = CORE_RANGE.fullmatch(core_string)
         if result is not None:
             return range(int(result.group(1)), int(result.group(2)) + 1)
+
+        return self.version_parse_cores_string(core_string)
 
     @abstractmethod
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
