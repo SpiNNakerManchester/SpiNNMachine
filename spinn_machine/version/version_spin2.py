@@ -12,14 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Final, List, Tuple
+import re
+from typing import Dict, Final, List, Iterable, Tuple
 
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.overrides import overrides
 
+from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 from .abstract_version import AbstractVersion
 
 CHIPS_PER_BOARD: Final = {(0, 0): 152}
+
+CORE_QX_QY_QP = re.compile(r"\d\.\d\.\d")
 
 
 class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
@@ -100,3 +104,11 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
              141: (6, 2, 0), 142: (6, 2, 1), 143: (6, 2, 2), 144: (6, 2, 3),
              145: (6, 3, 0), 146: (6, 3, 1), 147: (6, 3, 2), 148: (6, 3, 3),
              149: (5, 3, 0), 150: (5, 3, 1), 151: (5, 3, 2), 152: (5, 3, 3)})
+
+    def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
+        result = CORE_QX_QY_QP.fullmatch(core_string)
+        if result is not None:
+            raise NotImplementedError("TODO")
+
+        raise SpinnMachineInvalidParameterException(
+            f"{core_string} does not represent cores for Version 2 boards")

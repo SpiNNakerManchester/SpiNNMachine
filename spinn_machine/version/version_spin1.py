@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List
+from typing import List, Iterable
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.overrides import overrides
+from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 from .abstract_version import AbstractVersion
 
 
@@ -56,3 +57,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
 
     def quads_maps(self) -> None:
         return None
+
+    def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
+        raise SpinnMachineInvalidParameterException(
+            f"{core_string} does not represent cores for Version 1 boards")

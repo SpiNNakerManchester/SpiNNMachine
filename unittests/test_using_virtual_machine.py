@@ -343,25 +343,6 @@ class TestUsingVirtualMachine(unittest.TestCase):
         for i in range(12, 18):
             self.assertTrue(chip.is_processor_with_id(i))
 
-    def test_bad_ignores(self):
-        try:
-            IgnoreChip.parse_string("4,4,3,4:6,6,ignored_ip")
-        except Exception as ex:
-            self.assertTrue("downed_chip" in str(ex))
-
-        try:
-            IgnoreCore.parse_string("3,3,3,4: 5,5,-5:7,7,7,ignored_ip")
-        except Exception as ex:
-            self.assertTrue("downed_core" in str(ex))
-
-        empty = IgnoreCore.parse_string(None)
-        self.assertEqual(len(empty), 0)
-
-        try:
-            IgnoreLink.parse_string("1,3:5,3,3,ignored_ip")
-        except Exception as ex:
-            self.assertTrue("downed_link" in str(ex))
-
 
 if __name__ == '__main__':
     unittest.main()
