@@ -459,9 +459,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def qx_qy_qp_to_virtual(self, qx:int, qy:int, qp:int) -> int:
+    def qx_qy_qp_to_id(self, qx:int, qy:int, qp:int) -> int:
         """
-        Converts quad coordinates to virtual p
+        Converts quad coordinates to the core id
 
         :param int qx: quad x coordinate of the core
         :param int qy: quad y coordinate of the core
@@ -473,11 +473,11 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def virtual_to_qx_qy_qp(self, virtual:int) -> Tuple[int, int, int]:
+    def id_to_qx_qy_qp(self, id:int) -> Tuple[int, int, int]:
         """
-        Converts  virtual p to quad coordinates
+        Converts core id to quad coordinates
 
-        :param int virtual: Virtual id
+        :param int id: id of the core
         :return: (qx, qy, qp)
         :rtype: (int, int, int)
         :raises NotImplementedError:

@@ -107,13 +107,13 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     def quads_maps(self) -> Dict[int, Tuple[int, int, int]]:
         return QUAD_MAP
 
-    @overrides(AbstractVersion.qx_qy_qp_to_virtual)
-    def qx_qy_qp_to_virtual(self, qx:int, qy:int, qp:int) -> int:
+    @overrides(AbstractVersion.qx_qy_qp_to_id)
+    def qx_qy_qp_to_id(self, qx:int, qy:int, qp:int) -> int:
         return self._reverse_quad_map[(qx, qy, qp)]
 
-    @overrides(AbstractVersion.virtual_to_qx_qy_qp)
-    def virtual_to_qx_qy_qp(self, virtual:int) -> Tuple[int, int, int]:
-        return QUAD_MAP[virtual]
+    @overrides(AbstractVersion.id_to_qx_qy_qp)
+    def id_to_qx_qy_qp(self, id:int) -> Tuple[int, int, int]:
+        return QUAD_MAP[id]
 
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
         result = CORE_QX_QY_QP.fullmatch(core_string)
@@ -121,7 +121,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
             qx = int(result.group(1))
             qy = int(result.group(2))
             qp = int(result.group(3))
-            return (self.qx_qy_qp_to_virtual(qx, qy, qp), )
+            return (self.qx_qy_qp_to_id(qx, qy, qp),)
 
         raise SpinnMachineInvalidParameterException(
             f"{core_string} does not represent cores for Version 2 boards")

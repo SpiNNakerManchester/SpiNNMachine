@@ -59,12 +59,12 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     def quads_maps(self) -> None:
         return None
 
-    @overrides(AbstractVersion.qx_qy_qp_to_virtual)
-    def qx_qy_qp_to_virtual(self, qx:int, qy:int, qp:int) -> int:
+    @overrides(AbstractVersion.qx_qy_qp_to_id)
+    def qx_qy_qp_to_id(self, qx:int, qy:int, qp:int) -> int:
         raise NotImplementedError("Not supported in Version 1")
 
-    @overrides(AbstractVersion.virtual_to_qx_qy_qp)
-    def virtual_to_qx_qy_qp(self, virtual:int) -> Tuple[int, int, int]:
+    @overrides(AbstractVersion.id_to_qx_qy_qp)
+    def id_to_qx_qy_qp(self, id:int) -> Tuple[int, int, int]:
         raise NotImplementedError("Not supported in Version 1")
 
     @overrides(AbstractVersion.version_parse_cores_string)
