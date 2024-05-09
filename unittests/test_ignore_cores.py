@@ -48,7 +48,7 @@ class TestDownCores(unittest.TestCase):
             self.assertTrue("downed_link" in str(ex))
 
     def test_qx_qy_qp_to_id_spin2(self):
-        version = Version201
+        version = Version201()
         self.assertEqual(75, version.qx_qy_qp_to_id(3, 4, 2))
         self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(75))
 
