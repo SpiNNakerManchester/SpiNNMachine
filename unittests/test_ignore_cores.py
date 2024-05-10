@@ -14,6 +14,7 @@
 
 import unittest
 from spinn_utilities.config_holder import set_config
+from spinn_utilities.exceptions import ConfigException
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.version import SPIN2_1CHIP
@@ -46,6 +47,11 @@ class TestDownCores(unittest.TestCase):
             IgnoreLink.parse_string("1,3:5,3,3,ignored_ip")
         except Exception as ex:
             self.assertTrue("downed_link" in str(ex))
+
+    def test_down_cores_bad_string(self):
+        set_config("Machine", "versions", VersionStrings.BIG.text)
+        with self.assertRaises(ConfigException):
+            IgnoreCore.parse_string("4,4,bacon")
 
     def test_qx_qy_qp_to_id_spin2(self):
         version = Version201()
