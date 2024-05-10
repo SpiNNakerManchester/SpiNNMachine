@@ -22,6 +22,7 @@ from spinn_machine.version.version_201 import Version201
 from spinn_machine.version.version_5 import Version5
 from spinn_machine.version.version_strings import VersionStrings
 
+
 class TestDownCores(unittest.TestCase):
 
     def setUp(self):

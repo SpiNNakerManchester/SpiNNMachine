@@ -19,7 +19,6 @@ from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
-from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 from .abstract_version import AbstractVersion
 
 CHIPS_PER_BOARD: Final = {(0, 0): 152}
