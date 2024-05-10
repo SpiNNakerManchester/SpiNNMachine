@@ -68,7 +68,7 @@ class TestDownCores(unittest.TestCase):
 
     def test_version_401(self):
         set_config("Machine", "version", SPIN2_1CHIP)
-        ignores = IgnoreCore.parse_string("3,3,3.4.2,4")
+        ignores = IgnoreCore.parse_string("0,0,3.4.2")
         self.assertEqual(1, len(ignores))
         for ignore in ignores:
             self.assertEqual(75, ignore.p)
