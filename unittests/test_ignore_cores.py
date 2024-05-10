@@ -63,7 +63,7 @@ class TestDownCores(unittest.TestCase):
         version = Version5()
         with self.assertRaises(NotImplementedError):
             self.assertEqual(75, version.qx_qy_qp_to_id(3, 4, 2))
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(ConfigException):
             self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(75))
 
     def test_version_401(self):

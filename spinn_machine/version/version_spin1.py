@@ -65,7 +65,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
 
     @overrides(AbstractVersion.id_to_qx_qy_qp)
     def id_to_qx_qy_qp(self, id: int) -> Tuple[int, int, int]:
-        raise NotImplementedError("Not supported in Version 1")
+        raise ConfigException("Not supported in Version 1")
 
     @overrides(AbstractVersion.version_parse_cores_string)
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
