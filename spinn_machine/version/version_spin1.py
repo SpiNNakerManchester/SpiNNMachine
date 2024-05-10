@@ -16,6 +16,8 @@ from typing import List, Iterable, Tuple
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
+
+from spinn_machine.exceptions import SpinnMachineException
 from .abstract_version import AbstractVersion
 
 
@@ -61,11 +63,11 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
 
     @overrides(AbstractVersion.qx_qy_qp_to_id)
     def qx_qy_qp_to_id(self, qx: int, qy: int, qp: int) -> int:
-        raise NotImplementedError("Not supported in Version 1")
+        raise SpinnMachineException("Not supported in Version 1")
 
     @overrides(AbstractVersion.id_to_qx_qy_qp)
-    def id_to_qx_qy_qp(self, id: int) -> Tuple[int, int, int]:
-        raise ConfigException("Not supported in Version 1")
+    def id_to_qx_qy_qp(self, core_id: int) -> Tuple[int, int, int]:
+        raise SpinnMachineException("Not supported in Version 1")
 
     @overrides(AbstractVersion.version_parse_cores_string)
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:

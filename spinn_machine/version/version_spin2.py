@@ -70,7 +70,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     Code for the 1 Chip test Spin2 board versions
     """
 
-    __slots__ = ("_reverse_quad_map")
+    __slots__ = ["_reverse_quad_map"]
 
     def __init__(self) -> None:
         super().__init__(max_cores_per_chip=153,
@@ -112,9 +112,10 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
         return self._reverse_quad_map[(qx, qy, qp)]
 
     @overrides(AbstractVersion.id_to_qx_qy_qp)
-    def id_to_qx_qy_qp(self, id: int) -> Tuple[int, int, int]:
-        return QUAD_MAP[id]
+    def id_to_qx_qy_qp(self, core_id: int) -> Tuple[int, int, int]:
+        return QUAD_MAP[core_id]
 
+    @overrides(AbstractVersion.version_parse_cores_string)
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
         result = CORE_QX_QY_QP.fullmatch(core_string)
         if result is not None:

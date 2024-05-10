@@ -16,6 +16,7 @@ import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.exceptions import ConfigException
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.version import SPIN2_1CHIP
 from spinn_machine.version.version_201 import Version201
@@ -61,9 +62,9 @@ class TestDownCores(unittest.TestCase):
 
     def test_qx_qy_qp_to_spin1(self):
         version = Version5()
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(SpinnMachineException):
             self.assertEqual(75, version.qx_qy_qp_to_id(3, 4, 2))
-        with self.assertRaises(ConfigException):
+        with self.assertRaises(SpinnMachineException):
             self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(75))
 
     def test_version_401(self):

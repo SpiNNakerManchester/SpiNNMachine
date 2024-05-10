@@ -473,11 +473,11 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def id_to_qx_qy_qp(self, id: int) -> Tuple[int, int, int]:
+    def id_to_qx_qy_qp(self, core_id: int) -> Tuple[int, int, int]:
         """
         Converts core id to quad coordinates
 
-        :param int id: id of the core
+        :param int core_id: id of the core
         :return: (qx, qy, qp)
         :rtype: (int, int, int)
         :raises NotImplementedError:
@@ -497,7 +497,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         This may be a single negative int
         which will be taken as the physical core id
 
-        This may be two ints seperated by a minus
+        This may be two int values separated by a minus
         which will be taken as a range of one of the above
 
         Other formats are version specific.
@@ -519,4 +519,11 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @abstractmethod
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
+        """
+        A version specific parsing of the core string
+
+        :param str core_string:
+        :return: A list of cores, which might be just one
+        :rtype: list(int)
+        """
         raise NotImplementedError
