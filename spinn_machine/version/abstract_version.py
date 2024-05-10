@@ -459,7 +459,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def qx_qy_qp_to_id(self, qx:int, qy:int, qp:int) -> int:
+    def qx_qy_qp_to_id(self, qx: int, qy: int, qp: int) -> int:
         """
         Converts quad coordinates to the core id
 
@@ -473,7 +473,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def id_to_qx_qy_qp(self, id:int) -> Tuple[int, int, int]:
+    def id_to_qx_qy_qp(self, id: int) -> Tuple[int, int, int]:
         """
         Converts core id to quad coordinates
 

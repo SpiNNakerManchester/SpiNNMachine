@@ -14,8 +14,8 @@
 
 from typing import List, Iterable, Tuple
 from spinn_utilities.abstract_base import AbstractBase
+from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
-from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 from .abstract_version import AbstractVersion
 
 
@@ -60,17 +60,14 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
         return None
 
     @overrides(AbstractVersion.qx_qy_qp_to_id)
-    def qx_qy_qp_to_id(self, qx:int, qy:int, qp:int) -> int:
+    def qx_qy_qp_to_id(self, qx: int, qy: int, qp: int) -> int:
         raise NotImplementedError("Not supported in Version 1")
 
     @overrides(AbstractVersion.id_to_qx_qy_qp)
-    def id_to_qx_qy_qp(self, id:int) -> Tuple[int, int, int]:
+    def id_to_qx_qy_qp(self, id: int) -> Tuple[int, int, int]:
         raise NotImplementedError("Not supported in Version 1")
 
     @overrides(AbstractVersion.version_parse_cores_string)
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
-        if result is not None:
-            return range(int(result.group(1)), int(result.group(2)) + 1)
-
-        raise SpinnMachineInvalidParameterException(
+        raise ConfigException(
             f"{core_string} does not represent cores for Version 1 boards")

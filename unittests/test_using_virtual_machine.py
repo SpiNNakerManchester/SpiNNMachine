@@ -20,7 +20,6 @@ from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (SpinnMachineException)
-from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.machine_factory import machine_repair
 from spinn_machine.version.version_strings import VersionStrings
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD

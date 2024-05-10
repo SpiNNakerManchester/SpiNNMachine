@@ -16,6 +16,7 @@ import re
 from typing import Dict, Final, List, Iterable, Tuple
 
 from spinn_utilities.abstract_base import AbstractBase
+from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
 from spinn_machine.exceptions import SpinnMachineInvalidParameterException
@@ -108,11 +109,11 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
         return QUAD_MAP
 
     @overrides(AbstractVersion.qx_qy_qp_to_id)
-    def qx_qy_qp_to_id(self, qx:int, qy:int, qp:int) -> int:
+    def qx_qy_qp_to_id(self, qx: int, qy: int, qp: int) -> int:
         return self._reverse_quad_map[(qx, qy, qp)]
 
     @overrides(AbstractVersion.id_to_qx_qy_qp)
-    def id_to_qx_qy_qp(self, id:int) -> Tuple[int, int, int]:
+    def id_to_qx_qy_qp(self, id: int) -> Tuple[int, int, int]:
         return QUAD_MAP[id]
 
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
@@ -123,5 +124,5 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
             qp = int(result.group(3))
             return (self.qx_qy_qp_to_id(qx, qy, qp),)
 
-        raise SpinnMachineInvalidParameterException(
+        raise ConfigException(
             f"{core_string} does not represent cores for Version 2 boards")
