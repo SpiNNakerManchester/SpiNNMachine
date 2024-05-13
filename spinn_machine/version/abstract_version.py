@@ -13,7 +13,10 @@
 # limitations under the License.
 from __future__ import annotations
 import logging
-from typing import Dict, List, Optional, Sequence, Tuple, TYPE_CHECKING
+import re
+from typing import (Dict, Iterable, List, Optional, Sequence, Tuple,
+                    TYPE_CHECKING)
+
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
@@ -24,6 +27,9 @@ if TYPE_CHECKING:
     from spinn_machine.machine import Machine
 
 logger = FormatAdapter(logging.getLogger(__name__))
+
+CORE_RANGE = re.compile(r"(\d+)-(\d+)")
+CORE_SINGLE = re.compile(r"(-*)(\d+)")
 
 
 class AbstractVersion(object, metaclass=AbstractBase):
@@ -417,6 +423,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         """
         The list of Local X, Y and link Id to add spinnaker links to
@@ -428,6 +435,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
         """
         The list of Local X, Y, link, fpga_link_id and fpga_id
@@ -439,6 +447,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def quads_maps(self) -> Optional[Dict[int, Tuple[int, int, int]]]:
         """
         If applicable returns a map of virtual id to quad qx, qy, qp
@@ -446,5 +455,75 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Spin 1 boards will return None!
 
         :rtype: None or dict(int, (int, int, int)
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def qx_qy_qp_to_id(self, qx: int, qy: int, qp: int) -> int:
+        """
+        Converts quad coordinates to the core id
+
+        :param int qx: quad x coordinate of the core
+        :param int qy: quad y coordinate of the core
+        :param int qp: quad p coordinate of the core
+        :rtype: int
+        :raises NotImplementedError:
+            If called on a version that does not support quads
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def id_to_qx_qy_qp(self, core_id: int) -> Tuple[int, int, int]:
+        """
+        Converts core id to quad coordinates
+
+        :param int core_id: id of the core
+        :return: (qx, qy, qp)
+        :rtype: (int, int, int)
+        :raises NotImplementedError:
+            If called on a version that does not support quads
+        """
+        raise NotImplementedError
+
+    def parse_cores_string(self, core_string: str) -> Iterable[int]:
+        """
+        Parses a string representation of a core or cores
+
+        The main usage of this method is to support the cfg down_cores.
+
+        This may be a single positive int
+        which will be taken as the virtual core id
+
+        This may be a single negative int
+        which will be taken as the physical core id
+
+        This may be two int values separated by a minus
+        which will be taken as a range of one of the above
+
+        Other formats are version specific.
+        See version_parse_cores_string
+
+        :param str: A string to parse
+        :return: A list of cores, which might be just one
+        :rtype: list(int)
+        """
+        result = CORE_SINGLE.fullmatch(core_string)
+        if result is not None:
+            return (int(core_string),)
+
+        result = CORE_RANGE.fullmatch(core_string)
+        if result is not None:
+            return range(int(result.group(1)), int(result.group(2)) + 1)
+
+        return self.version_parse_cores_string(core_string)
+
+    @abstractmethod
+    def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
+        """
+        A version specific parsing of the core string
+
+        :param str core_string:
+        :return: A list of cores, which might be just one
+        :rtype: list(int)
         """
         raise NotImplementedError

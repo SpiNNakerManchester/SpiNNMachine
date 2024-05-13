@@ -14,8 +14,10 @@
 
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_machine.config_setup import unittest_setup
+
 from spinn_machine import Chip, Link, Router, virtual_machine
+from spinn_machine.config_setup import unittest_setup
+from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
 from spinn_machine.version import SPIN2_1CHIP
@@ -253,6 +255,16 @@ class TestVirtualMachine201(unittest.TestCase):
             virtual_machine_by_cores(200)
         with self.assertRaises(SpinnMachineException):
             virtual_machine_by_boards(2)
+
+    def test_down(self):
+        set_config("Machine", "version", SPIN2_1CHIP)
+        set_config("Machine", "down_cores", "0,0,2.2.1")
+        version = MachineDataView.get_machine_version()
+        self.assertEqual(90, version.qx_qy_qp_to_id(2, 2, 1))
+
+        machine = virtual_machine_by_cores(1)
+        chip = machine[(0, 0)]
+        self.assertFalse(chip.is_processor_with_id(90))
 
 
 if __name__ == '__main__':

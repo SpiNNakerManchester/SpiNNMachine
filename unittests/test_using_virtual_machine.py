@@ -20,7 +20,6 @@ from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (SpinnMachineException)
-from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.machine_factory import machine_repair
 from spinn_machine.version.version_strings import VersionStrings
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD
@@ -342,25 +341,6 @@ class TestUsingVirtualMachine(unittest.TestCase):
             self.assertFalse(chip.is_processor_with_id(i))
         for i in range(12, 18):
             self.assertTrue(chip.is_processor_with_id(i))
-
-    def test_bad_ignores(self):
-        try:
-            IgnoreChip.parse_string("4,4,3,4:6,6,ignored_ip")
-        except Exception as ex:
-            self.assertTrue("downed_chip" in str(ex))
-
-        try:
-            IgnoreCore.parse_string("3,3,3,4: 5,5,-5:7,7,7,ignored_ip")
-        except Exception as ex:
-            self.assertTrue("downed_core" in str(ex))
-
-        empty = IgnoreCore.parse_string(None)
-        self.assertEqual(len(empty), 0)
-
-        try:
-            IgnoreLink.parse_string("1,3:5,3,3,ignored_ip")
-        except Exception as ex:
-            self.assertTrue("downed_link" in str(ex))
 
 
 if __name__ == '__main__':
