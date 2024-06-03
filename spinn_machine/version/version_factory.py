@@ -92,6 +92,9 @@ def version_factory() -> AbstractVersion:
         return Version5()
 
     if version is None:
-        raise SpinnMachineException("cfg [Machine]version {version} is None")
-
+        machineName = get_config_str_or_none("Machine", "machineName")
+        raise SpinnMachineException(
+            "cfg [Machine]version {version} is None. "
+            f"Other cfg settings are {machineName=} {spalloc_server=}, "
+            f"{remote_spinnaker_url=} {width=} {height=}")
     raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")
