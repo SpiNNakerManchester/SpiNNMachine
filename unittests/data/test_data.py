@@ -14,11 +14,12 @@
 
 import unittest
 from spinn_utilities.config_holder import set_config
-from spinn_utilities.exceptions import (DataNotYetAvialable)
+from spinn_utilities.exceptions import (ConfigException, DataNotYetAvialable)
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
+from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version import FIVE, THREE, SPIN2_48CHIP
 from spinn_machine.version.version_strings import VersionStrings
 
@@ -185,3 +186,12 @@ class TestSimulatorData(unittest.TestCase):
         writer.add_monitor_core(True)
         self.assertEqual(2, MachineDataView.get_all_monitor_cores())
         self.assertEqual(3, MachineDataView.get_ethernet_monitor_cores())
+
+    def test_no_version(self):
+        set_config("Machine", "machineName", "SpiNNaker1M")
+        try:
+            MachineDataView.get_machine_version()
+            raise ConfigException("Should not get here")
+        except SpinnMachineException as ex:
+            msg = str(ex)
+            self.assertIn("SpiNNaker1M", msg)
