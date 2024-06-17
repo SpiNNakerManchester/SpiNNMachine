@@ -68,3 +68,6 @@ class Version248(VersionSpin2, Version48Chips):
     def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
         # TODO
         return []
+
+    def __eq__(self, other):
+        return isinstance(other, Version248)
