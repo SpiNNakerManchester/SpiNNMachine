@@ -58,10 +58,12 @@ def version_factory() -> AbstractVersion:
             version_url = _number_to_version(url_version)
             if version_cfg == version_url:
                 version = version_cfg
+            else:
+                raise_version_error("Incorrect version", cfg_version)
 
     if size_version is None:
         if version is None:
-                raise_no_version()
+                raise_version_error("No version", None)
         else:
             return version
     else:
@@ -88,6 +90,9 @@ def _get_cfg_version() -> Optional[int]:
         # Use the fact that we run actions against different python versions
         minor = sys.version_info.minor
         version = options[minor % len(options)]
+    if version is None:
+        logger.warning(
+            "The cfg has no version. This is deprecated! Please add a version")
     return version
 
 def _get_url_version() -> Optional[int]:
@@ -139,8 +144,6 @@ def _get_size_version() -> Optional[int]:
         if width is None:
             raise SpinnMachineException("cfg has height but not width")
         else:
-            logger.warning("cfg width and height are deprecated. "
-                           "Please remove then.")
             if height == width == 2:
                 return 3
             elif height == width == 1:
@@ -170,7 +173,7 @@ def _number_to_version(version: int):
 
     raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")
 
-def raise_no_version():
+def raise_version_error(error: str, version: Optional[int]):
     height = get_config_int_or_none("Machine", "height")
     width = get_config_int_or_none("Machine", "width")
 
@@ -181,72 +184,6 @@ def raise_no_version():
     machine_name = get_config_str_or_none("Machine", "machineName")
     virtual_board = get_config_bool("Machine", "virtual_board")
     raise SpinnMachineException(
-        "cfg [Machine]version {version} is None. "
-        f"Other cfg settings are {machine_name=} {spalloc_server=}, "
-        f"{remote_spinnaker_url=} {width=} {height=}")
-
-
-def version_factoryX() -> AbstractVersion:
-    """
-    Creates a Machine Version class based on cfg settings.
-
-    :return: A subclass of AbstractVersion
-    :raises SpinnMachineException: If the cfg version is not set correctly
-    """
-    # Delayed import to avoid circular imports
-    # pylint: disable=import-outside-toplevel
-    from .version_3 import Version3
-    from .version_5 import Version5
-    from .version_201 import Version201
-    from .version_248 import Version248
-
-    version = get_config_int_or_none("Machine", "version")
-    versions = get_config_str_or_none("Machine", "versions")
-    if versions is not None:
-        if version is not None:
-            raise SpinnMachineException(
-                f"Both {version=} and {versions=} found in cfg")
-        vs = VersionStrings.from_string(versions)
-        options = vs.options
-        # Use the fact that we run actions against different python versions
-        minor = sys.version_info.minor
-        version = options[minor % len(options)]
-
-    if version in [2, 3]:
-        return Version3()
-
-    if version in [4, 5]:
-        return Version5()
-
-    if version == SPIN2_1CHIP:
-        return Version201()
-
-    if version == SPIN2_48CHIP:
-        return Version248()
-
-    spalloc_server = get_config_str_or_none("Machine", "spalloc_server")
-    if spalloc_server is not None:
-        return Version5()
-
-    remote_spinnaker_url = get_config_str_or_none(
-        "Machine", "remote_spinnaker_url")
-    if remote_spinnaker_url is not None:
-        return Version5()
-
-    height = get_config_int_or_none("Machine", "height")
-    width = get_config_int_or_none("Machine", "width")
-    if height is not None and width is not None:
-        logger.info("Your cfg file does not have a version")
-        if height == width == 2:
-            return Version3()
-        elif height == width == 1:
-            return Version201()
-        return Version5()
-
-    if version is None:
-        machine_name = get_config_str_or_none("Machine", "machineName")
-        raise SpinnMachineException(
-            "cfg [Machine]version {version} is None. "
-            f"Other cfg settings are {machine_name=} {spalloc_server=}, "
-            f"{remote_spinnaker_url=} {width=} {height=}")
-    raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")
+        f"{error} with cfg [Machine] values {version=}, "
+        f"{machine_name=}, {spalloc_server=}, {remote_spinnaker_url=}, "
+        f"{width=}, and {height=}")
