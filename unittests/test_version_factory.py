@@ -63,12 +63,6 @@ class TestVersionFactory(unittest.TestCase):
     def test_bad_spalloc_and_name(self):
         set_config("Machine", "spalloc_server", "Somewhere")
         set_config("Machine", "machine_name", "Somewhere")
-        #with self.assertRaises(SpinnMachineException):
-        version_factory()
-
-    def test_bad_spalloc_and_name(self):
-        set_config("Machine", "spalloc_server", "Somewhere")
-        set_config("Machine", "machine_name", "Somewhere")
         with self.assertRaises(SpinnMachineException):
             version_factory()
 

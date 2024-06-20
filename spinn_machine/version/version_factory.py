@@ -15,7 +15,7 @@
 from __future__ import annotations
 import logging
 import sys
-from typing import Optional,TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 from spinn_utilities.config_holder import (
     get_config_bool, get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
@@ -63,7 +63,7 @@ def version_factory() -> AbstractVersion:
 
     if size_version is None:
         if version is None:
-                raise_version_error("No version", None)
+            raise_version_error("No version", None)
         else:
             return version
     else:
@@ -94,6 +94,7 @@ def _get_cfg_version() -> Optional[int]:
         logger.warning(
             "The cfg has no version. This is deprecated! Please add a version")
     return version
+
 
 def _get_url_version() -> Optional[int]:
     spalloc_server = get_config_str_or_none("Machine", "spalloc_server")
@@ -151,6 +152,7 @@ def _get_size_version() -> Optional[int]:
             # if width and height are valid checked later
             return 5
 
+
 def _number_to_version(version: int):
     # Delayed import to avoid circular imports
     # pylint: disable=import-outside-toplevel
@@ -173,6 +175,7 @@ def _number_to_version(version: int):
 
     raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")
 
+
 def raise_version_error(error: str, version: Optional[int]):
     height = get_config_int_or_none("Machine", "height")
     width = get_config_int_or_none("Machine", "width")
@@ -186,4 +189,4 @@ def raise_version_error(error: str, version: Optional[int]):
     raise SpinnMachineException(
         f"{error} with cfg [Machine] values {version=}, "
         f"{machine_name=}, {spalloc_server=}, {remote_spinnaker_url=}, "
-        f"{width=}, and {height=}")
+        f"{virtual_board=}, {width=}, and {height=}")
