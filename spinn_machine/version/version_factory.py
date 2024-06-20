@@ -78,6 +78,7 @@ def version_factory() -> AbstractVersion:
                 raise SpinnMachineException(
                     "cfg width and height do not match other cfg setting.")
 
+
 def _get_cfg_version() -> Optional[int]:
     version = get_config_int_or_none("Machine", "version")
     versions = get_config_str_or_none("Machine", "versions")
