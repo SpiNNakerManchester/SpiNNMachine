@@ -45,9 +45,10 @@ def version_factory() -> AbstractVersion:
     url_version = _get_url_version()
     size_version = _get_size_version()
 
+    version: Optional[AbstractVersion] = None
     if cfg_version is None:
         if url_version is None:
-            version: Optional[AbstractVersion] = None
+            version = None
         else:
             version = _number_to_version(url_version)
     else:
@@ -178,6 +179,14 @@ def _number_to_version(version: int):
 
 
 def raise_version_error(error: str, version: Optional[int]):
+    """
+    Collects main cfg values and raises an exception
+
+    :param str error: message for the exception
+    :param version: version claimed
+    :type version: int or None
+    :raises SpinnMachineException: Always!
+    """
     height = get_config_int_or_none("Machine", "height")
     width = get_config_int_or_none("Machine", "width")
 
