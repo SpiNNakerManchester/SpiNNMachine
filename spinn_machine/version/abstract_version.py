@@ -527,3 +527,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :rtype: list(int)
         """
         raise NotImplementedError
+
+    def __hash__(self):
+        return self.number

@@ -89,3 +89,6 @@ class Version201(VersionSpin2):
     @overrides(VersionSpin2.fpga_links)
     def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
         return []
+
+    def __eq__(self, other):
+        return isinstance(other, Version201)
