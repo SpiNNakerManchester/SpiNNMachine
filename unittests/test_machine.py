@@ -15,7 +15,7 @@
 """
 test for testing the python representation of a spinnaker machine
 """
-from testfixtures import LogCapture
+from testfixtures import LogCapture  # type: ignore[import]
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.testing import log_checker
