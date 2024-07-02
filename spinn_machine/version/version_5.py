@@ -82,3 +82,6 @@ class Version5(VersionSpin1, Version48Chips):
                 (7, 5, 0, 2, 12), (7, 5, 1, 2, 11),
                 (7, 6, 0, 2, 10), (7, 6, 1, 2, 9),
                 (7, 7, 0, 2, 8), (7, 7, 1, 2, 7), (7, 7, 2, 2, 6)]
+
+    def __eq__(self, other):
+        return isinstance(other, Version5)
