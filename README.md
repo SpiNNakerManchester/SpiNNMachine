@@ -7,8 +7,9 @@ This package is part of the [SpiNNaker Project](http://apt.cs.manchester.ac.uk/p
 
 This package is used to provide a Python representation of a SpiNNaker machine
 
-User Installation
+[COMING SOON..] User Installation
 =================
+As of now, SpiNNMachine2 has yet to be uploaded to pypi, so this installation procedure is not supported yet. If you want to install the package, you must use the developer installation procedure shown below.
 If you want to install for all users, run:
 
     sudo pip install SpiNNMachine
@@ -28,7 +29,7 @@ from other Python modules, you can set the install to be a developer install.
 In this case, download the source code, and extract it locally, or else clone
 the git repository:
 
-    git clone http://github.com/SpiNNakerManchester/SpiNNMachine.git
+    git clone https://gitlab.com/spinnaker2/SpiNNMachine2.git
 
 To install as a development version which all users will then be able to use,
 run the following where the code has been extracted:
