@@ -18,7 +18,7 @@ from spinn_utilities.config_holder import set_config
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.version import SPIN2_48CHIP
+from spinn_machine.version import SPIN2_GEN
 from spinn_machine.version.version_248 import CHIPS_PER_BOARD
 
 
@@ -30,7 +30,7 @@ class TestVirtualMachine248(unittest.TestCase):
         unittest_setup()
 
     def test_illegal_vms(self):
-        set_config("Machine", "version", SPIN2_48CHIP)
+        set_config("Machine", "version", SPIN2_GEN.SPIN2_48CHIP.value)
         with self.assertRaises(SpinnMachineException):
             virtual_machine(width=-1, height=2)
         with self.assertRaises(SpinnMachineException):
@@ -49,7 +49,7 @@ class TestVirtualMachine248(unittest.TestCase):
             virtual_machine(size_x, size_y, validate=True)
 
     def test_version_248_8_by_8(self):
-        set_config("Machine", "version", SPIN2_48CHIP)
+        set_config("Machine", "version", SPIN2_GEN.SPIN2_48CHIP.value)
         vm = virtual_machine(width=8, height=8, validate=True)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
@@ -148,7 +148,7 @@ class TestVirtualMachine248(unittest.TestCase):
         """
 
     def test_version_5_12_by_12(self):
-        set_config("Machine", "version", SPIN2_48CHIP)
+        set_config("Machine", "version", SPIN2_GEN.SPIN2_48CHIP.value)
         vm = virtual_machine(height=12, width=12, validate=True)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))
@@ -171,7 +171,7 @@ class TestVirtualMachine248(unittest.TestCase):
         """
 
     def test_version_5_16_by_16(self):
-        set_config("Machine", "version", SPIN2_48CHIP)
+        set_config("Machine", "version", SPIN2_GEN.SPIN2_48CHIP.value)
         vm = virtual_machine(height=16, width=16, validate=True)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))

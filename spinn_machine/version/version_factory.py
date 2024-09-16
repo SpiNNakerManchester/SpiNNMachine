@@ -15,6 +15,7 @@
 from __future__ import annotations
 import logging
 import sys
+from enum import Enum
 from typing import TYPE_CHECKING
 from spinn_utilities.config_holder import (
     get_config_int_or_none, get_config_str_or_none)
@@ -32,7 +33,14 @@ FIVE = 5
 # New value subject to change
 SPIN2_1CHIP = 201
 SPIN2_48CHIP = 248
+# Chip generations
+class SPIN1_GEN(Enum):
+    THREE = 3
+    FIVE = 5
 
+class SPIN2_GEN(Enum):
+    SPIN2_1CHIP = 201
+    SPIN2_48CHIP = 248
 
 def version_factory() -> AbstractVersion:
     """
@@ -66,10 +74,10 @@ def version_factory() -> AbstractVersion:
     if version in [4, 5]:
         return Version5()
 
-    if version == SPIN2_1CHIP:
+    if version == SPIN2_GEN.SPIN2_1CHIP.value:
         return Version201()
 
-    if version == SPIN2_48CHIP:
+    if version == SPIN2_GEN.SPIN2_48CHIP.value:
         return Version248()
 
     spalloc_server = get_config_str_or_none("Machine", "spalloc_server")

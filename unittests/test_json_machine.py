@@ -20,7 +20,7 @@ from spinn_machine.virtual_machine import (
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
-from spinn_machine.version import (FIVE, SPIN2_1CHIP, THREE)
+from spinn_machine.version import SPIN1_GEN, SPIN2_GEN
 from spinn_machine.version.version_strings import VersionStrings
 
 
@@ -30,7 +30,7 @@ class TestJsonMachine(unittest.TestCase):
         unittest_setup()
 
     def test_json_version_3(self):
-        set_config("Machine", "version", THREE)
+        set_config("Machine", "version", SPIN1_GEN.THREE.value)
         vm = virtual_machine(width=2, height=2)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
@@ -43,7 +43,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_json_version_5(self):
-        set_config("Machine", "version", FIVE)
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
@@ -56,7 +56,7 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     def test_json_version_201(self):
-        set_config("Machine", "version", SPIN2_1CHIP)
+        set_config("Machine", "version", SPIN2_GEN.SPIN2_1CHIP.value)
         vm = virtual_machine(width=1, height=1)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
