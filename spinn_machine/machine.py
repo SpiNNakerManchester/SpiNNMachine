@@ -720,7 +720,7 @@ class Machine(object, metaclass=AbstractBase):
     @property
     def n_ethernet_connected_chips(self) -> int:
         """
-        The number of ethernet conencted chips in the machine.
+        The number of Ethernet connected chips in the machine.
         """
         return len(self._ethernet_connected_chips)
 
