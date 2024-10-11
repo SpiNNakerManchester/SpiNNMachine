@@ -120,6 +120,10 @@ class TestVersion201(unittest.TestCase):
         version.verify_size(8, 8)
         with self.assertRaises(SpinnMachineException):
             version.verify_size(12, 8)
+        with self.assertRaises(SpinnMachineException):
+            version.verify_size(4, 16)
+        with self.assertRaises(SpinnMachineException):
+            version.verify_size(16, 4)
         version.verify_size(12, 12)
         version.verify_size(12, 16)
         version.verify_size(16, 12)
