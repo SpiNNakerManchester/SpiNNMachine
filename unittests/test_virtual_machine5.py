@@ -291,5 +291,6 @@ class TestVirtualMachine5(unittest.TestCase):
         virtual_machine(width=20, height=16)
         virtual_machine(width=12, height=16)
 
+
 if __name__ == '__main__':
     unittest.main()
