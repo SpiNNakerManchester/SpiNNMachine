@@ -48,14 +48,21 @@ class Version48Chips(AbstractVersion):
 
     @overrides(AbstractVersion._verify_size)
     def _verify_size(self, width: int, height: int):
-        if width == height == 8:
-            # 1 board
-            return
-        if width % 12 not in [0, 4]:
+        if width == 8:
+            if height == 8:
+                # 1 board
+                return
+            else:
+                raise SpinnMachineException(
+                    f"{width=} and {height=} not supported")
+        elif height == 8:
+            raise SpinnMachineException(
+                f"{width=} and {height=} not supported")
+        if width % 4 != 0:
             raise SpinnMachineException(
                 f"{width=} must be a multiple of 12 "
                 f"or a multiple of 12 plus 4")
-        if height % 12 not in [0, 4]:
+        if height % 4 != 0:
             raise SpinnMachineException(
                 f"{height=} must be a multiple of 12 "
                 f"or a multiple of 12 plus 4")

@@ -124,6 +124,8 @@ class TestVersion201(unittest.TestCase):
         version.verify_size(12, 16)
         version.verify_size(16, 12)
         version.verify_size(16, 16)
+        version.verify_size(16, 20)
+        version.verify_size(20, 16)
 
     def test_create_machine(self):
         version = Version248()
