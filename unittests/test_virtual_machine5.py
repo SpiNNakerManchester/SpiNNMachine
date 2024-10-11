@@ -286,6 +286,11 @@ class TestVirtualMachine5(unittest.TestCase):
         for ip, fpga, fpga_link, x, y, link in fpga_links:
             self._assert_fpga_link(machine, fpga, fpga_link, x, y, link, ip)
 
+    def test_none_triad(self):
+        set_config("Machine", "version", FIVE)
+        virtual_machine(width=20, height=16)
+        virtual_machine(width=12, height=16)
+
 
 if __name__ == '__main__':
     unittest.main()
