@@ -21,4 +21,4 @@
 
 utils="../SpiNNUtils/spinn_utilities"
 
-mypy $utils spinn_machine
+mypy --python-version 3.8 $utils spinn_machine
