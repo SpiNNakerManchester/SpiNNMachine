@@ -35,13 +35,13 @@ class FrozenCoreSubsets(CoreSubsets):
                 super().add_processor(x, y, processor_id)
 
     @overrides(CoreSubsets.add_core_subset)
-    def add_core_subset(self, core_subset: CoreSubset):
+    def add_core_subset(self, core_subset: CoreSubset) -> None:
         raise RuntimeError("This object is immutable")
 
     @overrides(CoreSubsets.add_core_subsets)
-    def add_core_subsets(self, core_subsets: Iterable[CoreSubset]):
+    def add_core_subsets(self, core_subsets: Iterable[CoreSubset]) -> None:
         raise RuntimeError("This object is immutable")
 
     @overrides(CoreSubsets.add_processor)
-    def add_processor(self, x: int, y: int, processor_id: int):
+    def add_processor(self, x: int, y: int, processor_id: int) -> None:
         raise RuntimeError("This object is immutable")

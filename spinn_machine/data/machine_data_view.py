@@ -277,7 +277,7 @@ class MachineDataView(UtilsDataView):
         return cls.__data._machine_version
 
     @classmethod
-    def set_v_to_p_map(cls, v_to_p_map: Dict[XY, bytes]):
+    def set_v_to_p_map(cls, v_to_p_map: Dict[XY, bytes]) -> None:
         """
         Registers the mapping from Virtual to int physical core ids
 

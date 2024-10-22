@@ -75,7 +75,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
             else:
                 self.verify_size(width, height)
 
-    def __set_max_cores_per_chip(self, max_cores_per_chip: int):
+    def __set_max_cores_per_chip(self, max_cores_per_chip: int) -> None:
         self._max_cores_per_chip = max_cores_per_chip
         max_machine_core = get_config_int_or_none(
             "Machine", "max_machine_core")
@@ -92,7 +92,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
                     f"due to cfg setting [Machine]max_machine_core")
                 self._max_cores_per_chip = max_machine_core
 
-    def __set_max_sdram_per_chip(self, max_sdram_per_chip: int):
+    def __set_max_sdram_per_chip(self, max_sdram_per_chip: int) -> None:
         self._max_sdram_per_chip = max_sdram_per_chip
         max_sdram = get_config_int_or_none(
             "Machine", "max_sdram_allowed_per_chip")
@@ -258,7 +258,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
-    def verify_size(self, width: Optional[int], height: Optional[int]):
+    def verify_size(self, width: Optional[int], height: Optional[int]) -> None:
         """
         Checks that the width and height are allowed for this version.
 
@@ -277,7 +277,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         self._verify_size(width, height)
 
     @abstractmethod
-    def _verify_size(self, width: int, height: int):
+    def _verify_size(self, width: int, height: int) -> None:
         """
         Implements the width and height checks that depend on the version.
 
@@ -528,5 +528,5 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return self.number

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Final, List, Tuple
+from typing import Any, Dict, Final, List, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 
@@ -83,5 +83,5 @@ class Version5(VersionSpin1, Version48Chips):
                 (7, 6, 0, 2, 10), (7, 6, 1, 2, 9),
                 (7, 7, 0, 2, 8), (7, 7, 1, 2, 7), (7, 7, 2, 2, 6)]
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version5)

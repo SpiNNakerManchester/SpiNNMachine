@@ -47,7 +47,7 @@ class Version48Chips(AbstractVersion):
         return geometry.get_potential_ethernet_chips(width, height)
 
     @overrides(AbstractVersion._verify_size)
-    def _verify_size(self, width: int, height: int):
+    def _verify_size(self, width: int, height: int) -> None:
         if width <= 8:
             if width == 8 and height == 8:
                 # 1 board

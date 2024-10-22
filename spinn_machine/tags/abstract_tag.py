@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Optional
+
 
 class AbstractTag(object):
     """
@@ -29,34 +31,35 @@ class AbstractTag(object):
         "_port"
     ]
 
-    def __init__(self, board_address, tag, port):
+    def __init__(self, board_address: Optional[str], tag: int,
+                 port: Optional[int]) -> None:
         self._board_address = board_address
         self._tag = tag
         self._port = port
 
     @property
-    def board_address(self):
+    def board_address(self) -> Optional[str]:
         """
         The board address of the tag.
         """
         return self._board_address
 
     @property
-    def tag(self):
+    def tag(self) -> int:
         """
         The tag ID of the tag.
         """
         return self._tag
 
     @property
-    def port(self):
+    def port(self) -> Optional[int]:
         """
         The port of the tag.
         """
         return self._port
 
     @port.setter
-    def port(self, port):
+    def port(self, port: int) -> None:
         """
         Set the port; will fail if the port is already set.
         """
