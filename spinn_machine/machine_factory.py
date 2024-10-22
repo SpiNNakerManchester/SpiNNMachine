@@ -121,7 +121,8 @@ def _generate_uni_direction_link_error(
                f"Please report this to spinnakerusers@googlegroups.com \n\n"
 
 
-def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
+def machine_repair(
+        original: Machine, removed_chips: Iterable[XY] = ()) -> Machine:
     """
     Remove chips that can't be reached or that can't reach other chips
     due to missing links.
@@ -129,16 +130,13 @@ def machine_repair(original: Machine, removed_chips: Iterable[XY] = ()):
     Also remove any one way links.
 
     :param original: the original machine
-    :type original: Machine
     :param removed_chips: List of chips (x and y coordinates) that have been
         removed while the machine was being created.
         One-way links to these chip are expected repairs so always done and
         never logged
-    :type removed_chips: list(tuple(int,int))
     :raises SpinnMachineException: if repair_machine is false and an unexpected
         repair is needed.
     :return: Either the original machine or a repaired replacement
-    :rtype: Machine
     """
     repair_machine = get_config_bool("Machine", "repair_machine")
     dead_chips: Set[XY] = set()

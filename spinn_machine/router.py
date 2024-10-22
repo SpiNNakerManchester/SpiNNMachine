@@ -58,7 +58,7 @@ class Router(object):
 
         self._n_available_multicast_entries = n_available_multicast_entries
 
-    def add_link(self, link: Link):
+    def add_link(self, link: Link) -> None:
         """
         Add a link to the router of the chip.
 

@@ -13,7 +13,8 @@
 # limitations under the License.
 
 from enum import Enum
-from typing import List
+from typing import List, Tuple
+from typing_extensions import Self
 from spinn_machine.exceptions import SpinnMachineException
 
 
@@ -35,17 +36,17 @@ class VersionStrings(Enum):
     # Tests for 8 by 8 boards with FPGAs defined
     WITH_FPGAS = (6, "with fpgas", [5])
 
-    def __new__(cls, *args, **kwds):
+    def __new__(cls, *args: Tuple[int, str, List[int]],  **kwds: None) -> Self:
         vs = object.__new__(cls)
         vs._value_ = args[0]
         return vs
 
     # ignore the first param since it's already set by __new__
-    def __init__(self, _: str, text: str, versions: List[int]):
+    def __init__(self, _: int, text: str, versions: List[int]):
         self.text = text
         self._versions = versions
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.text
 
     @property

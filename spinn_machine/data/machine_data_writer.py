@@ -72,7 +72,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         return self.__data._user_accessed_machine
 
-    def set_machine(self, machine: Machine):
+    def set_machine(self, machine: Machine) -> None:
         """
         Sets the machine.
 
@@ -94,19 +94,20 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         self.__data._machine = None
 
-    def set_machine_generator(self, machine_generator: Callable[[], None]):
+    def set_machine_generator(
+            self, machine_generator: Callable[[], None]) -> None:
         """
         Registers a function that can be called to give a machine. Note that
         if the function does not actually register a machine when called, an
         exception will be thrown.
 
-        :param function machine_generator:
+        :param machine_generator:
         """
         if not callable(machine_generator):
             raise TypeError("machine_generator must be callable")
         self.__data._machine_generator = machine_generator
 
-    def add_monitor_core(self, all_chips: bool):
+    def add_monitor_core(self, all_chips: bool) -> None:
         """
         Accepts a simple of the monitor cores to be added.
 

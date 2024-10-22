@@ -36,7 +36,7 @@ class CoreSubset(object):
         for processor_id in processor_ids:
             self.add_processor(processor_id)
 
-    def add_processor(self, processor_id: int):
+    def add_processor(self, processor_id: int) -> None:
         """
         Adds a processor ID to this subset
 

@@ -33,7 +33,7 @@ class CoreSubsets(object):
         for core_subset in core_subsets:
             self.add_core_subset(core_subset)
 
-    def add_core_subset(self, core_subset: CoreSubset):
+    def add_core_subset(self, core_subset: CoreSubset) -> None:
         """
         Add a core subset to the set
 
@@ -44,7 +44,7 @@ class CoreSubsets(object):
         for processor_id in core_subset.processor_ids:
             self.add_processor(x, y, processor_id)
 
-    def add_core_subsets(self, core_subsets: Iterable[CoreSubset]):
+    def add_core_subsets(self, core_subsets: Iterable[CoreSubset]) -> None:
         """
         Merges a core subsets into this one.
 
@@ -53,7 +53,7 @@ class CoreSubsets(object):
         for core_subset in core_subsets:
             self.add_core_subset(core_subset)
 
-    def add_processor(self, x: int, y: int, processor_id: int):
+    def add_processor(self, x: int, y: int, processor_id: int) -> None:
         """
         Add a processor on a given chip to the set.
 

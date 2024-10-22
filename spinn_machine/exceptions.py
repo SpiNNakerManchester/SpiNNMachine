@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any
+
 
 class SpinnMachineException(Exception):
     """
@@ -27,10 +29,10 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
         "_item",
         "_value"]
 
-    def __init__(self, item: str, value):
+    def __init__(self, item: str, value: Any) -> None:
         """
-        :param str item: The item of which there is already one of
-        :param str value: The value of the item
+        :param item: The item of which there is already one of
+        :param value: The value of the item
         """
         super().__init__(
             f"There can only be one {item} with a value of {value}")
@@ -45,7 +47,7 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
         return self._item
 
     @property
-    def value(self):
+    def value(self) -> Any:
         """
         The value of the item.
         """
@@ -61,12 +63,12 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         "_problem",
         "_value"]
 
-    def __init__(self, parameter: str, value, problem: str):
+    def __init__(self, parameter: str, value: Any, problem: str) -> None:
         """
-        :param str parameter:
+        :param parameter:
             The name of the parameter that has an invalid value
-        :param str value: The value of the parameter that is invalid
-        :param str problem: The reason for the exception
+        :param value: The value of the parameter that is invalid
+        :param problem: The reason for the exception
         """
         super().__init__(
             f"It is invalid to set {parameter} to {value}: {problem}")
@@ -82,7 +84,7 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         return self._parameter
 
     @property
-    def value(self):
+    def value(self) -> Any:
         """
         The value of the parameter.
         """

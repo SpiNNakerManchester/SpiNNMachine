@@ -106,7 +106,7 @@ class SpiNNakerTriadGeometry(object):
             for y, row in enumerate(nearest_ethernets)]
 
     @staticmethod
-    def __hexagonal_metric_distance(xy: XY, centre: _Centre):
+    def __hexagonal_metric_distance(xy: XY, centre: _Centre) -> float:
         """
         Get the hexagonal metric distance of a point from the centre of
         the hexagon.
@@ -138,7 +138,7 @@ class SpiNNakerTriadGeometry(object):
         return max(abs(dx), abs(dy), abs(dx - dy))
 
     def __locate_nearest_ethernet(
-            self, xy: XY, ethernet_chips: Sequence[XY], centre: _Centre):
+            self, xy: XY, ethernet_chips: Sequence[XY], centre: _Centre) -> XY:
         """
         Get the coordinate of the nearest Ethernet chip down and left from
         a given chip.
