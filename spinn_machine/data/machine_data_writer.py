@@ -72,7 +72,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         return self.__data._user_accessed_machine
 
-    def set_machine(self, machine: Machine)  -> None:
+    def set_machine(self, machine: Machine) -> None:
         """
         Sets the machine.
 
