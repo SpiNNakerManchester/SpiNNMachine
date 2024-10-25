@@ -12,13 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Iterable, Tuple
+from typing import List, Iterable, Tuple, Final
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
 from spinn_machine.exceptions import SpinnMachineException
-from .abstract_version import AbstractVersion
+from .abstract_version import (
+    AbstractVersion, RouterPackets, ChipActiveTime)
 
 
 class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
@@ -26,6 +27,37 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     """
     Shared code for all Spin1 board versions
     """
+
+    #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
+    #: Massively-Parallel Neural Network Simulation)
+    WATTS_PER_IDLE_CHIP: Final = 0.360
+
+    #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
+    #: Massively-Parallel Neural Network Simulation)
+    WATTS_PER_CORE_ACTIVE_OVERHEAD: Final = (1.0 - WATTS_PER_IDLE_CHIP) / 18
+
+    JOULES_PER_ROUTER_BIT = 0.000000000025
+
+    #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
+    #: Massively-Parallel Neural Network Simulation)
+    # - 25pJ per bit - spike packets are 40 bits so 1nJ per spike
+    JOULES_PER_PACKET: Final = JOULES_PER_ROUTER_BIT * 40
+
+    #: As above, but with extra 32-bits
+    JOULES_PER_PACKET_WITH_PAYLOAD: Final = JOULES_PER_ROUTER_BIT * 72
+
+    #: Cost of each packet type
+    COST_PER_PACKET_TYPE = {
+        "Local_Multicast_Packets": JOULES_PER_PACKET,
+        "External_Multicast_Packets": JOULES_PER_PACKET,
+        "Reinjected": JOULES_PER_PACKET,
+        "Local_P2P_Packets": JOULES_PER_PACKET_WITH_PAYLOAD,
+        "External_P2P_Packets": JOULES_PER_PACKET_WITH_PAYLOAD,
+        "Local_NN_Packets": JOULES_PER_PACKET,
+        "External_NN_Packets": JOULES_PER_PACKET,
+        "Local_FR_Packets": JOULES_PER_PACKET_WITH_PAYLOAD,
+        "External_FR_Packets": JOULES_PER_PACKET_WITH_PAYLOAD
+    }
 
     __slots__ = ()
 
@@ -73,3 +105,20 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     def version_parse_cores_string(self, core_string: str) -> Iterable[int]:
         raise ConfigException(
             f"{core_string} does not represent cores for Version 1 boards")
+
+    @overrides(AbstractVersion.get_router_report_packet_types)
+    def get_router_report_packet_types(self) -> List[str]:
+        return list(self.COST_PER_PACKET_TYPE.keys())
+
+    def _get_router_active_energy(
+            self, router_packets: RouterPackets) -> float:
+        return sum(
+            value * self.COST_PER_PACKET_TYPE[name]
+            for packets in router_packets.values()
+            for name, value in packets.items())
+
+    def _get_core_active_energy(
+            self, core_active_times: ChipActiveTime) -> float:
+        return sum(
+            time * self.WATTS_PER_CHIP_ACTIVE_OVERHEAD
+            for time in core_active_times.values())

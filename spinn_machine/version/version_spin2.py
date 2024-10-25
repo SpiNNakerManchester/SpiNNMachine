@@ -19,7 +19,8 @@ from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
-from .abstract_version import AbstractVersion
+from .abstract_version import (
+    AbstractVersion, ChipActiveTime, RouterPackets)
 
 CHIPS_PER_BOARD: Final = {(0, 0): 152}
 CORE_QX_QY_QP = re.compile(r"(\d)\.(\d)\.(\d)")
@@ -126,3 +127,23 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
 
         raise ConfigException(
             f"{core_string} does not represent cores for Version 2 boards")
+
+    @overrides(AbstractVersion.get_idle_energy)
+    def get_idle_energy(
+            self, time_s: float, n_frames: int, n_boards: int,
+            n_chips: int) -> float:
+        # TODO: Work this out for SpiNNaker 2
+        raise NotImplementedError
+
+    @overrides(AbstractVersion.get_active_energy)
+    def get_active_energy(
+            self, time_s: float, n_frames: int, n_boards: int, n_chips: int,
+            chip_active_time: ChipActiveTime,
+            router_packets: RouterPackets) -> float:
+        # TODO: Work this out for SpiNNaker 2
+        raise NotImplementedError
+
+    @overrides(AbstractVersion.get_router_report_packet_types)
+    def get_router_report_packet_types(self) -> List[str]:
+        # TODO: Work this out for SpiNNaker 2
+        raise NotImplementedError

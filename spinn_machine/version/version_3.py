@@ -19,6 +19,7 @@ from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.full_wrap_machine import FullWrapMachine
 from spinn_machine.machine import Machine
 from .version_spin1 import VersionSpin1
+from .abstract_version import ChipActiveTime, RouterPackets
 
 CHIPS_PER_BOARD: Final = {(0, 0): 18, (0, 1): 18, (1, 0): 18, (1, 1): 18}
 
@@ -85,6 +86,29 @@ class Version3(VersionSpin1):
     @overrides(VersionSpin1.fpga_links)
     def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
         return []
+
+    @overrides(VersionSpin1.get_idle_energy)
+    def get_idle_energy(
+            self, time_s: float, n_frames: int, n_boards: int,
+            n_chips: int) -> float:
+        if n_frames != 0:
+            raise SpinnMachineException(
+                "A version 3 SpiNNaker 1 board has no frames!")
+        if n_boards != 1:
+            raise SpinnMachineException(
+                "A version 3 SpiNNaker 1 board has exactly one board!")
+
+        return n_chips * self.WATTS_PER_IDLE_CHIP * time_s
+
+    @overrides(VersionSpin1.get_active_energy)
+    def get_active_energy(
+            self, time_s: float, n_frames: int, n_boards: int, n_chips: int,
+            chip_active_time: ChipActiveTime,
+            router_packets: RouterPackets) -> float:
+        return (
+            self.get_idle_energy(time_s, n_frames, n_boards, n_chips) +
+            self._get_router_active_energy(router_packets) +
+            self._get_core_active_energy(chip_active_time))
 
     def __eq__(self, other):
         return isinstance(other, Version3)
