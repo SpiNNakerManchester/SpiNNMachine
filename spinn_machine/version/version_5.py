@@ -138,7 +138,7 @@ class Version5(VersionSpin1, Version48Chips):
         container_energy = 0.0
         if n_frames != 0:
             container_energy = (
-                n_frames * self.WATTS_FOR_FRAME_ACTIVE_COST_OVERHEAD * time_s)
+                n_frames * self.WATTS_PER_FRAME_ACTIVE_COST_OVERHEAD * time_s)
         return (
             container_energy +
             self.get_idle_energy(time_s, n_frames, n_boards, n_chips) +

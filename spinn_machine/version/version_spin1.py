@@ -120,5 +120,5 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     def _get_core_active_energy(
             self, core_active_times: ChipActiveTime) -> float:
         return sum(
-            time * self.WATTS_PER_CHIP_ACTIVE_OVERHEAD
+            time * self.WATTS_PER_CORE_ACTIVE_OVERHEAD
             for time in core_active_times.values())
