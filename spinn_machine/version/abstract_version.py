@@ -15,7 +15,8 @@ from __future__ import annotations
 import logging
 import re
 from typing import (
-    Dict, Iterable, List, Optional, Sequence, Tuple, TypeAlias, TYPE_CHECKING)
+    Dict, Iterable, List, Optional, Sequence, Tuple, TYPE_CHECKING)
+from typing_extensions import TypeAlias
 
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
