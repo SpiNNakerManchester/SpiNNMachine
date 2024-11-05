@@ -30,17 +30,22 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
 
     #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
     #: Massively-Parallel Neural Network Simulation)
-    WATTS_PER_IDLE_CHIP: Final = 0.360
+    #: (includes Idle chip @ 360mW, SDRAM @ 170mW and idle cores @ 20mW each)
+    WATTS_PER_IDLE_CHIP: Final = 0.360 + 0.170 + (0.02 * 18)
 
     #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
     #: Massively-Parallel Neural Network Simulation)
-    WATTS_PER_CORE_ACTIVE_OVERHEAD: Final = (1.0 - WATTS_PER_IDLE_CHIP) / 18
+    #: = (1000mW - WATTS_PER_IDLE_CHIP - (6.3mW for each link)) / 18 ~= 4mW
+    WATTS_PER_CORE_ACTIVE_OVERHEAD: Final = 0.004
 
+    #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
+    #: Massively-Parallel Neural Network Simulation)
+    #: 25pJ per bit
     JOULES_PER_ROUTER_BIT = 0.000000000025
 
     #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
     #: Massively-Parallel Neural Network Simulation)
-    # - 25pJ per bit - spike packets are 40 bits so 1nJ per spike
+    #: 25pJ per bit - spike packets are 40 bits so 1nJ per spike
     JOULES_PER_PACKET: Final = JOULES_PER_ROUTER_BIT * 40
 
     #: As above, but with extra 32-bits
