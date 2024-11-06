@@ -94,7 +94,7 @@ class Version3(VersionSpin1):
         if n_frames != 0:
             raise SpinnMachineException(
                 "A version 3 SpiNNaker 1 board has no frames!")
-        if n_boards != 1:
+        if n_boards > 1:
             raise SpinnMachineException(
                 "A version 3 SpiNNaker 1 board has exactly one board!")
 
