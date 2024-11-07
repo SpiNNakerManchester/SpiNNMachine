@@ -40,9 +40,6 @@ class Version5(VersionSpin1, Version48Chips):
     """
     __slots__ = ()
 
-    #: given from Indar's measurements
-    WATTS_PER_BOARD_FPGAS: Final = 0.584635
-
     #: measured from the real power meter and timing between
     #: the photos for a days powered off
     #: this is the cost of just a frame itself, including the switch and
@@ -56,13 +53,13 @@ class Version5(VersionSpin1, Version48Chips):
 
     # pylint: disable=invalid-name
     #: measured from the real power meter and timing between the photos
-    #: for a day powered off
-    WATTS_FOR_BOXED_48_CHIP_FRAME_IDLE_COST: Final = 4.5833333
+    #: for a day with just the cooling fans of the boxed board.
+    WATTS_FOR_48_CHIP_BOX_COST_OVERHEAD: Final = 4.5833333
 
     # pylint: disable=invalid-name
     #: measured from the real power meter and timing between the photos
     #: for a day powered off
-    WATTS_FOR_UNBOXED_48_CHIP_FRAME_IDLE_COST: Final = 4.5833333
+    WATTS_FOR_48_CHIP_BOARD_IDLE_COST: Final = 4.5833333
 
     @property
     @overrides(VersionSpin1.name)
@@ -117,17 +114,15 @@ class Version5(VersionSpin1, Version48Chips):
 
         # The container of the boards idle energy
         if n_frames != 0:
-            energy += n_frames * self.WATTS_FOR_FRAME_IDLE_COST * time_s
-        elif n_boards == 1:
-            energy += (
-                self.WATTS_FOR_BOXED_48_CHIP_FRAME_IDLE_COST * time_s)
-        else:
-            energy += (
-                n_boards * self.WATTS_FOR_UNBOXED_48_CHIP_FRAME_IDLE_COST *
-                time_s)
+            if n_boards > 1:
+                energy += n_frames * self.WATTS_FOR_FRAME_IDLE_COST * time_s
+            elif n_boards == 1:
+                energy += (
+                    n_frames * self.WATTS_FOR_48_CHIP_BOX_COST_OVERHEAD *
+                    time_s)
 
-        # The FPGA idle energy
-        energy += n_boards * self.WATTS_PER_BOARD_FPGAS * time_s
+        # The FPGAs + board idle energy, excluding the chips
+        energy += n_boards * self.WATTS_FOR_48_CHIP_BOARD_IDLE_COST * time_s
         return energy
 
     @overrides(VersionSpin1.get_active_energy)

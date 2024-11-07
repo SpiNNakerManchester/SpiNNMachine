@@ -124,6 +124,8 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
 
     def _get_core_active_energy(
             self, core_active_times: ChipActiveTime) -> float:
+        # TODO: treat cores that are active sometimes differently to cores that
+        # are always idle
         return sum(
             time * self.WATTS_PER_CORE_ACTIVE_OVERHEAD
-            for time in core_active_times.values())
+            for time, _n_cores in core_active_times.values())
