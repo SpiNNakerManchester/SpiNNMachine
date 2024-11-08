@@ -52,14 +52,16 @@ class Version5(VersionSpin1, Version48Chips):
     WATTS_PER_FRAME_ACTIVE_COST_OVERHEAD: Final = 154.163558 - 117
 
     # pylint: disable=invalid-name
-    #: measured from the real power meter and timing between the photos
-    #: for a day with just the cooling fans of the boxed board.
-    WATTS_FOR_48_CHIP_BOX_COST_OVERHEAD: Final = 4.5833333
+    #: from Optimising the overall power usage on the SpiNNaker neuromimetic
+    #: platform, an idle board uses 26.84W and from measurement of a boxed
+    #: board with all cores idle for 1 hour including the power supply and all
+    #: parts, uses 31.88W, so the overhead is 5.04W
+    WATTS_FOR_48_CHIP_BOX_COST_OVERHEAD: Final = 5.04
 
     # pylint: disable=invalid-name
-    #: measured from the real power meter and timing between the photos
-    #: for a day powered off
-    WATTS_FOR_48_CHIP_BOARD_IDLE_COST: Final = 4.5833333
+    #: from Optimising the overall power usage on the SpiNNaker neuromimetic
+    #: platform, an idle board uses 26.84W
+    WATTS_FOR_48_CHIP_BOARD_IDLE_COST: Final = 26.84
 
     @property
     @overrides(VersionSpin1.name)
@@ -109,8 +111,9 @@ class Version5(VersionSpin1, Version48Chips):
     def get_idle_energy(
             self, time_s: float, n_frames: int, n_boards: int,
             n_chips: int) -> float:
-        # Chips idle energy
-        energy = n_chips * self.WATTS_PER_IDLE_CHIP * time_s
+
+        # The board idle energy
+        energy = n_boards * self.WATTS_FOR_48_CHIP_BOARD_IDLE_COST * time_s
 
         # The container of the boards idle energy
         if n_frames != 0:
@@ -121,8 +124,6 @@ class Version5(VersionSpin1, Version48Chips):
                     n_frames * self.WATTS_FOR_48_CHIP_BOX_COST_OVERHEAD *
                     time_s)
 
-        # The FPGAs + board idle energy, excluding the chips
-        energy += n_boards * self.WATTS_FOR_48_CHIP_BOARD_IDLE_COST * time_s
         return energy
 
     @overrides(VersionSpin1.get_active_energy)

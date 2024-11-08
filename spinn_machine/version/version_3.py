@@ -32,6 +32,10 @@ class Version3(VersionSpin1):
     """
     __slots__ = ()
 
+    #: From measuring the power of an idle 4-chip board for 1 hour, the cost
+    #: is 3.56W
+    WATTS_FOR_4_CHIP_BOARD_IDLE_COST: Final = 3.56
+
     @property
     @overrides(VersionSpin1.name)
     def name(self) -> str:
@@ -98,7 +102,9 @@ class Version3(VersionSpin1):
             raise SpinnMachineException(
                 "A version 3 SpiNNaker 1 board has exactly one board!")
 
-        return n_chips * self.WATTS_PER_IDLE_CHIP * time_s
+        # We allow n_boards to be 0 to discount the cost of the board,
+        # so we multiply by n_boards in case it is 0!
+        return n_boards * self.WATTS_FOR_4_CHIP_BOARD_IDLE_COST * time_s
 
     @overrides(VersionSpin1.get_active_energy)
     def get_active_energy(

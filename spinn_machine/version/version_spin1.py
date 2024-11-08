@@ -28,15 +28,10 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     Shared code for all Spin1 board versions
     """
 
-    #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
-    #: Massively-Parallel Neural Network Simulation)
-    #: (includes Idle chip @ 360mW, SDRAM @ 170mW and idle cores @ 20mW each)
-    WATTS_PER_IDLE_CHIP: Final = 0.360 + 0.170 + (0.02 * 18)
-
-    #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
-    #: Massively-Parallel Neural Network Simulation)
-    #: = (1000mW - WATTS_PER_IDLE_CHIP - (6.3mW for each link)) / 18 ~= 4mW
-    WATTS_PER_CORE_ACTIVE_OVERHEAD: Final = 0.004
+    #: From measuring the power of all 48 chips on a boxed board with all cores
+    #: idle for 1 hour and 806 cores active for 1 hour we get 31.88W idle and
+    #: 59.37W active, so 27.49W active overhead, which is 0.034W per core
+    WATTS_PER_CORE_ACTIVE_OVERHEAD: Final = 0.034
 
     #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
     #: Massively-Parallel Neural Network Simulation)
