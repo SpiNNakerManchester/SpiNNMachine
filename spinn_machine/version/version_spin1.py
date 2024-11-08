@@ -30,7 +30,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
 
     #: From measuring the power of all 48 chips on a boxed board with all cores
     #: idle for 1 hour and 806 cores active for 1 hour we get 31.88W idle and
-    #: 59.37W active, so 27.49W active overhead, which is 0.034W per core
+    #: 59.38W active, so 27.50W active overhead, which is 0.034W per core
     WATTS_PER_CORE_ACTIVE_OVERHEAD: Final = 0.034
 
     #: stated in papers (SpiNNaker: A 1-W 18 core system-on-Chip for
