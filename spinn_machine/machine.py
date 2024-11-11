@@ -833,6 +833,15 @@ class Machine(object, metaclass=AbstractBase):
                 f" {board_address}")
         return self._fpga_links[b_key]
 
+    @property
+    def n_fpga_links(self) -> int:
+        """
+        The number of FPGA links in the machine.
+
+        :rtype: int
+        """
+        return len(self._fpga_links)
+
     def add_spinnaker_links(self) -> None:
         """
         Add SpiNNaker links that are on a given machine depending on the

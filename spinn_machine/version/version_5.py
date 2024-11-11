@@ -18,6 +18,7 @@ from spinn_utilities.typing.coords import XY
 
 from .version_48_chips import Version48Chips
 from .version_spin1 import VersionSpin1
+from .abstract_version import ChipActiveTime, RouterPackets
 
 CHIPS_PER_BOARD: Final = {
     (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,
@@ -38,6 +39,29 @@ class Version5(VersionSpin1, Version48Chips):
     Covers versions 4 and 5
     """
     __slots__ = ()
+
+    #: measured from the real power meter and timing between
+    #: the photos for a days powered off
+    #: this is the cost of just a frame itself, including the switch and
+    #: cooling, while the system is idle.
+    WATTS_FOR_FRAME_IDLE_COST: Final = 117
+
+    #: measured from the loading of the column and extrapolated
+    #: this is the cost of just a frame itself, including the switch and
+    #: cooling, while the system is active, over the idle cost for simplicity
+    WATTS_PER_FRAME_ACTIVE_COST_OVERHEAD: Final = 154.163558 - 117
+
+    # pylint: disable=invalid-name
+    #: from Optimising the overall power usage on the SpiNNaker neuromimetic
+    #: platform, an idle board uses 26.84W and from measurement of a boxed
+    #: board with all cores idle for 1 hour including the power supply and all
+    #: parts, uses 31.88W, so the overhead is 5.04W
+    WATTS_FOR_48_CHIP_BOX_COST_OVERHEAD: Final = 5.04
+
+    # pylint: disable=invalid-name
+    #: from Optimising the overall power usage on the SpiNNaker neuromimetic
+    #: platform, an idle board uses 26.84W
+    WATTS_FOR_48_CHIP_BOARD_IDLE_COST: Final = 26.84
 
     @property
     @overrides(VersionSpin1.name)
@@ -82,6 +106,43 @@ class Version5(VersionSpin1, Version48Chips):
                 (7, 5, 0, 2, 12), (7, 5, 1, 2, 11),
                 (7, 6, 0, 2, 10), (7, 6, 1, 2, 9),
                 (7, 7, 0, 2, 8), (7, 7, 1, 2, 7), (7, 7, 2, 2, 6)]
+
+    @overrides(VersionSpin1.get_idle_energy)
+    def get_idle_energy(
+            self, time_s: float, n_frames: int, n_boards: int,
+            n_chips: int) -> float:
+
+        # We allow n_boards to be 0 to discount the cost of the board
+        if n_boards == 0:
+            energy = n_chips * self.WATTS_PER_IDLE_CHIP * time_s
+        else:
+            energy = n_boards * self.WATTS_FOR_48_CHIP_BOARD_IDLE_COST * time_s
+
+        # The container of the boards idle energy
+        if n_frames != 0:
+            if n_boards > 1:
+                energy += n_frames * self.WATTS_FOR_FRAME_IDLE_COST * time_s
+            elif n_boards == 1:
+                energy += (
+                    n_frames * self.WATTS_FOR_48_CHIP_BOX_COST_OVERHEAD *
+                    time_s)
+
+        return energy
+
+    @overrides(VersionSpin1.get_active_energy)
+    def get_active_energy(
+            self, time_s: float, n_frames: int, n_boards: int, n_chips: int,
+            chip_active_time: ChipActiveTime,
+            router_packets: RouterPackets) -> float:
+        container_energy = 0.0
+        if n_frames != 0:
+            container_energy = (
+                n_frames * self.WATTS_PER_FRAME_ACTIVE_COST_OVERHEAD * time_s)
+        return (
+            container_energy +
+            self.get_idle_energy(time_s, n_frames, n_boards, n_chips) +
+            self._get_router_active_energy(router_packets) +
+            self._get_core_active_energy(chip_active_time))
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version5)
