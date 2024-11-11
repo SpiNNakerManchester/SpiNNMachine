@@ -63,7 +63,7 @@ class IPTag(AbstractTag):
         self._destination_y = destination_y
 
     @property
-    def ip_address(self) -> Optional[str]:
+    def ip_address(self) -> str:
         """
         The IP address to which SDP packets with this tag will be sent.
         """
