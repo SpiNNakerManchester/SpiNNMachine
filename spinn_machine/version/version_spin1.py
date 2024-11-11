@@ -28,6 +28,11 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     Shared code for all Spin1 board versions
     """
 
+    #: From Optimising the overall power usage on the SpiNNaker neuromimetic
+    #: platform - all chips on a 48-chip board together use 5.23 + 5.17 + 5.52W
+    #: + SDRAM of 0.90W = 16.82W when idle, so each chip use 0.35W
+    WATTS_PER_IDLE_CHIP: Final = 0.35
+
     #: From measuring the power of all 48 chips on a boxed board with all cores
     #: idle for 1 hour and 806 cores active for 1 hour we get 31.88W idle and
     #: 59.38W active, so 27.50W active overhead, which is 0.034W per core

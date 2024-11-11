@@ -102,9 +102,10 @@ class Version3(VersionSpin1):
             raise SpinnMachineException(
                 "A version 3 SpiNNaker 1 board has exactly one board!")
 
-        # We allow n_boards to be 0 to discount the cost of the board,
-        # so we multiply by n_boards in case it is 0!
-        return n_boards * self.WATTS_FOR_4_CHIP_BOARD_IDLE_COST * time_s
+        # We allow n_boards to be 0 to discount the cost of the board
+        if n_boards == 0:
+            return n_chips * self.WATTS_PER_IDLE_CHIP * time_s
+        return self.WATTS_FOR_4_CHIP_BOARD_IDLE_COST * time_s
 
     @overrides(VersionSpin1.get_active_energy)
     def get_active_energy(

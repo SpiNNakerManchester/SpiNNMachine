@@ -112,8 +112,11 @@ class Version5(VersionSpin1, Version48Chips):
             self, time_s: float, n_frames: int, n_boards: int,
             n_chips: int) -> float:
 
-        # The board idle energy
-        energy = n_boards * self.WATTS_FOR_48_CHIP_BOARD_IDLE_COST * time_s
+        # We allow n_boards to be 0 to discount the cost of the board
+        if n_boards == 0:
+            energy = n_chips * self.WATTS_PER_IDLE_CHIP * time_s
+        else:
+            energy = n_boards * self.WATTS_FOR_48_CHIP_BOARD_IDLE_COST * time_s
 
         # The container of the boards idle energy
         if n_frames != 0:
