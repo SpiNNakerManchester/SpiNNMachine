@@ -14,8 +14,9 @@
 from __future__ import annotations
 import logging
 import re
-from typing import (Dict, Iterable, List, Optional, Sequence, Tuple,
-                    TYPE_CHECKING)
+from typing import (
+    Dict, Iterable, List, Optional, Sequence, Tuple, TYPE_CHECKING)
+from typing_extensions import TypeAlias
 
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
@@ -27,6 +28,12 @@ if TYPE_CHECKING:
     from spinn_machine.machine import Machine
 
 logger = FormatAdapter(logging.getLogger(__name__))
+
+ChipXY: TypeAlias = Tuple[int, int]
+# Dict of the number of packets sent by each router in each category
+RouterPackets: TypeAlias = Dict[ChipXY, Dict[str, int]]
+# Dict of the time the cores were active in seconds, and the number of cores
+ChipActiveTime: TypeAlias = Dict[ChipXY, Tuple[float, int]]
 
 CORE_RANGE = re.compile(r"(\d+)-(\d+)")
 CORE_SINGLE = re.compile(r"(-*)(\d+)")
@@ -525,6 +532,48 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :param str core_string:
         :return: A list of cores, which might be just one
         :rtype: list(int)
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_idle_energy(
+            self, time_s: float, n_frames: int, n_boards: int,
+            n_chips: int) -> float:
+        """
+        Returns the idle energy consumption of the system in joules
+
+        :param float time_s: The time to calculate the energy for in seconds
+        :param int n_frames: The number of frames
+        :param int n_boards: The number of boards
+        :param int n_chips: The number of chips
+        :rtype: float
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_active_energy(
+            self, time_s: float, n_frames: int, n_boards: int, n_chips: int,
+            chip_active_time: ChipActiveTime,
+            router_packets: RouterPackets) -> float:
+        """
+        Returns the active energy consumption of the system in joules
+
+        :param float time_s: The time to calculate the energy for in seconds
+        :param int n_frames: The number of frames
+        :param int n_boards: The number of boards
+        :param int n_chips: The number of chips
+        :param dict chip_active_time: The time the cores were active in seconds
+        :param dict router_packets: The number of packets sent by each router
+        :rtype: float
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_router_report_packet_types(self) -> List[str]:
+        """
+        Returns the list of packet types that the router can send
+
+        :rtype: list(str)
         """
         raise NotImplementedError
 
