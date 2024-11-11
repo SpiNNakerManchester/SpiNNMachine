@@ -31,14 +31,14 @@ class AbstractTag(object):
         "_port"
     ]
 
-    def __init__(self, board_address: Optional[str], tag: int,
+    def __init__(self, board_address: str, tag: int,
                  port: Optional[int]) -> None:
         self._board_address = board_address
         self._tag = tag
         self._port = port
 
     @property
-    def board_address(self) -> Optional[str]:
+    def board_address(self) -> str:
         """
         The board address of the tag.
         """

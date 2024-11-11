@@ -32,14 +32,13 @@ class IPTag(AbstractTag):
 
     # pylint: disable=too-many-arguments
     def __init__(
-            self, board_address: Optional[str], destination_x: int,
+            self, board_address: str, destination_x: int,
             destination_y: int, tag: int, ip_address: str,
             port: Optional[int] = None, strip_sdp: bool = False,
             traffic_identifier: str = "DEFAULT"):
         """
         :param board_address:
             The IP address of the board on which the tag is allocated
-        :type board_address: str or None
         :param int destination_x:
             The x-coordinate where users of this tag should send packets to
         :param int destination_y:
