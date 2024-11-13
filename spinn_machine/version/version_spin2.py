@@ -25,7 +25,7 @@ from .abstract_version import AbstractVersion
 CHIPS_PER_BOARD: Final = {(0, 0): 152}
 CORE_QX_QY_QP = re.compile(r"(\d)\.(\d)\.(\d)")
 QUAD_MAP = bidict(
-    {0: (0, 0, 0), 1: (7, 6, 0), 2: (7, 6, 1), 3: (7, 6, 2), 4: (7, 6, 3),
+    {1: (7, 6, 0), 2: (7, 6, 1), 3: (7, 6, 2), 4: (7, 6, 3),
      5: (7, 5, 0), 6: (7, 5, 1), 7: (7, 5, 2), 8: (7, 5, 3),
      9: (6, 6, 0), 10: (6, 6, 1), 11: (6, 6, 2), 12: (6, 6, 3),
      13: (6, 5, 0), 14: (6, 5, 1), 15: (6, 5, 2), 16: (6, 5, 3),
@@ -63,6 +63,40 @@ QUAD_MAP = bidict(
      141: (6, 2, 0), 142: (6, 2, 1), 143: (6, 2, 2), 144: (6, 2, 3),
      145: (6, 3, 0), 146: (6, 3, 1), 147: (6, 3, 2), 148: (6, 3, 3),
      149: (5, 3, 0), 150: (5, 3, 1), 151: (5, 3, 2), 152: (5, 3, 3)})
+
+  
+class S2_HW_MAP:
+    QUAD_MAP = QUAD_MAP
+    PERIPHERY = bidict({153: (0,0,0), 154: (1,0,0), 155: (2,0,0)})
+    S_LINK = bidict({156: (3,0,0),  157: (4,0,0)})
+    SW_LINK = bidict({158: (5,0,0), 159: (6,0,0)})
+    W_LINK = bidict({160: (7,3,0), 161: (7,4,0)})
+    N_LINK = bidict({162: (4,7,0),163: (3,7,0)})
+    NE_LINK = bidict({164: (2,7,0),165: (1,7,0)})
+    E_LINK = bidict({166: (0,4,0),167:(0,3,0)})
+    ROUTER = bidict({168: (4,3,0),169: (4,4,0)})
+    MEM_A = bidict({170: (0,6,0), 171: (0,5,0)})
+    MEM_B = bidict({172: (0,2,0), 173: (0,1,0)})
+    HW_LIST: List[bidict] = [QUAD_MAP, PERIPHERY, S_LINK, SW_LINK, W_LINK, N_LINK, NE_LINK, E_LINK, ROUTER, MEM_A, MEM_B]
+
+    def __contains__(self, item):
+        return any([item in hw for hw in self.HW_LIST])
+    
+    def inv(self, item):
+        """Emulate the behavior of bidict
+        """
+        for hw in self.HW_LIST:
+            try:
+                return hw.inv[item]
+            except KeyError:
+                continue
+    
+    def __getitem__(self, key):
+        for hw in self.HW_LIST:
+            if key in hw:
+                return hw[key]
+
+HW_MAP = S2_HW_MAP()
 
 
 class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
