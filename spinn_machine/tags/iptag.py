@@ -34,22 +34,20 @@ class IPTag(AbstractTag):
     def __init__(
             self, board_address: str, destination_x: int,
             destination_y: int, tag: int, ip_address: str,
-            port: Optional[int] = None, strip_sdp: bool = False,
+            port: int, strip_sdp: bool = False,
             traffic_identifier: str = "DEFAULT"):
         """
         :param board_address:
             The IP address of the board on which the tag is allocated
-        :param int destination_x:
+        :param destination_x:
             The x-coordinate where users of this tag should send packets to
-        :param int destination_y:
+        :param destination_y:
             The y-coordinate where users of this tag should send packets to
-        :param int tag: The tag of the SDP packet
+        :param tag: The tag of the SDP packet
         :param str ip_address:
             The IP address to which SDP packets with the tag will be sent
         :param port:
             The port to which the SDP packets with the tag will be sent, or
-            ``None`` if not yet assigned
-        :type port: int or None
         :param bool strip_sdp:
             Indicates whether the SDP header should be removed
         :param str traffic_identifier:
