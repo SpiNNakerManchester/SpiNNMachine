@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Final, List, Tuple
+from typing import Any, Dict, Final, List, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 
@@ -144,5 +144,5 @@ class Version5(VersionSpin1, Version48Chips):
             self._get_router_active_energy(router_packets) +
             self._get_core_active_energy(chip_active_time))
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version5)

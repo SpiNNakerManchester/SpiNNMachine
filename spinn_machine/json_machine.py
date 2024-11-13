@@ -176,7 +176,7 @@ def _int_value(value: int) -> int:
 
 
 # pylint: disable=wrong-spelling-in-docstring
-def _describe_chip(chip: Chip, standard, ethernet) -> JsonArray:
+def _describe_chip(chip: Chip, standard: _Desc, ethernet: _Desc) -> JsonArray:
     """
     Produce a JSON-suitable description of a single chip.
 

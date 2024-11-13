@@ -16,6 +16,9 @@ from __future__ import annotations
 import logging
 import sys
 from typing import Optional, TYPE_CHECKING
+
+from typing_extensions import Never
+
 from spinn_utilities.config_holder import (
     get_config_bool, get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
@@ -156,7 +159,7 @@ def _get_size_version() -> Optional[int]:
             return 5
 
 
-def _number_to_version(version: int):
+def _number_to_version(version: int) -> AbstractVersion:
     # Delayed import to avoid circular imports
     # pylint: disable=import-outside-toplevel
     from .version_3 import Version3
@@ -179,7 +182,7 @@ def _number_to_version(version: int):
     raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")
 
 
-def raise_version_error(error: str, version: Optional[int]):
+def raise_version_error(error: str, version: Optional[int]) -> Never:
     """
     Collects main cfg values and raises an exception
 

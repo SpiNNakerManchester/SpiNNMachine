@@ -13,6 +13,8 @@
 # limitations under the License.
 from typing import (Iterable, Iterator, Optional, Tuple)
 
+from typing_extensions import Self
+
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.typing.coords import XY
 
@@ -33,7 +35,7 @@ class Chip(XY):
                 sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
                 ip_address: Optional[str] = None,
                 tag_ids: Optional[Iterable[int]] = None,
-                parent_link: Optional[int] = None):
+                parent_link: Optional[int] = None) -> Self:
         return tuple.__new__(cls, (x, y))
 
     # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
