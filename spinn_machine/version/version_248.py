@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Final, List, Tuple
+from typing import Any, Dict, Final, List, Tuple
 
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
@@ -69,5 +69,5 @@ class Version248(VersionSpin2, Version48Chips):
         # TODO
         return []
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version248)

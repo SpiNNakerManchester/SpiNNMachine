@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Final, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Final, List, Optional, Sequence, Tuple
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 from spinn_machine.exceptions import SpinnMachineException
@@ -62,7 +62,7 @@ class Version3(VersionSpin1):
         return [(0, 0)]
 
     @overrides(VersionSpin1._verify_size)
-    def _verify_size(self, width: int, height: int):
+    def _verify_size(self, width: int, height: int) -> None:
         if width != 2:
             raise SpinnMachineException(f"Unexpected {width=}")
         if height != 2:
@@ -117,5 +117,5 @@ class Version3(VersionSpin1):
             self._get_router_active_energy(router_packets) +
             self._get_core_active_energy(chip_active_time))
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version3)

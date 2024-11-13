@@ -28,8 +28,9 @@ class ReverseIPTag(AbstractTag):
     ]
 
     # pylint: disable=too-many-arguments
-    def __init__(self, board_address, tag, port, destination_x, destination_y,
-                 destination_p, sdp_port=1):
+    def __init__(self, board_address: str, tag: int, port: int,
+                 destination_x: int, destination_y: int, destination_p: int,
+                 sdp_port: int = 1):
         """
         :param board_address:
             The IP address of the board on which the tag is allocated
@@ -53,7 +54,7 @@ class ReverseIPTag(AbstractTag):
         self._sdp_port = sdp_port
 
     @property
-    def sdp_port(self):
+    def sdp_port(self) -> int:
         """
         The SDP port number of the tag that these packets are to be
         received on for the processor.
@@ -61,7 +62,7 @@ class ReverseIPTag(AbstractTag):
         return self._sdp_port
 
     @property
-    def destination_x(self):
+    def destination_x(self) -> int:
         """
         The destination x coordinate of a chip in the SpiNNaker machine
         that packets should be sent to for this reverse IP tag.
@@ -69,7 +70,7 @@ class ReverseIPTag(AbstractTag):
         return self._destination_x
 
     @property
-    def destination_y(self):
+    def destination_y(self) -> int:
         """
         The destination y coordinate of a chip in the SpiNNaker machine
         that packets should be sent to for this reverse IP tag.
@@ -77,14 +78,14 @@ class ReverseIPTag(AbstractTag):
         return self._destination_y
 
     @property
-    def destination_p(self):
+    def destination_p(self) -> int:
         """
         The destination processor ID for the chip at (x,y) that packets
         should be send to for this reverse IP tag.
         """
         return self._destination_p
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"ReverseIPTag(board_address={self._board_address}, "
             f"tag={self._tag}, port={self._port}, "

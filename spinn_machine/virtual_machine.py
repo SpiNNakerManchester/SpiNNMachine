@@ -28,7 +28,7 @@ from .machine import Machine
 logger = FormatAdapter(logging.getLogger(__name__))
 
 
-def virtual_machine(width: int, height: int, validate: bool = True):
+def virtual_machine(width: int, height: int, validate: bool = True) -> Machine:
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
@@ -44,7 +44,7 @@ def virtual_machine(width: int, height: int, validate: bool = True):
 
 
 def virtual_machine_by_min_size(
-        width: int, height: int, validate: bool = True):
+        width: int, height: int, validate: bool = True) -> Machine:
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
@@ -67,7 +67,7 @@ def virtual_machine_by_min_size(
     return virtual_machine(width, height, validate)
 
 
-def virtual_machine_by_cores(n_cores: int, validate: bool = True):
+def virtual_machine_by_cores(n_cores: int, validate: bool = True) -> Machine:
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
@@ -92,7 +92,7 @@ def virtual_machine_by_cores(n_cores: int, validate: bool = True):
     return virtual_machine(width, height, validate)
 
 
-def virtual_machine_by_chips(n_chips: int, validate: bool = True):
+def virtual_machine_by_chips(n_chips: int, validate: bool = True) -> Machine:
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
@@ -117,7 +117,7 @@ def virtual_machine_by_chips(n_chips: int, validate: bool = True):
     return virtual_machine(width, height, validate)
 
 
-def virtual_machine_by_boards(n_boards: int, validate: bool = True):
+def virtual_machine_by_boards(n_boards: int, validate: bool = True) -> Machine:
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 

@@ -543,7 +543,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
-    def add_chip(self, chip: Chip):
+    def add_chip(self, chip: Chip) -> None:
         """
         Add a chip to the machine.
 
@@ -569,7 +569,7 @@ class Machine(object, metaclass=AbstractBase):
             if (chip == (0, 0)):
                 self._boot_ethernet_address = chip.ip_address
 
-    def add_chips(self, chips: Iterable[Chip]):
+    def add_chips(self, chips: Iterable[Chip]) -> None:
         """
         Add some chips to the machine.
 
@@ -668,7 +668,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return (x, y) in self._chips and self._chips[x, y].router.is_link(link)
 
-    def __contains__(self, x_y_tuple: XY):
+    def __contains__(self, x_y_tuple: XY) -> bool:
         """
         Determine if a chip exists at the given coordinates.
 
@@ -869,7 +869,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def _add_spinnaker_link(
             self, spinnaker_link_id: int, x: int, y: int, link: int,
-            board_address: str):
+            board_address: str) -> None:
         link_data = SpinnakerLinkData(
             spinnaker_link_id, x, y, link, board_address)
         self._spinnaker_links[board_address, spinnaker_link_id] = link_data
@@ -895,7 +895,7 @@ class Machine(object, metaclass=AbstractBase):
 
     def _add_fpga_link(
             self, fpga_id: int, fpga_link: int, x: int, y: int, link: int,
-            board_address: str, ex: int, ey: int):
+            board_address: str, ex: int, ey: int) -> None:
         # pylint: disable=too-many-arguments
         link_data = FPGALinkData(
             fpga_link_id=fpga_link, fpga_id=fpga_id,
