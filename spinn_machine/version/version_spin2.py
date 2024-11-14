@@ -86,15 +86,16 @@ class S2_HW_MAP:
         """Emulate the behavior of bidict
         """
         for hw in self.HW_LIST:
-            try:
-                return hw.inv[item]
-            except KeyError:
-                continue
+            item = hw.inv.get(item)
+            if item is not None:
+                return item
+        raise KeyError(f"Item {item} not found in any hardware map")
     
     def __getitem__(self, key):
         for hw in self.HW_LIST:
             if key in hw:
                 return hw[key]
+
 
 HW_MAP = S2_HW_MAP()
 
