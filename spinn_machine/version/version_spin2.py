@@ -77,7 +77,8 @@ class S2_HW_MAP:
     ROUTER = bidict({168: (4,3,0),169: (4,4,0)})
     MEM_A = bidict({170: (0,6,0), 171: (0,5,0)})
     MEM_B = bidict({172: (0,2,0), 173: (0,1,0)})
-    HW_LIST: List[bidict] = [QUAD_MAP, PERIPHERY, S_LINK, SW_LINK, W_LINK, N_LINK, NE_LINK, E_LINK, ROUTER, MEM_A, MEM_B]
+    HOST_IF = bidict({174: (5,7,0), 175: (6,7,0)})
+    HW_LIST: List[bidict] = [QUAD_MAP, PERIPHERY, S_LINK, SW_LINK, W_LINK, N_LINK, NE_LINK, E_LINK, ROUTER, MEM_A, MEM_B, HOST_IF]
 
     def __contains__(self, item):
         return any([item in hw for hw in self.HW_LIST])
@@ -86,9 +87,9 @@ class S2_HW_MAP:
         """Emulate the behavior of bidict
         """
         for hw in self.HW_LIST:
-            item = hw.inv.get(item)
-            if item is not None:
-                return item
+            core_id = hw.inv.get(item)
+            if core_id is not None:
+                return core_id
         raise KeyError(f"Item {item} not found in any hardware map")
     
     def __getitem__(self, key):
