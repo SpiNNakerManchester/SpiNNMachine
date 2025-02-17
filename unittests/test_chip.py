@@ -22,7 +22,7 @@ from spinn_machine.version.version_strings import VersionStrings
 
 class TestingChip(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
         set_config("Machine", "versions", VersionStrings.ANY.text)
         self._x = 0
@@ -45,7 +45,7 @@ class TestingChip(unittest.TestCase):
     def _create_chip(self, x, y, processors, r, sdram, ip):
         return Chip(x, y, [0], range(1, processors), r, sdram, 0, 0, ip)
 
-    def test_create_chip(self):
+    def test_create_chip(self) -> None:
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
 
@@ -64,18 +64,17 @@ class TestingChip(unittest.TestCase):
         self.assertEqual(new_chip.tag_ids, OrderedSet([1, 2, 3, 4, 5, 6, 7]))
         self.assertTrue(new_chip.is_processor_with_id(3))
 
-    def test_0_down(self):
+    def test_0_down(self) -> None:
         Chip(1, 1, [1], range(3, self.n_processors), self._router,
              self._sdram, 0, 0, self._ip)
 
-    def test_1_chip(self):
+    def test_1_chip(self) -> None:
         # Chip with just 1 processor
         new_chip = Chip(1, 1, [0], [], self._router, self._sdram, 0, 0,
                         self._ip)
-        with self.assertRaises(Exception):
-            new_chip.get_first_none_monitor_processor()
+        self.assertEqual((), new_chip.placable_processors_ids)
 
-    def test_processors(self):
+    def test_processors(self) -> None:
         new_chip = self._create_chip(self._x, self._y, self.n_processors,
                                      self._router, self._sdram, self._ip)
         all_p = set(new_chip.all_processor_ids)
@@ -85,7 +84,7 @@ class TestingChip(unittest.TestCase):
         monitors = set(new_chip.scamp_processors_ids)
         self.assertEqual(users.union(monitors), all_p)
 
-    def test_is_xy(self):
+    def test_is_xy(self) -> None:
         chip24 = self._create_chip(
             2, 4, self.n_processors, self._router, self._sdram, None)
         chip36 = self._create_chip(

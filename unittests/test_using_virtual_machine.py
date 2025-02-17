@@ -31,7 +31,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
 
     VERSION_5_N_CORES_PER_BOARD = sum(CHIPS_PER_BOARD.values())
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
     def _create_chip(self, x, y):
@@ -59,13 +59,15 @@ class TestUsingVirtualMachine(unittest.TestCase):
                         nearest_ethernet_chip[0],
                         nearest_ethernet_chip[1], None)
 
-    def test_new_vm_with_max_cores(self):
+    def test_new_vm_with_max_cores(self) -> None:
         set_config("Machine", "versions", VersionStrings.ANY.text)
         version = MachineDataView.get_machine_version()
         n_cpus = version.max_cores_per_chip - 5
-        set_config("Machine", "max_machine_core", n_cpus)
+        set_config("Machine", "max_machine_core", str(n_cpus))
         # HACK Unsupported! Need new the version again after the cfg changed
-        MachineDataView._MachineDataView__data._machine_version = None
+        data = (MachineDataView.
+                _MachineDataView__data)    # type: ignore[attr-defined]
+        data._machine_version = None
         version = MachineDataView.get_machine_version()
         vm = virtual_machine_by_boards(1, validate=True)
         for chip in vm.chips:
@@ -78,7 +80,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
             self.assertEqual(version.n_scamp_cores,
                              len(list(chip.scamp_processors_ids)))
 
-    def test_iter_chips(self):
+    def test_iter_chips(self) -> None:
         set_config("Machine", "versions", VersionStrings.ANY.text)
         vm = virtual_machine_by_boards(1)
         n_chips = MachineDataView.get_machine_version().n_chips_per_board
@@ -88,7 +90,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
             count += 1
         self.assertEqual(n_chips, count)
 
-    def test_down_chip(self):
+    def test_down_chip(self) -> None:
         set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         down_chips = set()
         down_chips.add((1, 1))
@@ -107,7 +109,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                       (source[1] + path[1] - path[2]) % height)
         self.assertEqual(target, new_target, "{}{}".format(source, path))
 
-    def test_nowrap_shortest_path(self):
+    def test_nowrap_shortest_path(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         machine = virtual_machine(16, 28, validate=True)
         for source in machine.chip_coordinates:
@@ -121,7 +123,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]))
                 self._check_path(source, target, path, 1000000, 1000000)
 
-    def test_fullwrap_shortest_path(self):
+    def test_fullwrap_shortest_path(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         width = 12
         height = 24
@@ -138,7 +140,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     "{}{}{}".format(source, target, path))
                 self._check_path(source, target, path, width, height)
 
-    def test_hoizontal_wrap_shortest_path(self):
+    def test_hoizontal_wrap_shortest_path(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         width = 12
         height = 16
@@ -163,7 +165,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     "{}{}{}".format(source, target, path))
                 self._check_path(source, target, path, width, height)
 
-    def test_vertical_wrap_shortest_path(self):
+    def test_vertical_wrap_shortest_path(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         width = 16
         height = 12
@@ -188,7 +190,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     "{}{}{}".format(source, target, path))
                 self._check_path(source, target, path, width, height)
 
-    def test_minimize(self):
+    def test_minimize(self) -> None:
         set_config("Machine", "versions", VersionStrings.ANY.text)
         machine = virtual_machine_by_boards(1)
         for x in range(-3, 3):
@@ -197,7 +199,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 min2 = machine._minimize_vector(x, y)
                 self.assertEqual(min1, min2)
 
-    def test_unreachable_incoming_chips(self):
+    def test_unreachable_incoming_chips(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         machine = virtual_machine_by_min_size(6, 6)
 
@@ -210,7 +212,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unreachable = machine.unreachable_incoming_chips()
         self.assertListEqual([(3, 3)], unreachable)
 
-    def test_unreachable_outgoing_chips(self):
+    def test_unreachable_outgoing_chips(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         machine = virtual_machine_by_min_size(6, 6)
 
@@ -221,7 +223,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unreachable = machine.unreachable_outgoing_chips()
         self.assertListEqual([(3, 3)], unreachable)
 
-    def test_unreachable_incoming_local_chips(self):
+    def test_unreachable_incoming_local_chips(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
@@ -231,7 +233,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unreachable = machine.unreachable_incoming_local_chips()
         self.assertListEqual([(8, 7)], unreachable)
 
-    def test_unreachable_outgoing_local_chips(self):
+    def test_unreachable_outgoing_local_chips(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
@@ -241,7 +243,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unreachable = machine.unreachable_outgoing_local_chips()
         self.assertListEqual([(8, 7)], unreachable)
 
-    def test_repair_with_local_orphan(self):
+    def test_repair_with_local_orphan(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
@@ -249,14 +251,14 @@ class TestUsingVirtualMachine(unittest.TestCase):
         set_config("Machine", "down_chips", down_str)
         machine = virtual_machine(16, 16)
         with self.assertRaises(SpinnMachineException):
-            set_config("Machine", "repair_machine", False)
+            set_config("Machine", "repair_machine", "False")
             repaired = machine_repair(machine)
-        set_config("Machine", "repair_machine", True)
+        set_config("Machine", "repair_machine", "True")
         repaired = machine_repair(machine)
         self.assertTrue(machine.is_chip_at(8, 7))
         self.assertFalse(repaired.is_chip_at(8, 7))
 
-    def test_repair_with_one_way_links_different_boards(self):
+    def test_repair_with_one_way_links_different_boards(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         machine = virtual_machine(12, 12)
         # Assumes boards of exactly size 8,8
@@ -266,13 +268,13 @@ class TestUsingVirtualMachine(unittest.TestCase):
         for (x, y, link) in down_links:
             del machine._chips[x, y].router._links[link]
         with self.assertRaises(SpinnMachineException):
-            set_config("Machine", "repair_machine", False)
+            set_config("Machine", "repair_machine", "False")
             new_machine = machine_repair(machine)
-        set_config("Machine", "repair_machine", True)
+        set_config("Machine", "repair_machine", "True")
         new_machine = machine_repair(machine)
         self.assertIsNotNone(new_machine)
 
-    def test_oneway_link_no_repair(self):
+    def test_oneway_link_no_repair(self) -> None:
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         machine = virtual_machine(8, 8)
 
@@ -283,23 +285,23 @@ class TestUsingVirtualMachine(unittest.TestCase):
             if machine.is_link_at(x, y, link):
                 del machine._chips[x, y].router._links[link]
         with self.assertRaises(SpinnMachineException):
-            set_config("Machine", "repair_machine", False)
+            set_config("Machine", "repair_machine", "False")
             new_machine = machine_repair(machine)
-        set_config("Machine", "repair_machine", True)
+        set_config("Machine", "repair_machine", "True")
         new_machine = machine_repair(machine)
         self.assertIsNotNone(new_machine)
 
-    def test_removed_chip_repair(self):
+    def test_removed_chip_repair(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         machine = virtual_machine_by_boards(1)
 
         del machine._chips[(3, 3)]
-        set_config("Machine", "repair_machine", False)
+        set_config("Machine", "repair_machine", "False")
         new_machine = machine_repair(machine, [(3, 3)])
         self.assertIsNotNone(new_machine)
         self.assertFalse(new_machine.is_link_at(2, 2, 1))
 
-    def test_ignores(self):
+    def test_ignores(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         set_config("Machine", "down_chips", "2,2:4,4:6,6,ignored_ip")
         set_config("Machine", "down_cores",

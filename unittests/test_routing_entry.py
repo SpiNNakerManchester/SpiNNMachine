@@ -20,10 +20,10 @@ from spinn_machine.config_setup import unittest_setup
 
 class TestRoutingEntry(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_creating_new_routing_entry(self):
+    def test_creating_new_routing_entry(self) -> None:
         link_ids = list()
         proc_ids = list()
         for i in range(6):
@@ -44,7 +44,7 @@ class TestRoutingEntry(unittest.TestCase):
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
         hash(a_multicast)
 
-    def test_defualtable_routing_entry(self):
+    def test_defualtable_routing_entry(self) -> None:
         a_multicast = RoutingEntry(
             processor_ids=[], link_ids=[4], incoming_link=1)
 
@@ -58,7 +58,7 @@ class TestRoutingEntry(unittest.TestCase):
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
         hash(a_multicast)
 
-    def test_spinnaker_route(self):
+    def test_spinnaker_route(self) -> None:
         multicast1 = RoutingEntry(processor_ids=[1, 3, 4, 16],
                                   link_ids=[2, 3, 5])
         self.assertEqual(4196012, multicast1.spinnaker_route)
@@ -69,7 +69,7 @@ class TestRoutingEntry(unittest.TestCase):
         self.assertEqual(multicast3.link_ids, {2, 3, 5})
         self.assertEqual(multicast3.processor_ids, {1, 3, 4, 16})
 
-    def test_merger(self):
+    def test_merger(self) -> None:
         link_ids = list()
         link_ids2 = list()
         proc_ids = list()
@@ -99,7 +99,7 @@ class TestRoutingEntry(unittest.TestCase):
         self.assertEqual(result_multicast.processor_ids,
                          set(comparison_proc_ids))
 
-    def test_merger_with_different_defaultable(self):
+    def test_merger_with_different_defaultable(self) -> None:
         a_multicast = RoutingEntry(
             processor_ids=[], link_ids=[1], incoming_link=4)
         b_multicast = RoutingEntry(
@@ -114,7 +114,7 @@ class TestRoutingEntry(unittest.TestCase):
 
     """
     From FixedRouteEntry use or loose
-    def test_fixed_route_errors(self):
+    def test_fixed_route_errors(self) -> None:
         with self.assertRaises(SpinnMachineAlreadyExistsException) as e:
             FixedRouteEntry([1, 2, 2], [2, 3, 4])
         self.assertEqual(e.exception.item, "processor ID")

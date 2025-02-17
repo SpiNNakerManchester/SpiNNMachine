@@ -22,15 +22,16 @@ from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
 from spinn_machine.version import (FIVE, SPIN2_1CHIP, THREE)
 from spinn_machine.version.version_strings import VersionStrings
+from spinn_utilities.ordered_set import OrderedSet
 
 
 class TestJsonMachine(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_json_version_3(self):
-        set_config("Machine", "version", THREE)
+    def test_json_version_3(self) -> None:
+        set_config("Machine", "version", str(THREE))
         vm = virtual_machine(width=2, height=2)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
@@ -42,8 +43,8 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    def test_json_version_5(self):
-        set_config("Machine", "version", FIVE)
+    def test_json_version_5(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         vm = virtual_machine(width=8, height=8)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
@@ -55,8 +56,8 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    def test_json_version_201(self):
-        set_config("Machine", "version", SPIN2_1CHIP)
+    def test_json_version_201(self) -> None:
+        set_config("Machine", "version", str(SPIN2_1CHIP))
         vm = virtual_machine(width=1, height=1)
         MachineDataWriter.mock().set_machine(vm)
         jpath = mktemp("json")
@@ -68,7 +69,7 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    def test_json_hole(self):
+    def test_json_hole(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         set_config("Machine", "down_chips", "3,3")
         writer = MachineDataWriter.mock()
@@ -83,7 +84,7 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    def test_exceptions(self):
+    def test_exceptions(self) -> None:
         set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         writer = MachineDataWriter.mock()
         vm = virtual_machine_by_boards(1)
@@ -94,7 +95,7 @@ class TestJsonMachine(unittest.TestCase):
             router01._n_available_multicast_entries - 20
         chip10 = vm[1, 0]
         chip10._sdram = 50000000
-        chip10._tag_ids = [2, 3]
+        chip10._tag_ids = OrderedSet([2, 3])
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)
@@ -103,7 +104,7 @@ class TestJsonMachine(unittest.TestCase):
         vchip10 = jm[1, 0]
         self.assertEqual(vchip10.tag_ids, chip10.tag_ids)
 
-    def test_monitor_exceptions(self):
+    def test_monitor_exceptions(self) -> None:
         set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         vm = virtual_machine_by_boards(1)
         MachineDataWriter.mock().set_machine(vm)
@@ -120,7 +121,7 @@ class TestJsonMachine(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             machine_from_json(jpath)
 
-    def test_ethernet_exceptions(self):
+    def test_ethernet_exceptions(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         vm = virtual_machine_by_boards(2)
         MachineDataWriter.mock().set_machine(vm)
@@ -129,7 +130,7 @@ class TestJsonMachine(unittest.TestCase):
         router2._n_available_multicast_entries = \
             router2._n_available_multicast_entries - 20
         eth2._sdram = 50000000
-        eth2._tag_ids = [2, 3]
+        eth2._tag_ids = OrderedSet([2, 3])
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)

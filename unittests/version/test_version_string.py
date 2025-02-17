@@ -23,10 +23,10 @@ from spinn_machine.version.version_strings import VersionStrings
 
 class TestVersionString(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_names(self):
+    def test_names(self) -> None:
         vs = VersionStrings.from_string("any")
         self.assertEqual(vs.text, "Any")
         vs = VersionStrings.from_string("FourPlus")

@@ -20,5 +20,5 @@ class ImportAllModule(unittest.TestCase):
 
     # no unittest_setup to check all imports work without it
 
-    def test_import_all(self):
+    def test_import_all(self) -> None:
         package_loader.load_module("spinn_machine")

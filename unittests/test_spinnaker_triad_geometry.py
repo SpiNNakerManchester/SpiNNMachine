@@ -19,10 +19,10 @@ from spinn_machine.config_setup import unittest_setup
 
 class TestingGeometry(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_geom(self):
+    def test_geom(self) -> None:
         # This table was produced using the code in Rig
         delta_table = [
             [(0, 0), (-1, 0), (-2, 0), (-3, 0), (-4, 0), (-1, -4),
@@ -60,7 +60,7 @@ class TestingGeometry(unittest.TestCase):
                     "x at ({},{}): expected ({},{}) but got ({},{})".format(
                         x, y, -px, -py, qx, qy))
 
-    def test_get_potential_ethernet_chips(self):
+    def test_get_potential_ethernet_chips(self) -> None:
         g = SpiNNakerTriadGeometry.get_spinn5_geometry()
         self.assertEqual(1, len(g.get_potential_ethernet_chips(2, 2)))
         self.assertEqual(1, len(g.get_potential_ethernet_chips(8, 8)))
