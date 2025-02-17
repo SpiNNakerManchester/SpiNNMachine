@@ -26,10 +26,10 @@ from spinn_machine.version.version_strings import VersionStrings
 
 class TestSimulatorData(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_setup(self):
+    def test_setup(self) -> None:
         # What happens before setup depends on the previous test
         # Use manual_check to verify this without dependency
         MachineDataWriter.setup()
@@ -38,13 +38,13 @@ class TestSimulatorData(unittest.TestCase):
         with self.assertRaises(DataNotYetAvialable):
             MachineDataView.get_chip_at(1, 1)
 
-    def test_mock(self):
-        set_config("Machine", "version", FIVE)
+    def test_mock(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         self.assertEqual(3, MachineDataView.get_chip_at(3, 5).x)
         self.assertEqual(48, MachineDataView.get_machine().n_chips)
 
-    def test_machine(self):
-        set_config("Machine", "version", THREE)
+    def test_machine(self) -> None:
+        set_config("Machine", "version", str(THREE))
         writer = MachineDataWriter.setup()
 
         with self.assertRaises(DataNotYetAvialable):
@@ -56,10 +56,10 @@ class TestSimulatorData(unittest.TestCase):
         with self.assertRaises(KeyError):
             MachineDataView.get_chip_at(4, 4)
         with self.assertRaises(TypeError):
-            writer.set_machine("bacon")
+            writer.set_machine("bacon")  # type: ignore[arg-type]
         self.assertTrue(MachineDataView.has_machine())
 
-    def test_where_is_mocked(self):
+    def test_where_is_mocked(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         writer = MachineDataWriter.mock()
         self.assertEqual(
@@ -75,9 +75,9 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.where_is_xy(11, 11))
         self.assertEqual(
             "global chip 2, 8 on 127.0.0.0 is chip 6, 4 on 127.0.8.4",
-            MachineDataView.where_is_chip(machine.get_chip_at(2, 8)))
+            MachineDataView.where_is_chip(machine[2, 8]))
 
-    def test_where_is_setup(self):
+    def test_where_is_setup(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         writer = MachineDataWriter.setup()
         self.assertEqual(
@@ -93,15 +93,15 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.where_is_xy(-1, 11))
         self.assertEqual(
             "global chip 2, 8 on 127.0.0.0 is chip 6, 4 on 127.0.8.4",
-            MachineDataView.where_is_chip(machine.get_chip_at(2, 8)))
+            MachineDataView.where_is_chip(machine[2, 8]))
         self.assertEqual(
             "None",
-            MachineDataView.where_is_chip(None)
+            MachineDataView.where_is_chip(None)  # type: ignore[arg-type]
         )
 
-    def test_v_to_p_spin1(self):
+    def test_v_to_p_spin1(self) -> None:
         writer = MachineDataWriter.setup()
-        set_config("Machine", "version", FIVE)
+        set_config("Machine", "version", str(FIVE))
         # Before setting
         with self.assertRaises(DataNotYetAvialable):
             writer.get_physical_core_id((1, 2), 3)
@@ -125,9 +125,9 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual("",
                          writer.get_physical_string((1, 2), 19))
 
-    def test_v_to_p_spin2(self):
+    def test_v_to_p_spin2(self) -> None:
         writer = MachineDataWriter.setup()
-        set_config("Machine", "version", SPIN2_48CHIP)
+        set_config("Machine", "version", str(SPIN2_48CHIP))
 
         # exists
         self.assertEqual((7, 6, 2), writer.get_physical_quad(3))
@@ -138,44 +138,44 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual("",
                          writer.get_physical_string((1, 2), 234))
 
-    def test_mock_any(self):
+    def test_mock_any(self) -> None:
         # Should work with any version
         set_config("Machine", "versions", VersionStrings.ANY.text)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
         self.assertGreaterEqual(machine.n_chips, 1)
 
-    def test_mock_4_or_more(self):
+    def test_mock_4_or_more(self) -> None:
         # Should work with any version that has 4 plus Chips
         set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
         self.assertGreaterEqual(machine.n_chips, 4)
 
-    def test_mock_big(self):
+    def test_mock_big(self) -> None:
         # Should work with any version
         set_config("Machine", "versions", VersionStrings.BIG.text)
         # check there is a value not what it is
         machine = MachineDataView.get_machine()
         self.assertGreaterEqual(machine.n_chips, 48)
 
-    def test_mock3(self):
+    def test_mock3(self) -> None:
         # Should work with any version
-        set_config("Machine", "version", 3)
+        set_config("Machine", "version", "3")
         # check there is a value not what it is
         MachineDataView.get_machine()
 
-    def test_mock5(self):
-        set_config("Machine", "version", 5)
+    def test_mock5(self) -> None:
+        set_config("Machine", "version", "5")
         # check there is a value not what it is
         MachineDataView.get_machine()
 
-    def test_mock201(self):
-        set_config("Machine", "version", 201)
+    def test_mock201(self) -> None:
+        set_config("Machine", "version", "201")
         # check there is a value not what it is
         MachineDataView.get_machine()
 
-    def test_get_monitors(self):
+    def test_get_monitors(self) -> None:
         writer = MachineDataWriter.setup()
         self.assertEqual(0, MachineDataView.get_all_monitor_cores())
         self.assertEqual(0, MachineDataView.get_ethernet_monitor_cores())
@@ -187,7 +187,7 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(2, MachineDataView.get_all_monitor_cores())
         self.assertEqual(3, MachineDataView.get_ethernet_monitor_cores())
 
-    def test_no_version(self):
+    def test_no_version(self) -> None:
         set_config("Machine", "machineName", "SpiNNaker1M")
         try:
             MachineDataView.get_machine_version()

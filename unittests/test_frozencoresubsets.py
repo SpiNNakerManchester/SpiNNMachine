@@ -19,7 +19,7 @@ from spinn_machine.config_setup import unittest_setup
 
 class TestFrozenCoreSubsets(unittest.TestCase):
 
-    def test_multiple(self):
+    def test_multiple(self) -> None:
         unittest_setup()
         cs1 = CoreSubset(0, 0, [1, 2, 3])
         cs2 = CoreSubset(0, 0, [4, 5, 6])

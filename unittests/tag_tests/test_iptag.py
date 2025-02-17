@@ -23,10 +23,10 @@ from spinn_machine.config_setup import unittest_setup
 class TestingIptag(unittest.TestCase):
     """ Tests of IPTag
     """
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_create_valid_iptag(self):
+    def test_create_valid_iptag(self) -> None:
         """ test if an IP tag with valid inputs works
 
         :rtype: None
@@ -34,7 +34,7 @@ class TestingIptag(unittest.TestCase):
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertIsNotNone(iptag)
 
-    def test_retrival_of_board_address(self):
+    def test_retrival_of_board_address(self) -> None:
         """ test if the board address retrieval works
 
         :rtype: None
@@ -44,7 +44,7 @@ class TestingIptag(unittest.TestCase):
         board_address = iptag.board_address
         self.assertEqual("", board_address)
 
-    def test_retrival_of_ip_address(self):
+    def test_retrival_of_ip_address(self) -> None:
         """ test if the board address retrieval works
 
         :rtype: None
@@ -54,7 +54,7 @@ class TestingIptag(unittest.TestCase):
         ip_address = iptag.ip_address
         self.assertEqual("", ip_address)
 
-    def test_retrival_of_tag(self):
+    def test_retrival_of_tag(self) -> None:
         """ test if the board address retrieval works
 
         :rtype: None
@@ -64,7 +64,7 @@ class TestingIptag(unittest.TestCase):
         tag = iptag.tag
         self.assertEqual(tag, 0)
 
-    def test_retrival_of_port(self):
+    def test_retrival_of_port(self) -> None:
         """ test if the board address retrieval works
 
         :rtype: None
@@ -74,7 +74,7 @@ class TestingIptag(unittest.TestCase):
         port = iptag.port
         self.assertEqual(port, 1)
 
-    def test_retrival_of_strip_sdp(self):
+    def test_retrival_of_strip_sdp(self) -> None:
         """ test if the board address retrieval works
 
         :rtype: None
@@ -84,14 +84,14 @@ class TestingIptag(unittest.TestCase):
         strip_sdp = iptag.strip_sdp
         self.assertEqual(strip_sdp, False)
 
-    def test_tag_rendering(self):
+    def test_tag_rendering(self) -> None:
         iptag = IPTag("localhost", 1, 2, 3, "abc", 4, True)
         assert iptag.__repr__() == (
             "IPTag(board_address=localhost, destination_x=1, destination_y=2, "
             "tag=3, port=4, ip_address=abc, strip_sdp=True, "
             "traffic_identifier=DEFAULT)")
 
-    def test_in_dict(self):
+    def test_in_dict(self) -> None:
         d = dict()
         iptag_1 = IPTag("", 0, 0, 0, "", 1)
         d[iptag_1] = 1
@@ -102,7 +102,7 @@ class TestingIptag(unittest.TestCase):
         assert d[iptag_2] == 10
         assert len(d) == 2
 
-    def test_no_equals(self):
+    def test_no_equals(self) -> None:
         iptag = IPTag("", 0, 0, 0, "", 1)
         self.assertNotEqual(iptag, "foo")
 

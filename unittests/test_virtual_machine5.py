@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import List
 import unittest
 from spinn_utilities.config_holder import set_config
 
@@ -26,11 +27,11 @@ class TestVirtualMachine5(unittest.TestCase):
 
     VERSION_5_N_CORES_PER_BOARD = sum(CHIPS_PER_BOARD.values())
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_version_5(self):
-        set_config("Machine", "version", FIVE)
+    def test_version_5(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         vm = virtual_machine(width=8, height=8)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
@@ -45,13 +46,13 @@ class TestVirtualMachine5(unittest.TestCase):
 #                         "[VirtualMachine: max_x=1, max_y=1, n_chips=4]")
         self.assertEqual(856, vm.get_cores_count())
         count = 0
-        for _chip in vm.get_existing_xys_on_board(vm[1, 1]):
+        for _xy in vm.get_existing_xys_on_board(vm[1, 1]):
             count += 1
         self.assertEqual(48, count)
         self.assertEqual((0, 4), vm.get_unused_xy())
 
-    def test_version_5_8_by_8(self):
-        set_config("Machine", "version", FIVE)
+    def test_version_5_8_by_8(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         vm = virtual_machine(width=8, height=8, validate=True)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
@@ -63,7 +64,7 @@ class TestVirtualMachine5(unittest.TestCase):
         count = sum(_chip.n_processors for _chip in vm.chips)
         self.assertEqual(count, 856)
         spinnaker_links = (list(vm.spinnaker_links))
-        expected = []
+        expected: List = []
         sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))
         expected.append((((0, 0), 0), sp))
@@ -125,7 +126,7 @@ class TestVirtualMachine5(unittest.TestCase):
         for (_, fpga_id, fpga_link), link in vm._fpga_links.items():
             data.add((link.connected_chip_x, link.connected_chip_y,
                       link.connected_link, fpga_id, fpga_link))
-        expected = set([(7, 3, 0, 0, 0), (7, 3, 5, 0, 1), (6, 2, 0, 0, 2),
+        expectes = set([(7, 3, 0, 0, 0), (7, 3, 5, 0, 1), (6, 2, 0, 0, 2),
                         (6, 2, 5, 0, 3), (5, 1, 0, 0, 4), (5, 1, 5, 0, 5),
                         (4, 0, 0, 0, 6), (4, 0, 5, 0, 7), (4, 0, 4, 0, 8),
                         (3, 0, 5, 0, 9), (3, 0, 4, 0, 10), (2, 0, 5, 0, 11),
@@ -143,10 +144,10 @@ class TestVirtualMachine5(unittest.TestCase):
                         (7, 6, 1, 2, 9), (7, 6, 0, 2, 10), (7, 5, 1, 2, 11),
                         (7, 5, 0, 2, 12), (7, 4, 1, 2, 13), (7, 4, 0, 2, 14),
                         (7, 3, 1, 2, 15)])
-        self.assertEqual(data, expected)
+        self.assertEqual(data, expectes)
 
-    def test_version_5_12_by_12(self):
-        set_config("Machine", "version", FIVE)
+    def test_version_5_12_by_12(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         vm = virtual_machine(height=12, width=12, validate=True)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))
@@ -158,15 +159,15 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual(48, count)
         self.assertEqual((12, 0), vm.get_unused_xy())
         spinnaker_links = (list(vm.spinnaker_links))
-        expected = []
+        expected: List = []
         self.assertEqual(expected, spinnaker_links)
         # 8 links on each of the 6 sides recorded 3 times
         # Except for the Ethernet Chip's 3 links which are only recorded twice
         expected_fpgas = (8 * 6 * 3 - 3) * 3
         self.assertEqual(expected_fpgas, len(vm._fpga_links))
 
-    def test_version_5_16_by_16(self):
-        set_config("Machine", "version", FIVE)
+    def test_version_5_16_by_16(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         vm = virtual_machine(height=16, width=16, validate=True)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))
@@ -178,7 +179,7 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual(48, count)
         self.assertEqual((0, 4), vm.get_unused_xy())
         spinnaker_links = (list(vm.spinnaker_links))
-        expected = []
+        expected: List = []
         sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))
         expected.append((((0, 0), 0), sp))
@@ -198,8 +199,8 @@ class TestVirtualMachine5(unittest.TestCase):
         assert link.connected_chip_y == y
         assert link.connected_link == link_id
 
-    def test_fpga_links_single_board(self):
-        set_config("Machine", "version", FIVE)
+    def test_fpga_links_single_board(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         machine = virtual_machine(width=8, height=8)
         machine.add_fpga_links()
         self._assert_fpga_link(machine, 0, 0, 7, 3, 0)
@@ -256,8 +257,8 @@ class TestVirtualMachine5(unittest.TestCase):
         self._assert_fpga_link(machine, 2, 14, 7, 4, 0)
         self._assert_fpga_link(machine, 2, 15, 7, 3, 1)
 
-    def test_fpga_links_3_board(self):
-        set_config("Machine", "version", FIVE)
+    def test_fpga_links_3_board(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         # A List of links, one for each side of each board in a 3-board toroid
         fpga_links = [("127.0.0.0", 0, 5, 5, 1, 5),
                       ("127.0.0.0", 0, 12, 2, 0, 4),
@@ -286,8 +287,8 @@ class TestVirtualMachine5(unittest.TestCase):
         for ip, fpga, fpga_link, x, y, link in fpga_links:
             self._assert_fpga_link(machine, fpga, fpga_link, x, y, link, ip)
 
-    def test_none_triad(self):
-        set_config("Machine", "version", FIVE)
+    def test_none_triad(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         virtual_machine(width=20, height=16)
         virtual_machine(width=12, height=16)
 

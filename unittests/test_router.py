@@ -20,10 +20,10 @@ from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 
 class TestingRouter(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_creating_new_router(self):
+    def test_creating_new_router(self) -> None:
         links = list()
         links.append(Link(0, 0, 0, 1, 1))
         links.append(Link(0, 1, 1, 1, 0))
@@ -63,7 +63,7 @@ class TestingRouter(unittest.TestCase):
             "[Link: source_x=1, source_y=0, source_link_id=3, "
             "destination_x=0, destination_y=1]]]")
 
-    def test_creating_new_router_with_duplicate_links(self):
+    def test_creating_new_router_with_duplicate_links(self) -> None:
         links = list()
         (e, ne, n, w, sw, s) = range(6)
         links.append(Link(0, 0, 0, 0, 1))

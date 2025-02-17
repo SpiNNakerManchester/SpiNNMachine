@@ -21,10 +21,10 @@ from spinn_machine.config_setup import unittest_setup
 
 class TestCfgChecker(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_cfg_checker(self):
+    def test_cfg_checker(self) -> None:
         unittests_dir = os.path.dirname(__file__)
         spinn_machine_dir = spinn_machine.__path__[0]
         run_config_checks(directories=[spinn_machine_dir, unittests_dir])

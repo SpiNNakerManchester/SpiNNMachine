@@ -19,10 +19,10 @@ from spinn_machine.config_setup import unittest_setup
 
 class TestingLinks(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_create_new_link(self):
+    def test_create_new_link(self) -> None:
         links = list()
         links.append(Link(0, 0, 0, 0, 1))
         self.assertEqual(links[0].source_x, 0)

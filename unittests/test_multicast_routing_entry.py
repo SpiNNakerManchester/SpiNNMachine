@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import pickle
+from typing import List
 import unittest
 from spinn_machine import MulticastRoutingEntry, RoutingEntry
 from spinn_machine.config_setup import unittest_setup
@@ -21,10 +22,10 @@ from spinn_machine.exceptions import SpinnMachineInvalidParameterException
 
 class TestMulticastRoutingEntry(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_creating_new_multicast_routing_entry(self):
+    def test_creating_new_multicast_routing_entry(self) -> None:
         link_ids = list()
         proc_ids = list()
         for i in range(6):
@@ -51,9 +52,9 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
         hash(a_multicast)
 
-    def test_creating_defaulatble_multicast_routing_entry(self):
+    def test_creating_defaulatble_multicast_routing_entry(self) -> None:
         link_ids = list()
-        proc_ids = list()
+        proc_ids: List[int] = list()
         link_ids.append(2)
         key = 1
         mask = 1
@@ -74,11 +75,11 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             pickle.loads(pickle.dumps(a_multicast, pickle.HIGHEST_PROTOCOL)))
         hash(a_multicast)
 
-    def test_bad_key_mask(self):
+    def test_bad_key_mask(self) -> None:
         with self.assertRaises(SpinnMachineInvalidParameterException):
-            MulticastRoutingEntry(1, 2, None)
+            MulticastRoutingEntry(1, 2, None)  # type: ignore[arg-type]
 
-    def test_spinnaker_route(self):
+    def test_spinnaker_route(self) -> None:
         multicast1 = MulticastRoutingEntry(1, 1, RoutingEntry(
             processor_ids=[1, 3, 4, 16], link_ids=[2, 3, 5]))
         self.assertEqual(4196012, multicast1.spinnaker_route)
@@ -91,7 +92,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(multicast3.link_ids, {2, 3, 5})
         self.assertEqual(multicast3.processor_ids, {1, 3, 4, 16})
 
-    def test_merger(self):
+    def test_merger(self) -> None:
         link_ids = list()
         link_ids2 = list()
         proc_ids = list()
@@ -129,7 +130,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(result_multicast.processor_ids,
                          set(comparison_proc_ids))
 
-    def test_merger_with_different_defaultable(self):
+    def test_merger_with_different_defaultable(self) -> None:
         key = 1
         mask = 1
         a_multicast = MulticastRoutingEntry(key, mask, RoutingEntry(
@@ -147,7 +148,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(result_multicast.processor_ids, set())
         assert not result_multicast.defaultable
 
-    def test_merger_with_invalid_parameter_key(self):
+    def test_merger_with_invalid_parameter_key(self) -> None:
         link_ids = list()
         link_ids2 = list()
         proc_ids = list()
@@ -172,7 +173,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(e.exception.value, "0x2")
         self.assertEqual(e.exception.problem, "The key does not match 0x1")
 
-    def test_merger_with_invalid_parameter_mask(self):
+    def test_merger_with_invalid_parameter_mask(self) -> None:
         link_ids = list()
         link_ids2 = list()
         proc_ids = list()

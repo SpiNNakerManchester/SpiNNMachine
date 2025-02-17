@@ -26,10 +26,10 @@ from spinn_machine.version.version_strings import VersionStrings
 
 class TestDownCores(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_bad_ignores(self):
+    def test_bad_ignores(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
 
         try:
@@ -50,25 +50,25 @@ class TestDownCores(unittest.TestCase):
         except Exception as ex:
             self.assertTrue("downed_link" in str(ex))
 
-    def test_down_cores_bad_string(self):
+    def test_down_cores_bad_string(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
         with self.assertRaises(ConfigException):
             IgnoreCore.parse_string("4,4,bacon")
 
-    def test_qx_qy_qp_to_id_spin2(self):
+    def test_qx_qy_qp_to_id_spin2(self) -> None:
         version = Version201()
         self.assertEqual(75, version.qx_qy_qp_to_id(3, 4, 2))
         self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(75))
 
-    def test_qx_qy_qp_to_spin1(self):
+    def test_qx_qy_qp_to_spin1(self) -> None:
         version = Version5()
         with self.assertRaises(SpinnMachineException):
             self.assertEqual(75, version.qx_qy_qp_to_id(3, 4, 2))
         with self.assertRaises(SpinnMachineException):
             self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(75))
 
-    def test_version_401(self):
-        set_config("Machine", "version", SPIN2_1CHIP)
+    def test_version_401(self) -> None:
+        set_config("Machine", "version", str(SPIN2_1CHIP))
         ignores = IgnoreCore.parse_string("0,0,3.4.2")
         self.assertEqual(1, len(ignores))
         for ignore in ignores:

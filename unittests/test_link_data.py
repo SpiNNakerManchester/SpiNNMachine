@@ -19,10 +19,10 @@ from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 
 class TestingLinks(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_fpga_link_data(self):
+    def test_fpga_link_data(self) -> None:
         ld = FPGALinkData(1, 2, 3, 4, 5, "somehost")
         ld2 = FPGALinkData(1, 2, 3, 4, 5, "somehost")
         ld3 = FPGALinkData(1, 2, 3, 4, 6, "somehost")
@@ -42,7 +42,7 @@ class TestingLinks(unittest.TestCase):
         d[ld3] = 3
         self.assertEqual(len(d), 2)
 
-    def test_spinnaker_link_data(self):
+    def test_spinnaker_link_data(self) -> None:
         ld = SpinnakerLinkData(2, 3, 4, 5, "somehost")
         ld2 = SpinnakerLinkData(2, 3, 4, 5, "somehost")
         ld3 = SpinnakerLinkData(2, 3, 4, 6, "somehost")

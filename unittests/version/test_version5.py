@@ -28,10 +28,10 @@ from spinn_machine.exceptions import SpinnMachineException
 
 class TestVersion5(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()
 
-    def test_attributes(self):
+    def test_attributes(self) -> None:
         version = Version5()
         self.assertEqual(18, version.max_cores_per_chip)
         self.assertEqual(123469792, version.max_sdram_per_chip)
@@ -42,30 +42,30 @@ class TestVersion5(unittest.TestCase):
         self.assertEqual(48, version.n_chips_per_board)
         self.assertEqual(1023, version.n_router_entries)
 
-    def test_verify_config_width_height(self):
+    def test_verify_config_width_height(self) -> None:
         set_config("Machine", "width", "None")
         set_config("Machine", "height", "None")
         Version5()
 
-        set_config("Machine", "width", 8)
+        set_config("Machine", "width", "8")
         with self.assertRaises(SpinnMachineException):
             Version5()
 
-        set_config("Machine", "height", 8)
+        set_config("Machine", "height", "8")
         Version5()
 
         set_config("Machine", "width", "None")
         with self.assertRaises(SpinnMachineException):
             Version5()
 
-    def test_set_max_lower(self):
-        set_config("Machine", "max_sdram_allowed_per_chip", 1000)
-        set_config("Machine", "max_machine_core", 10)
+    def test_set_max_lower(self) -> None:
+        set_config("Machine", "max_sdram_allowed_per_chip", "1000")
+        set_config("Machine", "max_machine_core", "10")
         version = Version5()
         self.assertEqual(10, version.max_cores_per_chip)
         self.assertEqual(1000, version.max_sdram_per_chip)
 
-    def test_expected_xys(self):
+    def test_expected_xys(self) -> None:
         version = Version5()
         xys = version.expected_xys
         self.assertEqual(48, len(xys))
@@ -76,7 +76,7 @@ class TestVersion5(unittest.TestCase):
             self.assertLess(x, 8)
             self.assertLess(y, 8)
 
-    def test_expected_chip_core_map(self):
+    def test_expected_chip_core_map(self) -> None:
         version = Version5()
         chip_core_map = version.chip_core_map
         self.assertEqual(48, len(chip_core_map))
@@ -89,20 +89,20 @@ class TestVersion5(unittest.TestCase):
             self.assertGreaterEqual(cores, 16)
             self.assertLessEqual(cores, 18)
 
-    def test_get_potential_ethernet_chips(self):
+    def test_get_potential_ethernet_chips(self) -> None:
         version = Version5()
         eths = version.get_potential_ethernet_chips(8, 8)
-        self.assertListEqual([(0, 0)], eths)
+        self.assertSequenceEqual([(0, 0)], eths)
         eths = version.get_potential_ethernet_chips(12, 12)
-        self.assertListEqual([(0, 0), (4, 8), (8, 4)], eths)
+        self.assertSequenceEqual([(0, 0), (4, 8), (8, 4)], eths)
         eths = version.get_potential_ethernet_chips(16, 16)
-        self.assertListEqual([(0, 0), (4, 8), (8, 4)], eths)
+        self.assertSequenceEqual([(0, 0), (4, 8), (8, 4)], eths)
 
         # if size is wrong GIGO
         eths = version.get_potential_ethernet_chips(2, 2)
-        self.assertListEqual([(0, 0)], eths)
+        self.assertSequenceEqual([(0, 0)], eths)
 
-    def test_verify_size(self):
+    def test_verify_size(self) -> None:
         version = Version5()
 
         with self.assertRaises(SpinnMachineException):
@@ -128,7 +128,7 @@ class TestVersion5(unittest.TestCase):
         version.verify_size(16, 12)
         version.verify_size(16, 16)
 
-    def test_create_machin(self):
+    def test_create_machin(self) -> None:
         version = Version5()
 
         machine = version.create_machine(width=8, height=8)
@@ -144,12 +144,12 @@ class TestVersion5(unittest.TestCase):
         machine = version.create_machine(12, 12)
         self.assertIsInstance(machine, FullWrapMachine)
 
-    def test_processor_info(self):
+    def test_processor_info(self) -> None:
         version = Version5()
         self.assertEqual([200], version.clock_speeds_hz)
         self.assertEqual(65536, version.dtcm_bytes)
 
-    def test_size_from_n_cores(self):
+    def test_size_from_n_cores(self) -> None:
         version = Version5()
         self.assertEqual((8, 8), version.size_from_n_cores(10))
         # standard for there to be 8 17 core Chips and each has 1 scamp core
@@ -165,7 +165,7 @@ class TestVersion5(unittest.TestCase):
         self.assertEqual((40, 28), version.size_from_n_cores(n_cores * 18))
         self.assertEqual((40, 40), version.size_from_n_cores(n_cores * 18 + 1))
 
-    def test_size_from_n_chips(self):
+    def test_size_from_n_chips(self) -> None:
         version = Version5()
         self.assertEqual((8, 8), version.size_from_n_chips(1))
         self.assertEqual((8, 8), version.size_from_n_chips(48))
