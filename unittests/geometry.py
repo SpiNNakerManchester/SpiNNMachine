@@ -35,7 +35,7 @@ def minimise_xyz(xyz: Iterable[int]) -> Tuple[int, int, int]:
 
 def shortest_mesh_path_length(
         source: Tuple[int, int, int],
-        destination: Tuple[int, int, int]) ->int:
+        destination: Tuple[int, int, int]) -> int:
     """Get the length of a shortest path from source to destination without
     using wrap-around links.
 
