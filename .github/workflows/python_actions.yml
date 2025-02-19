@@ -22,7 +22,7 @@ jobs:
     uses: SpiNNakerManchester/SupportScripts/.github/workflows/python_checks.yml@action-dash
     with:
       dependencies: SpiNNUtils
-      test_directories: unittests
+      test-directories: unittests
       coverage-package: spinn_machine
       flake8-packages: spinn_machine unittests
       pylint-packages: spinn_machine
