@@ -19,7 +19,7 @@ from spinn_utilities.config_holder import set_config
 from spinn_utilities.typing.coords import XY
 
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine import Chip, Link, Router, virtual_machine
+from spinn_machine import virtual_machine
 from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.data import MachineDataView
