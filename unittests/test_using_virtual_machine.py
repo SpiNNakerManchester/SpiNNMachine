@@ -12,8 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Tuple
 import unittest
+
 from spinn_utilities.config_holder import set_config
+from spinn_utilities.typing.coords import XY
+
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine import Chip, Link, Router, virtual_machine
 from spinn_machine.virtual_machine import (
@@ -33,31 +37,6 @@ class TestUsingVirtualMachine(unittest.TestCase):
 
     def setUp(self) -> None:
         unittest_setup()
-
-    def _create_chip(self, x, y):
-        # Create a list of processors.
-
-        n_processors = 18
-
-        links = list()
-        links.append(Link(0, 0, 0, 1, 1))
-        links.append(Link(0, 1, 1, 1, 0))
-        links.append(Link(1, 1, 2, 0, 0))
-        links.append(Link(1, 0, 3, 0, 1))
-        _router = Router(links, 1024)
-
-        _sdram = 128
-        nearest_ethernet_chip = (0, 0)
-        _ip = "192.162.240.253"
-
-        if (x == y == 0):
-            return Chip(x, y, n_processors, _router, _sdram,
-                        nearest_ethernet_chip[0],
-                        nearest_ethernet_chip[1], _ip)
-        else:
-            return Chip(x, y, n_processors, _router, _sdram,
-                        nearest_ethernet_chip[0],
-                        nearest_ethernet_chip[1], None)
 
     def test_new_vm_with_max_cores(self) -> None:
         set_config("Machine", "versions", VersionStrings.ANY.text)
@@ -104,7 +83,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
             self.assertNotIn(_chip, down_chips)
         self.assertEqual(n_chips - 1, count)
 
-    def _check_path(self, source, target, path, width, height):
+    def _check_path(self, source: XY, target: XY, path: Tuple[int, int, int],
+                    width: int, height: int) -> None:
         new_target = ((source[0] + path[0] - path[2]) % width,
                       (source[1] + path[1] - path[2]) % height)
         self.assertEqual(target, new_target, "{}{}".format(source, path))

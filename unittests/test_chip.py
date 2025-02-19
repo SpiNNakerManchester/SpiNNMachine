@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Optional
 import unittest
+
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine import Link, Router, Chip
@@ -42,7 +44,8 @@ class TestingChip(unittest.TestCase):
         self._sdram = 128
         self._ip = "192.162.240.253"
 
-    def _create_chip(self, x, y, processors, r, sdram, ip):
+    def _create_chip(self, x: int, y: int, processors: int, r: Router,
+                     sdram: int, ip: Optional[str]) -> Chip:
         return Chip(x, y, [0], range(1, processors), r, sdram, 0, 0, ip)
 
     def test_create_chip(self) -> None:

@@ -31,7 +31,7 @@ class TestVirtualMachine201(unittest.TestCase):
     def setUp(self) -> None:
         unittest_setup()
 
-    def _create_chip(self, x, y):
+    def _create_chip(self, x: int, y: int) -> Chip:
         # Create a list of processors.
 
         n_processors = 18
@@ -217,11 +217,6 @@ class TestVirtualMachine201(unittest.TestCase):
             count += 1
             assert xy not in hole
         self.assertEqual(3, count)
-
-    def _check_path(self, source, target, path, width, height):
-        new_target = ((source[0] + path[0] - path[2]) % width,
-                      (source[1] + path[1] - path[2]) % height)
-        self.assertEqual(target, new_target, "{}{}".format(source, path))
 
     def test_n_cores_2_2(self) -> None:
         set_config("Machine", "version", str(SPIN2_1CHIP))
