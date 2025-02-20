@@ -19,7 +19,7 @@ from testfixtures import LogCapture  # type: ignore[import]
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.testing import log_checker
-from spinn_machine import Link, Router, Chip
+from spinn_machine import Chip, Link, Machine, Router
 from spinn_machine.version import FIVE
 from spinn_machine.version.version_strings import VersionStrings
 from spinn_machine.virtual_machine import (
@@ -51,7 +51,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
         self._ip = "192.162.240.253"
 
-    def _create_chip(self, x, y):
+    def _create_chip(self, x: int, y: int) -> Chip:
         n_cores = MachineDataView.get_machine_version().max_cores_per_chip
         if x == y == 0:
             return Chip(x, y, [0], range(1, n_cores), self._router,
@@ -351,7 +351,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def _non_ethernet_chip(self, machine):
+    def _non_ethernet_chip(self, machine: Machine) -> Chip:
         for chip in machine.chips:
             if chip.ip_address is None:
                 return chip

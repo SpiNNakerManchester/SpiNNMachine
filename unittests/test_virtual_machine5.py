@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List
+from typing import List, Optional
 import unittest
 from spinn_utilities.config_holder import set_config
 
-from spinn_machine import virtual_machine
+from spinn_machine import Machine, virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.version import FIVE
@@ -193,7 +193,9 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual(expected_fpgas, len(vm._fpga_links))
 
     @staticmethod
-    def _assert_fpga_link(machine, fpga, fpga_link, x, y, link_id, ip=None):
+    def _assert_fpga_link(
+            machine: Machine, fpga: int, fpga_link: int, x: int, y: int,
+            link_id: int, ip: Optional[str] = None) -> None:
         link = machine.get_fpga_link_with_id(fpga, fpga_link, ip)
         assert link.connected_chip_x == x
         assert link.connected_chip_y == y

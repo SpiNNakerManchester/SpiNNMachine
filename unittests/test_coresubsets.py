@@ -16,7 +16,7 @@ from spinn_machine import CoreSubsets, CoreSubset
 from spinn_machine.config_setup import unittest_setup
 
 
-def test_coresubsets():
+def test_coresubsets() -> None:
     unittest_setup()
     core_subsets = CoreSubsets()
     assert len(core_subsets) == 0
@@ -36,7 +36,7 @@ def test_coresubsets():
     assert not core_subsets.is_core(0, 0, 14)
 
 
-def test_multiple():
+def test_multiple() -> None:
     unittest_setup()
     cs1 = CoreSubset(0, 0, [1, 2, 3])
     cs2 = CoreSubset(0, 0, [4, 5, 6])
@@ -50,7 +50,7 @@ def test_multiple():
     assert css[0, 1] == cs3
 
 
-def test_iter():
+def test_iter() -> None:
     unittest_setup()
     cs1 = CoreSubset(0, 0, [1, 2, 3])
     cs2 = CoreSubset(0, 0, [4, 5, 6])
@@ -67,7 +67,7 @@ def test_iter():
     assert len(css.get_core_subset_for_chip(1, 0)) == 0
 
 
-def test_interest():
+def test_interest() -> None:
     unittest_setup()
     cs11 = CoreSubset(0, 0, [1, 2, 3])
     cs12 = CoreSubset(0, 1, [1, 2, 3])
@@ -89,7 +89,7 @@ def test_interest():
     assert css3.__repr__() == "(0, 0)(1, 1)"
 
 
-def test_values():
+def test_values() -> None:
     unittest_setup()
     cs1 = CoreSubset(0, 0, [1, 2, 3])
     cs2 = CoreSubset(0, 0, [4, 5, 6])
@@ -98,4 +98,4 @@ def test_values():
     cs5 = CoreSubset(0, 0, [1, 2, 3, 4])
     css = CoreSubsets([cs1, cs2, cs3, cs4, cs5])
 
-    assert len(css.values()) == 2
+    assert len(list(css.values())) == 2

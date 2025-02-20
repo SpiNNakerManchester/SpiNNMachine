@@ -16,7 +16,7 @@ from spinn_machine import CoreSubset
 from spinn_machine.config_setup import unittest_setup
 
 
-def test_coresubset():
+def test_coresubset() -> None:
     unittest_setup()
     core_subset = CoreSubset(0, 0, [1, 2, 3])
     assert len(core_subset) == 3
@@ -34,7 +34,7 @@ def test_coresubset():
     assert core_subset.__repr__() == ("0:0:OrderedSet([1, 2, 3, 4])")
 
 
-def test_equals():
+def test_equals() -> None:
     unittest_setup()
     core_subset = CoreSubset(0, 0, [1, 2, 3])
     assert core_subset == CoreSubset(0, 0, [1, 2, 3])
@@ -43,7 +43,7 @@ def test_equals():
     assert core_subset != "oops"
 
 
-def test_in_dict():
+def test_in_dict() -> None:
     unittest_setup()
     cs1 = CoreSubset(0, 0, [1, 2, 3])
     cs2 = CoreSubset(0, 0, [4, 5, 6])
