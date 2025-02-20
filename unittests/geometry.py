@@ -17,22 +17,25 @@ From https://github.com/project-rig/rig/blob/master/rig/geometry.py
 """
 
 import random
+from typing import Iterable, Tuple
 
 
-def to_xyz(xy):
+def to_xyz(xy: Tuple[int, int]) -> Tuple[int, int, int]:
     """Convert a two-tuple (x, y) coordinate into an (x, y, 0) coordinate."""
     x, y = xy
     return (x, y, 0)
 
 
-def minimise_xyz(xyz):
+def minimise_xyz(xyz: Iterable[int]) -> Tuple[int, int, int]:
     """Minimise an (x, y, z) coordinate."""
     x, y, z = xyz
     m = max(min(x, y), min(max(x, y), z))
     return (x-m, y-m, z-m)
 
 
-def shortest_mesh_path_length(source, destination):
+def shortest_mesh_path_length(
+        source: Tuple[int, int, int],
+        destination: Tuple[int, int, int]) -> int:
     """Get the length of a shortest path from source to destination without
     using wrap-around links.
 
@@ -79,7 +82,9 @@ def shortest_mesh_path_length(source, destination):
     return maximum - minimum
 
 
-def shortest_mesh_path(source, destination):
+def shortest_mesh_path(
+        source: Tuple[int, int, int],
+        destination: Tuple[int, int, int]) -> Tuple[int, int, int]:
     """Calculate the shortest vector from source to destination without using
     wrap-around links.
 
@@ -95,7 +100,9 @@ def shortest_mesh_path(source, destination):
     return minimise_xyz(d - s for s, d in zip(source, destination))
 
 
-def shortest_torus_path_length(source, destination, width, height):
+def shortest_torus_path_length(
+        source: Tuple[int, int, int], destination: Tuple[int, int, int],
+        width: int, height: int) -> int:
     """Get the length of a shortest path from source to destination using
     wrap-around links.
 
@@ -162,7 +169,9 @@ def shortest_torus_path_length(source, destination, width, height):
         return length
 
 
-def shortest_torus_path(source, destination, width, height):
+def shortest_torus_path(
+        source: Tuple[int, int, int], destination: Tuple[int, int, int],
+        width: int, height: int) -> Tuple[int, int, int]:
     """Calculate the shortest vector from source to destination using
     wrap-around links.
 
