@@ -227,7 +227,7 @@ class Chip(XY):
         return self._nearest_ethernet_y
 
     @property
-    def tag_ids(self) -> Iterable[int]:
+    def tag_ids(self) -> OrderedSet[int]:
         """
         The tag IDs supported by this chip.
 
