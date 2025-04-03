@@ -97,7 +97,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     @property
     @overrides(AbstractVersion.clock_speeds_hz)
     def clock_speeds_hz(self) -> List[int]:
-        return [150, 300]
+        return [150000000, 300000000]
 
     @property
     @overrides(AbstractVersion.dtcm_bytes)

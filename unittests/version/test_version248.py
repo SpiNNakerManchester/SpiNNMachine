@@ -139,7 +139,7 @@ class TestVersion201(unittest.TestCase):
 
     def test_processor_info(self) -> None:
         version = Version248()
-        self.assertEqual([150, 300], version.clock_speeds_hz)
+        self.assertEqual([150000000, 300000000], version.clock_speeds_hz)
         # self.assertEqual(65536, version.dtcm_bytes)
 
 
