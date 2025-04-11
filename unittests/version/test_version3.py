@@ -136,7 +136,7 @@ class TestVersion3(unittest.TestCase):
 
     def test_processor_info(self) -> None:
         version = Version3()
-        self.assertEqual([200], version.clock_speeds_hz)
+        self.assertEqual([200000000], version.clock_speeds_hz)
         self.assertEqual(65536, version.dtcm_bytes)
 
     def test_size_from_n_cores(self) -> None:
