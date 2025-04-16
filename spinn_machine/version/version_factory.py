@@ -106,7 +106,7 @@ def _get_url_version() -> Optional[int]:
     spalloc_server = get_config_str_or_none("Machine", "spalloc_server")
     remote_spinnaker_url = get_config_str_or_none(
         "Machine", "remote_spinnaker_url")
-    machine_name = get_config_str_or_none("Machine", "machineName")
+    machine_name = get_config_str_or_none("Machine", "machine_name")
     virtual_board = get_config_bool("Machine", "virtual_board")
 
     if spalloc_server is not None:
@@ -198,7 +198,7 @@ def raise_version_error(error: str, version: Optional[int]) -> Never:
                                             "spalloc_server")
     remote_spinnaker_url = get_config_str_or_none(
         "Machine", "remote_spinnaker_url")
-    machine_name = get_config_str_or_none("Machine", "machineName")
+    machine_name = get_config_str_or_none("Machine", "machine_name")
     virtual_board = get_config_bool("Machine", "virtual_board")
     raise SpinnMachineException(
         f"{error} with cfg [Machine] values {version=}, "
