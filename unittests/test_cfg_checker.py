@@ -33,7 +33,7 @@ class TestCfgChecker(unittest.TestCase):
         spinn_machine_dir = spinn_machine.__path__[0]
         ConfigChecker([spinn_machine_dir, unittests_dir]).check()
 
-    def test_cfg_documentor(self):
+    def test_cfg_documentor(self) -> None:
         class_file = sys.modules[self.__module__].__file__
         assert class_file is not None
         abs_class_file = os.path.abspath(class_file)
