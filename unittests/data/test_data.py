@@ -188,7 +188,7 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual(3, MachineDataView.get_ethernet_monitor_cores())
 
     def test_no_version(self) -> None:
-        set_config("Machine", "machineName", "SpiNNaker1M")
+        set_config("Machine", "machine_name", "SpiNNaker1M")
         try:
             MachineDataView.get_machine_version()
             raise ConfigException("Should not get here")
