@@ -103,6 +103,15 @@ class MulticastRoutingEntry(object):
         """
         return self._routing_entry.spinnaker_route
 
+    def __eq__(self, other_entry: Any) -> bool:
+        if not isinstance(other_entry, MulticastRoutingEntry):
+            return False
+        if self.key != other_entry.key:
+            return False
+        if self.mask != other_entry.mask:
+            return False
+        return (self._routing_entry == other_entry._routing_entry)
+
     def merge(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
         Merges together two multicast routing entries.  The entry to merge
@@ -132,15 +141,6 @@ class MulticastRoutingEntry(object):
         routing_entry = self._routing_entry.merge(other._routing_entry)
         return MulticastRoutingEntry(
             self.key, self.mask, routing_entry)
-
-    def __eq__(self, other_entry: Any) -> bool:
-        if not isinstance(other_entry, MulticastRoutingEntry):
-            return False
-        if self.key != other_entry.key:
-            return False
-        if self.mask != other_entry.mask:
-            return False
-        return (self._routing_entry == other_entry._routing_entry)
 
     def __hash__(self) -> int:
         return (self.key * 13 + self.mask * 19 +
