@@ -38,8 +38,6 @@ class Chip(XY):
                 parent_link: Optional[int] = None) -> Self:
         return tuple.__new__(cls, (x, y))
 
-    # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
-    # pylint: disable=unused-argument
     def __init__(self, x: int, y: int, scamp_processors: Iterable[int],
                  placable_processors: Iterable[int], router: Router,
                  sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
@@ -79,6 +77,7 @@ class Chip(XY):
             ``processor_id``
         """
         # X and Y set by new
+        _, _ = x, y
         self._scamp_processors = tuple(scamp_processors)
         self._placable_processors = tuple(placable_processors)
         self._router = router
