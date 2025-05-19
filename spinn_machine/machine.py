@@ -953,6 +953,7 @@ class Machine(object, metaclass=AbstractBase):
         :raises IndexError: If there are no Chips in the MAchine
         :raises AttributeError: If there is no boot chip
         """
+        # pylint: disable=logging-fstring-interpolation
         version = MachineDataView.get_machine_version()
 
         sdram = sorted(self._sdram_counter.keys())
