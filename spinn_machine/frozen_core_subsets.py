@@ -28,6 +28,7 @@ class FrozenCoreSubsets(CoreSubsets):
     # pylint: disable=super-init-not-called
     def __init__(self, core_subsets: Iterable[CoreSubset] = ()):
         self._core_subsets: Dict[XY, CoreSubset] = dict()
+        # Do the load here so that the blocked add_processor is not called
         for core_subset in core_subsets:
             x = core_subset.x
             y = core_subset.y

@@ -45,7 +45,6 @@ class RoutingEntry(object):
                  spinnaker_route: int):
         ...
 
-    # pylint: disable=too-many-arguments
     def __init__(self, *,
                  processor_ids: Optional[Union[int, Collection[int]]] = None,
                  link_ids: Optional[Union[int, Collection[int]]] = None,

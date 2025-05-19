@@ -163,7 +163,6 @@ class SpiNNakerTriadGeometry(object):
         # is closest to the centre of
         return min(ethernet_chips, key=measure)
 
-    # pylint: disable=too-many-arguments
     def get_ethernet_chip_coordinates(
             self, x: int, y: int, width: int, height: int,
             root_x: int = 0, root_y: int = 0) -> XY:
