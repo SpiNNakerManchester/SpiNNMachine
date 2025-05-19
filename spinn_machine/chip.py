@@ -146,7 +146,7 @@ class Chip(XY):
     @property
     def placable_processors_ids(self) -> Tuple[int, ...]:
         """
-        An iterable of available placable/ non scamp processor ids.
+        An iterable of available placeable/ non scamp processor ids.
 
         :rtype: iterable(int)
         """
@@ -155,7 +155,7 @@ class Chip(XY):
     @property
     def n_placable_processors(self) -> int:
         """
-        The total number of processors that are placable / not used by scamp.
+        The total number of processors that are placeable / not used by scamp.
 
         :rtype: int
         """
