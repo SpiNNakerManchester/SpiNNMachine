@@ -112,7 +112,7 @@ class MulticastRoutingEntry(object):
             return False
         return (self._routing_entry == other_entry._routing_entry)
 
-    def merge(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
+    def _merge(self, other: MulticastRoutingEntry) -> MulticastRoutingEntry:
         """
         Merges together two multicast routing entries.  The entry to merge
         must have the same key and mask.  The merge will join the
