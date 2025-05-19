@@ -56,7 +56,6 @@ class _MachineDataModel(object):
     def __new__(cls) -> '_MachineDataModel':
         if cls.__singleton is not None:
             return cls.__singleton
-        # pylint: disable=protected-access
         obj = object.__new__(cls)
         cls.__singleton = obj
         obj._clear()
