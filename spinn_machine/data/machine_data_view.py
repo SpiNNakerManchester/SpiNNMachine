@@ -148,7 +148,6 @@ class MachineDataView(UtilsDataView):
             cls.__data._user_accessed_machine = True
         if cls.__data._machine is None:
             if cls.__data._machine_generator is not None:
-                # pylint: disable=not-callable
                 cls.__data._machine_generator()
                 if cls.__data._machine is None:
                     raise SpinnMachineException(
