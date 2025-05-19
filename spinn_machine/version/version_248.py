@@ -37,6 +37,7 @@ CHIPS_PER_BOARD: Final = {
 
 
 class Version248(VersionSpin2, Version48Chips):
+    # pylint: disable=abstract-method
     """
     Code for the 48 Chip Spin2 board versions
     """

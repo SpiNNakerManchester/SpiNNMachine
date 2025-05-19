@@ -23,6 +23,7 @@ from .abstract_version import (
 
 
 class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
+    # pylint: disable=abstract-method
     """
     Shared code for all Spin1 board versions
     """

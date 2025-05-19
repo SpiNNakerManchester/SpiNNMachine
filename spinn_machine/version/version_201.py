@@ -28,6 +28,7 @@ CHIPS_PER_BOARD: Final = {(0, 0): 153}
 
 
 class Version201(VersionSpin2):
+    # pylint: disable=abstract-method
     """
     Code for the 1 Chip test Spin2 board versions
     """

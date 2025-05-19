@@ -67,6 +67,7 @@ QUAD_MAP = (
 
 
 class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
+    # pylint: disable=abstract-method
     """
     Code for the Spin2 board versions
     """
