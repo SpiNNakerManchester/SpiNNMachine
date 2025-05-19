@@ -14,11 +14,8 @@
 
 import math
 from typing import Optional, Sequence, Tuple
-
-from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
-
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.machine import Machine
 from spinn_machine.full_wrap_machine import FullWrapMachine
@@ -29,7 +26,7 @@ from spinn_machine import SpiNNakerTriadGeometry
 from .abstract_version import AbstractVersion
 
 
-class Version48Chips(AbstractVersion, metaclass=AbstractBase):
+class Version48Chips(AbstractVersion):
     """
     Code shared by 48 Chip boards
 
