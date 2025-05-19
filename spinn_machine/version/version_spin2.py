@@ -102,7 +102,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     @property
     @overrides(AbstractVersion.dtcm_bytes)
     def dtcm_bytes(self) -> int:
-        raise NotImplementedError("dtcm_bytes unkown at this time")
+        raise SpinnMachineException("Spin2 dtcm bytes unknown.")
 
     @overrides(AbstractVersion.quads_maps)
     def quads_maps(self) -> Dict[int, Tuple[int, int, int]]:
@@ -133,7 +133,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
             self, time_s: float, n_frames: int, n_boards: int,
             n_chips: int) -> float:
         # TODO: Work this out for SpiNNaker 2
-        raise NotImplementedError
+        raise SpinnMachineException("Spin2 idle energy unknown.")
 
     @overrides(AbstractVersion.get_active_energy)
     def get_active_energy(
@@ -141,9 +141,9 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
             chip_active_time: ChipActiveTime,
             router_packets: RouterPackets) -> float:
         # TODO: Work this out for SpiNNaker 2
-        raise SpinnMachineException("Spin2 activeenergy unkown.")
+        raise SpinnMachineException("Spin2 active energy unknown.")
 
     @overrides(AbstractVersion.get_router_report_packet_types)
     def get_router_report_packet_types(self) -> List[str]:
         # TODO: Work this out for SpiNNaker 2
-        raise NotImplementedError
+        raise SpinnMachineException("Spin2 router report packet types unknown")
