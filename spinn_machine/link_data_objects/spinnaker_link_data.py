@@ -22,7 +22,6 @@ class SpinnakerLinkData(AbstractLinkData):
 
     __slots__ = ("_spinnaker_link_id",)
 
-    # pylint: disable=too-many-arguments
     def __init__(self, spinnaker_link_id: int, connected_chip_x: int,
                  connected_chip_y: int, connected_link: int,
                  board_address: str):
