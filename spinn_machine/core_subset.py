@@ -26,9 +26,9 @@ class CoreSubset(object):
 
     def __init__(self, x: int, y: int, processor_ids: Iterable[int]):
         """
-        :param int x: The x-coordinate of the chip
-        :param int y: The y-coordinate of the chip
-        :param iterable(int) processor_ids: The processor IDs on the chip
+        :param x: The x-coordinate of the chip
+        :param y: The y-coordinate of the chip
+        :param processor_ids: The processor IDs on the chip
         """
         self._x = x
         self._y = y
@@ -40,7 +40,7 @@ class CoreSubset(object):
         """
         Adds a processor ID to this subset
 
-        :param int processor_id: A processor ID
+        :param processor_id: A processor ID
         """
         self._processor_ids.add(processor_id)
 
@@ -51,8 +51,6 @@ class CoreSubset(object):
     def x(self) -> int:
         """
         The X-coordinate of the chip
-
-        :rtype: int
         """
         return self._x
 
@@ -60,8 +58,6 @@ class CoreSubset(object):
     def y(self) -> int:
         """
         The Y-coordinate of the chip
-
-        :rtype: int
         """
         return self._y
 
@@ -69,8 +65,6 @@ class CoreSubset(object):
     def processor_ids(self) -> Iterator[int]:
         """
         The processor IDs on the chip that in the subset.
-
-        :rtype: iterable(int)
         """
         return iter(self._processor_ids)
 
@@ -100,10 +94,9 @@ class CoreSubset(object):
         """
         Returns a new CoreSubset which is an intersect of this and the other.
 
-        :param CoreSubset other:
+        :param other:
             A second CoreSubset with possibly overlapping cores
         :return: A new CoreSubset with any overlap
-        :rtype: CoreSubset
         """
         result = CoreSubset(self._x, self._y, [])
         for processor_id in self._processor_ids:

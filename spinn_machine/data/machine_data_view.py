@@ -114,8 +114,6 @@ class MachineDataView(UtilsDataView):
 
         Unlike has_existing_machine for unit tests this will return True even
         if a Machine has not yet been created
-
-        :rtype: bool
         """
         return (cls.__data._machine is not None or cls._is_mocked())
 
@@ -126,8 +124,6 @@ class MachineDataView(UtilsDataView):
 
         Unlike has_machine this method returns false if a machine could be
         mocked
-
-        :rtype: bool
         """
         return cls.__data._machine is not None
 
@@ -140,7 +136,6 @@ class MachineDataView(UtilsDataView):
 
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
-        :rtype: ~spinn_machine.Machine
         """
         if cls.is_user_mode():
             if cls.is_soft_reset():
@@ -167,9 +162,8 @@ class MachineDataView(UtilsDataView):
         The method however does not return `None` but rather raises a KeyError
         if the chip is not known
 
-        :param int x:
-        :param int y:
-        :rtype: Chip
+        :param x:
+        :param y:
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
         :raises KeyError: If the chip does not exist but the machine does
@@ -189,11 +183,10 @@ class MachineDataView(UtilsDataView):
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
-        :param int x: Chip X coordinate
-        :param int y: Chip Y coordinate
+        :param x: Chip X coordinate
+        :param y: Chip Y coordinate
         :return: Chip (`x`,`y`)'s nearest_ethernet info
             or if that is not available just (`x`, `y`)
-        :rtype: tuple(int, int)
         """
         try:
             m = cls.__data._machine
@@ -218,9 +211,8 @@ class MachineDataView(UtilsDataView):
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
-        :param int x:
-        :param int y:
-        :rtype: str
+        :param x:
+        :param y:
         """
         try:
             m = cls.__data._machine
@@ -246,8 +238,7 @@ class MachineDataView(UtilsDataView):
             This method will never request a new machine.
             Therefore a call to this method will not trigger a hard reset
 
-        :param Chip chip:
-        :rtype: str
+        :param chip:
         """
         try:
             m = cls.__data._machine
@@ -283,7 +274,7 @@ class MachineDataView(UtilsDataView):
 
         Note: Only expected to be used in Version 1
 
-        :param dict((int, int), bytes) v_to_p_map:
+        :param v_to_p_map:
         """
         if cls.__data._quad_map:
             raise SpinnMachineException(
@@ -301,9 +292,8 @@ class MachineDataView(UtilsDataView):
 
         Note: This call only works for Version 1
 
-        :param (int, int) xy: The Chip or its XY coordinates
-        :param int virtual_p: The virtual core ID
-        :rtype: int
+        :param xy: The Chip or its XY coordinates
+        :param virtual_p: The virtual core ID
         :raises SpiNNUtilsException: If v_to_p map not set,
             including if the MachineVersion does not support v_to_p_map
         :raises KeyError: If xy not in the v_to_p_map
@@ -320,8 +310,7 @@ class MachineDataView(UtilsDataView):
 
         Does not include XY so does not check if the Core exists on a Chip
 
-        :param int virtual_p:
-        :rtype: (int, int, int)
+        :param virtual_p:
         :raises SpiNNUtilsException: If quad_map map not set,
             MachineVersion does not support quad_map
         :raises KeyError: If virtual_p not in the quad_map
@@ -338,9 +327,8 @@ class MachineDataView(UtilsDataView):
         """
         Returns a String representing the physical core
 
-        :param (int, int) xy: The Chip or its XY coordinates
+        :param xy: The Chip or its XY coordinates
         :param virtual_p: The virtual (python) id for the core
-        :rtype: str
         """
         physical_p: Union[int, Tuple[int, int, int]]
         try:
@@ -364,8 +352,6 @@ class MachineDataView(UtilsDataView):
         Ethernet-enabled chips may have more.
 
         Does not include the system core reserved by the machine/ scamp.
-
-        :rtype: int
         """
         return cls.__data._all_monitor_cores
 
@@ -379,7 +365,5 @@ class MachineDataView(UtilsDataView):
         some reason these are not on Ethernet chips.
 
         Does not include the system core reserved by the machine/ scamp.
-
-        :rtype: int
         """
         return cls.__data._ethernet_monitor_cores

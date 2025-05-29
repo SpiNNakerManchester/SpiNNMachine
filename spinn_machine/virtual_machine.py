@@ -32,12 +32,11 @@ def virtual_machine(width: int, height: int, validate: bool = True) -> Machine:
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
-    :param int width: the width of the virtual machine in chips
-    :param int height: the height of the virtual machine in chips
-    :param bool validate: if True will call the machine validate function
+    :param width: the width of the virtual machine in chips
+    :param height: the height of the virtual machine in chips
+    :param validate: if True will call the machine validate function
 
     :returns: a virtual machine (that cannot execute code)
-    :rtype: ~spinn_machine.Machine
     """
     factory = _VirtualMachine(width, height, validate)
     return factory.machine
@@ -48,12 +47,11 @@ def virtual_machine_by_min_size(
     """
     Create a virtual SpiNNaker machine, used for planning execution.
 
-    :param int width: the minimum width of the virtual machine in chips
-    :param int height: the minimum height of the virtual machine in chips
-    :param bool validate: if True will call the machine validate function
+    :param width: the minimum width of the virtual machine in chips
+    :param height: the minimum height of the virtual machine in chips
+    :param validate: if True will call the machine validate function
 
     :returns: a virtual machine (that cannot execute code)
-    :rtype: ~spinn_machine.Machine
     """
     version = MachineDataView.get_machine_version()
     w_board, h_board = version.board_shape
@@ -80,10 +78,9 @@ def virtual_machine_by_cores(n_cores: int, validate: bool = True) -> Machine:
     return virtual_machine(width, height, validate)
 
     :param n_cores: Minimum number of user cores
-    :param bool validate: if True will call the machine validate function
+    :param validate: if True will call the machine validate function
 
     :returns: a virtual machine (that cannot execute code)
-    :rtype: ~spinn_machine.Machine
     :raises SpinnMachineException:
         If multiple boards are needed but not supported
     """
@@ -105,10 +102,9 @@ def virtual_machine_by_chips(n_chips: int, validate: bool = True) -> Machine:
     return virtual_machine(width, height, validate)
 
     :param n_chips: Minimum number of chips
-    :param bool validate: if True will call the machine validate function
+    :param validate: if True will call the machine validate function
 
     :returns: a virtual machine (that cannot execute code)
-    :rtype: ~spinn_machine.Machine
     :raises SpinnMachineException:
         If multiple boards are needed but not supported
     """
@@ -130,10 +126,9 @@ def virtual_machine_by_boards(n_boards: int, validate: bool = True) -> Machine:
     return virtual_machine(width, height, validate)
 
     :param n_boards: Minimum number of boards
-    :param bool validate: if True will call the machine validate function
+    :param validate: if True will call the machine validate function
 
     :returns: a virtual machine (that cannot execute code)
-    :rtype: ~spinn_machine.Machine
     :raises SpinnMachineException:
         If multiple boards are needed but not supported
     """
@@ -229,8 +224,6 @@ class _VirtualMachine(object):
     def machine(self) -> Machine:
         """
         The Machine object created by this Factory
-
-        :rtype: Machine
         """
         return self._machine
 

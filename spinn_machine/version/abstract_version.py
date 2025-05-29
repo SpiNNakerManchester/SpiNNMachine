@@ -122,8 +122,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
     def name(self) -> str:
         """
         The name of the specific version.
-
-        :rtype: str
         """
         raise NotImplementedError
 
@@ -132,8 +130,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
     def number(self) -> int:
         """
         The version number that produced this Version.
-
-        :rtype: int
         """
         raise NotImplementedError
 
@@ -152,8 +148,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         There is no guarantee that there will be any chips with this many
         cores, only that there will be no cores with more.
-
-        :rtype: int
         """
         return self._max_cores_per_chip
 
@@ -162,8 +156,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
     def n_scamp_cores(self) -> int:
         """
         The number of scamp cores per chip.
-
-        :rtype: int
         """
         raise NotImplementedError
 
@@ -176,7 +168,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         this should not be counted on. Ask each Chip for its SDRAM.
 
         :return: the default SDRAM per chip
-        :rtype: int
         """
         return self._max_sdram_per_chip
 
@@ -186,8 +177,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         The normal number of chips on each board of this version.
 
         Remember that will the board may have dead or excluded chips.
-
-        :rtype: int
         """
         return len(self.chip_core_map)
 
@@ -199,8 +188,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         While it is likely that all chips will have this number it should
         not be counted on. Ask each chip's router for the correct value.
-
-        :rtype: int
         """
         raise NotImplementedError
 
@@ -221,8 +208,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         A map off the expected x,y coordinates on a standard board to
         the most likely number of cores on that chip.
-
-        :rtype: dict((int, int), int)
         """
         raise NotImplementedError
 
@@ -231,8 +216,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
     def clock_speeds_hz(self) -> List[int]:
         """
         The processor clock speeds in Hz this processor can run at
-
-        :rtype: int
         """
         raise NotImplementedError
 
@@ -241,8 +224,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
     def dtcm_bytes(self) -> int:
         """
         The Data Tightly Coupled Memory available on a processor in bytes
-
-        :rtype: int
         """
         raise NotImplementedError
 
@@ -259,9 +240,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
             :py:meth:`verify_size`.
             If not, the results may be wrong.
 
-        :param int width: The width of the machine to find the chips in
-        :param int height: The height of the machine to find the chips in
-        :rtype: list(tuple(int, int))
+        :param width: The width of the machine to find the chips in
+        :param height: The height of the machine to find the chips in
         """
         raise NotImplementedError
 
@@ -269,8 +249,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Checks that the width and height are allowed for this version.
 
-        :param int width:
-        :param int height:
+        :param width:
+        :param height:
         :raise SpinnMachineException: If the size is unexpected
         """
         if width is None:
@@ -288,8 +268,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Implements the width and height checks that depend on the version.
 
-        :param int width:
-        :param int height:
+        :param width:
+        :param height:
         :raise SpinnMachineException:
             If the size is unexpected
         """
@@ -301,14 +281,12 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Creates a new empty machine based on the width, height and version.
 
-        :param int width: The width of the machine excluding any virtual chips
-        :param int height:
+        :param width: The width of the machine excluding any virtual chips
+        :param height:
             The height of the machine excluding any virtual chips
         :param origin: Extra information about how this machine was created
             to be used in ``str(version)``. Example "``Virtual``" or "``Json``"
-        :type origin: str or None
         :return: A subclass of Machine with no chips in it
-        :rtype: ~spinn_machine.Machine
         :raises SpinnMachineInvalidParameterException:
             If the size is unexpected
         """
@@ -321,14 +299,12 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Create a new empty machine based on the width, height and version.
         The width and height will have been validated.
 
-        :param int width: The width of the machine excluding any virtual chips
-        :param int height:
+        :param width: The width of the machine excluding any virtual chips
+        :param height:
             The height of the machine excluding any virtual chips
         :param origin: Extra information about how this machine was created
             to be used in the str method. Example "``Virtual``" or "``Json``"
-        :type origin: str
         :return: A subclass of Machine with no Chips in it
-        :rtype: ~spinn_machine.Machine
         """
         raise NotImplementedError
 
@@ -341,7 +317,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         If there are less that this number of Cores Machine.validate and
         other methods are allowed to raise an exception
 
-        :rtype: int
         :return: The lowest number of cores to accept before flagging a
             Chip to be blacklisted
         """
@@ -360,8 +335,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         So this method returning None does not imply that x, y is an
         Ethernet location
 
-        :param int x:
-        :param int y:
+        :param x:
+        :param y:
         :return: An explanation that the x and y can never be an Ethernet
         """
         raise NotImplementedError
@@ -376,8 +351,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Does not include a safety factor for blacklisted cores or chips.
         For real machines a slightly bigger Machine may be needed.
 
-        :param int n_cores: Number of None Scamp and monitor cores needed
-        :rtype: (int, int)
+        :param n_cores: Number of None Scamp and monitor cores needed
         """
         cores_per_board = sum(self.chip_core_map.values())
         cores_per_board -= MachineDataView.get_ethernet_monitor_cores()
@@ -395,8 +369,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Does not include a safety factor for blacklisted Chips.
         For real machines a slightly bigger Machine may be needed.
 
-        :param int n_boards:
-        :rtype: (int, int)
         :raises SpinnMachineException:
             If multiple boards are needed but not supported
         """
@@ -407,8 +379,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Returns the size needed to support this many boards.
 
-        :param int n_boards:
-        :rtype: (int, int)
+        :param n_boards:
         :raises SpinnMachineException:
             If multiple boards are needed but not supported
         """
@@ -437,8 +408,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         These are applied local to each Ethernet Chip and only if the link is
         not connected to another board
-
-        :rtype: List((int, int, int))
         """
         raise NotImplementedError
 
@@ -449,8 +418,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         These are applied local to each Ethernet Chip and even if the link is
         connected to another board
-
-        :rtype: List((int, int, int, int, int))
         """
         raise NotImplementedError
 
@@ -460,8 +427,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         If applicable returns a map of virtual id to quad qx, qy, qp
 
         Spin 1 boards will return None!
-
-        :rtype: None or dict(int, (int, int, int)
         """
         raise NotImplementedError
 
@@ -470,10 +435,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Converts quad coordinates to the core id
 
-        :param int qx: quad x coordinate of the core
-        :param int qy: quad y coordinate of the core
-        :param int qp: quad p coordinate of the core
-        :rtype: int
+        :param qx: quad x coordinate of the core
+        :param qy: quad y coordinate of the core
+        :param qp: quad p coordinate of the core
         :raises NotImplementedError:
             If called on a version that does not support quads
         """
@@ -484,9 +448,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Converts core id to quad coordinates
 
-        :param int core_id: id of the core
+        :param core_id: id of the core
         :return: (qx, qy, qp)
-        :rtype: (int, int, int)
         :raises NotImplementedError:
             If called on a version that does not support quads
         """
@@ -510,9 +473,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Other formats are version specific.
         See version_parse_cores_string
 
-        :param str: A string to parse
+        :param core_string: A string to parse
         :return: A list of cores, which might be just one
-        :rtype: list(int)
         """
         result = CORE_SINGLE.fullmatch(core_string)
         if result is not None:
@@ -529,9 +491,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         A version specific parsing of the core string
 
-        :param str core_string:
+        :param core_string:
         :return: A list of cores, which might be just one
-        :rtype: list(int)
         """
         raise NotImplementedError
 
@@ -542,11 +503,10 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Returns the idle energy consumption of the system in joules
 
-        :param float time_s: The time to calculate the energy for in seconds
-        :param int n_frames: The number of frames
-        :param int n_boards: The number of boards
-        :param int n_chips: The number of chips
-        :rtype: float
+        :param time_s: The time to calculate the energy for in seconds
+        :param n_frames: The number of frames
+        :param n_boards: The number of boards
+        :param n_chips: The number of chips
         """
         raise NotImplementedError
 
@@ -558,13 +518,12 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Returns the active energy consumption of the system in joules
 
-        :param float time_s: The time to calculate the energy for in seconds
-        :param int n_frames: The number of frames
-        :param int n_boards: The number of boards
-        :param int n_chips: The number of chips
-        :param dict chip_active_time: The time the cores were active in seconds
-        :param dict router_packets: The number of packets sent by each router
-        :rtype: float
+        :param time_s: The time to calculate the energy for in seconds
+        :param n_frames: The number of frames
+        :param n_boards: The number of boards
+        :param n_chips: The number of chips
+        :param chip_active_time: The time the cores were active in seconds
+        :param router_packets: The number of packets sent by each router
         """
         raise NotImplementedError
 
@@ -572,8 +531,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
     def get_router_report_packet_types(self) -> List[str]:
         """
         Returns the list of packet types that the router can send
-
-        :rtype: list(str)
         """
         raise NotImplementedError
 

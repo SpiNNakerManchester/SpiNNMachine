@@ -60,15 +60,12 @@ class RoutingEntry(object):
             the processor_ids and link_ids parameters are ignored.
 
         :param processor_ids: The destination processor IDs
-        :type processor_ids: iterable(int) or None
         :param link_ids: The destination link IDs
-        :type link_ids: iterable(int) or None
-        :param bool defaultable:
+        :param defaultable:
             If this entry is defaultable (it receives packets
             from its directly opposite route position)
         :param spinnaker_route:
             The processor_ids and link_ids expressed as a single int.
-        :type spinnaker_route: int or None
         :raise spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             * If processor_ids contains the same ID more than once
             * If link_ids contains the same ID more than once
@@ -123,8 +120,6 @@ class RoutingEntry(object):
     def processor_ids(self) -> FrozenSet[int]:
         """
         The destination processor IDs.
-
-        :rtype: frozenset(int)
         """
         if self._processor_ids is None:
             self._processor_ids, self._link_ids = self._calc_routing_ids()
@@ -134,8 +129,6 @@ class RoutingEntry(object):
     def link_ids(self) -> FrozenSet[int]:
         """
         The destination link IDs.
-
-        :rtype: frozenset(int)
         """
         if self._link_ids is None:
             self._processor_ids, self._link_ids = self._calc_routing_ids()
@@ -149,8 +142,6 @@ class RoutingEntry(object):
         pass a message out on the link opposite from where it was received,
         without routing it to any processors; source and destination chips for
         a message cannot be defaultable).
-
-        :rtype: bool
         """
         return self._defaultable
 
@@ -158,8 +149,6 @@ class RoutingEntry(object):
     def spinnaker_route(self) -> int:
         """
         The encoded SpiNNaker route.
-
-        :rtype: int
         """
         return self._spinnaker_route
 
@@ -171,10 +160,9 @@ class RoutingEntry(object):
         routing table. It is also possible to use the add (`+`) operator
         or the or (`|`) operator with the same effect.
 
-        :param ~spinn_machine.MulticastRoutingEntry other:
+        :param other:
             The multicast entry to merge with this entry
         :return: A new multicast routing entry with merged destinations
-        :rtype: ~spinn_machine.MulticastRoutingEntry
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:
             If the key and mask of the other entry do not match
         """
@@ -214,8 +202,6 @@ class RoutingEntry(object):
         """
         Convert a routing table entry represented in software to a
         binary routing table entry usable on the machine.
-
-        :rtype: int
         """
         route_entry = 0
         assert self._processor_ids is not None
@@ -230,8 +216,6 @@ class RoutingEntry(object):
         """
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.
-
-        :rtype: tuple(frozenset(int), frozenset(int))
         """
         processor_ids = (pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
                          if self._spinnaker_route & 1 <<

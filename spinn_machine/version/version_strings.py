@@ -55,8 +55,6 @@ class VersionStrings(Enum):
         The text but in a shortened version
 
         This makes the text lower case and removes some special characters
-
-        :rtype: str
         """
         return self.shorten(self.text)
 
@@ -67,8 +65,6 @@ class VersionStrings(Enum):
         The list of the versions covered by this string
 
         This list can grow as new versions are added
-
-        :rtype: list(int)
         """
         return self._versions
 
@@ -77,8 +73,7 @@ class VersionStrings(Enum):
         """
         Makes the String lower case and removes some special characters
 
-        :param str value:
-        :rtype: str
+        :param value:
         """
         return value.lower().replace("_", "").replace("-", "").replace(" ", "")
 
@@ -87,8 +82,7 @@ class VersionStrings(Enum):
         """
         Gets a VersionString object from a String
 
-        :param str value:
-        :rtype: VersionStrings
+        :param value:
         """
         value_short = cls.shorten(value)
         for vs in cls:

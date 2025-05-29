@@ -46,9 +46,7 @@ def _machine_ignore(
 
     :param original: Machine to make a near copy of
     :param dead_chips: Collection of dead chips' (x, y) coordinates
-    :type dead_chips: Collection (int, int)
     :param dead_links: Collection of dead links' (x, y, direction) coordinates
-    :type dead_links: Collection of (int, int, int)
     :return: A New Machine object
     """
     new_machine = MachineDataView.get_machine_version().create_machine(

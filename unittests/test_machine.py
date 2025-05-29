@@ -147,8 +147,6 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_chip_already_exists(self) -> None:
         """
         check that adding a chip that already exists causes an error
-
-        :rtype: None
         """
         set_config("Machine", "versions", VersionStrings.ANY.text)
         machine = virtual_machine_by_boards(1)
@@ -161,8 +159,6 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_machine_get_chip_at(self) -> None:
         """
         test the get_chip_at function from the machine with a valid request
-
-        :rtype: None
         """
         set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         new_machine = virtual_machine_by_min_size(2, 2)
@@ -175,8 +171,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the add_chips method of the machine chips outside size
         should produce an error
-
-        :rtype: None
         """
         set_config("Machine", "versions", VersionStrings.ANY.text)
         version = MachineDataView.get_machine_version()
@@ -196,8 +190,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the add_chips method of the machine chips outside size
         should produce an error
-
-        :rtype: None
         """
         set_config("Machine", "versions", VersionStrings.ANY.text)
         version = MachineDataView.get_machine_version()
@@ -217,8 +209,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the machines get_chip_at function with a location thats invalid,
         should return None and not produce an error
-
-        :rtype: None
         """
         set_config("Machine", "versions", VersionStrings.ANY.text)
         version = MachineDataView.get_machine_version()
@@ -230,8 +220,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the is_chip_at function of the machine with a position to
         request which does indeed contain a chip
-
-        :rtype: None
         """
         set_config("Machine", "versions", VersionStrings.ANY.text)
         version = MachineDataView.get_machine_version()
@@ -243,8 +231,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         """
         test the is_chip_at function of the machine with a position to
         request which does not contain a chip
-
-        :rtype: None
         """
         set_config("Machine", "versions", VersionStrings.ANY.text)
         version = MachineDataView.get_machine_version()
