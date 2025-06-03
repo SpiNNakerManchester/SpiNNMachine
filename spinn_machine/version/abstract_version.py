@@ -29,11 +29,10 @@ if TYPE_CHECKING:
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
-ChipXY: TypeAlias = Tuple[int, int]
 # Dict of the number of packets sent by each router in each category
-RouterPackets: TypeAlias = Dict[ChipXY, Dict[str, int]]
+RouterPackets: TypeAlias = Dict[XY, Dict[str, int]]
 # Dict of the time the cores were active in seconds, and the number of cores
-ChipActiveTime: TypeAlias = Dict[ChipXY, Tuple[float, int]]
+ChipActiveTime: TypeAlias = Dict[XY, Tuple[float, int]]
 
 CORE_RANGE = re.compile(r"(\d+)-(\d+)")
 CORE_SINGLE = re.compile(r"(-*)(\d+)")
