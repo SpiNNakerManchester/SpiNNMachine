@@ -180,17 +180,29 @@ class MachineDataView(UtilsDataView):
     def get_nearest_ethernet(cls, x: int, y: int) -> XY:
         """
         Gets the nearest Ethernet-enabled chip (`x`, `y`) for the chip at
-        (`x`, `y`)
+        (`x`, `y`) if it exists.
 
-        :param x: Chip X coordinate
-        :param y: Chip Y coordinate
+        If there is no machine or no chip at (`x`, `y`) this method,
+        or any other issue will just return (`x`, `y`)
+
+        .. note::
+            This method will never request a new machine.
+            Therefore a call to this method will not trigger a hard reset
+
+        :param int x: Chip X coordinate
+        :param int y: Chip Y coordinate
         :return: Chip (`x`,`y`)'s nearest_ethernet info
             or if that is not available just (`x`, `y`)
+        :rtype: tuple(int, int)
         """
-        m = cls.__data._machine
-        assert m is not None
-        chip = m._chips[(x, y)]
-        return chip.nearest_ethernet_x, chip.nearest_ethernet_y
+        try:
+            m = cls.__data._machine
+            if m is not None:
+                chip = m._chips[(x, y)]
+                return chip.nearest_ethernet_x, chip.nearest_ethernet_y
+        except Exception:  # pylint: disable=broad-except
+            pass
+        return x, y
 
     @classmethod
     def where_is_xy(cls, x: int, y: int) -> str:
