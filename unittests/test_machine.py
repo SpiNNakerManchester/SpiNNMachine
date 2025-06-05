@@ -257,7 +257,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         Test the x_y with each wrap around.
 
         Notice that the function only does the math not validate the values.
-        :return:
         """
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # full wrap around
@@ -286,7 +285,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         Test get_global_xy with each wrap around.
 
         Notice that the function only does the math not validate the values.
-        :return:
         """
         set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
         # full wrap around
