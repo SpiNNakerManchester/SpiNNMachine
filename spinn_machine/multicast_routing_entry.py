@@ -29,9 +29,9 @@ class MulticastRoutingEntry(object):
     def __init__(self, key: int, mask: int,
                  routing_entry: RoutingEntry):
         """
-        :param int key: The routing key_combo
-        :param int mask: The route key_combo mask
-        :param RoutingEntry: routing_entry
+        :param key: The routing key_combo
+        :param mask: The route key_combo mask
+        :param routing_entry:
         """
         self._key: int = key
         self._mask: int = mask
@@ -49,8 +49,6 @@ class MulticastRoutingEntry(object):
     def key(self) -> int:
         """
         The routing key.
-
-        :rtype: int
         """
         return self._key
 
@@ -58,8 +56,6 @@ class MulticastRoutingEntry(object):
     def mask(self) -> int:
         """
         The routing mask.
-
-        :rtype: int
         """
         return self._mask
 
@@ -67,8 +63,6 @@ class MulticastRoutingEntry(object):
     def processor_ids(self) -> FrozenSet[int]:
         """
         The destination processor IDs.
-
-        :rtype: frozenset(int)
         """
         return self._routing_entry.processor_ids
 
@@ -76,8 +70,6 @@ class MulticastRoutingEntry(object):
     def link_ids(self) -> FrozenSet[int]:
         """
         The destination link IDs.
-
-        :rtype: frozenset(int)
         """
         return self._routing_entry.link_ids
 
@@ -89,8 +81,6 @@ class MulticastRoutingEntry(object):
         pass a message out on the link opposite from where it was received,
         without routing it to any processors; source and destination chips for
         a message cannot be defaultable).
-
-        :rtype: bool
         """
         return self._routing_entry.defaultable
 
@@ -98,8 +88,6 @@ class MulticastRoutingEntry(object):
     def spinnaker_route(self) -> int:
         """
         The encoded SpiNNaker route.
-
-        :rtype: int
         """
         return self._routing_entry.spinnaker_route
 
@@ -112,10 +100,8 @@ class MulticastRoutingEntry(object):
         routing table. It is also possible to use the add (`+`) operator
         or the or (`|`) operator with the same effect.
 
-        :param ~spinn_machine.MulticastRoutingEntry other:
-            The multicast entry to merge with this entry
+        :param other: The multicast entry to merge with this entry
         :return: A new multicast routing entry with merged destinations
-        :rtype: ~spinn_machine.MulticastRoutingEntry
         :raise spinn_machine.exceptions.SpinnMachineInvalidParameterException:
             If the key and mask of the other entry do not match
         """

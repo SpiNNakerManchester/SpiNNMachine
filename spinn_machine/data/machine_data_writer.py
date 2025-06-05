@@ -76,7 +76,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         Sets the machine.
 
-        :param Machine machine:
+        :param machine:
         :raises TypeError: it the machine is not a Machine
         """
         if not isinstance(machine, Machine):
@@ -116,7 +116,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         Only affect is to change the numbers reported by the
         get_all/ethernet_monitor methods.
 
-        :param bool all_chips:
+        :param all_chips:
             If True assumes that this Vertex will be placed on all chips
             including Ethernet ones.
             If False assumes that this Vertex type will only be placed on

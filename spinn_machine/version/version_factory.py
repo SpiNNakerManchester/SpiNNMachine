@@ -186,9 +186,8 @@ def raise_version_error(error: str, version: Optional[int]) -> Never:
     """
     Collects main cfg values and raises an exception
 
-    :param str error: message for the exception
+    :param error: message for the exception
     :param version: version claimed
-    :type version: int or None
     :raises SpinnMachineException: Always!
     """
     height = get_config_int_or_none("Machine", "height")

@@ -78,10 +78,7 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
     Generate a model of a machine from a JSON description of that machine.
 
     :param j_machine: JSON description of the machine
-    :type j_machine: dict in format returned by json.load or a
-        str representing a path to the JSON file
     :return: The machine model.
-    :rtype: Machine
     """
     if isinstance(j_machine, str):
         with open(j_machine, encoding="utf-8") as j_file:
@@ -233,8 +230,6 @@ def _describe_chip(chip: Chip, standard: _Desc, ethernet: _Desc) -> JsonArray:
 def to_json() -> JsonObject:
     """
     Runs the code to write the machine in Java readable JSON.
-
-    :rtype: dict
     """
     machine = MachineDataView.get_machine()
     # find the standard values to use for Ethernet chips
@@ -291,8 +286,6 @@ def to_json_path(file_path: str) -> None:
     Runs the code to write the machine in Java readable JSON.
 
     :param file_path: Location to write file to. Warning will overwrite!
-    :type file_path: str
-    :rtype: None
     """
     json_obj = to_json()
 

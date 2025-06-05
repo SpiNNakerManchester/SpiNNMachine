@@ -33,15 +33,11 @@ class IgnoreCore(object):
                  ip_address: Optional[str] = None):
         """
         :param x: X coordinate of a core to ignore
-        :type x: int or str
         :param y: Y coordinate of a core to ignore
-        :type y: int or str
         :param p: The virtual core ID of a core if > 0,
             or the physical core if <= 0 (actual value will be negated)
-        :type p: int or str
         :param ip_address: Optional IP address which, if provided, make
             x and y local coordinates
-        :type ip_address: str or None
         """
         #: X coordinate of the chip with the processor to ignore
         self.x = int(x)
@@ -93,9 +89,8 @@ class IgnoreCore(object):
             4,7,3
             6,5,-2,10.11.12.13
 
-        :param str downed_core: representation of one chip to ignore
+        :param downed_core: representation of one chip to ignore
         :return: A list of IgnoreCore objects
-        :rtype: list(IgnoreCore)
         """
         version = MachineDataView.get_machine_version()
         parts = downed_core.split(",")
@@ -137,9 +132,8 @@ class IgnoreCore(object):
 
             4,7,3:6,5,-2,10.11.12.13,2,3,2-17
 
-        :param str downed_cores: representation of zero or chips to ignore
+        :param downed_cores: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreCores
-        :rtype: set(IgnoreCore)
         """
         ignored_cores: Set['IgnoreCore'] = set()
         if downed_cores is None:

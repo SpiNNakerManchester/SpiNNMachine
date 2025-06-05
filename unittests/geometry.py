@@ -39,14 +39,6 @@ def shortest_mesh_path_length(
     """Get the length of a shortest path from source to destination without
     using wrap-around links.
 
-    Parameters
-    ----------
-    source : (x, y, z)
-    destination : (x, y, z)
-
-    Returns
-    -------
-    int
     """
     x = destination[0] - source[0]
     y = destination[1] - source[1]
@@ -88,14 +80,6 @@ def shortest_mesh_path(
     """Calculate the shortest vector from source to destination without using
     wrap-around links.
 
-    Parameters
-    ----------
-    source : (x, y, z)
-    destination : (x, y, z)
-
-    Returns
-    -------
-    (x, y, z)
     """
     return minimise_xyz(d - s for s, d in zip(source, destination))
 
@@ -109,16 +93,6 @@ def shortest_torus_path_length(
     See http://jhnet.co.uk/articles/torus_paths for an explanation of how this
     method works.
 
-    Parameters
-    ----------
-    source : (x, y, z)
-    destination : (x, y, z)
-    width : int
-    height : int
-
-    Returns
-    -------
-    int
     """
     # Aliases for convenience
     w, h = width, height
@@ -181,16 +155,6 @@ def shortest_torus_path(
     Note that when multiple shortest paths exist, one will be chosen at random
     with uniform probability.
 
-    Parameters
-    ----------
-    source : (x, y, z)
-    destination : (x, y, z)
-    width : int
-    height : int
-
-    Returns
-    -------
-    (x, y, z)
     """
     # Aliases for convenience
     w, h = width, height

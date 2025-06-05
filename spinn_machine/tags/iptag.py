@@ -44,13 +44,13 @@ class IPTag(AbstractTag):
         :param destination_y:
             The y-coordinate where users of this tag should send packets to
         :param tag: The tag of the SDP packet
-        :param str ip_address:
+        :param ip_address:
             The IP address to which SDP packets with the tag will be sent
         :param port:
             The port to which the SDP packets with the tag will be sent, or
-        :param bool strip_sdp:
+        :param strip_sdp:
             Indicates whether the SDP header should be removed
-        :param str traffic_identifier:
+        :param traffic_identifier:
             The identifier for traffic transmitted using this tag
         """
         super().__init__(board_address, tag, port)

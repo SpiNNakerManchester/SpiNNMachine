@@ -27,14 +27,10 @@ class IgnoreLink(object):
                  ip_address: Optional[str] = None):
         """
         :param x: X coordinate of a chip with a link to ignore
-        :type x: int or str
         :param y: Y coordinate of a chip with a link to ignore
-        :type y: int or str
         :param link: ID of the link to ignore
-        :type link: int or str
         :param ip_address: Optional IP address which, if provided, makes
             x and y be local coordinates
-        :type ip_address: str or None
         """
         #: X coordinate of the chip with the link to ignore
         self.x = int(x)
@@ -64,9 +60,8 @@ class IgnoreLink(object):
           If provided, the ``<chip_x>,<chip_y>`` will be considered local to
           the board with this IP address.
 
-        :param str downed_link: representation of one link to ignore
+        :param downed_link: representation of one link to ignore
         :return: An IgnoreLink object
-        :rtype: IgnoreLink
         """
         parts = downed_link.split(",")
 
@@ -100,9 +95,8 @@ class IgnoreLink(object):
 
         The string ``None`` (case insensitive) is used to represent no ignores
 
-        :param str downed_cores: representation of zero or chips to ignore
+        :param downed_links: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreLinks
-        :rtype: set(IgnoreLink)
         """
         ignored_links: Set['IgnoreLink'] = set()
         if downed_links is None:

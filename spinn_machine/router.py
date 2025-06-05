@@ -46,8 +46,8 @@ class Router(object):
             self, links: Iterable[Link],
             n_available_multicast_entries: int):
         """
-        :param iterable(~spinn_machine.Link) links: iterable of links
-        :param int n_available_multicast_entries:
+        :param links: iterable of links
+        :param n_available_multicast_entries:
             The number of entries available in the routing table
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If any two links have the same ``source_link_id``
@@ -62,7 +62,7 @@ class Router(object):
         """
         Add a link to the router of the chip.
 
-        :param Link link: The link to be added
+        :param link: The link to be added
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If another link already exists with the same ``source_link_id``
         """
@@ -76,9 +76,8 @@ class Router(object):
         Determine if there is a link with ID source_link_id.
         Also implemented as ``__contains__(source_link_id)``
 
-        :param int source_link_id: The ID of the link to find
+        :param source_link_id: The ID of the link to find
         :return: True if there is a link with the given ID, False otherwise
-        :rtype: bool
         """
         return source_link_id in self._links
 
@@ -93,9 +92,8 @@ class Router(object):
         Get the link with the given ID, or `None` if no such link.
         Also implemented as ``__getitem__(source_link_id)``
 
-        :param int source_link_id: The ID of the link to find
+        :param source_link_id: The ID of the link to find
         :return: The link, or ``None`` if no such link
-        :rtype: ~spinn_machine.Link or None
         """
         return self._links.get(source_link_id)
 
@@ -109,8 +107,6 @@ class Router(object):
     def links(self) -> Iterator[Link]:
         """
         The available links of this router.
-
-        :rtype: iterable(~spinn_machine.Link)
         """
         return iter(self._links.values())
 
@@ -121,7 +117,6 @@ class Router(object):
         :return: an iterable of tuples of ``(source_link_id, link)`` where:
             * ``source_link_id`` is the ID of the link
             * ``link`` is a router link
-        :rtype: iterable(int, ~spinn_machine.Link)
         """
         return iter(self._links.items())
 
@@ -130,7 +125,6 @@ class Router(object):
         Get the number of links in the router.
 
         :return: The length of the underlying iterable
-        :rtype: int
         """
         return len(self._links)
 
@@ -138,8 +132,6 @@ class Router(object):
     def n_available_multicast_entries(self) -> int:
         """
         The number of available multicast entries in the routing tables.
-
-        :rtype: int
         """
         return self._n_available_multicast_entries
 
@@ -151,11 +143,7 @@ class Router(object):
         Convert a routing table entry represented in software to a
         binary routing table entry usable on the machine.
 
-        :param routing_table_entry:
-            The entry to convert
-        :type routing_table_entry: ~spinn_machine.MulticastRoutingEntry or
-             ~spinn_machine.RoutingEntry
-        :rtype: int
+        :param routing_table_entry: The entry to convert
         """
         route_entry = 0
         for processor_id in routing_table_entry.processor_ids:
@@ -182,9 +170,8 @@ class Router(object):
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.
 
-        :param int route: The routing table entry
+        :param route: The routing table entry
         :return: The list of processor IDs, and the list of link IDs.
-        :rtype: tuple(list(int), list(int))
         """
         processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
                          if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
@@ -197,7 +184,6 @@ class Router(object):
         Utility method to convert links into x and y coordinates.
 
         :return: iterable list of destination coordinates in x and y dict
-        :rtype: iterable(dict(str,int))
         """
         return [
             {'x': link.destination_x, 'y': link.destination_y}
@@ -220,9 +206,8 @@ class Router(object):
         GIGO: this method assumes the input is valid.
         No verification is done
 
-        :param int link_id: A valid link_id
+        :param link_id: A valid link_id
         :return: The link_id for the opposite direction
-        :rtype: int
         """
         # Mod is faster than if
         return (link_id + Router.LINK_OPPOSITE) % Router.MAX_LINKS_PER_ROUTER
