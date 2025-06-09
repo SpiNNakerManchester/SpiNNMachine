@@ -163,3 +163,5 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
 
         raise ConfigException(
             f"{core_string} does not represent cores for Version 2 boards")
+
+        

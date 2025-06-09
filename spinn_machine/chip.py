@@ -187,6 +187,7 @@ class Chip(XY):
         """
         return self._router
 
+
     @property
     def sdram(self) -> int:
         """

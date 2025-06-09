@@ -58,6 +58,7 @@ class TestSimulatorData(unittest.TestCase):
         with self.assertRaises(TypeError):
             writer.set_machine("bacon")
         self.assertTrue(MachineDataView.has_machine())
+    
 
     def test_where_is_mocked(self):
         set_config("Machine", "versions", VersionStrings.BIG.text)
@@ -170,10 +171,12 @@ class TestSimulatorData(unittest.TestCase):
         # check there is a value not what it is
         MachineDataView.get_machine()
 
+
     def test_mock201(self):
         set_config("Machine", "version", 201)
         # check there is a value not what it is
         MachineDataView.get_machine()
+
 
     def test_get_monitors(self):
         writer = MachineDataWriter.setup()

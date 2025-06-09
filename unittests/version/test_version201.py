@@ -132,7 +132,6 @@ class TestVersion201(unittest.TestCase):
 
     def test_create_machine(self):
         version = Version201()
-
         machine = version.create_machine(width=1, height=1)
         self.assertIsInstance(machine, NoWrapMachine)
 
