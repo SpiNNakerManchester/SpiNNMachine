@@ -149,7 +149,7 @@ class Router(object):
     @staticmethod
     def max_cores_per_router():
         """Static method to substitute the previous constant: MAX_CORES_PER_ROUTER.
-        This is neede because Spinnaker 1 and 2 routers have different properties.
+        This is needed because Spinnaker 1 and 2 routers have different properties.
         We import machine data view in here to avoid circular import errors.
 
         Returns:

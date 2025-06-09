@@ -1,0 +1,12 @@
+# Since the unittests require around 1 s to run we can run on every push
+
+stages:
+  - test
+
+unit_tests:
+  stage: test
+  image: python:3.11  
+  before_script:
+    - pip install -e .'[test]'
+  script:
+    - python -m pytest 
