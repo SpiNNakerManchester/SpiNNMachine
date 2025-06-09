@@ -15,7 +15,7 @@
 from __future__ import annotations
 import logging
 import sys
-from enum import Enum
+from enum import IntEnum
 from typing import TYPE_CHECKING
 from spinn_utilities.config_holder import (
     get_config_int_or_none, get_config_str_or_none)
@@ -34,11 +34,11 @@ FIVE = 5
 SPIN2_1CHIP = 201
 SPIN2_48CHIP = 248
 # Chip generations
-class SPIN1_GEN(Enum):
+class SPIN1_GEN(IntEnum):
     THREE = 3
     FIVE = 5
 
-class SPIN2_GEN(Enum):
+class SPIN2_GEN(IntEnum):
     SPIN2_1CHIP = 201
     SPIN2_48CHIP = 248
 

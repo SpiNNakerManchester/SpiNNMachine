@@ -1,5 +1,5 @@
 import unittest
-from spinn_machine import Router
+from spinn_machine.router import Router, SPINN2_MAX_CORES_PER_ROUTER
 from spinn_machine.config_setup import unittest_setup
 from spinn_utilities.config_holder import set_config
 from spinn_machine.version.version_strings import VersionStrings
@@ -10,17 +10,22 @@ class TestingS2Router(unittest.TestCase):
 
     def setUp(self):
         unittest_setup()  
+    
+    def test_default_max_cores_in_router(self):
+        """If no version is specified, we default to the SpiNNaker2 specs.
+        """
+        links = list()
+        r = Router(links, 1024)
+        self.assertEqual(r.max_cores_per_router(), SPINN2_MAX_CORES_PER_ROUTER)
 
     def test_max_cores_s1_router(self):
         # set machine version to version3 which uses S1 chip
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "versions", VersionStrings.GEN1.text)
         links = list()
         r = Router(links, 1024)
         n_cores = r.max_cores_per_router()
 
         self.assertEqual(n_cores, 18)
-        self.assertFalse(n_cores < 18)
-        self.assertFalse(n_cores > 18)
 
     def test_max_cores_s2_router(self):
         # use defalut config to get machine with s2 chip
@@ -29,11 +34,9 @@ class TestingS2Router(unittest.TestCase):
         n_cores = r.max_cores_per_router()
 
         self.assertEqual(n_cores, 152, "spinnaker2 chip has only 152 cores")
-        self.assertFalse(n_cores < 152, "spinnaker2 chip has only 152 cores")
-        self.assertFalse(n_cores > 152, "spinnaker2 chip has only 152 cores")
 
     def test_convert_spinnaker1_route_to_routing_ids(self):
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "versions", VersionStrings.GEN1.text)
         links = list()
         r = Router(links, 1024)
 
@@ -54,7 +57,7 @@ class TestingS2Router(unittest.TestCase):
         self.assertEqual(link_ids2, link_ids)
 
     def test_convert_spinnaker2_route_to_routing_ids(self):
-        
+        set_config("Machine", "versions", VersionStrings.GEN2.text)
         links = list()
         r = Router(links, 1024)
 
@@ -76,7 +79,7 @@ class TestingS2Router(unittest.TestCase):
         self.assertEqual(link_ids2, link_ids)
 
     def test_routing_table_entry_to_spinnaker1_route(self):
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "versions", VersionStrings.GEN1.text)
         links = list()
         r = Router(links, 1024)
         proc_ids = list()
@@ -120,7 +123,7 @@ class TestingS2Router(unittest.TestCase):
         )
 
     def test_routing_table_entry_to_spinnaker2_route(self):
-
+        set_config("Machine", "versions", VersionStrings.GEN2.text)
         links = list()
         r = Router(links, 1024)
         proc_ids = list()
