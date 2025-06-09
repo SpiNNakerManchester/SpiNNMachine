@@ -184,6 +184,7 @@ class Machine(object, metaclass=AbstractBase):
         :rtype: iterable(tuple(tuple(int,int),int))
         """
         raise NotImplementedError
+    
 
     @abstractmethod
     def get_down_xys_by_ethernet(

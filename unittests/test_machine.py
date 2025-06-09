@@ -53,6 +53,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def _create_chip(self, x, y):
         n_cores = MachineDataView.get_machine_version().max_cores_per_chip
+
         if x == y == 0:
             return Chip(x, y, [0], range(1, n_cores), self._router,
                         self._sdram, self._nearest_ethernet_chip[0],

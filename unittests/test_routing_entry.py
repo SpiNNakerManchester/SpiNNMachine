@@ -35,6 +35,7 @@ class TestRoutingEntry(unittest.TestCase):
 
         self.assertEqual(a_multicast.link_ids, set(link_ids))
         self.assertEqual(a_multicast.processor_ids, set(proc_ids))
+
         # While we're here, let's check a few other basic operations
         self.assertEqual(str(a_multicast),
                          "{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, "

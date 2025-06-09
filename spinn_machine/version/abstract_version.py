@@ -238,6 +238,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :rtype: int
         """
         raise NotImplementedError
+    
 
     @abstractmethod
     def get_potential_ethernet_chips(
@@ -527,3 +528,4 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :rtype: list(int)
         """
         raise NotImplementedError
+    

@@ -14,18 +14,18 @@
 from __future__ import annotations
 from typing import (Any, Collection, FrozenSet, Optional, overload, Tuple,
                     Union)
-from spinn_machine.router import Router
+from .router import Router
 from .exceptions import (SpinnMachineInvalidParameterException)
-
 
 class RoutingEntry(object):
     """
     Represents an entry in a SpiNNaker chip's multicast routing table.
     """
-
     __slots__ = (
         "_defaultable", "_processor_ids",
         "_link_ids", "_spinnaker_route", "__repr")
+    
+
 
     @overload
     def __init__(self, *, processor_ids: Union[int, Collection[int]],
@@ -45,6 +45,7 @@ class RoutingEntry(object):
                  spinnaker_route: int):
         ...
 
+    
     # pylint: disable=too-many-arguments
     def __init__(self, *,
                  processor_ids: Optional[Union[int, Collection[int]]] = None,
@@ -233,7 +234,9 @@ class RoutingEntry(object):
 
         :rtype: tuple(frozenset(int), frozenset(int))
         """
-        processor_ids = (pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+        MAX_CORES_PER_ROUTER = Router.max_cores_per_router()
+        
+        processor_ids = (pi for pi in range(0, MAX_CORES_PER_ROUTER)
                          if self._spinnaker_route & 1 <<
                          (Router.MAX_LINKS_PER_ROUTER + pi))
         link_ids = (li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
