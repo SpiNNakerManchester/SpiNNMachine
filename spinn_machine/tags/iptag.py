@@ -30,7 +30,6 @@ class IPTag(AbstractTag):
         "_destination_y"
     ]
 
-    # pylint: disable=too-many-arguments
     def __init__(
             self, board_address: str, destination_x: int,
             destination_y: int, tag: int, ip_address: str,

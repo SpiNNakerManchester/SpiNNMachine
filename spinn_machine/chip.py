@@ -38,8 +38,6 @@ class Chip(XY):
                 parent_link: Optional[int] = None) -> Self:
         return tuple.__new__(cls, (x, y))
 
-    # pylint: disable=too-many-arguments, wrong-spelling-in-docstring
-    # pylint: disable=unused-argument
     def __init__(self, x: int, y: int, scamp_processors: Iterable[int],
                  placable_processors: Iterable[int], router: Router,
                  sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
@@ -71,6 +69,7 @@ class Chip(XY):
             ``processor_id``
         """
         # X and Y set by new
+        _, _ = x, y
         self._scamp_processors = tuple(scamp_processors)
         self._placable_processors = tuple(placable_processors)
         self._router = router
@@ -130,14 +129,18 @@ class Chip(XY):
     @property
     def placable_processors_ids(self) -> Tuple[int, ...]:
         """
-        An iterable of available placable/ non scamp processor ids.
+        An iterable of available placeable/ non scamp processor ids.
+
+        :rtype: iterable(int)
         """
         return self._placable_processors
 
     @property
     def n_placable_processors(self) -> int:
         """
-        The total number of processors that are placable / not used by scamp.
+        The total number of processors that are placeable / not used by scamp.
+
+        :rtype: int
         """
         return len(self._placable_processors)
 

@@ -56,7 +56,6 @@ class _MachineDataModel(object):
     def __new__(cls) -> '_MachineDataModel':
         if cls.__singleton is not None:
             return cls.__singleton
-        # pylint: disable=protected-access
         obj = object.__new__(cls)
         cls.__singleton = obj
         obj._clear()
@@ -143,7 +142,6 @@ class MachineDataView(UtilsDataView):
             cls.__data._user_accessed_machine = True
         if cls.__data._machine is None:
             if cls.__data._machine_generator is not None:
-                # pylint: disable=not-callable
                 cls.__data._machine_generator()
                 if cls.__data._machine is None:
                     raise SpinnMachineException(

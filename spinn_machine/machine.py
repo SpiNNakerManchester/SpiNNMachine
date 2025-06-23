@@ -841,7 +841,6 @@ class Machine(object, metaclass=AbstractBase):
     def _add_fpga_link(
             self, fpga_id: int, fpga_link: int, x: int, y: int, link: int,
             board_address: str, ex: int, ey: int) -> None:
-        # pylint: disable=too-many-arguments
         link_data = FPGALinkData(
             fpga_link_id=fpga_link, fpga_id=fpga_id,
             connected_chip_x=x, connected_chip_y=y,

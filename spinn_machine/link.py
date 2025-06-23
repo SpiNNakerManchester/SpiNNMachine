@@ -29,7 +29,6 @@ class Link(object):
     def __init__(
             self, source_x: int, source_y: int, source_link_id: int,
             destination_x: int, destination_y: int):
-        # pylint: disable=too-many-arguments
         """
         :param source_x: The x-coordinate of the source chip of the link
         :param source_y: The y-coordinate of the source chip of the link
