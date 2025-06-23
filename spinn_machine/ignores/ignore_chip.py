@@ -28,12 +28,9 @@ class IgnoreChip(object):
                  ip_address: Optional[str] = None):
         """
         :param x: X coordinate of a Chip to ignore
-        :type x: int or str
         :param y: Y coordinate of a Chip to ignore
-        :type y: int or str
         :param ip_address: Optional IP address which, if provided, make
             x and y local coordinates
-        :type ip_address: str or None
         """
         #: X coordinate of the chip to ignore
         self.x = int(x)
@@ -65,9 +62,8 @@ class IgnoreChip(object):
             4,7
             6,5,10.11.12.13
 
-        :param str downed_chip: representation of one chip to ignore
+        :param downed_chip: representation of one chip to ignore
         :return: An IgnoreChip Object
-        :rtype: IgnoreChip
         """
         parts = downed_chip.split(",")
 
@@ -104,9 +100,8 @@ class IgnoreChip(object):
 
             4,7:6,5,10.11.12.13
 
-        :param str downed_chips: representation of zero or chips to ignore
+        :param downed_chips: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreChips
-        :rtype: set(IgnoreChip)
         """
         ignored_chips: Set['IgnoreChip'] = set()
         if downed_chips is None:

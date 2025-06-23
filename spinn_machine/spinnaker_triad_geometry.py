@@ -61,18 +61,16 @@ class SpiNNakerTriadGeometry(object):
             board_width: int, board_height: int,
             roots: Sequence[XY], centre: _Centre):
         """
-        :param int triad_width: width of a triad in chips
-        :param int triad_height: height of a triad in chips
-        :param int board_width: width of a board in chips
-        :param int board_height: height of a board in chips
+        :param triad_width: width of a triad in chips
+        :param triad_height: height of a triad in chips
+        :param board_width: width of a board in chips
+        :param board_height: height of a board in chips
         :param roots: locations of the Ethernet connected chips
-        :type roots: list(tuple(int, int))
         :param centre:
             the distance from each Ethernet chip to the centre of the hexagon
 
             .. note::
                 This is the theoretical centre, it might not be an actual chip
-        :type centre: tuple(float, float)
         """
         self._triad_width = triad_width
         self._triad_height = triad_height
@@ -116,20 +114,13 @@ class SpiNNakerTriadGeometry(object):
         (1,0), (0,1) and (1,-1); we don't need to be careful with the
         signs of the vectors because we're about to do abs() of them anyway.
 
-        :param int x: The x-coordinate of the chip to get the distance for
-        :param int y: The y-coordinate of the chip to get the distance for
-        :param float x_centre:
-            The x-coordinate of the centre of the hexagon.
-
-            .. note::
-                This is the theoretical centre, it might not be an actual chip
-        :param float y_centre:
-            The y-coordinate of the centre of the hexagon.
+        :param xy: The x and y coordinates of the chip to get the distance for
+        :param centre:
+            The x and y coordinates of the centre of the hexagon.
 
             .. note::
                 This is the theoretical centre, it might not be an actual chip
         :return: how far the chip is away from the centre of the hexagon
-        :rtype: float
         """
         x, y = xy
         x_centre, y_centre = centre
@@ -143,8 +134,8 @@ class SpiNNakerTriadGeometry(object):
         Get the coordinate of the nearest Ethernet chip down and left from
         a given chip.
 
-        :param x: The x-coordinate of the chip to find the nearest Ethernet to
-        :param y: The y-coordinate of the chip to find the nearest Ethernet to
+        :param xy: The x and y coordinates of the chip
+            to find the nearest Ethernet to
         :param ethernet_chips: The locations of the Ethernet chips
         :param centre:
             The distance from the Ethernet chip of the centre of the hexagonal
@@ -176,20 +167,19 @@ class SpiNNakerTriadGeometry(object):
             SpiNN-5 board as the supplied chip.  This chip may not actually
             be working.
 
-        :param int x: x-coordinate of the chip to find the nearest Ethernet of
-        :param int y: y-coordinate of the chip to find the nearest Ethernet of
-        :param int width:
+        :param x: x-coordinate of the chip to find the nearest Ethernet of
+        :param y: y-coordinate of the chip to find the nearest Ethernet of
+        :param width:
             width of the SpiNNaker machine (must be a multiple of the triad
             width of this geometry)
-        :param int height:
+        :param height:
             height of the SpiNNaker machine (must be a multiple of the triad
             height of this geometry)
-        :param int root_x:
+        :param root_x:
             x-coordinate of the boot chip (default 0, 0)
-        :param int root_y:
+        :param root_y:
             y-coordinate of the boot chip (default 0, 0)
         :return: The coordinates of the closest Ethernet chip
-        :rtype: (int, int)
         """
         dx, dy = self.get_local_chip_coordinate(x, y, root_x, root_y)
         return ((x - dx) % width), ((y - dy) % height)
@@ -203,12 +193,11 @@ class SpiNNakerTriadGeometry(object):
         .. note::
             This function assumes the system is constructed from SpiNN-5 boards
 
-        :param int x: The x-coordinate of the chip to find the location of
-        :param int y: The y-coordinate of the chip to find the location of
-        :param int root_x: The x-coordinate of the boot chip (default 0, 0)
-        :param int root_y: The y-coordinate of the boot chip (default 0, 0)
+        :param x: The x-coordinate of the chip to find the location of
+        :param y: The y-coordinate of the chip to find the location of
+        :param root_x: The x-coordinate of the boot chip (default 0, 0)
+        :param root_y: The y-coordinate of the boot chip (default 0, 0)
         :return: the coordinates of the chip relative to its board
-        :rtype: (int, int)
         """
         dx = (x - root_x) % self._triad_width
         dy = (y - root_y) % self._triad_height
@@ -219,9 +208,8 @@ class SpiNNakerTriadGeometry(object):
         """
         Get the coordinates of chips that should be Ethernet chips
 
-        :param int width: The width of the machine to find the chips in
-        :param int height: The height of the machine to find the chips in
-        :rtype: list(tuple(int, int))
+        :param width: The width of the machine to find the chips in
+        :param height: The height of the machine to find the chips in
         """
         if width % self._triad_width == 0:
             eth_width = width

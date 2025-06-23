@@ -33,16 +33,15 @@ class ReverseIPTag(AbstractTag):
         """
         :param board_address:
             The IP address of the board on which the tag is allocated
-        :type board_address: str or None
-        :param int tag: The tag of the SDP packet
-        :param int port:
+        :param tag: The tag of the SDP packet
+        :param port:
             The UDP port on which SpiNNaker will listen for packets
-        :param int destination_x:
+        :param destination_x:
             The x-coordinate of the chip to send packets to
-        :param int destination_y:
+        :param destination_y:
             The y-coordinate of the chip to send packets to
-        :param int destination_p: The ID of the processor to send packets to
-        :param int sdp_port:
+        :param destination_p: The ID of the processor to send packets to
+        :param sdp_port:
             The optional port number to use for SDP packets that
             are formed on the machine (default is 1)
         """

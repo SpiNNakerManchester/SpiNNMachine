@@ -45,33 +45,25 @@ class Chip(XY):
                  tag_ids: Optional[Iterable[int]] = None,
                  parent_link: Optional[int] = None):
         """
-        :param int x: the x-coordinate of the chip's position in the
+        :param x: the x-coordinate of the chip's position in the
             two-dimensional grid of chips
-        :param int y: the y-coordinate of the chip's position in the
+        :param y: the y-coordinate of the chip's position in the
             two-dimensional grid of chips
-        :param iterable(int) scamp_processors:
+        :param scamp_processors:
             the ids of scamp processors
-        :param iterable(int) placable_processors:
+        :param placable_processors:
             the ids of processors excluding scamp processors.
-        :param ~spinn_machine.Router router: a router for the chip
-        :param int sdram: an SDRAM for the chip
+        :param router: a router for the chip
+        :param sdram: an SDRAM for the chip
         :param ip_address:
             the IP address of the chip, or ``None`` if no Ethernet attached
-        :type ip_address: str or None
         :param tag_ids: IDs to identify the chip for SDP can be empty to
             define no tags or `None` to allocate tag automatically
             based on if there is an ip_address
-        :type tag_ids: iterable(int) or None
         :param nearest_ethernet_x: the nearest Ethernet x coordinate
-        :type nearest_ethernet_x: int or None
         :param nearest_ethernet_y: the nearest Ethernet y coordinate
-        :type nearest_ethernet_y: int or None
         :param parent_link: The link down which the parent chips is found in
             the tree of chips towards the root (boot) chip
-        :type parent_link: int or None
-        :param v_to_p_map: An array indexed by virtual core which gives the
-            physical core number or 0xFF if no entry for the core
-        :type v_to_p_map: bytearray or None
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If processors contains any two processors with the same
             ``processor_id``
@@ -98,9 +90,8 @@ class Chip(XY):
         Determines if a processor with the given ID exists in the chip.
         Also implemented as ``__contains__(processor_id)``
 
-        :param int processor_id: the processor ID to check for
+        :param processor_id: the processor ID to check for
         :return: Whether the processor with the given ID exists
-        :rtype: bool
         """
         if processor_id in self._placable_processors:
             return True
@@ -110,8 +101,6 @@ class Chip(XY):
     def x(self) -> int:
         """
         The X-coordinate of the chip in the two-dimensional grid of chips.
-
-        :rtype: int
         """
         return self[0]
 
@@ -119,8 +108,6 @@ class Chip(XY):
     def y(self) -> int:
         """
         The Y-coordinate of the chip in the two-dimensional grid of chips.
-
-        :rtype: int
         """
         return self[1]
 
@@ -128,8 +115,6 @@ class Chip(XY):
     def all_processor_ids(self) -> Iterator[int]:
         """
         An iterable of id's of all available processors
-
-        :rtype: iterable(int)
         """
         yield from self._scamp_processors
         yield from self._placable_processors
@@ -138,8 +123,6 @@ class Chip(XY):
     def n_processors(self) -> int:
         """
         The total number of processors.
-
-        :rtype: int
         """
         return len(self._scamp_processors) + len(self._placable_processors)
 
@@ -165,8 +148,6 @@ class Chip(XY):
     def scamp_processors_ids(self) -> Tuple[int, ...]:
         """
         An iterable of available scamp processors.
-
-        :rtype: iterable(int)
         """
         return self._scamp_processors
 
@@ -174,8 +155,6 @@ class Chip(XY):
     def n_scamp_processors(self) -> int:
         """
         The total number of processors that are used by scamp.
-
-        :rtype: int
         """
         return len(self._scamp_processors)
 
@@ -183,8 +162,6 @@ class Chip(XY):
     def router(self) -> Router:
         """
         The router object associated with the chip.
-
-        :rtype: Router
         """
         return self._router
 
@@ -192,8 +169,6 @@ class Chip(XY):
     def sdram(self) -> int:
         """
         The SDRAM associated with the chip.
-
-        :rtype: int
         """
         return self._sdram
 
@@ -202,8 +177,6 @@ class Chip(XY):
         """
         The IP address of the chip, or ``None`` if there is no Ethernet
         connected to the chip.
-
-        :rtype: str or None
         """
         return self._ip_address
 
@@ -211,8 +184,6 @@ class Chip(XY):
     def nearest_ethernet_x(self) -> int:
         """
         The X-coordinate of the nearest Ethernet chip.
-
-        :rtype: int
         """
         return self._nearest_ethernet_x
 
@@ -220,8 +191,6 @@ class Chip(XY):
     def nearest_ethernet_y(self) -> int:
         """
         The Y-coordinate of the nearest Ethernet chip.
-
-        :rtype: int
         """
         return self._nearest_ethernet_y
 
@@ -229,8 +198,6 @@ class Chip(XY):
     def tag_ids(self) -> OrderedSet[int]:
         """
         The tag IDs supported by this chip.
-
-        :rtype: iterable(int)
         """
         return self._tag_ids
 
@@ -240,8 +207,6 @@ class Chip(XY):
         The link down which the parent is found in the tree of chips rooted
         at the machine root chip (probably 0, 0 in most cases).  This will
         be ``None`` if the chip information didn't contain this value.
-
-        :rtype: int or None
         """
         return self._parent_link
 
