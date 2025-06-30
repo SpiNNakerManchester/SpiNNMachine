@@ -185,7 +185,6 @@ class MachineDataView(UtilsDataView):
         :param y: Chip Y coordinate
         :return: Chip (`x`,`y`)'s nearest_ethernet info
             or if that is not available just (`x`, `y`)
-        :rtype: tuple(int, int)
         """
         try:
             m = cls.__data._machine
