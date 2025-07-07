@@ -79,7 +79,8 @@ class VersionStrings(Enum):
         """
         Makes the String lower case and removes some special characters
 
-        :param value:
+        :param value: original string
+        :returns: original in lower case and without special characters
         """
         return value.lower().replace("_", "").replace("-", "").replace(" ", "")
 
@@ -88,7 +89,8 @@ class VersionStrings(Enum):
         """
         Gets a VersionString object from a String
 
-        :param value:
+        :param value: label
+        :returns: VersionStrings Eenum with this label
         """
         value_short = cls.shorten(value)
         for vs in cls:

@@ -173,6 +173,6 @@ class CoreSubsets(object):
 
     def values(self) -> Iterable[CoreSubset]:
         """
-        The Core subsets held
+        :returns: Iterable of the core subsets held.
         """
         return self._core_subsets.values()

@@ -245,6 +245,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         :param width: The width of the machine to find the chips in
         :param height: The height of the machine to find the chips in
+        :returns: A list of Tuples of X and Y coordinates
         """
         raise NotImplementedError
 
@@ -353,6 +354,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         For real machines a slightly bigger Machine may be needed.
 
         :param n_cores: Number of None Scamp and monitor cores needed
+        :returns: A tuple of width and height
         """
         cores_per_board = sum(self.chip_core_map.values())
         cores_per_board -= MachineDataView.get_ethernet_monitor_cores()
@@ -367,9 +369,10 @@ class AbstractVersion(object, metaclass=AbstractBase):
         Returns the size needed to support this many chips.
 
         Designed for use with virtual boards.
-        Does not include a safety factor for blacklisted Chips.
+        Does not include a safety factor for blacklisted Chips or cores
         For real machines a slightly bigger Machine may be needed.
 
+        :returns: A tuple of width and height
         :raises SpinnMachineException:
             If multiple boards are needed but not supported
         """
@@ -383,6 +386,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :param n_boards:
         :raises SpinnMachineException:
             If multiple boards are needed but not supported
+        :returns: A tuple of width and height
         """
         # Override for versions that support multiple boards
         if n_boards == 1:
@@ -407,6 +411,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         These are applied local to each Ethernet Chip and only if the link is
         not connected to another board
+
+        :returns: List of Tuples of Local X, Y, and spinnaker link Id
         """
         raise NotImplementedError
 
@@ -417,6 +423,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         These are applied local to each Ethernet Chip and even if the link is
         connected to another board
+
+        :returns: List of Tuples of Local X, Y, link, fpga_link_id and fpga_id
         """
         raise NotImplementedError
 
@@ -426,6 +434,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
         If applicable returns a map of virtual id to quad qx, qy, qp
 
         Spin 1 boards will return None!
+
+        :returns: None or a Dict from virtual id
+            to a tuple of chip x, chip y and quad ID
         """
         raise NotImplementedError
 
@@ -437,6 +448,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :param qx: quad x coordinate of the core
         :param qy: quad y coordinate of the core
         :param qp: quad p coordinate of the core
+        :returns: The core id on the Chip
         :raises NotImplementedError:
             If called on a version that does not support quads
         """
@@ -500,12 +512,11 @@ class AbstractVersion(object, metaclass=AbstractBase):
             self, time_s: float, n_frames: int, n_boards: int,
             n_chips: int) -> float:
         """
-        Returns the idle energy consumption of the system in joules
-
         :param time_s: The time to calculate the energy for in seconds
         :param n_frames: The number of frames
         :param n_boards: The number of boards
         :param n_chips: The number of chips
+        :returns: the idle energy consumption of the system in joules
         """
         raise NotImplementedError
 
@@ -515,21 +526,20 @@ class AbstractVersion(object, metaclass=AbstractBase):
             chip_active_time: ChipActiveTime,
             router_packets: RouterPackets) -> float:
         """
-        Returns the active energy consumption of the system in joules
-
         :param time_s: The time to calculate the energy for in seconds
         :param n_frames: The number of frames
         :param n_boards: The number of boards
         :param n_chips: The number of chips
         :param chip_active_time: The time the cores were active in seconds
         :param router_packets: The number of packets sent by each router
+        :returns: the active energy consumption of the system in joules
         """
         raise NotImplementedError
 
     @abstractmethod
     def get_router_report_packet_types(self) -> List[str]:
         """
-        Returns the list of packet types that the router can send
+        :returns: The list of packet types that the router can send
         """
         raise NotImplementedError
 

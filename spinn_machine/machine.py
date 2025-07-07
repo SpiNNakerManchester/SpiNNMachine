@@ -441,6 +441,8 @@ class Machine(object, metaclass=AbstractBase):
 
         :param radius: The radius of rings to produce (0 = start only)
         :param start: The start coordinate
+        :returns: Iterator of the mathematically possible XY coordinates
+            of nearby locations no more than radius links away.
         """
         raise NotImplementedError
 
@@ -638,6 +640,7 @@ class Machine(object, metaclass=AbstractBase):
         :param x: The x location of the chip to test the link of
         :param y: The y location of the chip to test the link of
         :param link: The link to test the existence of
+        :returns: True if an only the Chip exists and has the Link
         """
         return (x, y) in self._chips and self._chips[x, y].router.is_link(link)
 
@@ -1088,6 +1091,10 @@ class Machine(object, metaclass=AbstractBase):
     def one_way_links(self) -> Iterable[Tuple[int, int, int, int]]:
         """
         Links with no link going the opposite way
+
+        :returns: Iterable of links that only go one way.
+            If any these will be Tuples of x, y, out (existing link id)
+            and back (id on the target) that is missing
         """
         link_checks = [(0, 3), (1, 4), (2, 5), (3, 0), (4, 1), (5, 2)]
         for chip in self.chips:
