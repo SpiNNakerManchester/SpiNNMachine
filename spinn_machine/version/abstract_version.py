@@ -55,6 +55,14 @@ class AbstractVersion(object, metaclass=AbstractBase):
         "_max_sdram_per_chip")
 
     def __init__(self, max_cores_per_chip: int, max_sdram_per_chip: int):
+        """
+        :param max_cores_per_chip:
+            Expected number of cores on a fully operational Chip.
+            Ignored if cfg sets a lower value (not recommended)
+        :param max_sdram_per_chip:
+            Expected amount of SDRAM on a fully operational Chip.
+            Ignored if cfg sets a lower value (not recommended)
+        """
         self.__verify_config_width_height()
         self.__set_max_cores_per_chip(max_cores_per_chip)
         self.__set_max_sdram_per_chip(max_sdram_per_chip)
@@ -248,8 +256,9 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         Checks that the width and height are allowed for this version.
 
-        :param width:
+        :param width: The width of the machine excluding any virtual chips
         :param height:
+            The height of the machine excluding any virtual chips
         :raise SpinnMachineException: If the size is unexpected
         """
         if width is None:
