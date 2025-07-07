@@ -41,8 +41,14 @@ class VersionStrings(Enum):
         vs._value_ = args[0]
         return vs
 
-    # ignore the first param since it's already set by __new__
-    def __init__(self, _: int, text: str, versions: List[int]):
+    def __init__(self, value: int, text: str, versions: List[int]):
+        """
+        :param value: enum ID for this version
+        :param text: label for this enum
+        :param versions: machine versions that this group includes
+        """
+        # ignore the first param since it's already set by __new__
+        _ = value
         self.text = text
         self._versions = versions
 

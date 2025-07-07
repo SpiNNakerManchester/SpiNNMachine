@@ -30,6 +30,11 @@ class AbstractTag(object):
     ]
 
     def __init__(self, board_address: str, tag: int, port: int):
+        """
+        :param board_address: The board address associated with this tag
+        :param tag: The tag ID associated with this tag
+        :param port: The port number associated with this tag
+        """
         self._board_address = board_address
         self._tag = tag
         self._port = port
