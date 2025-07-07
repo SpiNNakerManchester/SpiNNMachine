@@ -169,12 +169,10 @@ class AbstractVersion(object, metaclass=AbstractBase):
     @property
     def max_sdram_per_chip(self) -> int:
         """
-        Gets the maximum SDRAM per chip for the whole system.
+        The maximum SDRAM per chip for the whole system.
 
         While it is likely that all Chips will have this SDRAM
         this should not be counted on. Ask each Chip for its SDRAM.
-
-        :return: the default SDRAM per chip
         """
         return self._max_sdram_per_chip
 
@@ -204,8 +202,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         List of the standard x,y coordinates of chips for this version.
 
         Remember that will the board may have dead or excluded chips.
-
-        :return:
         """
         return list(self.chip_core_map.keys())
 
@@ -324,9 +320,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
         If there are less that this number of Cores Machine.validate and
         other methods are allowed to raise an exception
-
-        :return: The lowest number of cores to accept before flagging a
-            Chip to be blacklisted
         """
         raise NotImplementedError
 
@@ -404,8 +397,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
     def supports_multiple_boards(self) -> bool:
         """
         Specifies if this version allows machines of more than one board
-
-        :return:
         """
         raise NotImplementedError
 

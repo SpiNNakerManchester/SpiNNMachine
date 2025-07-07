@@ -34,7 +34,6 @@ class TestCfgChecker(unittest.TestCase):
         checker = DocsChecker(
             check_params=False,  # 64 errors in 12 files
             check_returns=False,  # failed on 40 errors in 11 files
-            check_properties=False  # 6 errors in 3 files
         )
         checker.check_dir(repo_dir)
         checker.check_no_errors()

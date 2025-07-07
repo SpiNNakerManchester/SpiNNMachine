@@ -889,8 +889,6 @@ class Machine(object, metaclass=AbstractBase):
     def min_n_router_enteries(self) -> int:
         """
         The minimum number of router_enteries found on any Chip
-
-        :return: The lowest n router entry found on any Router
         """
         return sorted(self._n_router_entries_counter.keys())[-1]
 
