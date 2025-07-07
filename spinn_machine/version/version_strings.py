@@ -90,7 +90,7 @@ class VersionStrings(Enum):
         Gets a VersionString object from a String
 
         :param value: label
-        :returns: VersionStrings Eenum with this label
+        :returns: VersionStrings Enum with this label
         """
         value_short = cls.shorten(value)
         for vs in cls:
