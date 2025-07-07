@@ -245,7 +245,8 @@ class MachineDataView(UtilsDataView):
             Therefore a call to this method will not trigger a hard reset
 
         :param chip:
-        :return: A human-readable description of the location of a chip.        """
+        :return: A human-readable description of the location of a chip.
+        """
         try:
             m = cls.__data._machine
             if m is not None:
