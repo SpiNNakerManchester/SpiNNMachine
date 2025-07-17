@@ -95,7 +95,7 @@ def convert_config_to_json(config_file: str, output_file: str) -> None:
                     for (x, y, z), ip in machine.spinnaker_ips.items()},
             } for machine in config.machines],
         "port": config.port,
-        "ip": config.ip,
+        "ip": config.ip_address,
         "timeout-check-interval": config.timeout_check_interval,
         "max-retired-jobs": config.max_retired_jobs,
         "seconds-before-free": config.seconds_before_free}
