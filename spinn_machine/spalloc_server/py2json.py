@@ -19,7 +19,8 @@ from collections import defaultdict
 
 
 from spinn_machine.spalloc_server import configuration, coordinates
-from spinn_machine.spalloc_server.configuration import Configuration, Machine
+from spinn_machine.spalloc_server.configuration import (
+    Configuration, MachineConfig)
 
 
 def _parse_config(config_file_contents: str) -> Dict:
@@ -50,7 +51,7 @@ def read_config_file(config_filename: str) -> Configuration:
     return _validate_config(parsed_config)
 
 
-def gather_links(machine: Machine) -> Dict[str, List[str]]:
+def gather_links(machine: MachineConfig) -> Dict[str, List[str]]:
     """
     Gather the links for a machine.
 

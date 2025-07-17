@@ -1,4 +1,4 @@
-# Copyright (c) 2017 The University of Manchester
+# Copyright (c) 2025 The University of Manchester
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ class Configuration(namedtuple(
     various parameters for the server.
     """
 
-    def __new__(cls, machines: Optional[List["Machine"]] = None,
+    def __new__(cls, machines: Optional[List["MachineConfig"]] = None,
                 port: int = 22244, ip_address: str = "",
                 timeout_check_interval: float = 5.0,
                 max_retired_jobs: int = 1200,
@@ -50,7 +50,7 @@ class Configuration(namedtuple(
         used_spinnaker_ips: Set[str] = set()
         machines = list([] if machines is None else machines)
         for m in machines:
-            if not isinstance(m, Machine):
+            if not isinstance(m, MachineConfig):
                 raise TypeError("All machines must be of type Machine.")
 
             # Machine names must be unique
@@ -77,9 +77,9 @@ class Configuration(namedtuple(
             max_retired_jobs, seconds_before_free)
 
 
-class Machine(namedtuple(
-        "Machine", "name,tags,width,height,dead_boards,dead_links,"
-                   "board_locations,bmp_ips,spinnaker_ips")):
+class MachineConfig(namedtuple(
+        "MachineConfig", "name,tags,width,height,dead_boards,dead_links,"
+                         "board_locations,bmp_ips,spinnaker_ips")):
     """
     A description of a machine, including its dimensions, dead boards and
     links, board locations, and IP addresses for the BMPs and SpiNNaker boards.
@@ -93,7 +93,7 @@ class Machine(namedtuple(
                                            Tuple[int, int, int]]] = None,
             bmp_ips: Optional[Dict[Tuple[int, int], str]] = None,
             spinnaker_ips: Optional[Dict[Tuple[int, int, int], str]] = None
-            ) -> "Machine":
+            ) -> "MachineConfig":
         """
 
         :param name: The name of the machine
@@ -186,7 +186,7 @@ class Machine(namedtuple(
             raise ValueError(
                 f"SpiNNaker IPs not given for boards {missing_ips}")
 
-        return super(Machine, cls).__new__(
+        return super(MachineConfig, cls).__new__(
             cls, name, tags, width, height, frozenset(dead_boards),
             frozenset(dead_links), board_locations, bmp_ips, spinnaker_ips)
 
@@ -194,7 +194,7 @@ class Machine(namedtuple(
     def single_board(
             cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
             bmp_ip: Optional[str] = None,
-            spinnaker_ip: Optional[str] = None) -> "Machine":
+            spinnaker_ip: Optional[str] = None) -> "MachineConfig":
         """
         Create a machine with a single board, with the given BMP and
         SpiNNaker IP addresses.
@@ -230,7 +230,7 @@ class Machine(namedtuple(
             frame_stride: str = "0.0.1.0",
             board_stride: str = "0.0.0.8",
             bmp_offset: str = "0.0.0.0",
-            spinnaker_offset: str = "0.0.0.1") -> "Machine":
+            spinnaker_offset: str = "0.0.0.1") -> "MachineConfig":
         """
         Create a machine with standard IP addresses based on the given
         parameters. The base IP is the starting point for the IP addresses,

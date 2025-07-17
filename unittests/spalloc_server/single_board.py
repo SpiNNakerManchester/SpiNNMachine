@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from spinn_machine.spalloc_server.configuration import Machine, Configuration
+from spinn_machine.spalloc_server.configuration import (
+    MachineConfig, Configuration)
 
-m = Machine.single_board("my-board",
+m = MachineConfig.single_board("my-board",
                          bmp_ip="192.168.0.2",
                          spinnaker_ip="192.168.0.3")
 
