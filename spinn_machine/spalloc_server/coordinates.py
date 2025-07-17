@@ -11,65 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Dict, Tuple
-from enum import IntEnum
+from typing import Tuple
 from spinn_machine import SpiNNakerTriadGeometry
-from .links import Links
-
-link_to_vector: Dict[Tuple[int, Links], Tuple[int, int, int]] = {
-    (0, Links.north): (0, 0, 2),
-    (0, Links.north_east): (0, 0, 1),
-    (0, Links.east): (0, -1, 2),
-
-    (1, Links.north): (1, 1, -1),
-    (1, Links.north_east): (1, 0, 1),
-    (1, Links.east): (1, 0, -1),
-
-    (2, Links.north): (0, 1, -1),
-    (2, Links.north_east): (1, 1, -2),
-    (2, Links.east): (0, 0, -1),
-}
-
-link_to_vector.update({
-    (z + dz, link.opposite): (-dx, -dy, -dz)
-    for (z, link), (dx, dy, dz) in link_to_vector.items()
-})
-
-
-def board_down_link(x1: int, y1: int, z1: int, link: Links, width: int,
-                    height: int) -> Tuple[int, int, int, "WrapAround"]:
-    # pylint: disable=too-many-arguments
-    dx, dy, dz = link_to_vector[(z1, link)]
-
-    x2_ = (x1 + dx)
-    y2_ = (y1 + dy)
-
-    x2 = x2_ % width
-    y2 = y2_ % height
-
-    z2 = z1 + dz
-
-    wrapped = WrapAround((WrapAround.x if x2_ != x2 else 0) |
-                         (WrapAround.y if y2_ != y2 else 0))
-
-    return (x2, y2, z2, wrapped)
-
-
-def board_to_chip(x: int, y: int, z: int) -> Tuple[int, int]:
-    x *= 12
-    y *= 12
-
-    if z == 1:
-        x += 8
-        y += 4
-    elif z == 2:
-        x += 4
-        y += 8
-
-    return (x, y)
 
 
 def chip_to_board(x: int, y: int, w: int, h: int) -> Tuple[int, int, int]:
+    """
+    Get the board coordinates from the chip coordinates.
+
+    :param x: The X coordinate of the chip.
+    :param y: The Y coordinate of the chip.
+    :param w: The width of the machine in chips.
+    :param h: The height of the machine in chips.
+
+    :return: The board coordinates (x, y, z) of the chip.
+    """
     # Convert to coordinate of chip at the bottom-left-corner of the board
     x, y = map(
         int,
@@ -93,36 +49,3 @@ def chip_to_board(x: int, y: int, w: int, h: int) -> Tuple[int, int, int]:
         assert False
 
     return (x, y, z)
-
-
-def triad_dimensions_to_chips(w: int, h: int, torus: int) -> Tuple[int, int]:
-    w *= 12
-    h *= 12
-
-    # If not a torus topology, the pieces of boards which would wrap-around and
-    # "tuck in" to the opposing sides of the network will be left poking out.
-    # Compensate for this.
-    if not (torus & WrapAround.x):
-        w += 4
-    if not (torus & WrapAround.y):
-        h += 4
-
-    return (w, h)
-
-
-class WrapAround(IntEnum):
-    """ No wrap-around links.
-    """
-    none = 0b00
-
-    """ Has wrap around links around X-axis.
-    """
-    x = 0
-
-    """ Has wrap around links around Y-axis.
-    """
-    y = 0b10
-
-    """ Has wrap around links on X and Y axes.
-    """
-    both = 0b11

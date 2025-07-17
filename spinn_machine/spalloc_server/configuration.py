@@ -23,6 +23,11 @@ from .coordinates import chip_to_board
 class Configuration(namedtuple(
         "Configuration", "machines,port,ip,timeout_check_interval,"
                          "max_retired_jobs,seconds_before_free")):
+    """
+    A configuration for the spalloc server, containing a list of machines and
+    various parameters for the server.
+    """
+
     def __new__(cls, machines: Optional[List["Machine"]] = None,
                 port: int = 22244, ip: str = "",
                 timeout_check_interval: float = 5.0,
@@ -36,28 +41,26 @@ class Configuration(namedtuple(
         used_spinnaker_ips: Set[str] = set()
         machines = list([] if machines is None else machines)
         for m in machines:
-            # Typecheck...
             if not isinstance(m, Machine):
                 raise TypeError("All machines must be of type Machine.")
 
             # Machine names must be unique
             if m.name in used_names:
-                raise ValueError("Machine name '{}' used multiple "
-                                 "times.".format(m.name))
+                raise ValueError(
+                    f"Machine name '{m.name}' used multiple times.")
             used_names.add(m.name)
 
             # All BMP IPs must be unique
             for bmp_ip in m.bmp_ips.values():
                 if bmp_ip in used_bmp_ips:
-                    raise ValueError("BMP IP '{}' used multiple "
-                                     "times.".format(bmp_ip))
+                    raise ValueError(f"BMP IP '{bmp_ip}' used multiple times.")
                 used_bmp_ips.add(bmp_ip)
 
             # All SpiNNaker IPs must be unique
             for spinnaker_ip in m.spinnaker_ips.values():
                 if spinnaker_ip in used_spinnaker_ips:
-                    raise ValueError("SpiNNaker IP '{}' used multiple "
-                                     "times.".format(spinnaker_ip))
+                    raise ValueError(
+                        f"SpiNNaker IP '{spinnaker_ip}' used multiple times.")
                 used_spinnaker_ips.add(spinnaker_ip)
 
         return super(Configuration, cls).__new__(
@@ -68,6 +71,10 @@ class Configuration(namedtuple(
 class Machine(namedtuple(
         "Machine", "name,tags,width,height,dead_boards,dead_links,"
                    "board_locations,bmp_ips,spinnaker_ips")):
+    """
+    A description of a machine, including its dimensions, dead boards and
+    links, board locations, and IP addresses for the BMPs and SpiNNaker boards.
+    """
     def __new__(
             cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
             width: Optional[int] = None, height: Optional[int] = None,
@@ -107,14 +114,12 @@ class Machine(namedtuple(
             if not (0 <= x < width and
                     0 <= y < height and
                     0 <= z < 3):
-                raise ValueError("Dead board ({}, {}, {}) "
-                                 "outside system.".format(x, y, z))
+                raise ValueError(f"Dead board ({x}, {y}, {z}) outside system.")
         for x, y, z, _ in dead_links:
             if not (0 <= x < width and
                     0 <= y < height and
                     0 <= z < 3):
-                raise ValueError("Dead link ({}, {}, {}) "
-                                 "outside system.".format(x, y, z))
+                raise ValueError(f"Dead link ({x}, {y}, {z}) outside system.")
 
         # All board locations must be sensible
         locations = set()
@@ -124,11 +129,11 @@ class Machine(namedtuple(
                     0 <= y < height and
                     0 <= z < 3):
                 raise ValueError("Board location given for board "
-                                 "not in system ({}, {}, {}).".format(x, y, z))
+                                 f"not in system ({x}, {y}, {z}).")
             # No two boards should be in the same location
             if (c, f, b) in locations:
                 raise ValueError("Multiple boards given location "
-                                 "c:{}, f:{}, b:{}.".format(c, f, b))
+                                 f"c:{c}, f:{f}, b:{b}.")
             locations.add((c, f, b))
 
         # All boards must have their locations specified, unless they are
@@ -141,19 +146,19 @@ class Machine(namedtuple(
         missing_boards = live_bords - set(board_locations)
         if missing_boards:
             raise ValueError(
-                "Board locations missing for {}".format(missing_boards))
+                f"Board locations missing for {missing_boards}")
 
         # BMP IPs should be given for all frames which have been used
         missing_bmp_ips = set((c, f) for c, f, _ in locations) - set(bmp_ips)
         if missing_bmp_ips:
             raise ValueError(
-                "BMP IPs not given for frames {}".format(missing_bmp_ips))
+                f"BMP IPs not given for frames {missing_bmp_ips}")
 
         # SpiNNaker IPs should be given for all live boards
         missing_ips = live_bords - set(spinnaker_ips)
         if missing_ips:
             raise ValueError(
-                "SpiNNaker IPs not given for boards {}".format(missing_ips))
+                f"SpiNNaker IPs not given for boards {missing_ips}")
 
         return super(Machine, cls).__new__(
             cls, name, tags, width, height, frozenset(dead_boards),
@@ -164,6 +169,10 @@ class Machine(namedtuple(
             cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
             bmp_ip: Optional[str] = None,
             spinnaker_ip: Optional[str] = None) -> "Machine":
+        """
+        Create a machine with a single board, with the given BMP and
+        SpiNNaker IP addresses.
+        """
         if bmp_ip is None:
             raise TypeError("bmp_ip must be given.")
         if spinnaker_ip is None:
@@ -188,6 +197,12 @@ class Machine(namedtuple(
             board_stride: str = "0.0.0.8",
             bmp_offset: str = "0.0.0.0",
             spinnaker_offset: str = "0.0.0.1") -> "Machine":
+        """
+        Create a machine with standard IP addresses based on the given
+        parameters. The base IP is the starting point for the IP addresses,
+        and the other parameters define how the IPs for cabinets, frames,
+        boards, BMPs, and SpiNNaker boards are calculated.
+        """
         # pylint: disable=too-many-arguments
 
         def ip_to_int(ip: str) -> int:
@@ -195,12 +210,12 @@ class Machine(namedtuple(
             """
             match = re.match(r"^(\d+).(\d+).(\d+).(\d+)$", ip)
             if not match:
-                raise ValueError("Malformed IPv4 address '{}'".format(ip))
+                raise ValueError(f"Malformed IPv4 address '{ip}'")
 
             ip_int = 0
             for group in map(int, match.groups()):
                 if group & ~0xFF:
-                    raise ValueError("Malformed IPv4 address '{}'".format(ip))
+                    raise ValueError(f"Malformed IPv4 address '{ip}'")
                 ip_int <<= 8
                 ip_int |= group
 
@@ -243,9 +258,13 @@ class Machine(namedtuple(
 
 def board_locations_from_spinner(filename: str) -> Dict[Tuple[int, int, int],
                                                         Tuple[int, int, int]]:
+    """
+    Extract board locations from a CSV file containing Ethernet connected
+    chips and their locations.
+    """
     # Extract lookup from Ethernet connected chips to locations
     chip_locations: Dict[Tuple[int, int], Tuple[int, int, int]] = {}
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding='utf8') as f:
         for entry in csv.DictReader(f):
             cfb: Tuple[int, int, int] = (
                 int(entry["cabinet"]), int(entry["frame"]),

@@ -47,7 +47,7 @@ def test_three_boards() -> None:
     assert config.machines is not None
     assert len(config.machines) == 1
     machine = config.machines[0]
-    assert machine.dead_links == {(0, 0, 0, Links.east)}
+    assert machine.dead_links == {(0, 0, 0, Links.EAST)}
 
 
 def test_from_csv() -> None:
