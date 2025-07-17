@@ -20,7 +20,6 @@ from collections import defaultdict
 
 from spinn_machine.spalloc_server import configuration, coordinates
 from spinn_machine.spalloc_server.configuration import Configuration, Machine
-from spinn_machine.spalloc_server.links import Links
 
 
 def _parse_config(config_file_contents: str) -> Dict:
@@ -95,11 +94,11 @@ def convert_config_to_json(config_file: str, output_file: str) -> None:
                     f"[x:{x},y:{y},z:{z}]": ip
                     for (x, y, z), ip in machine.spinnaker_ips.items()},
             } for machine in config.machines],
-        "port" : config.port,
-        "ip" : config.ip,
-        "timeout-check-interval" : config.timeout_check_interval,
-        "max-retired-jobs" : config.max_retired_jobs,
-        "seconds-before-free" : config.seconds_before_free}
+        "port": config.port,
+        "ip": config.ip,
+        "timeout-check-interval": config.timeout_check_interval,
+        "max-retired-jobs": config.max_retired_jobs,
+        "seconds-before-free": config.seconds_before_free}
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(json.dumps(output))
 

@@ -17,25 +17,25 @@ from spinn_machine.spalloc_server.links import Links
 
 m = Machine(name="my-three-board-machine",
             board_locations={
-                #X  Y  Z    C  F  B
+                # X  Y  Z    C  F  B
                 (0, 0, 0): (0, 0, 0),
                 (0, 0, 1): (0, 0, 2),
                 (0, 0, 2): (0, 0, 5),
             },
             # Just one BMP
             bmp_ips={
-                #C  F
+                # C  F
                 (0, 0): "192.168.240.0",
             },
             # Each SpiNNaker board has an IP
             spinnaker_ips={
-                #X  Y  Z
+                # X  Y  Z
                 (0, 0, 0): "192.168.240.1",
                 (0, 0, 1): "192.168.240.17",
                 (0, 0, 2): "192.168.240.41",
             },
             dead_links=frozenset([
-                #X  Y  Z  Direction
+                # X  Y  Z  Direction
                 (0, 0, 0, Links.east)
             ]))
 configuration = Configuration(machines=[m])

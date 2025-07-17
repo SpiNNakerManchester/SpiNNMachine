@@ -182,7 +182,7 @@ class Machine(namedtuple(
             dead_links: FrozenSet[Tuple[int, int, int, Links]] = frozenset(),
             board_locations: Optional[Dict[Tuple[int, int, int],
                                            Tuple[int, int, int]]] = None,
-            base_ip: str ="192.168.0.0",
+            base_ip: str = "192.168.0.0",
             cabinet_stride: str = "0.0.5.0",
             frame_stride: str = "0.0.1.0",
             board_stride: str = "0.0.0.8",
@@ -244,7 +244,7 @@ class Machine(namedtuple(
 def board_locations_from_spinner(filename: str) -> Dict[Tuple[int, int, int],
                                                         Tuple[int, int, int]]:
     # Extract lookup from Ethernet connected chips to locations
-    chip_locations:Dict[Tuple[int, int], Tuple[int, int, int]] = {}
+    chip_locations: Dict[Tuple[int, int], Tuple[int, int, int]] = {}
     with open(filename, "r") as f:
         for entry in csv.DictReader(f):
             cfb: Tuple[int, int, int] = (
