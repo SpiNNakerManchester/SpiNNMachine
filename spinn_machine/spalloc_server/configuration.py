@@ -33,6 +33,15 @@ class Configuration(namedtuple(
                 timeout_check_interval: float = 5.0,
                 max_retired_jobs: int = 1200,
                 seconds_before_free: int = 30) -> "Configuration":
+        """
+
+        :param machines: A list of Machine objects describing the machines
+        :param port: The port on which the server will listen
+        :param ip: The IP address on which the server will listen
+        :param timeout_check_interval: How often to check for timeouts
+        :param max_retired_jobs: The maximum number of retired jobs to keep
+        :param seconds_before_free: How long to wait before freeing an idle job
+        """
         # pylint: disable=too-many-arguments
 
         # Validate machine definitions
@@ -85,6 +94,23 @@ class Machine(namedtuple(
             bmp_ips: Optional[Dict[Tuple[int, int], str]] = None,
             spinnaker_ips: Optional[Dict[Tuple[int, int, int], str]] = None
             ) -> "Machine":
+        """
+
+        :param name: The name of the machine
+        :param tags: A set of tags for the machine, used for filtering
+        :param width: The width of the machine in triads
+        :param height: The height of the machine in triads
+        :param dead_boards: A set of dead boards in the machine, given as
+            tuples of (x, y, z) coordinates.
+        :param dead_links: A set of dead links in the machine, given as
+            tuples of (x, y, z, link_type)
+        :param board_locations: A dictionary mapping board coordinates
+            (x, y, z) to their locations (cabinet, frame, board).
+        :param bmp_ips: A dictionary mapping (cabinet, frame) to the BMP IP
+            address for that cabinet and frame.
+        :param spinnaker_ips: A dictionary mapping (x, y, z) coordinates to
+            the SpiNNaker IP address for that board.
+        """
         # pylint: disable=too-many-arguments
 
         # Make sure the set-type arguments are the correct type...
@@ -172,6 +198,14 @@ class Machine(namedtuple(
         """
         Create a machine with a single board, with the given BMP and
         SpiNNaker IP addresses.
+
+        :param name: The name of the machine
+        :param tags: A set of tags for the machine, used for filtering
+        :param bmp_ip: The IP address of the BMP for this machine
+        :param spinnaker_ip: The IP address of the SpiNNaker board for this
+            machine
+
+        :return: A Machine object representing a single board machine
         """
         if bmp_ip is None:
             raise TypeError("bmp_ip must be given.")
@@ -202,11 +236,33 @@ class Machine(namedtuple(
         parameters. The base IP is the starting point for the IP addresses,
         and the other parameters define how the IPs for cabinets, frames,
         boards, BMPs, and SpiNNaker boards are calculated.
+
+        :param name: The name of the machine
+        :param tags: A set of tags for the machine, used for filtering
+        :param width: The width of the machine in triads
+        :param height: The height of the machine in triads
+        :param dead_boards: A set of dead boards in the machine, given as
+            tuples of (x, y, z) coordinates.
+        :param dead_links: A set of dead links in the machine, given as
+            tuples of (x, y, z, link_type)
+        :param board_locations: A dictionary mapping board coordinates
+            (x, y, z) to their locations (cabinet, frame, board).
+        :param base_ip: The base IP address for the machine, in dotted decimal
+        :param cabinet_stride: The stride for cabinets, in dotted decimal
+        :param frame_stride: The stride for frames, in dotted decimal
+        :param board_stride: The stride for boards, in dotted decimal
+        :param bmp_offset: The offset for BMPs, in dotted decimal
+        :param spinnaker_offset: The offset for SpiNNaker boards, in dotted
+            decimal
+        :return: A Machine object with the specified parameters
         """
         # pylint: disable=too-many-arguments
 
         def ip_to_int(ip: str) -> int:
             """ Convert from string-based IP to a 32-bit integer.
+
+            :param ip: The IP address in dotted decimal format
+            :return: The IP address as a 32-bit integer
             """
             match = re.match(r"^(\d+).(\d+).(\d+).(\d+)$", ip)
             if not match:
@@ -223,6 +279,9 @@ class Machine(namedtuple(
 
         def int_to_ip(ip_int: int) -> str:
             """ Convert from 32-bit integer to string-based IP address.
+
+            :param ip_int: The IP address as a 32-bit integer
+            :return: The IP address in dotted decimal format
             """
             return ".".join(str((ip_int >> b) & 0xFF)
                             for b in range(24, -8, -8))
@@ -261,6 +320,10 @@ def board_locations_from_spinner(filename: str) -> Dict[Tuple[int, int, int],
     """
     Extract board locations from a CSV file containing Ethernet connected
     chips and their locations.
+
+    :param filename: The path to the CSV file containing the chip locations
+    :return: A dictionary mapping board coordinates (x, y, z) to their
+             locations (cabinet, frame, board).
     """
     # Extract lookup from Ethernet connected chips to locations
     chip_locations: Dict[Tuple[int, int], Tuple[int, int, int]] = {}
