@@ -11,12 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Dict, Tuple
 from enum import IntEnum
 from spinn_machine import SpiNNakerTriadGeometry
 from .links import Links
 
-link_to_vector = {
+link_to_vector: Dict[Tuple[int, Links], Tuple[int, int, int]] = {
     (0, Links.north): (0, 0, 2),
     (0, Links.north_east): (0, 0, 1),
     (0, Links.east): (0, -1, 2),
@@ -36,7 +36,8 @@ link_to_vector.update({
 })
 
 
-def board_down_link(x1, y1, z1, link, width, height):
+def board_down_link(x1: int, y1: int, z1: int, link: Links, width: int,
+                    height: int) -> Tuple[int, int, int, "WrapAround"]:
     # pylint: disable=too-many-arguments
     dx, dy, dz = link_to_vector[(z1, link)]
 
@@ -54,7 +55,7 @@ def board_down_link(x1, y1, z1, link, width, height):
     return (x2, y2, z2, wrapped)
 
 
-def board_to_chip(x, y, z):
+def board_to_chip(x: int, y: int, z: int) -> Tuple[int, int]:
     x *= 12
     y *= 12
 
@@ -68,7 +69,7 @@ def board_to_chip(x, y, z):
     return (x, y)
 
 
-def chip_to_board(x, y, w, h):
+def chip_to_board(x: int, y: int, w: int, h: int) -> Tuple[int, int, int]:
     # Convert to coordinate of chip at the bottom-left-corner of the board
     x, y = map(
         int,
@@ -94,7 +95,7 @@ def chip_to_board(x, y, w, h):
     return (x, y, z)
 
 
-def triad_dimensions_to_chips(w, h, torus):
+def triad_dimensions_to_chips(w: int, h: int, torus: int) -> Tuple[int, int]:
     w *= 12
     h *= 12
 
@@ -110,18 +111,18 @@ def triad_dimensions_to_chips(w, h, torus):
 
 
 class WrapAround(IntEnum):
-    none = 0b00
     """ No wrap-around links.
     """
+    none = 0b00
 
-    x = 0b01
     """ Has wrap around links around X-axis.
     """
+    x = 0
 
-    y = 0b10
     """ Has wrap around links around Y-axis.
     """
+    y = 0b10
 
-    both = 0b11
     """ Has wrap around links on X and Y axes.
     """
+    both = 0b11

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Tuple, Dict
 from enum import IntEnum
 
 
@@ -24,7 +24,7 @@ class Links(IntEnum):
     south = 5
 
     @classmethod
-    def from_vector(cls, vector):
+    def from_vector(cls, vector: Tuple[int, int]) -> "Links":
         x, y = vector
 
         if abs(x) > 1:
@@ -35,22 +35,23 @@ class Links(IntEnum):
         lookup, _ = _LinksHelper.get_lookups()
         return lookup[(x, y)]  # pylint: disable=unsubscriptable-object
 
-    def to_vector(self):
+    def to_vector(self) -> Tuple[int, int]:
         _, lookup = _LinksHelper.get_lookups()
         return lookup[self]  # pylint: disable=unsubscriptable-object
 
     @property
-    def opposite(self):
+    def opposite(self) -> "Links":
         return Links((self + 3) % 6)
 
 
-class _LinksHelper(object):
-    _link_direction_lookup = None
-    _direction_link_lookup = None
+class _LinksHelper():
+    _link_direction_lookup: Dict[Tuple[int, int], Links] = dict()
+    _direction_link_lookup: Dict[Links, Tuple[int, int]] = dict()
 
     @classmethod
-    def get_lookups(cls):
-        if _LinksHelper._link_direction_lookup is None:
+    def get_lookups(cls) -> Tuple[Dict[Tuple[int, int], Links],
+                                  Dict[Links, Tuple[int, int]]]:
+        if not _LinksHelper._link_direction_lookup:
             ldl = _LinksHelper._link_direction_lookup = {
                 (+1, +0): Links.east,
                 (-1, +0): Links.west,

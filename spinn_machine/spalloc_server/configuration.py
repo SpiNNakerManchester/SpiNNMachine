@@ -11,31 +11,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from collections import namedtuple
 import re
 import csv
 from itertools import chain
+from typing import List, Set, Optional, Tuple, Dict, FrozenSet
+from .links import Links
 from .coordinates import chip_to_board
 
 
-def _empty_default_dict(d):
-    return dict(d) if d is not None else {}
-
-
-class Configuration(namedtuple("Configuration",
-                               "machines,port,ip,timeout_check_interval,"
-                               "max_retired_jobs,seconds_before_free")):
-    def __new__(cls, machines=None, port=22244, ip="",
-                timeout_check_interval=5.0,
-                max_retired_jobs=1200,
-                seconds_before_free=30):
+class Configuration(namedtuple(
+        "Configuration", "machines,port,ip,timeout_check_interval,"
+                         "max_retired_jobs,seconds_before_free")):
+    def __new__(cls, machines: Optional[List["Machine"]] = None,
+                port: int = 22244, ip: str = "",
+                timeout_check_interval: float = 5.0,
+                max_retired_jobs: int = 1200, seconds_before_free: int = 30):
         # pylint: disable=too-many-arguments
 
         # Validate machine definitions
-        used_names = set()
-        used_bmp_ips = set()
-        used_spinnaker_ips = set()
+        used_names: Set[str] = set()
+        used_bmp_ips: Set[str] = set()
+        used_spinnaker_ips: Set[str] = set()
         machines = list([] if machines is None else machines)
         for m in machines:
             # Typecheck...
@@ -67,14 +64,18 @@ class Configuration(namedtuple("Configuration",
             seconds_before_free)
 
 
-class Machine(namedtuple("Machine", "name,tags,width,height,"
-                                    "dead_boards,dead_links,"
-                                    "board_locations,"
-                                    "bmp_ips,spinnaker_ips")):
-    def __new__(cls, name, tags=frozenset(["default"]),
-                width=None, height=None,
-                dead_boards=frozenset(), dead_links=frozenset(),
-                board_locations=None, bmp_ips=None, spinnaker_ips=None):
+class Machine(namedtuple(
+        "Machine", "name,tags,width,height,dead_boards,dead_links,"
+                   "board_locations,bmp_ips,spinnaker_ips")):
+    def __new__(
+            cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
+            width: Optional[int] = None, height: Optional[int] = None,
+            dead_boards: FrozenSet[Tuple[int, int, int]] = frozenset(),
+            dead_links: FrozenSet[Tuple[int, int, int, Links]] = frozenset(),
+            board_locations: Optional[Dict[Tuple[int, int, int],
+                                           Tuple[int, int, int]]] = None,
+            bmp_ips: Optional[Dict[Tuple[int, int], str]] = None,
+            spinnaker_ips: Optional[Dict[Tuple[int, int, int], str]] = None):
         # pylint: disable=too-many-arguments
 
         # Make sure the set-type arguments are the correct type...
@@ -85,9 +86,9 @@ class Machine(namedtuple("Machine", "name,tags,width,height,"
         if not isinstance(dead_links, (set, frozenset)):
             raise TypeError("dead_links should be a set.")
 
-        board_locations = _empty_default_dict(board_locations)
-        bmp_ips = _empty_default_dict(bmp_ips)
-        spinnaker_ips = _empty_default_dict(spinnaker_ips)
+        board_locations = dict(board_locations) if board_locations else {}
+        bmp_ips = dict(bmp_ips) if bmp_ips else {}
+        spinnaker_ips = dict(spinnaker_ips) if spinnaker_ips else {}
 
         # If not specified, infer the dimensions of the system
         if width is None and height is None:
@@ -157,32 +158,37 @@ class Machine(namedtuple("Machine", "name,tags,width,height,"
             frozenset(dead_links), board_locations, bmp_ips, spinnaker_ips)
 
     @classmethod
-    def single_board(cls, name, tags=frozenset(["default"]),
-                     bmp_ip=None, spinnaker_ip=None):
+    def single_board(
+            cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
+            bmp_ip: Optional[str] = None,
+            spinnaker_ip: Optional[str] = None) -> "Machine":
         if bmp_ip is None:
             raise TypeError("bmp_ip must be given.")
         if spinnaker_ip is None:
             raise TypeError("spinnaker_ip must be given.")
 
         return cls(
-            name, tags, 1, 1, dead_boards=set([(0, 0, 1), (0, 0, 2)]),
-            dead_links=set(), board_locations={(0, 0, 0): (0, 0, 0)},
+            name, tags, 1, 1, dead_boards=frozenset([(0, 0, 1), (0, 0, 2)]),
+            dead_links=frozenset(), board_locations={(0, 0, 0): (0, 0, 0)},
             bmp_ips={(0, 0): bmp_ip}, spinnaker_ips={(0, 0, 0): spinnaker_ip})
 
     @classmethod
-    def with_standard_ips(cls, name, tags=frozenset(["default"]),
-                          width=None, height=None,
-                          dead_boards=frozenset(), dead_links=frozenset(),
-                          board_locations=None,
-                          base_ip="192.168.0.0",
-                          cabinet_stride="0.0.5.0",
-                          frame_stride="0.0.1.0",
-                          board_stride="0.0.0.8",
-                          bmp_offset="0.0.0.0",
-                          spinnaker_offset="0.0.0.1"):
+    def with_standard_ips(
+            cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
+            width: Optional[int] = None, height: Optional[int] = None,
+            dead_boards: FrozenSet[Tuple[int, int, int]] = frozenset(),
+            dead_links: FrozenSet[Tuple[int, int, int, Links]] = frozenset(),
+            board_locations: Optional[Dict[Tuple[int, int, int],
+                                           Tuple[int, int, int]]] = None,
+            base_ip: str ="192.168.0.0",
+            cabinet_stride: str = "0.0.5.0",
+            frame_stride: str = "0.0.1.0",
+            board_stride: str = "0.0.0.8",
+            bmp_offset: str = "0.0.0.0",
+            spinnaker_offset: str = "0.0.0.1") -> "Machine":
         # pylint: disable=too-many-arguments
 
-        def ip_to_int(ip):
+        def ip_to_int(ip: str) -> int:
             """ Convert from string-based IP to a 32-bit integer.
             """
             match = re.match(r"^(\d+).(\d+).(\d+).(\d+)$", ip)
@@ -198,51 +204,52 @@ class Machine(namedtuple("Machine", "name,tags,width,height,"
 
             return ip_int
 
-        def int_to_ip(ip_int):
+        def int_to_ip(ip_int: int) -> str:
             """ Convert from 32-bit integer to string-based IP address.
             """
             return ".".join(str((ip_int >> b) & 0xFF)
                             for b in range(24, -8, -8))
 
-        base_ip = ip_to_int(base_ip)
-        cabinet_stride = ip_to_int(cabinet_stride)
-        frame_stride = ip_to_int(frame_stride)
-        board_stride = ip_to_int(board_stride)
-        bmp_offset = ip_to_int(bmp_offset)
-        spinnaker_offset = ip_to_int(spinnaker_offset)
-        board_locations = _empty_default_dict(board_locations)
+        base_ip_int = ip_to_int(base_ip)
+        cabinet_stride_int = ip_to_int(cabinet_stride)
+        frame_stride_int = ip_to_int(frame_stride)
+        board_stride_int = ip_to_int(board_stride)
+        bmp_offset_int = ip_to_int(bmp_offset)
+        spinnaker_offset_int = ip_to_int(spinnaker_offset)
+        board_locations = dict(board_locations) if board_locations else {}
 
         # Generate IP addresses for BMPs
         cabinets_and_frames = set(
             (c, f) for c, f, _ in board_locations.values())
         bmp_ips = {
-            (c, f): int_to_ip(base_ip + (cabinet_stride * c) +
-                              (frame_stride * f) + bmp_offset)
+            (c, f): int_to_ip(base_ip_int + (cabinet_stride_int * c) +
+                              (frame_stride_int * f) + bmp_offset_int)
             for (c, f) in cabinets_and_frames}
 
         # Generate IP addresses for SpiNNaker boards
         spinnaker_ips = {
-            (x, y, z): int_to_ip(base_ip + (cabinet_stride * c) +
-                                 (frame_stride * f) + (board_stride * b) +
-                                 spinnaker_offset)
+            (x, y, z): int_to_ip(base_ip_int + (cabinet_stride_int * c) +
+                                 (frame_stride_int * f) +
+                                 (board_stride_int * b) +
+                                 spinnaker_offset_int)
             for (x, y, z), (c, f, b) in board_locations.items()}
 
-        return cls(name, set(tags), width, height,
-                   dead_boards=set(dead_boards), dead_links=set(dead_links),
-                   board_locations=dict(board_locations),
+        return cls(name, tags, width, height, dead_boards=dead_boards,
+                   dead_links=dead_links, board_locations=board_locations,
                    bmp_ips=bmp_ips, spinnaker_ips=spinnaker_ips)
 
 
-def board_locations_from_spinner(filename):
+def board_locations_from_spinner(filename: str) -> Dict[Tuple[int, int, int],
+                                                        Tuple[int, int, int]]:
     # Extract lookup from Ethernet connected chips to locations
-    chip_locations = {}
+    chip_locations:Dict[Tuple[int, int], Tuple[int, int, int]] = {}
     with open(filename, "r") as f:
         for entry in csv.DictReader(f):
-            cfb = tuple(map(int, (entry["cabinet"],
-                                  entry["frame"],
-                                  entry["board"])))
+            cfb: Tuple[int, int, int] = (
+                int(entry["cabinet"]), int(entry["frame"]),
+                int(entry["board"]))
 
-            chip_xy = (int(entry["x"]), int(entry["y"]))
+            chip_xy: Tuple[int, int] = (int(entry["x"]), int(entry["y"]))
 
             assert chip_xy not in chip_locations
             chip_locations[chip_xy] = cfb

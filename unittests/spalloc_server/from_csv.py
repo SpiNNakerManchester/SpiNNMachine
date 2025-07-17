@@ -16,7 +16,7 @@ from spinn_machine.spalloc_server.configuration import (
     Machine, board_locations_from_spinner, Configuration)
 
 machine = Machine.with_standard_ips(
-    "SpiNNaker1M", tags=set(["default", "machine-room"]),
+    "SpiNNaker1M", tags=frozenset(["default", "machine-room"]),
     board_locations=board_locations_from_spinner("cabinets.csv"),
     base_ip="10.11.193.0")
 

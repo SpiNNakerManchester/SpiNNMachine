@@ -34,8 +34,8 @@ m = Machine(name="my-three-board-machine",
                 (0, 0, 1): "192.168.240.17",
                 (0, 0, 2): "192.168.240.41",
             },
-            dead_links={
+            dead_links=frozenset([
                 #X  Y  Z  Direction
                 (0, 0, 0, Links.east)
-            })
+            ]))
 configuration = Configuration(machines=[m])
