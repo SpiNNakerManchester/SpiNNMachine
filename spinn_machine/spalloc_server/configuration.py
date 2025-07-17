@@ -21,7 +21,7 @@ from .coordinates import chip_to_board
 
 
 class Configuration(namedtuple(
-        "Configuration", "machines,port,ip,timeout_check_interval,"
+        "Configuration", "machines,port,ip_address,timeout_check_interval,"
                          "max_retired_jobs,seconds_before_free")):
     """
     A configuration for the spalloc server, containing a list of machines and
@@ -29,7 +29,7 @@ class Configuration(namedtuple(
     """
 
     def __new__(cls, machines: Optional[List["Machine"]] = None,
-                port: int = 22244, ip: str = "",
+                port: int = 22244, ip_address: str = "",
                 timeout_check_interval: float = 5.0,
                 max_retired_jobs: int = 1200,
                 seconds_before_free: int = 30) -> "Configuration":
@@ -37,7 +37,7 @@ class Configuration(namedtuple(
 
         :param machines: A list of Machine objects describing the machines
         :param port: The port on which the server will listen
-        :param ip: The IP address on which the server will listen
+        :param ip_address: The IP address on which the server will listen
         :param timeout_check_interval: How often to check for timeouts
         :param max_retired_jobs: The maximum number of retired jobs to keep
         :param seconds_before_free: How long to wait before freeing an idle job
@@ -73,8 +73,8 @@ class Configuration(namedtuple(
                 used_spinnaker_ips.add(spinnaker_ip)
 
         return super(Configuration, cls).__new__(
-            cls, machines, port, ip, timeout_check_interval, max_retired_jobs,
-            seconds_before_free)
+            cls, machines, port, ip_address, timeout_check_interval,
+            max_retired_jobs, seconds_before_free)
 
 
 class Machine(namedtuple(
@@ -258,20 +258,20 @@ class Machine(namedtuple(
         """
         # pylint: disable=too-many-arguments
 
-        def ip_to_int(ip: str) -> int:
+        def ip_to_int(ip_address: str) -> int:
             """ Convert from string-based IP to a 32-bit integer.
 
-            :param ip: The IP address in dotted decimal format
+            :param ip_address: The IP address in dotted decimal format
             :return: The IP address as a 32-bit integer
             """
-            match = re.match(r"^(\d+).(\d+).(\d+).(\d+)$", ip)
+            match = re.match(r"^(\d+).(\d+).(\d+).(\d+)$", ip_address)
             if not match:
-                raise ValueError(f"Malformed IPv4 address '{ip}'")
+                raise ValueError(f"Malformed IPv4 address '{ip_address}'")
 
             ip_int = 0
             for group in map(int, match.groups()):
                 if group & ~0xFF:
-                    raise ValueError(f"Malformed IPv4 address '{ip}'")
+                    raise ValueError(f"Malformed IPv4 address '{ip_address}'")
                 ip_int <<= 8
                 ip_int |= group
 
