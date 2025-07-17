@@ -69,6 +69,9 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         Reports if `...View.get_machine` has been called outside of `sim.run`.
 
         Designed to only be used from ASB. Any other use is not supported
+
+        :returns:
+            True if get_machine has been called other than by the run process
         """
         return self.__data._user_accessed_machine
 

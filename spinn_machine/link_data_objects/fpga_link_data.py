@@ -27,6 +27,20 @@ class FPGALinkData(AbstractLinkData):
     def __init__(self, fpga_link_id: int, fpga_id: int, connected_chip_x: int,
                  connected_chip_y: int, connected_link: int,
                  board_address: str):
+        """
+        :param fpga_link_id: The ID of the link out of the SpiNNaker FPGA.
+        :param fpga_id: The ID of the SpiNNaker FPGA.
+        :param connected_chip_x:
+            The X coordinate of the chip on the board that the link is
+            connected to.
+        :param connected_chip_y:
+            The Y coordinate of the chip on the board that the link is
+            connected to.
+        :param connected_link:
+            The ID of the link on the source chip that this is data about.
+        :param board_address:
+            The IP address of the board that this link data is about.
+        """
         super().__init__(
             connected_chip_x, connected_chip_y, connected_link, board_address)
         self._fpga_link_id = fpga_link_id

@@ -41,8 +41,14 @@ class VersionStrings(Enum):
         vs._value_ = args[0]
         return vs
 
-    # ignore the first param since it's already set by __new__
-    def __init__(self, _: int, text: str, versions: List[int]):
+    def __init__(self, value: int, text: str, versions: List[int]):
+        """
+        :param value: enum ID for this version
+        :param text: label for this enum
+        :param versions: machine versions that this group includes
+        """
+        # ignore the first param since it's already set by __new__
+        _ = value
         self.text = text
         self._versions = versions
 
@@ -73,7 +79,8 @@ class VersionStrings(Enum):
         """
         Makes the String lower case and removes some special characters
 
-        :param value:
+        :param value: original string
+        :returns: original in lower case and without special characters
         """
         return value.lower().replace("_", "").replace("-", "").replace(" ", "")
 
@@ -82,7 +89,8 @@ class VersionStrings(Enum):
         """
         Gets a VersionString object from a String
 
-        :param value:
+        :param value: label
+        :returns: VersionStrings Enum with this label
         """
         value_short = cls.shorten(value)
         for vs in cls:

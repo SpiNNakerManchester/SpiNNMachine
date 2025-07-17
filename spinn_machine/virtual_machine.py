@@ -158,6 +158,13 @@ class _VirtualMachine(object):
     ORIGIN = "Virtual"
 
     def __init__(self, width: int, height: int, validate: bool = True):
+        """
+
+        :param width: The width of the machine excluding any virtual chips
+        :param height:
+            The height of the machine excluding any virtual chips
+        :param validate: If True will run code to validate the machine
+        """
         version = MachineDataView.get_machine_version()
         version.verify_size(width, height)
         max_cores = version.max_cores_per_chip
