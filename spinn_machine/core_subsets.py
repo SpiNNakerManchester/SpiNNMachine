@@ -96,9 +96,7 @@ class CoreSubsets(object):
     @property
     def core_subsets(self) -> Iterable[CoreSubset]:
         """
-        The one-per-chip subsets.
-
-        :return: Iterable of core subsets
+        Iterable of core subsets for each Chip
         """
         return iter(self._core_subsets.values())
 
@@ -175,6 +173,6 @@ class CoreSubsets(object):
 
     def values(self) -> Iterable[CoreSubset]:
         """
-        The Core subsets held
+        :returns: Iterable of the core subsets held.
         """
         return self._core_subsets.values()

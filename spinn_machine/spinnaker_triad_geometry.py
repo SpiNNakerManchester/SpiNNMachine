@@ -210,6 +210,8 @@ class SpiNNakerTriadGeometry(object):
 
         :param width: The width of the machine to find the chips in
         :param height: The height of the machine to find the chips in
+        :return: The coordinates of chips that should be Ethernet chips.
+           There is no guarantee that the chips exists.
         """
         if width % self._triad_width == 0:
             eth_width = width

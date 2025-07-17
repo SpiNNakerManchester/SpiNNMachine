@@ -113,6 +113,9 @@ class MachineDataView(UtilsDataView):
 
         Unlike has_existing_machine for unit tests this will return True even
         if a Machine has not yet been created
+
+        :returns: True if a Machine is available.
+           (Already read Physically or can be Mocked if needed)
         """
         return (cls.__data._machine is not None or cls._is_mocked())
 
@@ -123,6 +126,8 @@ class MachineDataView(UtilsDataView):
 
         Unlike has_machine this method returns false if a machine could be
         mocked
+
+        :returns: True if a Machine has already been created.
         """
         return cls.__data._machine is not None
 
@@ -133,6 +138,7 @@ class MachineDataView(UtilsDataView):
 
         In Mock mode will create and return a virtual 8 * 8 board
 
+        :returns: The already existing Machine or Virtual 8 * 8 Machine.
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
         """
@@ -162,6 +168,7 @@ class MachineDataView(UtilsDataView):
 
         :param x:
         :param y:
+        :returns: The Chip or bust
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
         :raises KeyError: If the chip does not exist but the machine does
@@ -211,6 +218,7 @@ class MachineDataView(UtilsDataView):
 
         :param x:
         :param y:
+        :return: A human-readable description of the location of a chip.
         """
         try:
             m = cls.__data._machine
@@ -237,6 +245,7 @@ class MachineDataView(UtilsDataView):
             Therefore a call to this method will not trigger a hard reset
 
         :param chip:
+        :return: A human-readable description of the location of a chip.
         """
         try:
             m = cls.__data._machine
@@ -252,7 +261,7 @@ class MachineDataView(UtilsDataView):
         """
         Returns the Machine Version if it has or can be set.
 
-`       May call version_factory to create the version
+        May call version_factory to create the version.
 
         :return: A superclass of AbstractVersion
         :raises SpinnMachineException: If the cfg version is not set correctly
@@ -292,6 +301,7 @@ class MachineDataView(UtilsDataView):
 
         :param xy: The Chip or its XY coordinates
         :param virtual_p: The virtual core ID
+        :return: The physical ID for the core on machine
         :raises SpiNNUtilsException: If v_to_p map not set,
             including if the MachineVersion does not support v_to_p_map
         :raises KeyError: If xy not in the v_to_p_map
@@ -312,6 +322,7 @@ class MachineDataView(UtilsDataView):
         :raises SpiNNUtilsException: If quad_map map not set,
             MachineVersion does not support quad_map
         :raises KeyError: If virtual_p not in the quad_map
+        :return: A report / debug representation of the Chip and physical quad
         """
         if cls.__data._quad_map is None:
             # Try to get the version which should load it
@@ -327,6 +338,7 @@ class MachineDataView(UtilsDataView):
 
         :param xy: The Chip or its XY coordinates
         :param virtual_p: The virtual (python) id for the core
+        :return: A report / debug representation of the Chip and physical core
         """
         physical_p: Union[int, Tuple[int, int, int]]
         try:
@@ -350,6 +362,9 @@ class MachineDataView(UtilsDataView):
         Ethernet-enabled chips may have more.
 
         Does not include the system core reserved by the machine/ scamp.
+
+        :return: The number of core that will be allocated for special
+            monitor on each none Ethernet Chip
         """
         return cls.__data._all_monitor_cores
 
@@ -363,5 +378,8 @@ class MachineDataView(UtilsDataView):
         some reason these are not on Ethernet chips.
 
         Does not include the system core reserved by the machine/ scamp.
+
+        :return: The number of core that will be allocated for special
+            monitor on each Ethernet Chip
         """
         return cls.__data._ethernet_monitor_cores

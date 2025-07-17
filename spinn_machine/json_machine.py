@@ -230,6 +230,8 @@ def _describe_chip(chip: Chip, standard: _Desc, ethernet: _Desc) -> JsonArray:
 def to_json() -> JsonObject:
     """
     Runs the code to write the machine in Java readable JSON.
+
+    :returns: The Machine as a json readable dict.
     """
     machine = MachineDataView.get_machine()
     # find the standard values to use for Ethernet chips

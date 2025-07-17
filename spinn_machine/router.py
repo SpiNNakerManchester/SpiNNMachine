@@ -144,6 +144,8 @@ class Router(object):
         binary routing table entry usable on the machine.
 
         :param routing_table_entry: The entry to convert
+        :returns: Entry as a single int in spinnaker format which is a bitmap
+            of all chip links and core links.
         """
         route_entry = 0
         for processor_id in routing_table_entry.processor_ids:
