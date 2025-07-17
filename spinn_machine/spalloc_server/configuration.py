@@ -26,7 +26,8 @@ class Configuration(namedtuple(
     def __new__(cls, machines: Optional[List["Machine"]] = None,
                 port: int = 22244, ip: str = "",
                 timeout_check_interval: float = 5.0,
-                max_retired_jobs: int = 1200, seconds_before_free: int = 30):
+                max_retired_jobs: int = 1200,
+                seconds_before_free: int = 30) -> "Configuration":
         # pylint: disable=too-many-arguments
 
         # Validate machine definitions
@@ -75,7 +76,8 @@ class Machine(namedtuple(
             board_locations: Optional[Dict[Tuple[int, int, int],
                                            Tuple[int, int, int]]] = None,
             bmp_ips: Optional[Dict[Tuple[int, int], str]] = None,
-            spinnaker_ips: Optional[Dict[Tuple[int, int, int], str]] = None):
+            spinnaker_ips: Optional[Dict[Tuple[int, int, int], str]] = None
+            ) -> "Machine":
         # pylint: disable=too-many-arguments
 
         # Make sure the set-type arguments are the correct type...

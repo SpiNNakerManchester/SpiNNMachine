@@ -20,7 +20,7 @@ import json
 import deepdiff
 
 
-def test_single_board():
+def test_single_board() -> None:
     class_file = str(__file__)
     path = os.path.dirname(os.path.abspath(class_file))
     config = read_config_file(os.path.join(path, "single_board.py"))
@@ -40,7 +40,7 @@ def test_single_board():
     assert machine.spinnaker_ips[0, 0, 0] == "192.168.0.3"
 
 
-def test_three_boards():
+def test_three_boards() -> None:
     class_file = str(__file__)
     path = os.path.dirname(os.path.abspath(class_file))
     config = read_config_file(os.path.join(path, "three_board.py"))
@@ -50,7 +50,7 @@ def test_three_boards():
     assert machine.dead_links == {(0, 0, 0, Links.east)}
 
 
-def test_from_csv():
+def test_from_csv() -> None:
     class_file = str(__file__)
     path = os.path.dirname(os.path.abspath(class_file))
     chdir(path)
@@ -74,7 +74,7 @@ def test_from_csv():
         (0, 0, 2): "10.11.193.9"}
 
 
-def test_to_json():
+def test_to_json() -> None:
     class_file = str(__file__)
     path = os.path.dirname(os.path.abspath(class_file))
     config_file = os.path.join(path, "single_board.py")
