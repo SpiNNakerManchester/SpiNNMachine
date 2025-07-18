@@ -1,0 +1,36 @@
+{
+  "machines" : [ {
+    "name" : "my-board",
+    "tags" : [ "default" ],
+    "width" : 1,
+    "height" : 1,
+    "dead-boards" : [ {
+      "x" : 0,
+      "y" : 0,
+      "z" : 1
+    }, {
+      "x" : 0,
+      "y" : 0,
+      "z" : 2
+    } ],
+    "dead-links" : {},
+    "board-locations" : {
+      "[x:0,y:0,z:0]" : {
+        "c" : 0,
+        "f" : 0,
+        "b" : 0
+      }
+    },
+    "bmp-ips" : {
+      "[c:0,f:0]" : "192.168.0.2"
+    },
+    "spinnaker-ips" : {
+      "[x:0,y:0,z:0]" : "192.168.0.3"
+    }
+  } ],
+  "port" : 22244,
+  "ip" : "",
+  "timeout-check-interval" : 5.0,
+  "max-retired-jobs" : 1200,
+  "seconds-before-free" : 30
+}
