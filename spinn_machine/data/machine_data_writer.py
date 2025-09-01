@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import logging
-from typing import Callable
+from typing import Callable, Optional
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
@@ -128,3 +128,52 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         self.__data._ethernet_monitor_cores += 1
         if all_chips:
             self.__data._all_monitor_cores += 1
+
+    def set_n_required(self, n_boards_required: Optional[int],
+                       n_chips_required: Optional[int]) -> None:
+        """
+        Sets (if not `None`) the number of boards/chips requested by the user.
+
+        :param n_boards_required:
+            `None` or the number of boards requested by the user
+        :param n_chips_required:
+            `None` or the number of chips requested by the user
+        """
+        if n_boards_required is None:
+            if n_chips_required is None:
+                return
+            elif not isinstance(n_chips_required, int):
+                raise TypeError("n_chips_required must be an int (or None)")
+            if n_chips_required <= 0:
+                raise ValueError(
+                    "n_chips_required must be positive and not "
+                    f"{n_chips_required}")
+        else:
+            if n_chips_required is not None:
+                raise ValueError(
+                    "Illegal call with both both param provided as "
+                    f"{n_boards_required}, {n_chips_required}")
+            if not isinstance(n_boards_required, int):
+                raise TypeError("n_boards_required must be an int (or None)")
+            if n_boards_required <= 0:
+                raise ValueError(
+                    "n_boards_required must be positive and not "
+                    f"{n_boards_required}")
+        if self.__data._n_boards_required is not None or \
+                self.__data._n_chips_required is not None:
+            raise ValueError(
+                "Illegal second call to set_n_required")
+        self.__data._n_boards_required = n_boards_required
+        self.__data._n_chips_required = n_chips_required
+
+    def set_n_chips_in_graph(self, n_chips_in_graph: int) -> None:
+        """
+        Sets the number of chips needed by the graph.
+        """
+        if not isinstance(n_chips_in_graph, int):
+            raise TypeError("n_chips_in_graph must be an int (or None)")
+        if n_chips_in_graph <= 0:
+            raise ValueError(
+                "n_chips_in_graph must be positive and not "
+                f"{n_chips_in_graph}")
+        self.__data._n_chips_in_graph = n_chips_in_graph

@@ -48,6 +48,9 @@ class _MachineDataModel(object):
         "_machine",
         "_machine_generator",
         "_machine_version",
+        "_n_boards_required",
+        "_n_chips_required",
+        "_n_chips_in_graph",
         "_quad_map",
         "_user_accessed_machine",
         "_v_to_p_map"
@@ -68,6 +71,8 @@ class _MachineDataModel(object):
         self._hard_reset()
         self._machine_generator: Optional[Callable[[], None]] = None
         self._machine_version: Optional[AbstractVersion] = None
+        self._n_boards_required: Optional[int] = None
+        self._n_chips_required: Optional[int] = None
         self._quad_map: Optional[Dict[int, Tuple[int, int, int]]] = None
 
     def _hard_reset(self) -> None:
@@ -80,6 +85,7 @@ class _MachineDataModel(object):
         self._all_monitor_cores: int = 0
         self._ethernet_monitor_cores: int = 0
         self._machine: Optional[Machine] = None
+        self._n_chips_in_graph: Optional[int] = None
         self._v_to_p_map: Optional[Dict[XY, bytes]] = None
         self._user_accessed_machine = False
 
@@ -383,3 +389,79 @@ class MachineDataView(UtilsDataView):
             monitor on each Ethernet Chip
         """
         return cls.__data._ethernet_monitor_cores
+
+    # n_boards/chips required
+
+    @classmethod
+    def has_n_boards_required(cls) -> bool:
+        """
+        Reports if a user has sets the number of boards requested during setup.
+
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If n_boards_required is not set or set to `None`
+        """
+        return cls.__data._n_boards_required is not None
+
+    @classmethod
+    def get_n_boards_required(cls) -> int:
+        """
+        Gets the number of boards requested by the user during setup if known.
+
+        Guaranteed to be positive
+
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If the n_boards_required is currently unavailable
+        """
+        if cls.__data._n_boards_required is None:
+            raise cls._exception("n_boards_requiredr")
+        return cls.__data._n_boards_required
+
+    @classmethod
+    def get_n_chips_needed(cls) -> int:
+        """
+        Gets the number of chips needed, if set.
+
+        This will be the number of chips requested by the user during setup,
+        even if this is less that what the partitioner reported.
+
+        If the partitioner has run and the user has not specified a number,
+        this will be what the partitioner requested.
+
+        Guaranteed to be positive if set
+
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If data for n_chips_needed is not available
+        """
+        if cls.__data._n_chips_required:
+            return cls.__data._n_chips_required
+        if cls.__data._n_chips_in_graph:
+            return cls.__data._n_chips_in_graph
+        raise cls._exception("n_chips_requiredr")
+
+    @classmethod
+    def has_n_chips_needed(cls) -> bool:
+        """
+        Detects if the number of chips needed has been set.
+
+        This will be the number of chips requested by the use during setup or
+        what the partitioner requested.
+        """
+        if cls.__data._n_chips_required is not None:
+            return True
+        return cls.__data._n_chips_in_graph is not None
+
+    @classmethod
+    def get_chips_boards_required_str(cls) -> str:
+        """
+        Gets a String to say what was required
+        """
+        if cls.__data._n_boards_required:
+            return (f"Setup asked for "
+                    f"{cls.__data._n_boards_required} Boards")
+        if cls.__data._n_chips_required:
+            return (f"Setup asked for "
+                    f"{cls.__data._n_chips_required} Chips")
+        if cls.__data._n_chips_in_graph:
+            return (f"Graph requires "
+                    f"{cls.__data._n_chips_in_graph} Chips")
+        return "No requirements known"
