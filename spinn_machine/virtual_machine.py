@@ -15,17 +15,73 @@ import math
 from collections import defaultdict
 import logging
 from typing import Dict, List, Optional, Set, Tuple
-from spinn_utilities.config_holder import get_config_str_or_none
+
+from spinn_utilities.config_holder import (
+    get_config_int, get_config_int_or_none, get_config_str_or_none,
+    is_config_none)
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
+
 from spinn_machine.data import MachineDataView
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from .chip import Chip
+from .exceptions import SpinnMachineException
+from .json_machine import machine_from_json
 from .router import Router
 from .link import Link
 from .machine import Machine
 
 logger = FormatAdapter(logging.getLogger(__name__))
+
+
+def virtual_machine_generator() -> Machine:
+    """
+    Generates a virtual machine with given dimensions and configuration.
+
+    :return: The virtual machine.
+    :raises Exception: If given bad arguments
+    """
+
+    json_path = get_config_str_or_none("Machine", "json_path")
+    if json_path is None:
+        if is_config_none("Machine", "width") or \
+                is_config_none("Machine", "height"):
+            if MachineDataView.has_n_boards_required():
+                n_boards = MachineDataView.get_n_boards_required()
+                machine = virtual_machine_by_boards((n_boards))
+            elif MachineDataView.has_n_chips_needed():
+                n_chips = MachineDataView.get_n_chips_needed()
+                machine = virtual_machine_by_chips((n_chips))
+            else:
+                height = get_config_int_or_none("Machine", "height")
+                width = get_config_int_or_none("Machine", "width")
+                raise SpinnMachineException(
+                    "Unable to create a VirtualMachine at this time unless "
+                    "setup call includes n_boards or n_chips or "
+                    "both width and heigth are specified in the cfg found "
+                    f"found {width=} {height=}")
+        else:
+            height = get_config_int("Machine", "height")
+            width = get_config_int("Machine", "width")
+            machine = virtual_machine(
+                width=width, height=height, validate=True)
+    else:
+        if (not is_config_none("Machine", "width") or
+                not is_config_none("Machine", "height") or
+                not is_config_none("Machine", "down_chips") or
+                not is_config_none("Machine", "down_cores") or
+                not is_config_none("Machine", "down_links")):
+            logger.warning("As json_path specified all other virtual "
+                           "machine settings ignored.")
+        machine = machine_from_json(json_path)
+
+    # Work out and add the SpiNNaker links and FPGA links
+    machine.add_spinnaker_links()
+    machine.add_fpga_links()
+
+    logger.info("Created {}", machine.summary_string())
+
+    return machine
 
 
 def virtual_machine(width: int, height: int, validate: bool = True) -> Machine:
