@@ -397,6 +397,7 @@ class MachineDataView(UtilsDataView):
         """
         Reports if a user has sets the number of boards requested during setup.
 
+        :return: True if the user has sets the number of boards requested
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If n_boards_required is not set or set to `None`
         """
@@ -409,6 +410,7 @@ class MachineDataView(UtilsDataView):
 
         Guaranteed to be positive
 
+        :returns: The number of boards requested by the user
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the n_boards_required is currently unavailable
         """
@@ -429,6 +431,7 @@ class MachineDataView(UtilsDataView):
 
         Guaranteed to be positive if set
 
+        :returns: the number of chips needed
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If data for n_chips_needed is not available
         """
@@ -445,6 +448,8 @@ class MachineDataView(UtilsDataView):
 
         This will be the number of chips requested by the use during setup or
         what the partitioner requested.
+
+        :returns: True if the number of required chips is known
         """
         if cls.__data._n_chips_required is not None:
             return True
@@ -453,7 +458,7 @@ class MachineDataView(UtilsDataView):
     @classmethod
     def get_chips_boards_required_str(cls) -> str:
         """
-        Gets a String to say what was required
+        :returns: a String to say what was required
         """
         if cls.__data._n_boards_required:
             return (f"Setup asked for "
