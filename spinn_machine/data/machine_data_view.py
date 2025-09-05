@@ -159,12 +159,12 @@ class MachineDataView(UtilsDataView):
         Usage of this method other than via get_machine is not supported!
         """
         if cls.__data._machine is None:
-            if cls._is_mocked:
+            if cls._is_mocked():
                 # delayed import due to circular dependencies
                 # pylint: disable=import-outside-toplevel
                 from spinn_machine.virtual_machine import \
                     virtual_machine_by_boards
-                cls.set_machine(virtual_machine_by_boards(1))
+                cls._data,_machine = virtual_machine_by_boards(1)
             if cls.__data._machine is None:
                 raise cls._exception("machine")
         return cls.__data._machine

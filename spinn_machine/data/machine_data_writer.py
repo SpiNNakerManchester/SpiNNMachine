@@ -77,7 +77,7 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         :returns:
             True if get_machine has been called other than by the run process
         """
-        return self.__data._user_accessed_machine
+        self.__data._user_accessed_machine = True
 
     @classmethod
     def get_machine(cls) -> Machine:
@@ -115,19 +115,6 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
             Will be removed without notice if `max_machine` is no longer done.
         """
         self.__data._machine = None
-
-    def set_machine_generator(
-            self, machine_generator: Callable[[], None]) -> None:
-        """
-        Registers a function that can be called to give a machine. Note that
-        if the function does not actually register a machine when called, an
-        exception will be thrown.
-
-        :param machine_generator:
-        """
-        if not callable(machine_generator):
-            raise TypeError("machine_generator must be callable")
-        self.__data._machine_generator = machine_generator
 
     def add_monitor_core(self, all_chips: bool) -> None:
         """
