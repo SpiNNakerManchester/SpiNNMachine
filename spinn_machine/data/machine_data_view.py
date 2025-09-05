@@ -143,13 +143,12 @@ class MachineDataView(UtilsDataView):
         In Mock mode will create and return a virtual 8 * 8 board
 
         ..note::
-            like sim.get_machine this method does not protect against
+            Unlike `sim.get_machine` this method does not protect against
             inconstancy of Machine if reset has or will be called.
 
         :returns: The already existing Machine or Virtual 8 * 8 Machine.
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
-        :raises SpinnMachineException: if called outside of a sim.run call
         """
         if cls.__data._machine is None:
             if cls._is_mocked():
