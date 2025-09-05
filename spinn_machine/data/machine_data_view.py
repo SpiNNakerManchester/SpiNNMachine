@@ -142,21 +142,14 @@ class MachineDataView(UtilsDataView):
 
         In Mock mode will create and return a virtual 8 * 8 board
 
+        ..note::
+            like sim.get_machine this method does not protect against
+            inconstancy of Machine if reset has or will be called.
+
         :returns: The already existing Machine or Virtual 8 * 8 Machine.
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
         :raises SpinnMachineException: if called outside of a sim.run call
-        """
-        if cls.is_user_mode():
-            raise SpinnMachineException(
-                "View.get_machine is no longer supported outside or sim.run"
-                "Use sim.get_machine() instead")
-        return cls._get_machine()
-
-    @classmethod
-    def _get_machine(cls) -> Machine:
-        """
-        Usage of this method other than via get_machine is not supported!
         """
         if cls.__data._machine is None:
             if cls._is_mocked():
@@ -164,7 +157,7 @@ class MachineDataView(UtilsDataView):
                 # pylint: disable=import-outside-toplevel
                 from spinn_machine.virtual_machine import \
                     virtual_machine_by_boards
-                cls.__data,_machine = virtual_machine_by_boards(1)
+                cls.__data._machine = virtual_machine_by_boards(1)
             if cls.__data._machine is None:
                 raise cls._exception("machine")
         return cls.__data._machine

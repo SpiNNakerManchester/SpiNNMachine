@@ -79,21 +79,6 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         self.__data._user_accessed_machine = True
 
-    @classmethod
-    def get_machine(cls) -> Machine:
-        """
-        Returns the Machine if it has been set.
-
-        In Mock mode will create and return a virtual 8 * 8 board
-
-        Unlike the view method this can not called outside of `sim.run`.
-
-        :returns: The already existing Machine or Virtual 8 * 8 Machine.
-        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
-            If the machine is currently unavailable
-        """
-        return cls._get_machine()
-
     def set_machine(self, machine: Machine) -> None:
         """
         Sets the machine.
