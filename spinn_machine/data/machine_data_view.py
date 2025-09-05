@@ -164,8 +164,8 @@ class MachineDataView(UtilsDataView):
                 # pylint: disable=import-outside-toplevel
                 from spinn_machine.virtual_machine import \
                     virtual_machine_by_boards
-                cls._data,_machine = virtual_machine_by_boards(1)
-            if cls._data._machine is None:
+                cls.__data,_machine = virtual_machine_by_boards(1)
+            if cls.__data._machine is None:
                 raise cls._exception("machine")
         return cls.__data._machine
 
