@@ -18,7 +18,7 @@ from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
 from spinn_machine import Machine
-from spinn_machine.virtual_machine import virtual_machine_by_boards
+
 from .machine_data_view import MachineDataView, _MachineDataModel
 logger = FormatAdapter(logging.getLogger(__name__))
 __temp_dir = None
@@ -41,13 +41,6 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
     def _mock(self) -> None:
         UtilsDataWriter._mock(self)
         self.__data._clear()
-        self.__data._machine_generator = self._mock_machine
-
-    def _mock_machine(self) -> None:
-        """
-        Method to create a virtual machine in mock mode.
-        """
-        self.set_machine(virtual_machine_by_boards(1))
 
     @overrides(UtilsDataWriter._setup)
     def _setup(self) -> None:
@@ -74,6 +67,32 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
             True if get_machine has been called other than by the run process
         """
         return self.__data._user_accessed_machine
+
+    def set_user_accessed_machine(self) -> None:
+        """
+        Reports if `...View.get_machine` has been called outside of `sim.run`.
+
+        Designed to only be used from ASB. Any other use is not supported
+
+        :returns:
+            True if get_machine has been called other than by the run process
+        """
+        return self.__data._user_accessed_machine
+
+    @classmethod
+    def get_machine(cls) -> Machine:
+        """
+        Returns the Machine if it has been set.
+
+        In Mock mode will create and return a virtual 8 * 8 board
+
+        Unlike the view method this can not called outside of `sim.run`.
+
+        :returns: The already existing Machine or Virtual 8 * 8 Machine.
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If the machine is currently unavailable
+        """
+        return cls._get_machine()
 
     def set_machine(self, machine: Machine) -> None:
         """

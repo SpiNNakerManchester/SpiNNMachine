@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Callable, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Dict, Optional, Tuple, TYPE_CHECKING, Union
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.data import UtilsDataView
 from spinn_machine.exceptions import SpinnMachineException
@@ -46,7 +46,6 @@ class _MachineDataModel(object):
         "_all_monitor_cores",
         "_ethernet_monitor_cores",
         "_machine",
-        "_machine_generator",
         "_machine_version",
         "_n_boards_required",
         "_n_chips_required",
@@ -69,7 +68,6 @@ class _MachineDataModel(object):
         Clears out all data
         """
         self._hard_reset()
-        self._machine_generator: Optional[Callable[[], None]] = None
         self._machine_version: Optional[AbstractVersion] = None
         self._n_boards_required: Optional[int] = None
         self._n_chips_required: Optional[int] = None
@@ -147,19 +145,28 @@ class MachineDataView(UtilsDataView):
         :returns: The already existing Machine or Virtual 8 * 8 Machine.
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
+        :raises SpinnMachineException: if called outside of a sim.run call
         """
         if cls.is_user_mode():
-            if cls.is_soft_reset():
-                cls.__data._machine = None
-            cls.__data._user_accessed_machine = True
+            raise SpinnMachineException(
+                "View.get_machine is no longer supported outside or sim.run"
+                "Use sim.get_machine() instead")
+        return cls._get_machine()
+
+    @classmethod
+    def _get_machine(cls) -> Machine:
+        """
+        Usage of this method other than via get_machine is not supported!
+        """
         if cls.__data._machine is None:
-            if cls.__data._machine_generator is not None:
-                cls.__data._machine_generator()
-                if cls.__data._machine is None:
-                    raise SpinnMachineException(
-                        "machine generator did not generate machine")
-                return cls.__data._machine
-            raise cls._exception("machine")
+            if cls._is_mocked:
+                # delayed import due to circular dependencies
+                # pylint: disable=import-outside-toplevel
+                from spinn_machine.virtual_machine import \
+                    virtual_machine_by_boards
+                cls.set_machine(virtual_machine_by_boards(1))
+            if cls.__data._machine is None:
+                raise cls._exception("machine")
         return cls.__data._machine
 
     @classmethod
