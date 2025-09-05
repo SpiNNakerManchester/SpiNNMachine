@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import logging
-from typing import Callable, Optional
+from typing import Optional
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
