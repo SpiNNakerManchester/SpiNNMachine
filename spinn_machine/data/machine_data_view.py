@@ -150,6 +150,9 @@ class MachineDataView(UtilsDataView):
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
         """
+        if cls.is_user_mode():
+            if cls.is_soft_reset():
+                raise cls._exception("machine after a soft reset")
         if cls.__data._machine is None:
             if cls._is_mocked():
                 # delayed import due to circular dependencies
