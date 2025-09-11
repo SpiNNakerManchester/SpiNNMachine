@@ -92,14 +92,15 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
     def clear_machine(self) -> None:
         """
-        Clears any previously set machine.
+        Clears any previously set machine and any data related to the Machine
 
         .. warning::
-            Designed to only be used by ASB to remove a max machine before
-            allocating an actual one.  Any other use is not supported.
-            Will be removed without notice if `max_machine` is no longer done.
+            Designed to only be used by ASB to remove a machine when something
+            went wrong before it could be returned from get machine
         """
         self.__data._machine = None
+        self.__data._quad_map = None
+        self.__data._v_to_p_map = None
 
     def add_monitor_core(self, all_chips: bool) -> None:
         """
