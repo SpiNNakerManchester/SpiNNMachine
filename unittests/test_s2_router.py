@@ -61,13 +61,13 @@ class TestingS2Router(unittest.TestCase):
         links = list()
         r = Router(links, 1024)
 
-        # consider route that requires 153 cores and 6 link which will have 159 values in binary representation
-        route1 = (2**159) - 1 
-        len_proc_ids1 = 153
+        # consider route that requires 152 cores and 6 link which will have 158 values in binary representation
+        route1 = (2**158) - 1 
+        len_proc_ids1 = 152
         len_link_ids1 = 6
         proc_ids, link_ids = r.convert_spinnaker_route_to_routing_ids(route1)
 
-        self.assertNotEqual(len_proc_ids1, len(proc_ids))
+        self.assertEqual(len_proc_ids1, len(proc_ids))
         self.assertEqual(len_link_ids1, len(link_ids))
 
         route2 = 1431655765

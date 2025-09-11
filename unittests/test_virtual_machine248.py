@@ -60,7 +60,7 @@ class TestVirtualMachine248(unittest.TestCase):
         self.assertEqual(240, count)
         count = sum(_chip.n_processors for _chip in vm.chips)
         # TODO check this is correct
-        self.assertEqual(count, 7331)
+        self.assertEqual(count, 152*48)
         # TODO LINKS
         """
         spinnaker_links = (list(vm.spinnaker_links))

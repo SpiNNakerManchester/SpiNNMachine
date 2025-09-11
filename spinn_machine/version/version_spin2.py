@@ -110,7 +110,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     __slots__ = ["_reverse_quad_map"]
 
     def __init__(self) -> None:
-        super().__init__(max_cores_per_chip=153,
+        super().__init__(max_cores_per_chip=152,
                          max_sdram_per_chip=1073741824)
         self._reverse_quad_map: Dict[Tuple[int, int, int], int] = (
             dict((v, k) for k, v in QUAD_MAP.items()))
@@ -118,7 +118,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     @property
     @overrides(AbstractVersion.n_scamp_cores)
     def n_scamp_cores(self) -> int:
-        return 1
+        return 4
 
     @property
     @overrides(AbstractVersion.n_router_entries)
@@ -140,8 +140,8 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     def dtcm_bytes(self) -> int:
         raise NotImplementedError
 
-    @overrides(AbstractVersion.quads_maps)
-    def quads_maps(self) -> Dict[int, Tuple[int, int, int]]:
+    @overrides(AbstractVersion.quad_maps)
+    def quad_maps(self) -> Dict[int, Tuple[int, int, int]]:
         return QUAD_MAP
 
     @overrides(AbstractVersion.qx_qy_qp_to_id)

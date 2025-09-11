@@ -69,7 +69,7 @@ class TestVirtualMachine201(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             virtual_machine(width=2, height=2)
 
-    def test_version_SPIN2_1CHIP(self):
+    def test_version_201(self):
         set_config("Machine", "version", SPIN2_GEN.SPIN2_1CHIP.value)
         vm = virtual_machine(width=1, height=1)
         self.assertEqual(1, vm.n_chips)
@@ -88,7 +88,7 @@ class TestVirtualMachine201(unittest.TestCase):
             for _link in _chip.router.links:
                 count += 1
         self.assertEqual(0, count)
-        self.assertEqual(153, vm.get_cores_count())
+        self.assertEqual(152, vm.get_cores_count())
         self.assertEqual(0, vm.get_links_count())
         count = 0
         for _chip in vm.get_existing_xys_on_board(vm[0, 0]):
@@ -228,9 +228,9 @@ class TestVirtualMachine201(unittest.TestCase):
         machine = virtual_machine(1, 1)
         n_cores = sum(
             cores for (_, cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEqual(n_cores, 153)
+        self.assertEqual(n_cores, 152)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, 153)
+        self.assertEqual(n_cores, 152)
 
     def test_by(self):
         set_config("Machine", "version", SPIN2_GEN.SPIN2_1CHIP.value)
