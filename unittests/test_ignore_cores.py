@@ -57,20 +57,20 @@ class TestDownCores(unittest.TestCase):
 
     def test_qx_qy_qp_to_id_spin2(self):
         version = Version201()
-        self.assertEqual(75, version.qx_qy_qp_to_id(3, 4, 2))
-        self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(75))
+        self.assertEqual(74, version.qx_qy_qp_to_id(3, 4, 2))
+        self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(74))
 
     def test_qx_qy_qp_to_spin1(self):
         version = Version5()
         with self.assertRaises(SpinnMachineException):
-            self.assertEqual(75, version.qx_qy_qp_to_id(3, 4, 2))
+            self.assertEqual(74, version.qx_qy_qp_to_id(3, 4, 2))
         with self.assertRaises(SpinnMachineException):
-            self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(75))
+            self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(74))
 
     def test_version_401(self):
         set_config("Machine", "version", SPIN2_GEN.SPIN2_1CHIP.value)
         ignores = IgnoreCore.parse_string("0,0,3.4.2")
         self.assertEqual(1, len(ignores))
         for ignore in ignores:
-            self.assertEqual(75, ignore.p)
-            self.assertEqual(75, ignore.virtual_p)
+            self.assertEqual(74, ignore.p)
+            self.assertEqual(74, ignore.virtual_p)

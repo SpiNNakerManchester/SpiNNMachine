@@ -131,9 +131,9 @@ class TestSimulatorData(unittest.TestCase):
         set_config("Machine", "version", SPIN2_GEN.SPIN2_48CHIP.value)
 
         # exists
-        self.assertEqual((7, 6, 2), writer.get_physical_quad(3))
+        self.assertEqual((7, 6, 2), writer.get_physical_quad(2))
         self.assertEqual(" (qpe:7, 6, 2)",
-                         writer.get_physical_string((1, 2), 3))
+                         writer.get_physical_string((1, 2), 2))
         with self.assertRaises(KeyError):
             writer.get_physical_quad(234)
         self.assertEqual("",

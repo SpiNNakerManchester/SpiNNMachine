@@ -1,9 +1,7 @@
-[![PyPi version](https://img.shields.io/pypi/v/SpiNNMachine.svg?style=flat)](https://pypi.org/project/SpiNNMachine/)
-[![Build Status](https://github.com/SpiNNakerManchester/SpiNNMachine/workflows/Python%20Actions/badge.svg?branch=master)](https://github.com/SpiNNakerManchester/SpiNNMachine/actions?query=workflow%3A%22Python+Actions%22+branch%3Amaster)
+<!-- [![PyPi version](https://img.shields.io/pypi/v/SpiNNMachine.svg?style=flat)](https://pypi.org/project/SpiNNMachine/) -->
+<!-- [![Build Status](https://github.com/SpiNNakerManchester/SpiNNMachine/workflows/Python%20Actions/badge.svg?branch=master)](https://github.com/SpiNNakerManchester/SpiNNMachine/actions?query=workflow%3A%22Python+Actions%22+branch%3Amaster) -->
 [![Documentation Status](https://readthedocs.org/projects/spinnmachine/badge/?version=latest)](https://spinnmachine.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/SpiNNakerManchester/SpiNNMachine/badge.svg?branch=master)](https://coveralls.io/github/SpiNNakerManchester/SpiNNMachine?branch=master)
-
-This package is part of the [SpiNNaker Project](http://apt.cs.manchester.ac.uk/projects/SpiNNaker/) .
 
 This package is used to provide a Python representation of a SpiNNaker machine
 
@@ -12,7 +10,7 @@ This package is used to provide a Python representation of a SpiNNaker machine
 As of now, SpiNNMachine2 has yet to be uploaded to pypi, so this installation procedure is not supported yet. If you want to install the package, you must use the developer installation procedure shown below.
 If you want to install for all users, run:
 
-    sudo pip install SpiNNMachine
+    pip install SpiNNMachine
 
 If you want to install only for yourself, run:
 

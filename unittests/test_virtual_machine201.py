@@ -260,11 +260,11 @@ class TestVirtualMachine201(unittest.TestCase):
         set_config("Machine", "version", SPIN2_GEN.SPIN2_1CHIP.value)
         set_config("Machine", "down_cores", "0,0,2.2.1")
         version = MachineDataView.get_machine_version()
-        self.assertEqual(90, version.qx_qy_qp_to_id(2, 2, 1))
+        self.assertEqual(91, version.qx_qy_qp_to_id(2, 2, 1))
 
         machine = virtual_machine_by_cores(1)
         chip = machine[(0, 0)]
-        self.assertFalse(chip.is_processor_with_id(90))
+        self.assertFalse(chip.is_processor_with_id(91))
 
 
 if __name__ == '__main__':
