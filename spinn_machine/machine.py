@@ -866,7 +866,8 @@ class Machine(object, metaclass=AbstractBase):
         else:
             n_boards = ""
         return (f"[{self._origin}{self.wrap}Machine: width={self._width}, "
-                f"height={self._height},{n_boards} n_chips={len(self._chips)}]")
+                f"height={self._height},{n_boards} "
+                f"n_chips={len(self._chips)}]")
 
     def __repr__(self) -> str:
         return self.__str__()
