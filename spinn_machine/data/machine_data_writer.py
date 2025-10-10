@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import logging
-from typing import Callable
+from typing import Optional
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.overrides import overrides
 from spinn_utilities.log import FormatAdapter
 from spinn_machine import Machine
-from spinn_machine.virtual_machine import virtual_machine_by_boards
+
 from .machine_data_view import MachineDataView, _MachineDataModel
 logger = FormatAdapter(logging.getLogger(__name__))
 __temp_dir = None
@@ -41,13 +41,6 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
     def _mock(self) -> None:
         UtilsDataWriter._mock(self)
         self.__data._clear()
-        self.__data._machine_generator = self._mock_machine
-
-    def _mock_machine(self) -> None:
-        """
-        Method to create a virtual machine in mock mode.
-        """
-        self.set_machine(virtual_machine_by_boards(1))
 
     @overrides(UtilsDataWriter._setup)
     def _setup(self) -> None:
@@ -75,6 +68,17 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         """
         return self.__data._user_accessed_machine
 
+    def set_user_accessed_machine(self) -> None:
+        """
+        Reports if `...View.get_machine` has been called outside of `sim.run`.
+
+        Designed to only be used from ASB. Any other use is not supported
+
+        :returns:
+            True if get_machine has been called other than by the run process
+        """
+        self.__data._user_accessed_machine = True
+
     def set_machine(self, machine: Machine) -> None:
         """
         Sets the machine.
@@ -88,27 +92,15 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
 
     def clear_machine(self) -> None:
         """
-        Clears any previously set machine.
+        Clears any previously set machine and any data related to the Machine
 
         .. warning::
-            Designed to only be used by ASB to remove a max machine before
-            allocating an actual one.  Any other use is not supported.
-            Will be removed without notice if `max_machine` is no longer done.
+            Designed to only be used by ASB to remove a machine when something
+            went wrong before it could be returned from get machine
         """
         self.__data._machine = None
-
-    def set_machine_generator(
-            self, machine_generator: Callable[[], None]) -> None:
-        """
-        Registers a function that can be called to give a machine. Note that
-        if the function does not actually register a machine when called, an
-        exception will be thrown.
-
-        :param machine_generator:
-        """
-        if not callable(machine_generator):
-            raise TypeError("machine_generator must be callable")
-        self.__data._machine_generator = machine_generator
+        self.__data._quad_map = None
+        self.__data._v_to_p_map = None
 
     def add_monitor_core(self, all_chips: bool) -> None:
         """
@@ -128,3 +120,52 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         self.__data._ethernet_monitor_cores += 1
         if all_chips:
             self.__data._all_monitor_cores += 1
+
+    def set_n_required(self, n_boards_required: Optional[int],
+                       n_chips_required: Optional[int]) -> None:
+        """
+        Sets (if not `None`) the number of boards/chips requested by the user.
+
+        :param n_boards_required:
+            `None` or the number of boards requested by the user
+        :param n_chips_required:
+            `None` or the number of chips requested by the user
+        """
+        if n_boards_required is None:
+            if n_chips_required is None:
+                return
+            elif not isinstance(n_chips_required, int):
+                raise TypeError("n_chips_required must be an int (or None)")
+            if n_chips_required <= 0:
+                raise ValueError(
+                    "n_chips_required must be positive and not "
+                    f"{n_chips_required}")
+        else:
+            if n_chips_required is not None:
+                raise ValueError(
+                    "Illegal call with both both param provided as "
+                    f"{n_boards_required}, {n_chips_required}")
+            if not isinstance(n_boards_required, int):
+                raise TypeError("n_boards_required must be an int (or None)")
+            if n_boards_required <= 0:
+                raise ValueError(
+                    "n_boards_required must be positive and not "
+                    f"{n_boards_required}")
+        if self.__data._n_boards_required is not None or \
+                self.__data._n_chips_required is not None:
+            raise ValueError(
+                "Illegal second call to set_n_required")
+        self.__data._n_boards_required = n_boards_required
+        self.__data._n_chips_required = n_chips_required
+
+    def set_n_chips_in_graph(self, n_chips_in_graph: int) -> None:
+        """
+        Sets the number of chips needed by the graph.
+        """
+        if not isinstance(n_chips_in_graph, int):
+            raise TypeError("n_chips_in_graph must be an int (or None)")
+        if n_chips_in_graph <= 0:
+            raise ValueError(
+                "n_chips_in_graph must be positive and not "
+                f"{n_chips_in_graph}")
+        self.__data._n_chips_in_graph = n_chips_in_graph

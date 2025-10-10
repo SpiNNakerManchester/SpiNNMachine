@@ -861,8 +861,13 @@ class Machine(object, metaclass=AbstractBase):
         return fpga_id, fpga_link + 1
 
     def __str__(self) -> str:
+        if len(self._ethernet_connected_chips) > 1:
+            n_boards = f" n_boards={len(self._ethernet_connected_chips)},"
+        else:
+            n_boards = ""
         return (f"[{self._origin}{self.wrap}Machine: width={self._width}, "
-                f"height={self._height}, n_chips={len(self._chips)}]")
+                f"height={self._height},{n_boards} "
+                f"n_chips={len(self._chips)}]")
 
     def __repr__(self) -> str:
         return self.__str__()
