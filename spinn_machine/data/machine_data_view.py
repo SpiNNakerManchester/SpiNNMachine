@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Callable, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Dict, Optional, Tuple, TYPE_CHECKING, Union
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.data import UtilsDataView
 from spinn_machine.exceptions import SpinnMachineException
@@ -46,8 +46,10 @@ class _MachineDataModel(object):
         "_all_monitor_cores",
         "_ethernet_monitor_cores",
         "_machine",
-        "_machine_generator",
         "_machine_version",
+        "_n_boards_required",
+        "_n_chips_required",
+        "_n_chips_in_graph",
         "_quad_map",
         "_user_accessed_machine",
         "_v_to_p_map"
@@ -66,8 +68,9 @@ class _MachineDataModel(object):
         Clears out all data
         """
         self._hard_reset()
-        self._machine_generator: Optional[Callable[[], None]] = None
         self._machine_version: Optional[AbstractVersion] = None
+        self._n_boards_required: Optional[int] = None
+        self._n_chips_required: Optional[int] = None
         self._quad_map: Optional[Dict[int, Tuple[int, int, int]]] = None
 
     def _hard_reset(self) -> None:
@@ -80,6 +83,7 @@ class _MachineDataModel(object):
         self._all_monitor_cores: int = 0
         self._ethernet_monitor_cores: int = 0
         self._machine: Optional[Machine] = None
+        self._n_chips_in_graph: Optional[int] = None
         self._v_to_p_map: Optional[Dict[XY, bytes]] = None
         self._user_accessed_machine = False
 
@@ -138,22 +142,26 @@ class MachineDataView(UtilsDataView):
 
         In Mock mode will create and return a virtual 8 * 8 board
 
+        ..note::
+            Unlike `sim.get_machine` this method does not protect against
+            inconstancy of Machine if reset has or will be called.
+
         :returns: The already existing Machine or Virtual 8 * 8 Machine.
         :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
             If the machine is currently unavailable
         """
         if cls.is_user_mode():
             if cls.is_soft_reset():
-                cls.__data._machine = None
-            cls.__data._user_accessed_machine = True
+                raise cls._exception("machine after a soft reset")
         if cls.__data._machine is None:
-            if cls.__data._machine_generator is not None:
-                cls.__data._machine_generator()
-                if cls.__data._machine is None:
-                    raise SpinnMachineException(
-                        "machine generator did not generate machine")
-                return cls.__data._machine
-            raise cls._exception("machine")
+            if cls._is_mocked():
+                # delayed import due to circular dependencies
+                # pylint: disable=import-outside-toplevel
+                from spinn_machine.virtual_machine import \
+                    virtual_machine_by_boards
+                cls.__data._machine = virtual_machine_by_boards(1)
+            if cls.__data._machine is None:
+                raise cls._exception("machine")
         return cls.__data._machine
 
     @classmethod
@@ -383,3 +391,84 @@ class MachineDataView(UtilsDataView):
             monitor on each Ethernet Chip
         """
         return cls.__data._ethernet_monitor_cores
+
+    # n_boards/chips required
+
+    @classmethod
+    def has_n_boards_required(cls) -> bool:
+        """
+        Reports if a user has sets the number of boards requested during setup.
+
+        :return: True if the user has sets the number of boards requested
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If n_boards_required is not set or set to `None`
+        """
+        return cls.__data._n_boards_required is not None
+
+    @classmethod
+    def get_n_boards_required(cls) -> int:
+        """
+        Gets the number of boards requested by the user during setup if known.
+
+        Guaranteed to be positive
+
+        :returns: The number of boards requested by the user
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If the n_boards_required is currently unavailable
+        """
+        if cls.__data._n_boards_required is None:
+            raise cls._exception("n_boards_requiredr")
+        return cls.__data._n_boards_required
+
+    @classmethod
+    def get_n_chips_needed(cls) -> int:
+        """
+        Gets the number of chips needed, if set.
+
+        This will be the number of chips requested by the user during setup,
+        even if this is less that what the partitioner reported.
+
+        If the partitioner has run and the user has not specified a number,
+        this will be what the partitioner requested.
+
+        Guaranteed to be positive if set
+
+        :returns: the number of chips needed
+        :raises ~spinn_utilities.exceptions.SpiNNUtilsException:
+            If data for n_chips_needed is not available
+        """
+        if cls.__data._n_chips_required:
+            return cls.__data._n_chips_required
+        if cls.__data._n_chips_in_graph:
+            return cls.__data._n_chips_in_graph
+        raise cls._exception("n_chips_requiredr")
+
+    @classmethod
+    def has_n_chips_needed(cls) -> bool:
+        """
+        Detects if the number of chips needed has been set.
+
+        This will be the number of chips requested by the use during setup or
+        what the partitioner requested.
+
+        :returns: True if the number of required chips is known
+        """
+        if cls.__data._n_chips_required is not None:
+            return True
+        return cls.__data._n_chips_in_graph is not None
+
+    @classmethod
+    def get_chips_boards_required_str(cls) -> str:
+        """
+        :returns: a String to say what was required
+        """
+        if cls.__data._n_boards_required:
+            return (f"Setup asked for "
+                    f"{cls.__data._n_boards_required} Boards")
+        if cls.__data._n_chips_required:
+            return (f"Setup asked for "
+                    f"{cls.__data._n_chips_required} Chips")
+        if cls.__data._n_chips_in_graph:
+            return (f"Graph requires "
+                    f"{cls.__data._n_chips_in_graph} Chips")
+        return "No requirements known"

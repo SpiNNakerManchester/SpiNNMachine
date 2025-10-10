@@ -195,3 +195,82 @@ class TestSimulatorData(unittest.TestCase):
         except SpinnMachineException as ex:
             msg = str(ex)
             self.assertIn("SpiNNaker1M", msg)
+
+    def test_required(self) -> None:
+        writer = MachineDataWriter.setup()
+        with self.assertRaises(DataNotYetAvialable):
+            self.assertIsNone(MachineDataView.get_n_boards_required())
+        self.assertFalse(MachineDataView.has_n_boards_required())
+        with self.assertRaises(DataNotYetAvialable):
+            self.assertIsNone(MachineDataView.get_n_chips_needed())
+        self.assertFalse(MachineDataView.has_n_chips_needed())
+
+        # required higher than in graph
+        writer.set_n_required(None, 20)
+        self.assertFalse(MachineDataView.has_n_boards_required())
+        self.assertEqual(20, MachineDataView.get_n_chips_needed())
+        writer.set_n_chips_in_graph(15)
+        self.assertFalse(MachineDataView.has_n_boards_required())
+        self.assertEqual(20, MachineDataView.get_n_chips_needed())
+
+        # required higher than in graph
+        writer.set_n_chips_in_graph(25)
+        self.assertFalse(MachineDataView.has_n_boards_required())
+        self.assertEqual(20, MachineDataView.get_n_chips_needed())
+
+        # reset does not remove required
+        writer.start_run()
+        writer.finish_run()
+        writer.hard_reset()
+        self.assertFalse(MachineDataView.has_n_boards_required())
+        self.assertEqual(20, MachineDataView.get_n_chips_needed())
+
+        writer = MachineDataWriter.setup()
+        self.assertFalse(MachineDataView.has_n_boards_required())
+        self.assertFalse(MachineDataView.has_n_chips_needed())
+
+        # in graph only
+        writer.set_n_chips_in_graph(25)
+        self.assertEqual(25, MachineDataView.get_n_chips_needed())
+
+        # reset clears in graph
+        writer.start_run()
+        writer.finish_run()
+        writer.hard_reset()
+        self.assertFalse(MachineDataView.has_n_chips_needed())
+
+        # N boards
+        writer = MachineDataWriter.setup()
+        writer.set_n_required(5, None)
+        self.assertEqual(5, MachineDataView.get_n_boards_required())
+        self.assertFalse(MachineDataView.has_n_chips_needed())
+
+        # boards does not hide in graph
+        writer.set_n_chips_in_graph(40)
+        self.assertEqual(5, MachineDataView.get_n_boards_required())
+        self.assertEqual(40, MachineDataView.get_n_chips_needed())
+
+        # reset does not clear required
+        writer.start_run()
+        writer.finish_run()
+        writer.hard_reset()
+        self.assertEqual(5, MachineDataView.get_n_boards_required())
+        self.assertFalse(MachineDataView.has_n_chips_needed())
+
+        # two Nones fine
+        writer = MachineDataWriter.setup()
+        writer.set_n_required(None, None)
+        self.assertFalse(MachineDataView.has_n_boards_required())
+        self.assertFalse(MachineDataView.has_n_chips_needed())
+
+        # Ilegal calls
+        with self.assertRaises(ValueError):
+            writer.set_n_required(5, 5)
+        with self.assertRaises(ValueError):
+            writer.set_n_required(None, -5)
+        with self.assertRaises(ValueError):
+            writer.set_n_required(0, None)
+        with self.assertRaises(TypeError):
+            writer.set_n_required(None, "five")  # type: ignore[arg-type]
+        with self.assertRaises(TypeError):
+            writer.set_n_required("2.3", None)  # type: ignore[arg-type]
