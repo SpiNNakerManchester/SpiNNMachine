@@ -1,7 +1,6 @@
 [![PyPi version](https://img.shields.io/pypi/v/SpiNNMachine.svg?style=flat)](https://pypi.org/project/SpiNNMachine/)
 [![Python Actions](https://github.com/SpiNNakerManchester/SpiNNMachine/actions/workflows/python_actions.yml/badge.svg)](https://github.com/SpiNNakerManchester/SpiNNMachine/actions/workflows/python_actions.yml)
 [![Documentation Status](https://readthedocs.org/projects/spinnmachine/badge/?version=7.4.1)](https://spinnmachine.readthedocs.io/en/7.4.1)
-[![Coverage Status](https://coveralls.io/repos/github/SpiNNakerManchester/SpiNNMachine/badge.svg?branch=master)](https://coveralls.io/github/SpiNNakerManchester/SpiNNMachine?branch=master)
 
 This package is part of the [SpiNNaker Project](http://apt.cs.manchester.ac.uk/projects/SpiNNaker/) .
 
