@@ -1,6 +1,6 @@
 [![PyPi version](https://img.shields.io/pypi/v/SpiNNMachine.svg?style=flat)](https://pypi.org/project/SpiNNMachine/)
 [![Python Actions](https://github.com/SpiNNakerManchester/SpiNNMachine/actions/workflows/python_actions.yml/badge.svg)](https://github.com/SpiNNakerManchester/SpiNNMachine/actions/workflows/python_actions.yml)
-[![Documentation Status](https://readthedocs.org/projects/spinnmachine/badge/?version=7.4.1)](https://spinnmachine.readthedocs.io/en/7.4.1)
+[![Documentation Status](https://readthedocs.org/projects/spinnmachine/badge/?version=latest)](https://spinnmachine.readthedocs.io/en/latest)
 
 This package is part of the [SpiNNaker Project](http://apt.cs.manchester.ac.uk/projects/SpiNNaker/) .
 
@@ -51,6 +51,6 @@ To be able to run the unitests add [Test] to the pip installs above
 
 Documentation
 =============
-[SpiNNMachine python documentation](http://spinnmachine.readthedocs.io/en/7.4.1)
+[SpiNNMachine python documentation](http://spinnmachine.readthedocs.io/en/latest)
 
-[Combined python documentation](http://spinnakermanchester.readthedocs.io/en/7.4.1)
+[Combined python documentation](http://spinnakermanchester.readthedocs.io/en/latest)
