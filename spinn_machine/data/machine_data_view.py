@@ -363,6 +363,12 @@ class MachineDataView(UtilsDataView):
 
     @classmethod
     def get_physical_cores(cls, xy: XY) -> Set[int]:
+        """
+        The Physical cores that have been mapped for this Chip
+
+        :param xy: The Chip or its XY coordinates
+        :return: A set of physical core IDs
+        """
         if cls.__data._v_to_p_map is None:
             raise cls._exception("v_to_p map")
         cores = set(cls.__data._v_to_p_map[xy])
