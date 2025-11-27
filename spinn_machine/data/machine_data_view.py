@@ -23,6 +23,8 @@ if TYPE_CHECKING:
     from spinn_machine.version.abstract_version import AbstractVersion
 # pylint: disable=protected-access
 
+NONE_CORE = 255
+
 
 class _MachineDataModel(object):
     """
@@ -372,7 +374,8 @@ class MachineDataView(UtilsDataView):
         if cls.__data._v_to_p_map is None:
             raise cls._exception("v_to_p map")
         cores = set(cls.__data._v_to_p_map[xy])
-        cores.discard(255)
+        # As v_to_p_map arrays are fixed length remove the none value
+        cores.discard(NONE_CORE)
         return cores
 
     @classmethod
