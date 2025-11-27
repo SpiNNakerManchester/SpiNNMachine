@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Dict, Optional, Set, Tuple, TYPE_CHECKING, Union
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.data import UtilsDataView
 from spinn_machine.exceptions import SpinnMachineException
@@ -360,6 +360,14 @@ class MachineDataView(UtilsDataView):
                 return ""
         except Exception:  # pylint: disable=broad-except
             return ""
+
+    @classmethod
+    def get_physical_cores(cls, xy: XY) -> Set[int]:
+        if cls.__data._v_to_p_map is None:
+            raise cls._exception("v_to_p map")
+        cores = set(cls.__data._v_to_p_map[xy])
+        cores.discard(255)
+        return cores
 
     @classmethod
     def get_all_monitor_cores(cls) -> int:
