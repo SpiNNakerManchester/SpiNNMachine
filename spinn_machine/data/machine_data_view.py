@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Dict, Optional, Set, Tuple, TYPE_CHECKING, Union
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.data import UtilsDataView
 from spinn_machine.exceptions import SpinnMachineException
@@ -22,6 +22,8 @@ if TYPE_CHECKING:
     from spinn_machine.machine import Machine
     from spinn_machine.version.abstract_version import AbstractVersion
 # pylint: disable=protected-access
+
+NONE_CORE = 255
 
 
 class _MachineDataModel(object):
@@ -360,6 +362,21 @@ class MachineDataView(UtilsDataView):
                 return ""
         except Exception:  # pylint: disable=broad-except
             return ""
+
+    @classmethod
+    def get_physical_cores(cls, xy: XY) -> Set[int]:
+        """
+        The Physical cores that have been mapped for this Chip
+
+        :param xy: The Chip or its XY coordinates
+        :return: A set of physical core IDs
+        """
+        if cls.__data._v_to_p_map is None:
+            raise cls._exception("v_to_p map")
+        cores = set(cls.__data._v_to_p_map[xy])
+        # As v_to_p_map arrays are fixed length remove the none value
+        cores.discard(NONE_CORE)
+        return cores
 
     @classmethod
     def get_all_monitor_cores(cls) -> int:
