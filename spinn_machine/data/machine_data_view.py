@@ -14,6 +14,7 @@
 from __future__ import annotations
 from typing import Dict, Optional, Set, Tuple, TYPE_CHECKING, Union
 from spinn_utilities.typing.coords import XY
+from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.data import UtilsDataView
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version.version_factory import version_factory
@@ -372,6 +373,9 @@ class MachineDataView(UtilsDataView):
         :return: A set of physical core IDs
         """
         if cls.__data._v_to_p_map is None:
+            if get_config_bool("Machine", "virtual_board"):
+                chip = cls.get_machine()[xy]
+                return set(chip.all_processor_ids)
             raise cls._exception("v_to_p map")
         cores = set(cls.__data._v_to_p_map[xy])
         # As v_to_p_map arrays are fixed length remove the none value
