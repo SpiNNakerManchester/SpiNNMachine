@@ -87,7 +87,7 @@ class RoutingEntry(object):
             self._processor_ids = frozenset(processor_ids)
             self._link_ids = frozenset(link_ids)
             self._spinnaker_route: int = self._calc_spinnaker_route()
-            if incoming_link is None:
+            if incoming_link is None or len(self._processor_ids) > 0:
                 self._defaultable = False
             else:
                 if incoming_processor is None:
