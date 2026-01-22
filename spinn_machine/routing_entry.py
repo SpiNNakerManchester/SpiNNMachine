@@ -87,21 +87,20 @@ class RoutingEntry(object):
             self._processor_ids = frozenset(processor_ids)
             self._link_ids = frozenset(link_ids)
             self._spinnaker_route: int = self._calc_spinnaker_route()
-            if incoming_link is None or len(self._processor_ids) > 0:
+            if incoming_link is None:
                 self._defaultable = False
-            else:
-                if incoming_processor is None:
-                    if len(link_ids) != 1:
-                        self._defaultable = False
-                    else:
-                        link_id = next(iter(link_ids))
-                        self._defaultable = (
-                                ((incoming_link + 3) % 6) == link_id)
+            elif incoming_processor is None:
+                if len(link_ids) != 1 or len(self._processor_ids) > 0:
+                    self._defaultable = False
                 else:
-                    raise SpinnMachineInvalidParameterException(
-                        "incoming_processor", incoming_processor,
-                        "The incoming direction for a path can only be from "
-                        "either one link or one processors, not both")
+                    link_id = next(iter(link_ids))
+                    self._defaultable = (
+                            ((incoming_link + 3) % 6) == link_id)
+            else:
+                raise SpinnMachineInvalidParameterException(
+                    "incoming_processor", incoming_processor,
+                    "The incoming direction for a path can only be from "
+                    "either one link or one processors, not both")
         else:
             assert processor_ids is None
             assert link_ids is None
