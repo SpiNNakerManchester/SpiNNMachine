@@ -197,6 +197,11 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         with self.assertRaises(SpinnMachineInvalidParameterException):
             a_multicast.merge(b_multicast)
 
+    def test_double_incoming(self) -> None:
+        with self.assertRaises(SpinnMachineInvalidParameterException):
+            RoutingEntry(link_ids=range(6), processor_ids=range(18),
+                         incoming_processor=4, incoming_link=3)
+
 
 if __name__ == '__main__':
     unittest.main()
