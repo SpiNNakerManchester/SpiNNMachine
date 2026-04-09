@@ -18,8 +18,11 @@ from typing import (
     Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Union,
     TYPE_CHECKING)
 from typing_extensions import TypeAlias
+
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
+from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
+
 from spinn_machine.data import MachineDataView
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 from .exceptions import (
@@ -28,7 +31,8 @@ from .exceptions import (
 if TYPE_CHECKING:
     from .chip import Chip
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
+
 _SpinLinkKey: TypeAlias = Tuple[Union[str, XY], int]
 _FpgaLinkKey: TypeAlias = Tuple[Union[str, XY], int, int]
 
