@@ -554,7 +554,7 @@ class Machine(object, metaclass=AbstractBase):
 
         if chip.ip_address is not None:
             self._ethernet_connected_chips.append(chip)
-            if (chip == (0, 0)):
+            if chip.x == 0 and chip.y == 0:
                 self._boot_ethernet_address = chip.ip_address
 
     def add_chips(self, chips: Iterable[Chip]) -> None:
