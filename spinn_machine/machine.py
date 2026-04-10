@@ -688,6 +688,13 @@ class Machine(object, metaclass=AbstractBase):
         return self._ethernet_connected_chips
 
     @property
+    def n_ethernet_connected_chips(self) -> int:
+        """
+        The number of chips in the machine that have an Ethernet connection.
+        """
+        return len(self._ethernet_connected_chips)
+
+    @property
     def spinnaker_links(self) -> Iterator[
             Tuple[_SpinLinkKey, SpinnakerLinkData]]:
         """
