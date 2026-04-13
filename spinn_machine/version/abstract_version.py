@@ -528,7 +528,8 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :param n_frames: The number of frames
         :param n_boards: The number of boards
         :param n_chips: The number of chips
-        :param sum_chip_active_time: Sum of times the cores were active in seconds
+        :param sum_chip_active_time:
+            Sum of times the cores were active in seconds
         :param router_packets: The number of packets sent by each router
         :returns: the active energy consumption of the system in joules
         """
