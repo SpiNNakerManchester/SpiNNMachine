@@ -76,7 +76,7 @@ class TestVirtualMachine201(unittest.TestCase):
         self.assertTrue(vm.is_chip_at(0, 0))
         self.assertFalse(vm.is_chip_at(0, 1))
         self.assertEqual(1, len(vm.ethernet_connected_chips))
-        self.assertEqual(1, vm.n_.ethernet_connected_chips)
+        self.assertEqual(1, vm.n_ethernet_connected_chips)
         self.assertFalse(vm.is_link_at(0, 0, 0))
         self.assertFalse(vm.is_link_at(0, 0, 1))
         self.assertFalse(vm.is_link_at(0, 0, 2))
