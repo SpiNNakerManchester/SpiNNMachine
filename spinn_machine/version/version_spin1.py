@@ -18,8 +18,7 @@ from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
 from spinn_machine.exceptions import SpinnMachineException
-from .abstract_version import (
-    AbstractVersion, RouterPackets, ChipActiveTime)
+from .abstract_version import (AbstractVersion, RouterPackets)
 
 
 class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
@@ -123,9 +122,5 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
             for name, value in packets.items())
 
     def _get_core_active_energy(
-            self, core_active_times: ChipActiveTime) -> float:
-        # TODO: treat cores that are active sometimes differently to cores that
-        # are always idle
-        return sum(
-            time * self.WATTS_PER_CORE_ACTIVE_OVERHEAD
-            for time, _n_cores in core_active_times.values())
+            self, sum_core_active_times: float) -> float:
+        return sum_core_active_times * self.WATTS_PER_CORE_ACTIVE_OVERHEAD

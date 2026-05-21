@@ -18,7 +18,7 @@ from spinn_utilities.typing.coords import XY
 
 from .version_48_chips import Version48Chips
 from .version_spin1 import VersionSpin1
-from .abstract_version import ChipActiveTime, RouterPackets
+from .abstract_version import RouterPackets
 
 CHIPS_PER_BOARD: Final = {
     (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,
@@ -132,7 +132,7 @@ class Version5(VersionSpin1, Version48Chips):
     @overrides(VersionSpin1.get_active_energy)
     def get_active_energy(
             self, time_s: float, n_frames: int, n_boards: int, n_chips: int,
-            chip_active_time: ChipActiveTime,
+            sum_chip_active_time: float,
             router_packets: RouterPackets) -> float:
         container_energy = 0.0
         if n_frames != 0:
@@ -142,7 +142,7 @@ class Version5(VersionSpin1, Version48Chips):
             container_energy +
             self.get_idle_energy(time_s, n_frames, n_boards, n_chips) +
             self._get_router_active_energy(router_packets) +
-            self._get_core_active_energy(chip_active_time))
+            self._get_core_active_energy(sum_chip_active_time))
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version5)

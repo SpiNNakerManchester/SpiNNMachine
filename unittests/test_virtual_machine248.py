@@ -152,6 +152,7 @@ class TestVirtualMachine248(unittest.TestCase):
         vm = virtual_machine(height=12, width=12, validate=True)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))
+        self.assertEqual(3, vm.n_ethernet_connected_chips)
         count = sum(1 for _chip in vm.chips for _link in _chip.router.links)
         self.assertEqual(864, count)
         count = 0

@@ -31,8 +31,6 @@ logger = FormatAdapter(logging.getLogger(__name__))
 
 # Dict of the number of packets sent by each router in each category
 RouterPackets: TypeAlias = Dict[XY, Dict[str, int]]
-# Dict of the time the cores were active in seconds, and the number of cores
-ChipActiveTime: TypeAlias = Dict[XY, Tuple[float, int]]
 
 CORE_RANGE = re.compile(r"(\d+)-(\d+)")
 CORE_SINGLE = re.compile(r"(-*)(\d+)")
@@ -523,14 +521,15 @@ class AbstractVersion(object, metaclass=AbstractBase):
     @abstractmethod
     def get_active_energy(
             self, time_s: float, n_frames: int, n_boards: int, n_chips: int,
-            chip_active_time: ChipActiveTime,
+            sum_chip_active_time: float,
             router_packets: RouterPackets) -> float:
         """
         :param time_s: The time to calculate the energy for in seconds
         :param n_frames: The number of frames
         :param n_boards: The number of boards
         :param n_chips: The number of chips
-        :param chip_active_time: The time the cores were active in seconds
+        :param sum_chip_active_time:
+            Sum of times the cores were active in seconds
         :param router_packets: The number of packets sent by each router
         :returns: the active energy consumption of the system in joules
         """

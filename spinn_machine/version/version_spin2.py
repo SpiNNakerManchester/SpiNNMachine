@@ -20,8 +20,7 @@ from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
 from spinn_machine.exceptions import SpinnMachineException
-from .abstract_version import (
-    AbstractVersion, ChipActiveTime, RouterPackets)
+from .abstract_version import (AbstractVersion, RouterPackets)
 
 CHIPS_PER_BOARD: Final = {(0, 0): 152}
 CORE_QX_QY_QP = re.compile(r"(\d)\.(\d)\.(\d)")
@@ -139,7 +138,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     @overrides(AbstractVersion.get_active_energy)
     def get_active_energy(
             self, time_s: float, n_frames: int, n_boards: int, n_chips: int,
-            chip_active_time: ChipActiveTime,
+            sum_chip_active_time: float,
             router_packets: RouterPackets) -> float:
         # TODO: Work this out for SpiNNaker 2
         raise SpinnMachineException("Spin2 active energy unknown.")
