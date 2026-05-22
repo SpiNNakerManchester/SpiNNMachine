@@ -1,4 +1,5 @@
 # Copyright (c) 2023 The University of Manchester
+# Copyright (c) 2025 SpiNNcloud
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +13,67 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# based on https://gitlab.com/spinnaker2/SpiNNMachine2/-/blob/main/pyproject.toml
+
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "SpiNNMachine"
+version = "1!7.4.2"
+description = "Representation of a SpiNNaker Machine"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "SpiNNakerTeam", email = "spinnakerusers@googlegroups.com" },
+    { name = "SpiNNcloud", email = "info@spinncloud.com" }
+]
+requires-python = ">=3.10, <4"
+dependencies = [
+    "SpiNNUtilities == 1!7.4.2",
+    "bidict"  # for SpiNN2
+]
+keywords = ["spinnaker", "machine model"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14"
+]
+
+[project.urls]
+Codebase = "https://github.com/SpiNNakerManchester/SpiNNUtils"
+Spin2_code = "https://gitlab.com/spinnaker2/SpiNNUtils2"
+
+[project.optional-dependencies]
+test = [
+    "deepdiff",
+    "pytest-cov",
+    "testfixtures",
+    "httpretty != 1.0.0",
+]
+
+[tool.setuptools]
+zip-safe = true
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["spinn_machine", "spinn_machine.*"]
+
+[tool.setuptools.package-data]
+"*" = [
+    "spinn_machine.cfg",
+    "py.typed"
+]
+
