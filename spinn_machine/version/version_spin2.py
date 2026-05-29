@@ -82,7 +82,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     @property
     @overrides(AbstractVersion.n_scamp_cores)
     def n_scamp_cores(self) -> int:
-        return 1
+        return 2
 
     @property
     @overrides(AbstractVersion.n_router_entries)

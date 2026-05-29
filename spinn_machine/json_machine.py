@@ -90,14 +90,14 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
 
     machine = MachineDataView.get_machine_version().create_machine(
         width, height, origin="Json")
-    s_monitors = _obj(j_machine["standardResources"])["monitors"]
+    s_monitors = _int(_obj(j_machine["standardResources"])["monitors"])
     s_router_entries = _int(_obj(
         j_machine["standardResources"])["routerEntries"])
     s_sdram = _int(_obj(j_machine["standardResources"])["sdram"])
     s_tag_ids = _ary(_obj(j_machine["standardResources"])["tags"])
 
     eth_res = _obj(j_machine["ethernetResources"])
-    e_monitors = eth_res["monitors"]
+    e_monitors = _int(eth_res["monitors"])
     e_router_entries = _int(eth_res["routerEntries"])
     e_sdram = _int(eth_res["sdram"])
     e_tag_ids = _ary(eth_res["tags"])
@@ -125,16 +125,13 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
         if len(j_chip) > 3:
             exceptions = _obj(j_chip[3])
             if "monitors" in exceptions:
-                monitors = exceptions["monitors"]
+                monitors = _int(exceptions["monitors"])
             if "routerEntries" in exceptions:
                 router_entries = _int(exceptions["routerEntries"])
             if "sdram" in exceptions:
                 sdram = _int(exceptions["sdram"])
             if "tags" in exceptions:
                 tag_ids = _ary(exceptions["tags"])
-        if monitors != 1:
-            raise NotImplementedError(
-                "We currently only support exactly 1 monitor per core")
 
         # create a router based on the details
         if "deadLinks" in details:
@@ -151,11 +148,12 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
                     destination_y))
         router = Router(links, router_entries)
 
+        scamp_processors = list(range(0, monitors))
         # Create and add a chip with this router
         n_cores = _int(details["cores"])
         chip = Chip(
-            source_x, source_y, [0], range(1, n_cores), router, sdram,
-            _int(board_x), _int(board_y), ip_address, [
+            source_x, source_y, scamp_processors, range(monitors, n_cores),
+            router, sdram, _int(board_x), _int(board_y), ip_address, [
                 _int(tag) for tag in tag_ids])
         machine.add_chip(chip)
 
