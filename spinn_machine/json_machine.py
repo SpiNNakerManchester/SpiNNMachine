@@ -90,14 +90,14 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
 
     machine = MachineDataView.get_machine_version().create_machine(
         width, height, origin="Json")
-    s_monitors = _obj(j_machine["standardResources"])["monitors"]
+    s_monitors = _int(_obj(j_machine["standardResources"])["monitors"])
     s_router_entries = _int(_obj(
         j_machine["standardResources"])["routerEntries"])
     s_sdram = _int(_obj(j_machine["standardResources"])["sdram"])
     s_tag_ids = _ary(_obj(j_machine["standardResources"])["tags"])
 
     eth_res = _obj(j_machine["ethernetResources"])
-    e_monitors = eth_res["monitors"]
+    e_monitors = _int(eth_res["monitors"])
     e_router_entries = _int(eth_res["routerEntries"])
     e_sdram = _int(eth_res["sdram"])
     e_tag_ids = _ary(eth_res["tags"])
@@ -125,7 +125,7 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
         if len(j_chip) > 3:
             exceptions = _obj(j_chip[3])
             if "monitors" in exceptions:
-                monitors = exceptions["monitors"]
+                monitors = _int(exceptions["monitors"])
             if "routerEntries" in exceptions:
                 router_entries = _int(exceptions["routerEntries"])
             if "sdram" in exceptions:
