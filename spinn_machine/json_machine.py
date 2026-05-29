@@ -132,9 +132,6 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
                 sdram = _int(exceptions["sdram"])
             if "tags" in exceptions:
                 tag_ids = _ary(exceptions["tags"])
-        if monitors != 1:
-            raise NotImplementedError(
-                "We currently only support exactly 1 monitor per core")
 
         # create a router based on the details
         if "deadLinks" in details:
@@ -151,11 +148,12 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
                     destination_y))
         router = Router(links, router_entries)
 
+        scamp_processors = list(range(0, monitors))
         # Create and add a chip with this router
         n_cores = _int(details["cores"])
         chip = Chip(
-            source_x, source_y, [0], range(1, n_cores), router, sdram,
-            _int(board_x), _int(board_y), ip_address, [
+            source_x, source_y, scamp_processors, range(monitors, n_cores),
+            router, sdram, _int(board_x), _int(board_y), ip_address, [
                 _int(tag) for tag in tag_ids])
         machine.add_chip(chip)
 

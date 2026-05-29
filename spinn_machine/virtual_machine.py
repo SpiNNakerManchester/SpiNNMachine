@@ -269,13 +269,15 @@ class _VirtualMachine(object):
         # for chip in self._unreachable_incoming_chips:
         #    configured_chips.remove(chip)
 
+        scamp_processors = list(range(0, version.n_scamp_cores))
         for xy in configured_chips:
             if xy in ethernet_chips:
                 x, y = xy
                 new_chip = self._create_chip(
-                    xy, configured_chips, f"127.0.{x}.{y}")
+                    xy, scamp_processors, configured_chips, f"127.0.{x}.{y}")
             else:
-                new_chip = self._create_chip(xy, configured_chips)
+                new_chip = self._create_chip(
+                    xy, scamp_processors, configured_chips)
             self._machine.add_chip(new_chip)
 
         self._machine.add_spinnaker_links()
@@ -290,7 +292,8 @@ class _VirtualMachine(object):
         """
         return self._machine
 
-    def _create_chip(self, xy: XY, configured_chips: Dict[XY, Tuple[XY, int]],
+    def _create_chip(self, xy: XY, scamp_processors: list[int],
+                     configured_chips: Dict[XY, Tuple[XY, int]],
                      ip_address: Optional[str] = None) -> Chip:
         chip_links = self._calculate_links(xy, configured_chips)
         chip_router = Router(chip_links, self._n_router_entries)
@@ -299,12 +302,13 @@ class _VirtualMachine(object):
 
         x, y = xy
         sdram = MachineDataView.get_machine_version().max_sdram_per_chip
-        cores = list(range(1, n_cores))
+        cores = list(range(len(scamp_processors), n_cores))
         for down_core in self._unused_cores.get(xy, []):
             if down_core in cores:
                 cores.remove(down_core)
         return Chip(
-            x, y, [0], cores, chip_router, sdram, eth_x, eth_y, ip_address)
+            x, y, scamp_processors, cores, chip_router, sdram, eth_x, eth_y,
+            ip_address)
 
     def _calculate_links(
             self, xy: XY, configured_chips: Dict[XY, Tuple[XY, int]]
