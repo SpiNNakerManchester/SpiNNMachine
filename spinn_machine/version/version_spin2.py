@@ -84,15 +84,6 @@ class S2_HW_MAP:
     def __contains__(self, item):
         return any([item in hw for hw in self.HW_LIST])
 
-    def inv(self, item):
-        """Emulate the behavior of bidict
-        """
-        for hw in self.HW_LIST:
-            core_id = hw.inv.get(item)
-            if core_id is not None:
-                return core_id
-        raise KeyError(f"Item {item} not found in any hardware map")
-
     def __getitem__(self, key):
         for hw in self.HW_LIST:
             if key in hw:
