@@ -31,7 +31,7 @@ class TestVirtualMachine5(unittest.TestCase):
         unittest_setup()
 
     def test_version_5(self):
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         vm = virtual_machine(width=8, height=8)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
