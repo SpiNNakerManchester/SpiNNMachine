@@ -32,7 +32,7 @@ class TestVersion201(unittest.TestCase):
         version = Version248()
         self.assertEqual(153, version.max_cores_per_chip)
         self.assertEqual(2**30, version.max_sdram_per_chip)
-        self.assertEqual(1, version.n_scamp_cores)
+        self.assertEqual(2, version.n_scamp_cores)
         self.assertEqual("Spin2 48 Chips", version.name)
         self.assertEqual(248, version.number)
         self.assertEqual((8, 8), version.board_shape)

@@ -101,15 +101,17 @@ class TestVirtualMachine201(unittest.TestCase):
 
     def test_new_vm_with_max_cores(self) -> None:
         set_config("Machine", "version", str(SPIN2_1CHIP))
-        n_cpus = 105
+        n_cpus = 153
+        n_scamp = 2
         set_config("Machine", "max_machine_core", str(n_cpus))
         vm = virtual_machine(1, 1, validate=True)
         _chip = vm[0, 0]
         self.assertEqual(n_cpus, _chip.n_processors)
-        self.assertEqual(n_cpus - 1, _chip.n_placable_processors)
-        self.assertEqual(1, _chip.n_scamp_processors)
-        self.assertEqual(n_cpus - 1, len(list(_chip.placable_processors_ids)))
-        self.assertEqual(1, len(list(_chip.scamp_processors_ids)))
+        self.assertEqual(n_cpus - n_scamp, _chip.n_placable_processors)
+        self.assertEqual(n_scamp, _chip.n_scamp_processors)
+        self.assertEqual(n_cpus - n_scamp,
+                         len(list(_chip.placable_processors_ids)))
+        self.assertEqual(n_scamp, len(list(_chip.scamp_processors_ids)))
         count = sum(_chip.n_processors for _chip in vm.chips)
         self.assertEqual(count, 1 * n_cpus)
 
