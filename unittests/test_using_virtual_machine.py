@@ -285,7 +285,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         set_config("Machine", "versions", VersionStrings.BIG.text)
         set_config("Machine", "down_chips", "2,2:4,4:6,6,ignored_ip")
         set_config("Machine", "down_cores",
-                   "1,1,1:3,3,3: 5,5,-5:7,7,7,ignored_ip:0,0,5-10")
+                   "1,1,4:3,3,3: 5,5,-5:7,7,7,ignored_ip:0,0,5-10")
         set_config("Machine", "down_links", "1,3,3:3,5,3:5,3,3,ignored_ip")
 
         machine = virtual_machine_by_min_size(8, 8)
@@ -305,7 +305,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertTrue(chip.is_processor_with_id(6))
 
         chip = machine[1, 1]
-        self.assertFalse(chip.is_processor_with_id(1))
+        self.assertFalse(chip.is_processor_with_id(4))
 
         router = machine[1, 3].router
         self.assertFalse(router.is_link(3))

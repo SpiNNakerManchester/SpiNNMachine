@@ -104,7 +104,7 @@ class TestJsonMachine(unittest.TestCase):
         vchip10 = jm[1, 0]
         self.assertEqual(vchip10.tag_ids, chip10.tag_ids)
 
-    def test_monitor_exceptions(self) -> None:
+    def test_two_monitors(self) -> None:
         set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
         vm = virtual_machine_by_boards(1)
         MachineDataWriter.mock().set_machine(vm)
@@ -115,11 +115,10 @@ class TestJsonMachine(unittest.TestCase):
         chip._scamp_processors = tuple([0, 1])
         chip._placable_processors = tuple([2, 3, 4, 5, 6, 7, 8, 9])
         jpath = mktemp("json")
-        # Should still be able to write json even with more than one monitor
         to_json_path(jpath)
-        # However we dont need to support reading back with more than 1 monitor
-        with self.assertRaises(NotImplementedError):
-            machine_from_json(jpath)
+        jm = machine_from_json(jpath)
+        for vchip, jchip in zip(vm, jm):
+            self.assertEqual(str(vchip), str(jchip))
 
     def test_ethernet_exceptions(self) -> None:
         set_config("Machine", "versions", VersionStrings.BIG.text)
