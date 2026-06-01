@@ -14,6 +14,9 @@
 from __future__ import annotations
 from typing import (
     Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
+
+from spinn_machine.data import MachineDataView
+
 from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 if TYPE_CHECKING:
@@ -37,8 +40,6 @@ class Router(object):
 
     # Number to add or sub from a link to get its opposite
     LINK_OPPOSITE = 3
-
-    MAX_CORES_PER_ROUTER = 18
 
     __slots__ = ("_links", "_n_available_multicast_entries")
 
@@ -148,13 +149,14 @@ class Router(object):
             of all chip links and core links.
         """
         route_entry = 0
+        max_cores = MachineDataView.get_machine_version().max_cores_per_chip
         for processor_id in routing_table_entry.processor_ids:
-            if processor_id >= Router.MAX_CORES_PER_ROUTER or processor_id < 0:
+            if 0 > processor_id >= max_cores:
                 raise SpinnMachineInvalidParameterException(
                     "route.processor_ids",
                     str(routing_table_entry.processor_ids),
                     "Processor IDs must be between 0 and " +
-                    str(Router.MAX_CORES_PER_ROUTER - 1))
+                    str(max_cores - 1))
             route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
         for link_id in routing_table_entry.link_ids:
             if link_id >= Router.MAX_LINKS_PER_ROUTER or link_id < 0:
@@ -175,7 +177,8 @@ class Router(object):
         :param route: The routing table entry
         :return: The list of processor IDs, and the list of link IDs.
         """
-        processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+        max_cores = MachineDataView.get_machine_version().max_cores_per_chip
+        processor_ids = [pi for pi in range(0, max_cores)
                          if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
         link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
                     if route & 1 << li]

@@ -15,6 +15,7 @@ from __future__ import annotations
 from typing import (Any, Collection, FrozenSet, Optional, overload, Tuple,
                     Union)
 from spinn_machine.router import Router
+from .data import MachineDataView
 from .exceptions import (SpinnMachineInvalidParameterException)
 
 
@@ -215,7 +216,8 @@ class RoutingEntry(object):
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.
         """
-        processor_ids = (pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+        max_cores = MachineDataView.get_machine_version().max_cores_per_chip
+        processor_ids = (pi for pi in range(0, max_cores)
                          if self._spinnaker_route & 1 <<
                          (Router.MAX_LINKS_PER_ROUTER + pi))
         link_ids = (li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
