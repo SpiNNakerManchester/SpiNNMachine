@@ -15,4 +15,5 @@
 from .version_factory import (
     ALL_BOARD_TYPES, FIVE, SPIN2_1CHIP, SPIN2_48CHIP, THREE, version_factory)
 
-__all__ = ["ALL_BOARD_TYPES", "FIVE", "SPIN2_1CHIP", "SPIN2_48CHIP", "THREE", "version_factory"]
+__all__ = ["ALL_BOARD_TYPES", "FIVE", "SPIN2_1CHIP", "SPIN2_48CHIP", "THREE",
+           "version_factory"]
