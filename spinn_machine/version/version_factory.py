@@ -36,6 +36,10 @@ FIVE = 5
 SPIN2_1CHIP = 201
 SPIN2_48CHIP = 248
 
+ALL_BOARD_TYPES = [["THREE", THREE], ["FIVE", FIVE],
+                   ["SPIN2_1CHIP", SPIN2_1CHIP],
+                   ["SPIN2_48CHIP", SPIN2_48CHIP]]
+
 
 def version_factory() -> AbstractVersion:
     """

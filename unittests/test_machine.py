@@ -15,12 +15,14 @@
 """
 test for testing the python representation of a spinnaker machine
 """
+from parameterized import parameterized
+
 from testfixtures import LogCapture  # type: ignore[import]
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.testing import log_checker
 from spinn_machine import Chip, Link, Machine, Router
-from spinn_machine.version import FIVE
+from spinn_machine.version import ALL_BOARD_TYPES, FIVE
 from spinn_machine.version.version_strings import VersionStrings
 from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_min_size)
@@ -144,11 +146,15 @@ class SpinnMachineTestCase(unittest.TestCase):
                 "Not all Chips had the same n_router_tables. "
                 "The counts where Counter({456: 1, 321: 1}).")
 
-    def test_chip_already_exists(self) -> None:
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_chip_already_exists(self, _: str, version: str) -> None:
         """
         check that adding a chip that already exists causes an error
+
+        :param _: name param only used to creat full test name
+        :param version: Version string for config
         """
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "version", version)
         machine = virtual_machine_by_boards(1)
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             machine.add_chip(Chip(
