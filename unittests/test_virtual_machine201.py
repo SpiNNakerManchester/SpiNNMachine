@@ -101,7 +101,7 @@ class TestVirtualMachine201(unittest.TestCase):
 
     def test_new_vm_with_max_cores(self) -> None:
         set_config("Machine", "version", SPIN2_GEN.SPIN2_1CHIP.value)
-        n_cpus = 153
+        n_cpus = 152
         n_scamp = 2
         set_config("Machine", "max_machine_core", str(n_cpus))
         vm = virtual_machine(1, 1, validate=True)
