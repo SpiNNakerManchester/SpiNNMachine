@@ -20,7 +20,7 @@
 doc/build
 build/
 dist/
-SpiNNMachine.egg-info
+SpiNNMachine2.egg-info
 .cache/
 .coverage
 .pytest_cache

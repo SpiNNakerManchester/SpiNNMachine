@@ -14,7 +14,7 @@
 from __future__ import annotations
 from typing import (Any, Collection, FrozenSet, Optional, overload, Tuple,
                     Union)
-from spinn_machine.router import Router
+from .router import Router
 from .exceptions import (SpinnMachineInvalidParameterException)
 
 
@@ -22,7 +22,6 @@ class RoutingEntry(object):
     """
     Represents an entry in a SpiNNaker chip's multicast routing table.
     """
-
     __slots__ = (
         "_defaultable", "_processor_ids",
         "_link_ids", "_spinnaker_route", "__repr")
@@ -215,7 +214,7 @@ class RoutingEntry(object):
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.
         """
-        processor_ids = (pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+        processor_ids = (pi for pi in range(0, Router.max_cores_per_router())
                          if self._spinnaker_route & 1 <<
                          (Router.MAX_LINKS_PER_ROUTER + pi))
         link_ids = (li for li in range(0, Router.MAX_LINKS_PER_ROUTER)

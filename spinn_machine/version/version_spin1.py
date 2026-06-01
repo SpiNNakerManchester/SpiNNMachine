@@ -93,8 +93,8 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     def dtcm_bytes(self) -> int:
         return 2 ** 16
 
-    @overrides(AbstractVersion.quads_maps)
-    def quads_maps(self) -> None:
+    @overrides(AbstractVersion.quad_maps)
+    def quad_maps(self) -> None:
         return None
 
     @overrides(AbstractVersion.qx_qy_qp_to_id)

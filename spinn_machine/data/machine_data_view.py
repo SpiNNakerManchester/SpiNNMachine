@@ -279,10 +279,7 @@ class MachineDataView(UtilsDataView):
         """
         if cls.__data._machine_version is None:
             cls.__data._machine_version = version_factory()
-            cls.__data._quad_map = cls.__data._machine_version.quads_maps()
-            if cls.__data._quad_map and cls.__data._v_to_p_map:
-                raise SpinnMachineException(
-                    "Can not have both quad_map and v_to_p_map")
+            cls.__data._quad_map = cls.__data._machine_version.quad_maps()
         return cls.__data._machine_version
 
     @classmethod
@@ -294,9 +291,6 @@ class MachineDataView(UtilsDataView):
 
         :param v_to_p_map:
         """
-        if cls.__data._quad_map:
-            raise SpinnMachineException(
-                "Can not have both quad_map and v_to_p_map")
         if cls.__data._v_to_p_map is None:
             cls.__data._v_to_p_map = v_to_p_map
         else:

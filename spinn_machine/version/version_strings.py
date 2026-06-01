@@ -35,6 +35,9 @@ class VersionStrings(Enum):
     EIGHT_BY_EIGHT = (5, "eight by eigth", [5, 248])
     # Tests for 8 by 8 boards with FPGAs defined
     WITH_FPGAS = (6, "with fpgas", [5])
+    # Generation specific
+    GEN1 = (7, "Gen1", [3, 5])
+    GEN2 = (8, "Gen2", [201, 248])
 
     def __new__(cls, *args: Tuple[int, str, List[int]],  **kwds: None) -> Self:
         vs = object.__new__(cls)

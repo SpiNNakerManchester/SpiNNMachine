@@ -427,7 +427,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def quads_maps(self) -> Optional[Dict[int, Tuple[int, int, int]]]:
+    def quad_maps(self) -> Optional[Dict[int, Tuple[int, int, int]]]:
         """
         If applicable returns a map of virtual id to quad qx, qy, qp
 
@@ -517,6 +517,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         :returns: the idle energy consumption of the system in joules
         """
         raise NotImplementedError
+
 
     @abstractmethod
     def get_active_energy(

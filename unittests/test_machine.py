@@ -20,7 +20,7 @@ import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.testing import log_checker
 from spinn_machine import Chip, Link, Machine, Router
-from spinn_machine.version import FIVE
+from spinn_machine.version import SPIN1_GEN
 from spinn_machine.version.version_strings import VersionStrings
 from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_min_size)
@@ -53,6 +53,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def _create_chip(self, x: int, y: int) -> Chip:
         n_cores = MachineDataView.get_machine_version().max_cores_per_chip
+
         if x == y == 0:
             return Chip(x, y, [0], range(1, n_cores), self._router,
                         self._sdram, self._nearest_ethernet_chip[0],
@@ -66,7 +67,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         test creating a new machine
         """
         # Tests the version 5 values specifically
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         new_machine = virtual_machine_by_boards(1)
 
         self.assertEqual(new_machine.width, 8)
@@ -96,7 +97,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_summary(self) -> None:
         # Strings hard coded to version 5
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         machine = virtual_machine_by_boards(1)
         self.assertEqual(
             "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 links. "

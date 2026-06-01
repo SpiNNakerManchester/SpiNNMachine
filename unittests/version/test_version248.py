@@ -30,7 +30,7 @@ class TestVersion201(unittest.TestCase):
 
     def test_attributes(self) -> None:
         version = Version248()
-        self.assertEqual(153, version.max_cores_per_chip)
+        self.assertEqual(152, version.max_cores_per_chip)
         self.assertEqual(2**30, version.max_sdram_per_chip)
         self.assertEqual(2, version.n_scamp_cores)
         self.assertEqual("Spin2 48 Chips", version.name)
@@ -84,7 +84,7 @@ class TestVersion201(unittest.TestCase):
             self.assertLess(y, 8)
             cores = chip_core_map[(x, y)]
             self.assertGreaterEqual(cores, 151)
-            self.assertLessEqual(cores, 153)
+            self.assertLessEqual(cores, 152)
 
     def test_get_potential_ethernet_chips(self) -> None:
         version = Version248()

@@ -13,5 +13,62 @@
 # limitations under the License.
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "SpiNNMachine2"
+version = "2!0.1.1b"
+description = "Representation of a SpiNNaker Machine"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "SpiNNakerTeam", email = "spinnakerusers@googlegroups.com" },
+    { name = "SpiNNcloud", email = "info@spinncloud.com" }
+]
+requires-python = ">=3.8, <4"
+dependencies = [
+    "SpiNNUtilities2 @ git+https://gitlab.com/spinnaker2/SpiNNUtils2.git@main",
+    "bidict"
+]
+keywords = ["spinnaker", "machine model"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+
+[project.urls]
+Homepage = "https://github.com/SpiNNakerManchester/SpiNNMachine"
+
+[project.optional-dependencies]
+test = [
+    "pytest-cov",
+    "testfixtures",
+    "httpretty != 1.0.0"
+]
+
+[tool.setuptools]
+zip-safe = true
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["spinn_machine", "spinn_machine.*"]
+
+[tool.setuptools.package-data]
+"*" = [
+    "spinn_machine.cfg",
+    "py.typed"
+]
+

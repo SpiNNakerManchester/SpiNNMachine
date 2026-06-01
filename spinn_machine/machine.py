@@ -186,6 +186,7 @@ class Machine(object, metaclass=AbstractBase):
             number of cores for a chip in that position.
         """
         raise NotImplementedError
+    
 
     @abstractmethod
     def get_down_xys_by_ethernet(

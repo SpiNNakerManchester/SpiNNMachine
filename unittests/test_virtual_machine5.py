@@ -19,7 +19,7 @@ from spinn_utilities.config_holder import set_config
 from spinn_machine import Machine, virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.link_data_objects import SpinnakerLinkData
-from spinn_machine.version import FIVE
+from spinn_machine.version import SPIN1_GEN
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD
 
 
@@ -30,7 +30,7 @@ class TestVirtualMachine5(unittest.TestCase):
     def setUp(self) -> None:
         unittest_setup()
 
-    def test_version_5(self) -> None:
+    def test_version_5(self):
         set_config("Machine", "version", str(FIVE))
         vm = virtual_machine(width=8, height=8)
         self.assertEqual(48, vm.n_chips)
@@ -52,7 +52,7 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual((0, 4), vm.get_unused_xy())
 
     def test_version_5_8_by_8(self) -> None:
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         vm = virtual_machine(width=8, height=8, validate=True)
         self.assertEqual(48, vm.n_chips)
         self.assertEqual(1, len(vm.ethernet_connected_chips))
@@ -147,7 +147,7 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual(data, expectes)
 
     def test_version_5_12_by_12(self) -> None:
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         vm = virtual_machine(height=12, width=12, validate=True)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))
@@ -167,7 +167,7 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual(expected_fpgas, len(vm._fpga_links))
 
     def test_version_5_16_by_16(self) -> None:
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         vm = virtual_machine(height=16, width=16, validate=True)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))
@@ -202,7 +202,7 @@ class TestVirtualMachine5(unittest.TestCase):
         assert link.connected_link == link_id
 
     def test_fpga_links_single_board(self) -> None:
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         machine = virtual_machine(width=8, height=8)
         machine.add_fpga_links()
         self._assert_fpga_link(machine, 0, 0, 7, 3, 0)
@@ -260,7 +260,7 @@ class TestVirtualMachine5(unittest.TestCase):
         self._assert_fpga_link(machine, 2, 15, 7, 3, 1)
 
     def test_fpga_links_3_board(self) -> None:
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", SPIN1_GEN.FIVE.value)
         # A List of links, one for each side of each board in a 3-board toroid
         fpga_links = [("127.0.0.0", 0, 5, 5, 1, 5),
                       ("127.0.0.0", 0, 12, 2, 0, 4),
@@ -290,7 +290,7 @@ class TestVirtualMachine5(unittest.TestCase):
             self._assert_fpga_link(machine, fpga, fpga_link, x, y, link, ip)
 
     def test_none_triad(self) -> None:
-        set_config("Machine", "version", str(FIVE))
+        set_config("Machine", "version", str(SPIN1_GEN.FIVE))
         virtual_machine(width=20, height=16)
         virtual_machine(width=12, height=16)
 

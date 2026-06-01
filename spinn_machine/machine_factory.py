@@ -89,7 +89,7 @@ def _generate_uni_direction_link_error(
         return f"Link {out} from {src_chip} to {dest_x}:{dest_y} points to " \
                f"a dead chip. Chip {src_x}:{src_y} resides on board with ip " \
                f"address {src_ethernet}. " \
-               f"Please report this to spinnakerusers@googlegroups.com \n\n"
+               f"Please report this to info@spinncloud.com \n\n"
 
     # got working chips, so get the separate Ethernet's
     dest_ethernet = original[
@@ -107,7 +107,7 @@ def _generate_uni_direction_link_error(
                f"under ip address {src_ethernet} and are local chip " \
                f"ids {local_dest_chip_x}:{local_dest_chip_y} and " \
                f"{local_src_chip_x}:{local_src_chip_y}. " \
-               f"Please report this to spinnakerusers@googlegroups.com \n\n"
+               f"Please report this to info@spinncloud.com \n\n"
     else:
         return f"Link {back} from {dest_chip} to {src_chip} does not exist, " \
                f"but the opposite does. The chips live on different boards. " \
@@ -116,7 +116,7 @@ def _generate_uni_direction_link_error(
                f"{local_dest_chip_y} and chip {src_x}:{src_y} resides on " \
                f"board with ip address {src_ethernet} with local id " \
                f"{local_src_chip_x}:{local_src_chip_y}. " \
-               f"Please report this to spinnakerusers@googlegroups.com \n\n"
+               f"Please report this to info@spinncloud.com \n\n"
 
 
 def machine_repair(
@@ -149,7 +149,7 @@ def machine_repair(
         ethernet = original[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
         msg = f"Your machine has unreachable incoming chips at {error_xy} " \
               f"on board {ethernet} which will cause algorithms to fail. " \
-              f"Please report this to spinnakerusers@googlegroups.com \n\n"
+              f"Please report this to info@spinncloud.com \n\n"
         if repair_machine:
             dead_chips.add(xy)
             logger.warning(msg)
@@ -162,7 +162,7 @@ def machine_repair(
         ethernet = original[chip.nearest_ethernet_x, chip.nearest_ethernet_y]
         msg = f"Your machine has unreachable outgoing chips at {error_xy} " \
               f"on board {ethernet} which will cause algorithms to fail. " \
-              f"Please report this to spinnakerusers@googlegroups.com \n\n"
+              f"Please report this to info@spinncloud.com \n\n"
         if repair_machine:
             dead_chips.add(xy)
             logger.warning(msg)
@@ -196,7 +196,7 @@ def machine_repair(
                       f"it was booted. This occurred on board with " \
                       f"ip address {ethernet.ip_address} " \
                       f"Please report this to " \
-                      f"spinnakerusers@googlegroups.com \n\n"
+                      f"info@spinncloud.com \n\n"
                 if repair_machine:
                     dead_chips.add(chip)
                     logger.warning(msg)

@@ -14,13 +14,15 @@
 from __future__ import annotations
 from typing import (
     Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
-from .exceptions import (
+from .exceptions import (SpinnMachineException,
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 if TYPE_CHECKING:
     from .link import Link
     from .multicast_routing_entry import MulticastRoutingEntry
     from .routing_entry import RoutingEntry
 
+SPINN1_MAX_CORES_PER_ROUTER = 18
+SPINN2_MAX_CORES_PER_ROUTER = 152
 
 class Router(object):
     """
@@ -38,7 +40,8 @@ class Router(object):
     # Number to add or sub from a link to get its opposite
     LINK_OPPOSITE = 3
 
-    MAX_CORES_PER_ROUTER = 18
+
+   
 
     __slots__ = ("_links", "_n_available_multicast_entries")
 
@@ -134,6 +137,31 @@ class Router(object):
         The number of available multicast entries in the routing tables.
         """
         return self._n_available_multicast_entries
+    
+    @staticmethod
+    def max_cores_per_router():
+        """Static method to substitute the previous constant: MAX_CORES_PER_ROUTER.
+        This is needed because Spinnaker 1 and 2 routers have different properties.
+        We import machine data view in here to avoid circular import errors.
+
+        Returns:
+            int: The MAX_CORES_PER_ROUTER for the current machine version, defaults to SPIN2_ROUTER if no machine was defined.
+        """
+
+        from spinn_machine.data import MachineDataView
+        from spinn_machine.version.version_factory import SPIN1_GEN, SPIN2_GEN
+
+        try:
+            version = MachineDataView.get_machine_version().number
+
+            if version in SPIN1_GEN._value2member_map_:
+                return SPINN1_MAX_CORES_PER_ROUTER
+            elif version in SPIN2_GEN._value2member_map_:
+                return SPINN2_MAX_CORES_PER_ROUTER
+            else:
+                raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")
+        except SpinnMachineException:
+            return SPINN2_MAX_CORES_PER_ROUTER
 
     @staticmethod
     def convert_routing_table_entry_to_spinnaker_route(
@@ -148,13 +176,15 @@ class Router(object):
             of all chip links and core links.
         """
         route_entry = 0
+        MAX_CORES_PER_ROUTER = Router.max_cores_per_router()
+
         for processor_id in routing_table_entry.processor_ids:
-            if processor_id >= Router.MAX_CORES_PER_ROUTER or processor_id < 0:
+            if processor_id >= MAX_CORES_PER_ROUTER or processor_id < 0:
                 raise SpinnMachineInvalidParameterException(
                     "route.processor_ids",
                     str(routing_table_entry.processor_ids),
                     "Processor IDs must be between 0 and " +
-                    str(Router.MAX_CORES_PER_ROUTER - 1))
+                    str(MAX_CORES_PER_ROUTER - 1))
             route_entry |= (1 << (Router.MAX_LINKS_PER_ROUTER + processor_id))
         for link_id in routing_table_entry.link_ids:
             if link_id >= Router.MAX_LINKS_PER_ROUTER or link_id < 0:
@@ -175,7 +205,9 @@ class Router(object):
         :param route: The routing table entry
         :return: The list of processor IDs, and the list of link IDs.
         """
-        processor_ids = [pi for pi in range(0, Router.MAX_CORES_PER_ROUTER)
+        MAX_CORES_PER_ROUTER = Router.max_cores_per_router()
+
+        processor_ids = [pi for pi in range(0, MAX_CORES_PER_ROUTER)
                          if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
         link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
                     if route & 1 << li]
@@ -213,3 +245,5 @@ class Router(object):
         """
         # Mod is faster than if
         return (link_id + Router.LINK_OPPOSITE) % Router.MAX_LINKS_PER_ROUTER
+    
+
