@@ -484,7 +484,7 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         set_config("Machine", "versions", VersionStrings.BIG.text)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
-        n_cores -= version.n_chips_per_board
+        n_cores -= version.n_chips_per_board * version.n_scamp_cores
         machine = virtual_machine_by_cores(n_cores)
         self.assertEqual(8, machine.width)
         self.assertEqual(8, machine.height)
@@ -498,7 +498,7 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         set_config("Machine", "versions", VersionStrings.BIG.text)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
-        n_cores -= version.n_chips_per_board
+        n_cores -= version.n_chips_per_board * version.n_scamp_cores
         machine = virtual_machine_by_cores(n_cores * 2)
         # despite asking for two boards you get a triad
         self.assertEqual(16, machine.width)
@@ -519,7 +519,7 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         set_config("Machine", "versions", VersionStrings.BIG.text)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
-        n_cores -= version.n_chips_per_board
+        n_cores -= version.n_chips_per_board * version.n_scamp_cores
         machine = virtual_machine_by_cores(n_cores * 5)
         self.assertEqual(28, machine.width)
         self.assertEqual(16, machine.height)
@@ -533,7 +533,7 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         set_config("Machine", "versions", VersionStrings.BIG.text)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
-        n_cores -= version.n_chips_per_board
+        n_cores -= version.n_chips_per_board * version.n_scamp_cores
         machine = virtual_machine_by_cores(n_cores * 9)
         self.assertEqual(28, machine.width)
         self.assertEqual(28, machine.height)
@@ -547,7 +547,7 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         set_config("Machine", "versions", VersionStrings.BIG.text)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
-        n_cores -= version.n_chips_per_board
+        n_cores -= version.n_chips_per_board * version.n_scamp_cores
         machine = virtual_machine_by_cores(n_cores * 12 + 1)
         self.assertEqual(40, machine.width)
         self.assertEqual(28, machine.height)
