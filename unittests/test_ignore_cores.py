@@ -13,15 +13,18 @@
 # limitations under the License.
 
 import unittest
+
+from parameterized import parameterized
+
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.exceptions import ConfigException
+
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
-from spinn_machine.version import SPIN2_1CHIP
+from spinn_machine.version import SPIN2_1CHIP, BIG_BOARD_TYPES
 from spinn_machine.version.version_201 import Version201
 from spinn_machine.version.version_5 import Version5
-from spinn_machine.version.version_strings import VersionStrings
 
 
 class TestDownCores(unittest.TestCase):
@@ -29,8 +32,9 @@ class TestDownCores(unittest.TestCase):
     def setUp(self) -> None:
         unittest_setup()
 
-    def test_bad_ignores(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_bad_ignores(self, _: str, version: str) -> None:
+        set_config("Machine", "version", version)
 
         try:
             IgnoreChip.parse_string("4,4,3,4:6,6,ignored_ip")
@@ -50,8 +54,9 @@ class TestDownCores(unittest.TestCase):
         except Exception as ex:
             self.assertTrue("downed_link" in str(ex))
 
-    def test_down_cores_bad_string(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_down_cores_bad_string(self, _: str, version: str) -> None:
+        set_config("Machine", "version", version)
         with self.assertRaises(ConfigException):
             IgnoreCore.parse_string("4,4,bacon")
 

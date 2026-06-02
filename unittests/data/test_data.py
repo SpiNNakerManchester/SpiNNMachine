@@ -12,16 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from parameterized import parameterized
 import unittest
+
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.exceptions import (ConfigException, DataNotYetAvialable)
+
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.version import FIVE, THREE, SPIN2_48CHIP
-from spinn_machine.version.version_strings import VersionStrings
+from spinn_machine.version import BIG_BOARD_TYPES, FIVE, THREE, SPIN2_48CHIP
 
 
 class TestSimulatorData(unittest.TestCase):
@@ -59,8 +61,9 @@ class TestSimulatorData(unittest.TestCase):
             writer.set_machine("bacon")  # type: ignore[arg-type]
         self.assertTrue(MachineDataView.has_machine())
 
-    def test_where_is_mocked(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_where_is_mocked(self, _: str, version: str) -> None:
+        set_config("Machine", "version", version)
         writer = MachineDataWriter.mock()
         self.assertEqual(
             "No Machine created yet",
@@ -77,8 +80,9 @@ class TestSimulatorData(unittest.TestCase):
             "global chip 2, 8 on 127.0.0.0 is chip 6, 4 on 127.0.8.4",
             MachineDataView.where_is_chip(machine[2, 8]))
 
-    def test_where_is_setup(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_where_is_setup(self, _: str, version: str) -> None:
+        set_config("Machine", "version", version)
         writer = MachineDataWriter.setup()
         self.assertEqual(
             "No Machine created yet",
@@ -137,43 +141,6 @@ class TestSimulatorData(unittest.TestCase):
             writer.get_physical_quad(234)
         self.assertEqual("",
                          writer.get_physical_string((1, 2), 234))
-
-    def test_mock_any(self) -> None:
-        # Should work with any version
-        set_config("Machine", "versions", VersionStrings.ANY.text)
-        # check there is a value not what it is
-        machine = MachineDataView.get_machine()
-        self.assertGreaterEqual(machine.n_chips, 1)
-
-    def test_mock_4_or_more(self) -> None:
-        # Should work with any version that has 4 plus Chips
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
-        # check there is a value not what it is
-        machine = MachineDataView.get_machine()
-        self.assertGreaterEqual(machine.n_chips, 4)
-
-    def test_mock_big(self) -> None:
-        # Should work with any version
-        set_config("Machine", "versions", VersionStrings.BIG.text)
-        # check there is a value not what it is
-        machine = MachineDataView.get_machine()
-        self.assertGreaterEqual(machine.n_chips, 48)
-
-    def test_mock3(self) -> None:
-        # Should work with any version
-        set_config("Machine", "version", "3")
-        # check there is a value not what it is
-        MachineDataView.get_machine()
-
-    def test_mock5(self) -> None:
-        set_config("Machine", "version", "5")
-        # check there is a value not what it is
-        MachineDataView.get_machine()
-
-    def test_mock201(self) -> None:
-        set_config("Machine", "version", "201")
-        # check there is a value not what it is
-        MachineDataView.get_machine()
 
     def test_get_monitors(self) -> None:
         writer = MachineDataWriter.setup()
