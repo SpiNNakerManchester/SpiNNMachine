@@ -19,7 +19,8 @@ from typing import Optional, TYPE_CHECKING
 from typing_extensions import Never
 
 from spinn_utilities.config_holder import (
-    get_config_bool, get_config_int_or_none, get_config_str_or_none)
+    get_config_bool, get_config_int_or_none, get_config_str_or_none,
+    has_config_option)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
 if TYPE_CHECKING:
@@ -94,10 +95,9 @@ def version_factory() -> AbstractVersion:
 
 def _get_cfg_version() -> Optional[int]:
     version = get_config_int_or_none("Machine", "version")
-    versions = get_config_str_or_none("Machine", "versions")
-    if versions is not None:
+    if has_config_option("Machine", "versions"):
         raise SpinnMachineException(
-            f"{versions=} in cfg is no longer supported.")
+            f"versions in cfg is no longer supported.")
     if version is None:
         logger.warning(
             "The cfg has no version. This is deprecated! Please add a version")
