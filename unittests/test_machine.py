@@ -369,7 +369,7 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_bad_ethernet_chip_x(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
-        width, _ = MachineDataView.get_machine_version().board_shape
+        width, __ = MachineDataView.get_machine_version().board_shape
         self._non_ethernet_chip(machine)._nearest_ethernet_x = width + 1
         with self.assertRaises(SpinnMachineException):
             machine.validate()
@@ -378,7 +378,7 @@ class SpinnMachineTestCase(unittest.TestCase):
     def test_bad_ethernet_chip_no_chip(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
-        _, height = MachineDataView.get_machine_version().board_shape
+        __, height = MachineDataView.get_machine_version().board_shape
         self._non_ethernet_chip(machine)._nearest_ethernet_x = height + 1
         with self.assertRaises(SpinnMachineException):
             machine.validate()
