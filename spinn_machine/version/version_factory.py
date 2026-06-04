@@ -14,7 +14,6 @@
 
 from __future__ import annotations
 import logging
-import sys
 from typing import Optional, TYPE_CHECKING
 
 from typing_extensions import Never
@@ -23,7 +22,6 @@ from spinn_utilities.config_holder import (
     get_config_bool, get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
-from .version_strings import VersionStrings
 if TYPE_CHECKING:
     from .abstract_version import AbstractVersion
 
@@ -98,14 +96,8 @@ def _get_cfg_version() -> Optional[int]:
     version = get_config_int_or_none("Machine", "version")
     versions = get_config_str_or_none("Machine", "versions")
     if versions is not None:
-        if version is not None:
-            raise SpinnMachineException(
-                f"Both {version=} and {versions=} found in cfg")
-        vs = VersionStrings.from_string(versions)
-        options = vs.options
-        # Use the fact that we run actions against different python versions
-        minor = sys.version_info.minor
-        version = options[minor % len(options)]
+        raise SpinnMachineException(
+            f"{versions=} in cfg is no longer supported.")
     if version is None:
         logger.warning(
             "The cfg has no version. This is deprecated! Please add a version")

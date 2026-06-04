@@ -38,8 +38,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unittest_setup()
 
     @parameterized.expand(ALL_BOARD_TYPES)
-    def test_new_vm_with_max_cores(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_new_vm_with_max_cores(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         n_cpus = version.max_cores_per_chip - 5
         set_config("Machine", "max_machine_core", str(n_cpus))
@@ -60,8 +60,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
                              len(list(chip.scamp_processors_ids)))
 
     @parameterized.expand(ALL_BOARD_TYPES)
-    def test_iter_chips(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_iter_chips(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine_by_boards(1)
         n_chips = MachineDataView.get_machine_version().n_chips_per_board
         self.assertEqual(n_chips, vm.n_chips)
@@ -71,8 +71,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertEqual(n_chips, count)
 
     @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
-    def test_down_chip(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_down_chip(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         down_chips = set()
         down_chips.add((1, 1))
         set_config("Machine", "down_chips", "1,1")
@@ -92,8 +92,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertEqual(target, new_target, "{}{}".format(source, path))
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_nowrap_shortest_path(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_nowrap_shortest_path(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine(16, 28, validate=True)
         for source in machine.chip_coordinates:
             for target in machine.chip_coordinates:
@@ -107,8 +107,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, 1000000, 1000000)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_fullwrap_shortest_path(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_fullwrap_shortest_path(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         width = 12
         height = 24
         machine = virtual_machine(width, height, validate=True)
@@ -125,8 +125,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_hoizontal_wrap_shortest_path(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_hoizontal_wrap_shortest_path(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         width = 12
         height = 16
         machine = virtual_machine(width, height, validate=False)
@@ -151,8 +151,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_vertical_wrap_shortest_path(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_vertical_wrap_shortest_path(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         width = 16
         height = 12
         machine = virtual_machine(width, height, validate=False)
@@ -177,8 +177,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self._check_path(source, target, path, width, height)
 
     @parameterized.expand(ALL_BOARD_TYPES)
-    def test_minimize(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_minimize(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
         for x in range(-3, 3):
             for y in range(-3, 3):
@@ -187,8 +187,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 self.assertEqual(min1, min2)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_unreachable_incoming_chips(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_unreachable_incoming_chips(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_min_size(6, 6)
 
         # Delete links incoming to 3, 3
@@ -201,8 +201,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(3, 3)], unreachable)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_unreachable_outgoing_chips(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_unreachable_outgoing_chips(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_min_size(6, 6)
 
         # Delete links outgoing from 3, 3
@@ -213,8 +213,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(3, 3)], unreachable)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_unreachable_incoming_local_chips(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_unreachable_incoming_local_chips(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -224,8 +224,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(8, 7)], unreachable)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_unreachable_outgoing_local_chips(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_unreachable_outgoing_local_chips(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -235,8 +235,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(8, 7)], unreachable)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_repair_with_local_orphan(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_repair_with_local_orphan(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
         down_str = ":".join([f"{x},{y}" for x, y in down_chips])
@@ -252,8 +252,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
 
     @parameterized.expand(BIG_BOARD_TYPES)
     def test_repair_with_one_way_links_different_boards(
-            self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+            self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine(12, 12)
         # Assumes boards of exactly size 8,8
         # Delete some links between boards
@@ -269,8 +269,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertIsNotNone(new_machine)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_oneway_link_no_repair(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_oneway_link_no_repair(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine(8, 8)
 
         # Delete some random links
@@ -287,8 +287,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertIsNotNone(new_machine)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_removed_chip_repair(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_removed_chip_repair(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
 
         del machine._chips[(3, 3)]
@@ -298,8 +298,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertFalse(new_machine.is_link_at(2, 2, 1))
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_ignores(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_ignores(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         set_config("Machine", "down_chips", "2,2:4,4:6,6,ignored_ip")
         set_config("Machine", "down_cores",
                    "1,1,4:3,3,3: 5,5,-5:7,7,7,ignored_ip:0,0,5-10")

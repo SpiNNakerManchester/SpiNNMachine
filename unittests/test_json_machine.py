@@ -74,8 +74,8 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_json_hole(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_json_hole(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         set_config("Machine", "down_chips", "3,3")
         writer = MachineDataWriter.mock()
         vm = virtual_machine_by_min_size(5, 5)
@@ -90,8 +90,8 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
-    def test_exceptions(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_exceptions(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         writer = MachineDataWriter.mock()
         vm = virtual_machine_by_boards(1)
         writer.set_machine(vm)
@@ -111,8 +111,8 @@ class TestJsonMachine(unittest.TestCase):
         self.assertEqual(vchip10.tag_ids, chip10.tag_ids)
 
     @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
-    def test_two_monitors(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_two_monitors(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine_by_boards(1)
         MachineDataWriter.mock().set_machine(vm)
         for chip in vm.chips:
@@ -128,8 +128,8 @@ class TestJsonMachine(unittest.TestCase):
             self.assertEqual(str(vchip), str(jchip))
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_ethernet_exceptions(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_ethernet_exceptions(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine_by_boards(2)
         MachineDataWriter.mock().set_machine(vm)
         eth2 = vm.ethernet_connected_chips[1]

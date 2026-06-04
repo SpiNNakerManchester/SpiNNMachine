@@ -62,8 +62,8 @@ class TestSimulatorData(unittest.TestCase):
         self.assertTrue(MachineDataView.has_machine())
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_where_is_mocked(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_where_is_mocked(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         writer = MachineDataWriter.mock()
         self.assertEqual(
             "No Machine created yet",
@@ -81,8 +81,8 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.where_is_chip(machine[2, 8]))
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_where_is_setup(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_where_is_setup(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         writer = MachineDataWriter.setup()
         self.assertEqual(
             "No Machine created yet",

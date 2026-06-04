@@ -33,8 +33,8 @@ class TestDownCores(unittest.TestCase):
         unittest_setup()
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_bad_ignores(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_bad_ignores(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
 
         try:
             IgnoreChip.parse_string("4,4,3,4:6,6,ignored_ip")
@@ -55,8 +55,8 @@ class TestDownCores(unittest.TestCase):
             self.assertTrue("downed_link" in str(ex))
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_down_cores_bad_string(self, _: str, version: str) -> None:
-        set_config("Machine", "version", version)
+    def test_down_cores_bad_string(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         with self.assertRaises(ConfigException):
             IgnoreCore.parse_string("4,4,bacon")
 
