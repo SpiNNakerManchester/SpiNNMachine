@@ -42,8 +42,8 @@ FOUR_PLUS_BOARD_TYPES = [["THREE", THREE], ["FIVE", str(FIVE)],
                          ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
 EIGHT_BY_EIGHT_BOARD_TYPES = [["FIVE", str(FIVE)],
                               ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
-BIG_BOARD_TYPES =  [["FIVE", str(FIVE)],
-                    ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
+BIG_BOARD_TYPES = [["FIVE", str(FIVE)],
+                   ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
 
 
 def version_factory() -> AbstractVersion:
@@ -97,7 +97,7 @@ def _get_cfg_version() -> Optional[int]:
     version = get_config_int_or_none("Machine", "version")
     if has_config_option("Machine", "versions"):
         raise SpinnMachineException(
-            f"versions in cfg is no longer supported.")
+            "versions in cfg is no longer supported.")
     if version is None:
         logger.warning(
             "The cfg has no version. This is deprecated! Please add a version")

@@ -213,7 +213,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(3, 3)], unreachable)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_unreachable_incoming_local_chips(self, _: str, ver_num: str) -> None:
+    def test_unreachable_incoming_local_chips(
+            self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
@@ -224,7 +225,8 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertListEqual([(8, 7)], unreachable)
 
     @parameterized.expand(BIG_BOARD_TYPES)
-    def test_unreachable_outgoing_local_chips(self, _: str, ver_num: str) -> None:
+    def test_unreachable_outgoing_local_chips(
+            self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         # Assumes boards of exactly size 8,8
         down_chips = [(8, 6), (9, 7), (9, 8)]
