@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
+
 def version_factory() -> AbstractVersion:
     """
     Creates a Machine Version class based on cfg settings.

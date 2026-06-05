@@ -22,5 +22,3 @@ class Spin2Gen(IntEnum):
     """
     SPIN2_1CHIP = 201
     SPIN2_48CHIP = 248
-
-
