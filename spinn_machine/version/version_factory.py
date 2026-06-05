@@ -32,12 +32,18 @@ logger = FormatAdapter(logging.getLogger(__name__))
 
 
 # Chip generations
-class SPIN1_GEN(IntEnum):
+class Spin1Gen(IntEnum):
+    """
+    Spin1 Generation boards
+    """
     THREE = 3
     FIVE = 5
 
 
-class SPIN2_GEN(IntEnum):
+class Spin2Gen(IntEnum):
+    """
+    Spin2 Generation boards
+    """
     SPIN2_1CHIP = 201
     SPIN2_48CHIP = 248
 
@@ -178,10 +184,10 @@ def _number_to_version(version: int) -> AbstractVersion:
     if version in [4, 5]:
         return Version5()
 
-    if version == SPIN2_GEN.SPIN2_1CHIP.value:
+    if version == Spin2Gen.SPIN2_1CHIP.value:
         return Version201()
 
-    if version == SPIN2_GEN.SPIN2_48CHIP.value:
+    if version == Spin2Gen.SPIN2_48CHIP.value:
         return Version248()
 
     raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")

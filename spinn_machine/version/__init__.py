@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from .version_factory import (SPIN1_GEN, SPIN2_GEN,
+from .version_factory import (Spin1Gen, Spin2Gen,
                               version_factory)
 
-__all__ = ["SPIN1_GEN", "SPIN2_GEN", "version_factory"]
+__all__ = ["Spin1Gen", "Spin2Gen", "version_factory"]
