@@ -30,10 +30,12 @@ if TYPE_CHECKING:
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
+
 # Chip generations
 class SPIN1_GEN(IntEnum):
     THREE = 3
     FIVE = 5
+
 
 class SPIN2_GEN(IntEnum):
     SPIN2_1CHIP = 201
