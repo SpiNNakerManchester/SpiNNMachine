@@ -14,8 +14,12 @@
 
 import pickle
 import unittest
+
+from spinn_utilities.config_holder import set_config
+
 from spinn_machine import RoutingEntry
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.version import FIVE
 
 
 class TestRoutingEntry(unittest.TestCase):
@@ -59,6 +63,7 @@ class TestRoutingEntry(unittest.TestCase):
         hash(a_multicast)
 
     def test_spinnaker_route(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         multicast1 = RoutingEntry(processor_ids=[1, 3, 4, 16],
                                   link_ids=[2, 3, 5])
         self.assertEqual(4196012, multicast1.spinnaker_route)
@@ -70,6 +75,7 @@ class TestRoutingEntry(unittest.TestCase):
         self.assertEqual(multicast3.processor_ids, {1, 3, 4, 16})
 
     def test_merger(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         link_ids = list()
         link_ids2 = list()
         proc_ids = list()
@@ -100,6 +106,7 @@ class TestRoutingEntry(unittest.TestCase):
                          set(comparison_proc_ids))
 
     def test_merger_with_different_defaultable(self) -> None:
+        set_config("Machine", "version", str(FIVE))
         a_multicast = RoutingEntry(
             processor_ids=[], link_ids=[1], incoming_link=4)
         b_multicast = RoutingEntry(
