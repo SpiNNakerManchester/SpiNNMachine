@@ -15,6 +15,7 @@
 from __future__ import annotations
 import logging
 import sys
+from enum import IntEnum
 from typing import Optional, TYPE_CHECKING
 
 from typing_extensions import Never
@@ -35,6 +36,15 @@ FIVE = 5
 # New value subject to change
 SPIN2_1CHIP = 201
 SPIN2_48CHIP = 248
+
+# Chip generations
+class SPIN1_GEN(IntEnum):
+    THREE = 3
+    FIVE = 5
+
+class SPIN2_GEN(IntEnum):
+    SPIN2_1CHIP = 201
+    SPIN2_48CHIP = 248
 
 
 def version_factory() -> AbstractVersion:

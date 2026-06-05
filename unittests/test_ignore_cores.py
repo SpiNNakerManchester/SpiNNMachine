@@ -18,7 +18,7 @@ from spinn_utilities.exceptions import ConfigException
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
-from spinn_machine.version import SPIN2_1CHIP
+from spinn_machine.version import SPIN2_GEN
 from spinn_machine.version.version_201 import Version201
 from spinn_machine.version.version_5 import Version5
 from spinn_machine.version.version_strings import VersionStrings
@@ -68,7 +68,7 @@ class TestDownCores(unittest.TestCase):
             self.assertEqual((3, 4, 2), version.id_to_qx_qy_qp(75))
 
     def test_version_401(self) -> None:
-        set_config("Machine", "version", str(SPIN2_1CHIP))
+        set_config("Machine", "version", str(SPIN2_GEN.SPIN2_1CHIP))
         ignores = IgnoreCore.parse_string("0,0,3.4.2")
         self.assertEqual(1, len(ignores))
         for ignore in ignores:
