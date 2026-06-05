@@ -15,7 +15,6 @@
 from __future__ import annotations
 import logging
 import sys
-from enum import IntEnum
 from typing import Optional, TYPE_CHECKING
 
 from typing_extensions import Never
@@ -24,29 +23,13 @@ from spinn_utilities.config_holder import (
     get_config_bool, get_config_int_or_none, get_config_str_or_none)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
+from .spin1_gen import Spin1Gen
+from .spin2_gen import Spin2Gen
 from .version_strings import VersionStrings
 if TYPE_CHECKING:
     from .abstract_version import AbstractVersion
 
 logger = FormatAdapter(logging.getLogger(__name__))
-
-
-# Chip generations
-class Spin1Gen(IntEnum):
-    """
-    Spin1 Generation boards
-    """
-    THREE = 3
-    FIVE = 5
-
-
-class Spin2Gen(IntEnum):
-    """
-    Spin2 Generation boards
-    """
-    SPIN2_1CHIP = 201
-    SPIN2_48CHIP = 248
-
 
 def version_factory() -> AbstractVersion:
     """
@@ -178,10 +161,10 @@ def _number_to_version(version: int) -> AbstractVersion:
     from .version_201 import Version201
     from .version_248 import Version248
 
-    if version in [2, 3]:
+    if version in [2, Spin1Gen.THREE.value]:
         return Version3()
 
-    if version in [4, 5]:
+    if version in [4, Spin1Gen.FIVE.value]:
         return Version5()
 
     if version == Spin2Gen.SPIN2_1CHIP.value:

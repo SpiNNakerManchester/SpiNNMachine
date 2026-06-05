@@ -1,4 +1,5 @@
-# Copyright (c) 2023 The University of Manchester
+# Copyright (c) 2026 SpiNNcloud
+# Copyright (c) 2026 The University of Manchester
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from enum import IntEnum
 
-from .spin1_gen import Spin1Gen
-from .spin2_gen import Spin2Gen
-from .version_factory import version_factory
 
-__all__ = ["Spin1Gen", "Spin2Gen", "version_factory"]
+class Spin2Gen(IntEnum):
+    """
+    Spin2 Generation boards
+    """
+    SPIN2_1CHIP = 201
+    SPIN2_48CHIP = 248
+
+
