@@ -39,12 +39,12 @@ class TestSimulatorData(unittest.TestCase):
             MachineDataView.get_chip_at(1, 1)
 
     def test_mock(self) -> None:
-        set_config("Machine", "version", str(Spin1Gen.FIVE))
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         self.assertEqual(3, MachineDataView.get_chip_at(3, 5).x)
         self.assertEqual(48, MachineDataView.get_machine().n_chips)
 
     def test_machine(self) -> None:
-        set_config("Machine", "version", str(Spin1Gen.THREE))
+        set_config("Machine", "version", str(Spin1Gen.THREE.value))
         writer = MachineDataWriter.setup()
 
         with self.assertRaises(DataNotYetAvialable):
@@ -101,7 +101,7 @@ class TestSimulatorData(unittest.TestCase):
 
     def test_v_to_p_spin1(self) -> None:
         writer = MachineDataWriter.setup()
-        set_config("Machine", "version", str(Spin1Gen.FIVE))
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         # Before setting
         with self.assertRaises(DataNotYetAvialable):
             writer.get_physical_core_id((1, 2), 3)
@@ -128,7 +128,7 @@ class TestSimulatorData(unittest.TestCase):
     def test_v_to_p_spin2(self) -> None:
         writer = MachineDataWriter.setup()
         set_config("Machine", "version", str(
-            Spin2Gen.SPIN2_48CHIP))
+            Spin2Gen.SPIN2_48CHIP.value))
 
         # exists
         self.assertEqual((7, 6, 2), writer.get_physical_quad(3))

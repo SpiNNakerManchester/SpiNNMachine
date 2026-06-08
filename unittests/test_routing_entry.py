@@ -63,7 +63,7 @@ class TestRoutingEntry(unittest.TestCase):
         hash(a_multicast)
 
     def test_spinnaker_route(self) -> None:
-        set_config("Machine", "version", str(Spin1Gen.FIVE))
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         multicast1 = RoutingEntry(processor_ids=[1, 3, 4, 16],
                                   link_ids=[2, 3, 5])
         self.assertEqual(4196012, multicast1.spinnaker_route)
@@ -75,7 +75,7 @@ class TestRoutingEntry(unittest.TestCase):
         self.assertEqual(multicast3.processor_ids, {1, 3, 4, 16})
 
     def test_merger(self) -> None:
-        set_config("Machine", "version", str(Spin1Gen.FIVE))
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         link_ids = list()
         link_ids2 = list()
         proc_ids = list()
@@ -106,7 +106,7 @@ class TestRoutingEntry(unittest.TestCase):
                          set(comparison_proc_ids))
 
     def test_merger_with_different_defaultable(self) -> None:
-        set_config("Machine", "version", str(Spin1Gen.FIVE))
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         a_multicast = RoutingEntry(
             processor_ids=[], link_ids=[1], incoming_link=4)
         b_multicast = RoutingEntry(

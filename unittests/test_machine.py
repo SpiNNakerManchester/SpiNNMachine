@@ -66,7 +66,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         test creating a new machine
         """
         # Tests the version 5 values specifically
-        set_config("Machine", "version", str(Spin1Gen.FIVE))
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         new_machine = virtual_machine_by_boards(1)
 
         self.assertEqual(new_machine.width, 8)
@@ -96,7 +96,7 @@ class SpinnMachineTestCase(unittest.TestCase):
 
     def test_summary(self) -> None:
         # Strings hard coded to version 5
-        set_config("Machine", "version", str(Spin1Gen.FIVE))
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         machine = virtual_machine_by_boards(1)
         self.assertEqual(
             "Machine on 127.0.0.0 with 48 Chips, 856 cores and 120.0 links. "
