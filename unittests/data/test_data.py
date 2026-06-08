@@ -61,7 +61,7 @@ class TestSimulatorData(unittest.TestCase):
             writer.set_machine("bacon")  # type: ignore[arg-type]
         self.assertTrue(MachineDataView.has_machine())
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # needs multiple boards
     def test_where_is_mocked(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         writer = MachineDataWriter.mock()
@@ -80,7 +80,7 @@ class TestSimulatorData(unittest.TestCase):
             "global chip 2, 8 on 127.0.0.0 is chip 6, 4 on 127.0.8.4",
             MachineDataView.where_is_chip(machine[2, 8]))
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_where_is_setup(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         writer = MachineDataWriter.setup()

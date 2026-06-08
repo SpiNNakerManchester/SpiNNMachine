@@ -91,7 +91,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                       (source[1] + path[1] - path[2]) % height)
         self.assertEqual(target, new_target, "{}{}".format(source, path))
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_nowrap_shortest_path(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         machine = virtual_machine(16, 28, validate=True)
@@ -106,7 +106,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]))
                 self._check_path(source, target, path, 1000000, 1000000)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_fullwrap_shortest_path(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         width = 12
@@ -124,7 +124,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     "{}{}{}".format(source, target, path))
                 self._check_path(source, target, path, width, height)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_hoizontal_wrap_shortest_path(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         width = 12
@@ -150,7 +150,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     "{}{}{}".format(source, target, path))
                 self._check_path(source, target, path, width, height)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_vertical_wrap_shortest_path(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         width = 16
@@ -186,7 +186,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 min2 = machine._minimize_vector(x, y)
                 self.assertEqual(min1, min2)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
     def test_unreachable_incoming_chips(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_min_size(6, 6)
@@ -200,7 +200,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unreachable = machine.unreachable_incoming_chips()
         self.assertListEqual([(3, 3)], unreachable)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
     def test_unreachable_outgoing_chips(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_min_size(6, 6)
@@ -212,7 +212,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unreachable = machine.unreachable_outgoing_chips()
         self.assertListEqual([(3, 3)], unreachable)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_unreachable_incoming_local_chips(
             self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
@@ -224,7 +224,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unreachable = machine.unreachable_incoming_local_chips()
         self.assertListEqual([(8, 7)], unreachable)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_unreachable_outgoing_local_chips(
             self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
@@ -236,7 +236,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         unreachable = machine.unreachable_outgoing_local_chips()
         self.assertListEqual([(8, 7)], unreachable)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_repair_with_local_orphan(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         # Assumes boards of exactly size 8,8
@@ -252,7 +252,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertTrue(machine.is_chip_at(8, 7))
         self.assertFalse(repaired.is_chip_at(8, 7))
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_repair_with_one_way_links_different_boards(
             self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
@@ -270,7 +270,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         new_machine = machine_repair(machine)
         self.assertIsNotNone(new_machine)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
     def test_oneway_link_no_repair(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         machine = virtual_machine(8, 8)
@@ -288,7 +288,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         new_machine = machine_repair(machine)
         self.assertIsNotNone(new_machine)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
     def test_removed_chip_repair(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
@@ -299,7 +299,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertIsNotNone(new_machine)
         self.assertFalse(new_machine.is_link_at(2, 2, 1))
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
     def test_ignores(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         set_config("Machine", "down_chips", "2,2:4,4:6,6,ignored_ip")

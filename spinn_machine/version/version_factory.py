@@ -43,6 +43,7 @@ FOUR_PLUS_BOARD_TYPES = [["THREE", THREE], ["FIVE", str(FIVE)],
 BIG_BOARD_TYPES = [["FIVE", str(FIVE)],
                    ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
 FPGA_BOARD_TYPES = [["FIVE", str(FIVE)]]
+MANY_BOARD_TYPES = ALL_BOARD_TYPES
 
 
 def version_factory() -> AbstractVersion:

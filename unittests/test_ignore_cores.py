@@ -22,7 +22,7 @@ from spinn_utilities.exceptions import ConfigException
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
-from spinn_machine.version import SPIN2_1CHIP, BIG_BOARD_TYPES
+from spinn_machine.version import SPIN2_1CHIP, MANY_BOARD_TYPES
 from spinn_machine.version.version_201 import Version201
 from spinn_machine.version.version_5 import Version5
 
@@ -32,7 +32,7 @@ class TestDownCores(unittest.TestCase):
     def setUp(self) -> None:
         unittest_setup()
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(MANY_BOARD_TYPES)
     def test_bad_ignores(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
 
@@ -54,7 +54,7 @@ class TestDownCores(unittest.TestCase):
         except Exception as ex:
             self.assertTrue("downed_link" in str(ex))
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(MANY_BOARD_TYPES)
     def test_down_cores_bad_string(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         with self.assertRaises(ConfigException):

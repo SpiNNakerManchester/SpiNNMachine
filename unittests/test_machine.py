@@ -248,7 +248,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         width, height = version.board_shape
         self.assertFalse(new_machine.is_chip_at(width + 2, height // 2))
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs many boards
     def test_machine_get_chips_on_board(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         new_machine = virtual_machine_by_boards(3)
@@ -263,7 +263,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         with self.assertRaises(KeyError):
             new_machine.get_fpga_link_with_id(3, 3)
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_x_y_over_link(self, _: str, ver_num: str) -> None:
         """
         Test the x_y with each wrap around.
@@ -292,7 +292,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(machine.xy_over_link(15, 23, 1), (16, 0))
         self.assertEqual(machine.wrap, "VerWrap")
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
     def test_get_global_xy(self, _: str, ver_num: str) -> None:
         """
         Test get_global_xy with each wrap around.
@@ -383,7 +383,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
     def test_concentric_xys(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_min_size(5, 5)

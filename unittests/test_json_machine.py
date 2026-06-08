@@ -73,7 +73,7 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
     def test_json_hole(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         set_config("Machine", "down_chips", "3,3")
@@ -127,7 +127,7 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    @parameterized.expand(BIG_BOARD_TYPES)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs board with Ethernet
     def test_ethernet_exceptions(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         vm = virtual_machine_by_boards(2)
