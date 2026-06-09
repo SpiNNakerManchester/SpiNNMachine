@@ -12,17 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from parameterized import parameterized
 from tempfile import mktemp
 import unittest
+
+
 from spinn_utilities.config_holder import set_config
+from spinn_utilities.ordered_set import OrderedSet
+
 from spinn_machine.virtual_machine import (
     virtual_machine, virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
-from spinn_machine.version import Spin1Gen, Spin2Gen
-from spinn_machine.version.version_strings import VersionStrings
 from spinn_utilities.ordered_set import OrderedSet
+from spinn_machine.version import (BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES,
+                                   Spin1Gen, Spin2Gen)
 
 
 class TestJsonMachine(unittest.TestCase):
@@ -69,8 +74,9 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    def test_json_hole(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
+    def test_json_hole(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         set_config("Machine", "down_chips", "3,3")
         writer = MachineDataWriter.mock()
         vm = virtual_machine_by_min_size(5, 5)
@@ -84,8 +90,9 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    def test_exceptions(self) -> None:
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+    @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
+    def test_exceptions(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         writer = MachineDataWriter.mock()
         vm = virtual_machine_by_boards(1)
         writer.set_machine(vm)
@@ -104,8 +111,9 @@ class TestJsonMachine(unittest.TestCase):
         vchip10 = jm[1, 0]
         self.assertEqual(vchip10.tag_ids, chip10.tag_ids)
 
-    def test_two_monitors(self) -> None:
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+    @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
+    def test_two_monitors(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine_by_boards(1)
         MachineDataWriter.mock().set_machine(vm)
         for chip in vm.chips:
@@ -120,8 +128,9 @@ class TestJsonMachine(unittest.TestCase):
         for vchip, jchip in zip(vm, jm):
             self.assertEqual(str(vchip), str(jchip))
 
-    def test_ethernet_exceptions(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs board with Ethernet
+    def test_ethernet_exceptions(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine_by_boards(2)
         MachineDataWriter.mock().set_machine(vm)
         eth2 = vm.ethernet_connected_chips[1]

@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 from .spin1_gen import Spin1Gen
 from .spin2_gen import Spin2Gen
-from .version_factory import version_factory
+from .version_factory import (
+    ALL_BOARD_TYPES, BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES,
+    FPGA_BOARD_TYPES, MANY_BOARD_TYPES, version_factory)
 
-__all__ = ["Spin1Gen", "Spin2Gen", "version_factory"]
+__all__ = ["ALL_BOARD_TYPES", "BIG_BOARD_TYPES", "FOUR_PLUS_BOARD_TYPES",
+           "FPGA_BOARD_TYPES", "MANY_BOARD_TYPES", "version_factory",
+           "Spin1Gen", "Spin2Gen"]
+
