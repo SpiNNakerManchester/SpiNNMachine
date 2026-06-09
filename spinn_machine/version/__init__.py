@@ -14,8 +14,9 @@
 
 from .version_factory import (
     ALL_BOARD_TYPES, BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES,
-    FPGA_BOARD_TYPES, FIVE, SPIN2_1CHIP, SPIN2_48CHIP, THREE, version_factory)
+    FPGA_BOARD_TYPES, MANY_BOARD_TYPES,
+    FIVE, SPIN2_1CHIP, SPIN2_48CHIP, THREE, version_factory)
 
 __all__ = ["ALL_BOARD_TYPES", "BIG_BOARD_TYPES", "FOUR_PLUS_BOARD_TYPES",
-           "FPGA_BOARD_TYPES", "version_factory",
+           "FPGA_BOARD_TYPES", "MANY_BOARD_TYPES", "version_factory",
            "FIVE", "SPIN2_1CHIP", "SPIN2_48CHIP", "THREE"]
