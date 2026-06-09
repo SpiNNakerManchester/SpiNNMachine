@@ -15,13 +15,15 @@
 """
 test for testing the python representation of a spinnaker machine
 """
+from parameterized import parameterized
+
 from testfixtures import LogCapture  # type: ignore[import]
 import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.testing import log_checker
 from spinn_machine import Chip, Link, Machine, Router
-from spinn_machine.version import FIVE
-from spinn_machine.version.version_strings import VersionStrings
+from spinn_machine.version import (
+    ALL_BOARD_TYPES, BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES, FIVE)
 from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.config_setup import unittest_setup
@@ -144,11 +146,12 @@ class SpinnMachineTestCase(unittest.TestCase):
                 "Not all Chips had the same n_router_tables. "
                 "The counts where Counter({456: 1, 321: 1}).")
 
-    def test_chip_already_exists(self) -> None:
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_chip_already_exists(self, _: str, ver_num: str) -> None:
         """
         check that adding a chip that already exists causes an error
         """
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
         with self.assertRaises(SpinnMachineAlreadyExistsException):
             machine.add_chip(Chip(
@@ -156,23 +159,25 @@ class SpinnMachineTestCase(unittest.TestCase):
                 self._nearest_ethernet_chip[0],
                 self._nearest_ethernet_chip[1], self._ip))
 
-    def test_machine_get_chip_at(self) -> None:
+    @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
+    def test_machine_get_chip_at(self, _: str, ver_num: str) -> None:
         """
         test the get_chip_at function from the machine with a valid request
         """
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+        set_config("Machine", "version", ver_num)
         new_machine = virtual_machine_by_min_size(2, 2)
         self.assertEqual(1, new_machine[1, 0].x)
         self.assertEqual(0, new_machine[1, 0].y)
         self.assertEqual(0, new_machine[0, 1].x)
         self.assertEqual(1, new_machine[0, 1].y)
 
-    def test_machine_big_x(self) -> None:
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_machine_big_x(self, _: str, ver_num: str) -> None:
         """
         test the add_chips method of the machine chips outside size
         should produce an error
         """
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         width, height = version.board_shape
         # create an empty Machine
@@ -186,12 +191,13 @@ class SpinnMachineTestCase(unittest.TestCase):
         except SpinnMachineException as ex:
             self.assertIn(f"has an x larger than width {width}", str(ex))
 
-    def test_machine_big_y(self) -> None:
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_machine_big_y(self, _: str, ver_num: str) -> None:
         """
         test the add_chips method of the machine chips outside size
         should produce an error
         """
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         width, height = version.board_shape
         # create an empty Machine
@@ -205,41 +211,46 @@ class SpinnMachineTestCase(unittest.TestCase):
         except SpinnMachineException as ex:
             self.assertIn(f"has a y larger than height {height}", str(ex))
 
-    def test_machine_get_chip_at_invalid_location(self) -> None:
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_machine_get_chip_at_invalid_location(
+            self, _: str, ver_num: str) -> None:
         """
         test the machines get_chip_at function with a location thats invalid,
         should return None and not produce an error
         """
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         new_machine = virtual_machine_by_boards(1)
         width, height = version.board_shape
         self.assertEqual(None, new_machine.get_chip_at(width + 2, height // 2))
 
-    def test_machine_is_chip_at_true(self) -> None:
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_machine_is_chip_at_true(self, _: str, ver_num: str) -> None:
         """
         test the is_chip_at function of the machine with a position to
         request which does indeed contain a chip
         """
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         new_machine = virtual_machine_by_boards(1)
         width, height = version.board_shape
         self.assertTrue(new_machine.is_chip_at(width // 2, height // 2))
 
-    def test_machine_is_chip_at_false(self) -> None:
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_machine_is_chip_at_false(self, _: str, ver_num: str) -> None:
         """
         test the is_chip_at function of the machine with a position to
         request which does not contain a chip
         """
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         new_machine = virtual_machine_by_boards(1)
         width, height = version.board_shape
         self.assertFalse(new_machine.is_chip_at(width + 2, height // 2))
 
-    def test_machine_get_chips_on_board(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs many boards
+    def test_machine_get_chips_on_board(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         new_machine = virtual_machine_by_boards(3)
         version = MachineDataView.get_machine_version()
         for eth_chip in new_machine._ethernet_connected_chips:
@@ -252,13 +263,14 @@ class SpinnMachineTestCase(unittest.TestCase):
         with self.assertRaises(KeyError):
             new_machine.get_fpga_link_with_id(3, 3)
 
-    def test_x_y_over_link(self) -> None:
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
+    def test_x_y_over_link(self, _: str, ver_num: str) -> None:
         """
         Test the x_y with each wrap around.
 
         Notice that the function only does the math not validate the values.
         """
-        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
+        set_config("Machine", "version", ver_num)
         # full wrap around
         machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.xy_over_link(0, 0, 4), (23, 23))
@@ -280,13 +292,14 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(machine.xy_over_link(15, 23, 1), (16, 0))
         self.assertEqual(machine.wrap, "VerWrap")
 
-    def test_get_global_xy(self) -> None:
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
+    def test_get_global_xy(self, _: str, ver_num: str) -> None:
         """
         Test get_global_xy with each wrap around.
 
         Notice that the function only does the math not validate the values.
         """
-        set_config("Machine", "versions", VersionStrings.EIGHT_BY_EIGHT.text)
+        set_config("Machine", "version", ver_num)
         # full wrap around
         machine = MachineDataView.get_machine_version().create_machine(24, 24)
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
@@ -304,8 +317,9 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(machine.get_global_xy(1, 4, 4, 20), (5, 0))
         self.assertEqual(machine.get_global_xy(5, 0, 20, 4), (25, 4))
 
-    def test_no_boot(self) -> None:
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_no_boot(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         width, height = version.board_shape
         # create an empty Machine
@@ -313,8 +327,9 @@ class SpinnMachineTestCase(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_negative_x(self) -> None:
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_negative_x(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         width, height = version.board_shape
         # create an empty Machine
@@ -324,8 +339,9 @@ class SpinnMachineTestCase(unittest.TestCase):
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_negative_y(self) -> None:
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_negative_y(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         width, height = version.board_shape
         # create an empty Machine
@@ -341,31 +357,35 @@ class SpinnMachineTestCase(unittest.TestCase):
                 return chip
         raise SpinnMachineException("No none Ethernet Chip")
 
-    def test_weird_ethernet1(self) -> None:
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+    @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
+    def test_weird_ethernet1(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
         self._non_ethernet_chip(machine)._ip_address = "1.2.3.4"
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_bad_ethernet_chip_x(self) -> None:
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+    @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
+    def test_bad_ethernet_chip_x(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
-        width, _ = MachineDataView.get_machine_version().board_shape
+        width, __ = MachineDataView.get_machine_version().board_shape
         self._non_ethernet_chip(machine)._nearest_ethernet_x = width + 1
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_bad_ethernet_chip_no_chip(self) -> None:
-        set_config("Machine", "versions", VersionStrings.FOUR_PLUS.text)
+    @parameterized.expand(FOUR_PLUS_BOARD_TYPES)
+    def test_bad_ethernet_chip_no_chip(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
-        _, height = MachineDataView.get_machine_version().board_shape
+        __, height = MachineDataView.get_machine_version().board_shape
         self._non_ethernet_chip(machine)._nearest_ethernet_x = height + 1
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
-    def test_concentric_xys(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)  # Needs a large board
+    def test_concentric_xys(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_min_size(5, 5)
         found = list(machine.concentric_xys(2, (2, 2)))
         expected = [
@@ -375,8 +395,9 @@ class SpinnMachineTestCase(unittest.TestCase):
             (2, 4), (1, 3), (0, 2), (0, 1), (0, 0), (1, 0)]
         self.assertListEqual(expected, found)
 
-    def test_too_few_cores(self) -> None:
-        set_config("Machine", "versions", VersionStrings.ANY.text)
+    @parameterized.expand(ALL_BOARD_TYPES)
+    def test_too_few_cores(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_boards(1)
         # Hack to get n_processors return a low number
         chip = next(machine.chips)

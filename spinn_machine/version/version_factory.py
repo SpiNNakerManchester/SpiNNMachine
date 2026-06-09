@@ -14,16 +14,16 @@
 
 from __future__ import annotations
 import logging
-import sys
 from typing import Optional, TYPE_CHECKING
+import os
 
 from typing_extensions import Never
 
 from spinn_utilities.config_holder import (
-    get_config_bool, get_config_int_or_none, get_config_str_or_none)
+    get_config_bool, get_config_int_or_none, get_config_str_or_none,
+    has_config_option)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
-from .version_strings import VersionStrings
 if TYPE_CHECKING:
     from .abstract_version import AbstractVersion
 
@@ -35,6 +35,19 @@ FIVE = 5
 # New value subject to change
 SPIN2_1CHIP = 201
 SPIN2_48CHIP = 248
+
+ALL_BOARD_TYPES = [["THREE", str(THREE)], ["FIVE", str(FIVE)],
+                   ["SPIN2_1CHIP", str(SPIN2_1CHIP)],
+                   ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
+FOUR_PLUS_BOARD_TYPES = [["THREE", THREE], ["FIVE", str(FIVE)],
+                         ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
+BIG_BOARD_TYPES = [["FIVE", str(FIVE)],
+                   ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
+FPGA_BOARD_TYPES = [["FIVE", str(FIVE)]]
+if os.environ.get("SPINNAKER_TEST_ALL") == "true":
+    MANY_BOARD_TYPES = ALL_BOARD_TYPES
+else:
+    MANY_BOARD_TYPES = BIG_BOARD_TYPES
 
 
 def version_factory() -> AbstractVersion:
@@ -86,16 +99,9 @@ def version_factory() -> AbstractVersion:
 
 def _get_cfg_version() -> Optional[int]:
     version = get_config_int_or_none("Machine", "version")
-    versions = get_config_str_or_none("Machine", "versions")
-    if versions is not None:
-        if version is not None:
-            raise SpinnMachineException(
-                f"Both {version=} and {versions=} found in cfg")
-        vs = VersionStrings.from_string(versions)
-        options = vs.options
-        # Use the fact that we run actions against different python versions
-        minor = sys.version_info.minor
-        version = options[minor % len(options)]
+    if has_config_option("Machine", "versions"):
+        raise SpinnMachineException(
+            "versions in cfg is no longer supported.")
     if version is None:
         logger.warning(
             "The cfg has no version. This is deprecated! Please add a version")

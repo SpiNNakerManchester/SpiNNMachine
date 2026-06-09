@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from parameterized import parameterized
 import unittest
 from spinn_utilities.config_holder import set_config
 
@@ -19,7 +20,7 @@ from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.version.version_strings import VersionStrings
+from spinn_machine.version import BIG_BOARD_TYPES
 from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_chips,
     virtual_machine_by_cores, virtual_machine_by_min_size)
@@ -30,8 +31,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
     def setUp(self) -> None:
         unittest_setup()
 
-    def test_illegal_vms(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_illegal_vms(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         with self.assertRaises(SpinnMachineException):
             virtual_machine(width=-1, height=2)
         with self.assertRaises(SpinnMachineException):
@@ -49,8 +51,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
             virtual_machine(size_x, None,  # type: ignore[arg-type]
                             validate=True)
 
-    def test_version_hole(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_version_hole(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         set_config("Machine", "down_chips", "3,3")
         vm = virtual_machine(height=8, width=8, validate=True)
         self.assertEqual(47, vm.n_chips)
@@ -62,8 +65,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(228, count)
         self.assertEqual(48, len(list(vm.local_xys)))
 
-    def test_version_hole2(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_version_hole2(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         set_config("Machine", "down_chips", "0,3")
         vm = virtual_machine(height=8, width=8, validate=True)
         self.assertEqual(47, vm.n_chips)
@@ -76,30 +80,34 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(48, len(list(vm.local_xys)))
         self.assertEqual((0, 4), vm.get_unused_xy())
 
-    def test_12_n_plus4_12_m_4(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_12_n_plus4_12_m_4(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         size_x = 12 * 5
         size_y = 12 * 7
         vm = virtual_machine(size_x + 4, size_y + 4, validate=True)
         self.assertEqual(size_x * size_y, vm.n_chips)
 
-    def test_12_n_12_m(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_12_n_12_m(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         size_x = 12 * 5
         size_y = 12 * 7
         vm = virtual_machine(size_x, size_y, validate=True)
         self.assertEqual(size_x * size_y, vm.n_chips)
 
-    def test_chips(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_chips(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine(8, 8)
         count = 0
         for _chip in vm.chips:
             count += 1
         self.assertEqual(count, 48)
 
-    def test_ethernet_chips_exist(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_ethernet_chips_exist(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine(width=48, height=24)
         for eth_chip in vm._ethernet_connected_chips:
             self.assertTrue(vm.get_chip_at(eth_chip.x, eth_chip.y),
@@ -107,14 +115,16 @@ class TestVirtualMachine48Chips(unittest.TestCase):
                             "_configured_chips"
                             .format(eth_chip.x, eth_chip.y))
 
-    def test_boot_chip(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_boot_chip(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine(12, 12)
         # based on Chip equaling its XY
         self.assertEqual(vm.boot_chip, (0, 0))
 
-    def test_get_chips_on_boards(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_get_chips_on_boards(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         vm = virtual_machine(width=24, height=36)
         # check each chip appears only once on the entire board
         count00 = 0
@@ -140,13 +150,15 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         # (24,36) is not on this virtual machine
         self.assertEqual(count2436, 0)
 
-    def test_big(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_big(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         virtual_machine(
             width=240, height=240, validate=True)
 
-    def test_48_28(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_48_28(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine(48, 24, validate=True)
         global_xys = set()
         for chip in machine.chips:
@@ -160,8 +172,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(len(global_xys), 48 * 24)
         self.assertEqual(48, len(list(machine.local_xys)))
 
-    def test_48_24(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_48_24(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine(48, 24, validate=True)
         global_xys = set()
         for chip in machine.chips:
@@ -175,8 +188,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(len(global_xys), 48 * 24)
         self.assertEqual(48, len(list(machine.local_xys)))
 
-    def test_52_28(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_52_28(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine(48, 24, validate=True)
         global_xys = set()
         for chip in machine.chips:
@@ -190,8 +204,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(len(global_xys), 48 * 24)
         self.assertEqual(48, len(list(machine.local_xys)))
 
-    def test_52_24(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_52_24(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine(48, 24, validate=True)
         global_xys = set()
         for chip in machine.chips:
@@ -205,8 +220,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(len(global_xys), 48 * 24)
         self.assertEqual(48, len(list(machine.local_xys)))
 
-    def test_fullwrap_holes(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_fullwrap_holes(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         hole = [(1, 1), (7, 7), (8, 1), (8, 10), (1, 8), (9, 6)]
         hole_str = ":".join([f"{x},{y}" for x, y in hole])
         set_config("Machine", "down_chips", hole_str)
@@ -256,8 +272,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
             assert xy not in hole
         self.assertEqual(46, count)
 
-    def test_horizontal_wrap_holes(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_horizontal_wrap_holes(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         hole = [(1, 1), (7, 7), (8, 13), (8, 10), (1, 8), (9, 6)]
         hole_str = ":".join([f"{x},{y}" for x, y in hole])
         set_config("Machine", "down_chips", hole_str)
@@ -307,8 +324,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
             assert xy not in hole
         self.assertEqual(46, count)
 
-    def test_vertical_wrap_holes(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_vertical_wrap_holes(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         hole = [(1, 1), (7, 7), (8, 1), (8, 10), (13, 8), (9, 6)]
         hole_str = ":".join([f"{x},{y}" for x, y in hole])
         set_config("Machine", "down_chips", hole_str)
@@ -358,8 +376,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
             assert xy not in hole
         self.assertEqual(46, count)
 
-    def test_no_wrap_holes(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_no_wrap_holes(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         hole = [(1, 1), (7, 7), (8, 13), (8, 10), (13, 8), (9, 6)]
         hole_str = ":".join([f"{x},{y}" for x, y in hole])
         set_config("Machine", "down_chips", hole_str)
@@ -409,8 +428,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
             assert xy not in hole
         self.assertEqual(46, count)
 
-    def test_n_cores_full_wrap(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_n_cores_full_wrap(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         cores_per_board = sum(version.chip_core_map.values())
         machine = virtual_machine(12, 12)
@@ -421,8 +441,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, cores_per_board * 3)
 
-    def test_n_cores_no_wrap(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_n_cores_no_wrap(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         cores_per_board = sum(version.chip_core_map.values())
         machine = virtual_machine(16, 16)
@@ -447,8 +468,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         where = machine.where_is_xy(15, 15)
         self.assertEqual(where, 'No chip 15, 15 found')
 
-    def test_n_cores_horizontal_wrap(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_n_cores_horizontal_wrap(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         cores_per_board = sum(version.chip_core_map.values())
         machine = virtual_machine(12, 16)
@@ -459,8 +481,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, cores_per_board * 3)
 
-    def test_n_cores_vertical_wrap(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_n_cores_vertical_wrap(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         cores_per_board = sum(version.chip_core_map.values())
         machine = virtual_machine(12, 16)
@@ -469,8 +492,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, cores_per_board * 3)
 
-    def test_n_cores_8_8(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_n_cores_8_8(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         cores_per_board = sum(version.chip_core_map.values())
         machine = virtual_machine(8, 8)
@@ -480,8 +504,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         n_cores = sum(chip.n_processors for chip in machine.chips)
         self.assertEqual(n_cores, cores_per_board)
 
-    def test_8_8_by_cores_1_board(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_8_8_by_cores_1_board(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board * version.n_scamp_cores
@@ -494,8 +519,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(8, machine.height)
         self.assertEqual(n_cores, machine.total_available_user_cores)
 
-    def test_8_8_by_cores_3_boards(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_8_8_by_cores_3_boards(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board * version.n_scamp_cores
@@ -515,8 +541,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(16, machine.height)
         self.assertEqual(n_cores*3, machine.total_available_user_cores)
 
-    def test_8_8_by_cores_6_boards(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_8_8_by_cores_6_boards(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board * version.n_scamp_cores
@@ -529,8 +556,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(16, machine.height)
         self.assertEqual(n_cores * 6, machine.total_available_user_cores)
 
-    def test_8_8_by_cores_12_boards(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_8_8_by_cores_12_boards(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board * version.n_scamp_cores
@@ -543,8 +571,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(28, machine.height)
         self.assertEqual(n_cores * 12, machine.total_available_user_cores)
 
-    def test_8_8_by_cores_18_boards(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_8_8_by_cores_18_boards(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board * version.n_scamp_cores
@@ -557,14 +586,16 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(28, machine.height)
         self.assertEqual(n_cores * 18, machine.total_available_user_cores)
 
-    def test_by_min_size(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_by_min_size(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         machine = virtual_machine_by_min_size(15, 21)
         self.assertGreaterEqual(machine.width, 15)
         self.assertGreaterEqual(machine.height, 21)
 
-    def test_by_min_size_edge_case(self) -> None:
-        set_config("Machine", "versions", VersionStrings.BIG.text)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_by_min_size_edge_case(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         width, height = version.board_shape
         machine = virtual_machine_by_min_size(width, height + 1)
