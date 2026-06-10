@@ -20,7 +20,7 @@ from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
-from spinn_machine.version import Spin2Gen
+from spinn_machine.version import Spin1Gen, Spin2Gen
 from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_chips,
     virtual_machine_by_cores)
@@ -178,7 +178,7 @@ class TestVirtualMachine201(unittest.TestCase):
         self.assertEqual(count04, 0)
 
     def test_fpga_links_single_board(self) -> None:
-        set_config("Machine", "version", "3")
+        set_config("Machine", "version", str(Spin1Gen.THREE.value))
         machine = virtual_machine(width=2, height=2)
         machine.add_fpga_links()
         self.assertEqual(0, len(machine._fpga_links))
