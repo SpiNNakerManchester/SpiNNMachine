@@ -260,8 +260,6 @@ class SpinnMachineTestCase(unittest.TestCase):
         # TODO use version info from other PR
         with self.assertRaises(KeyError):
             new_machine.get_spinnaker_link_with_id(1)
-        with self.assertRaises(KeyError):
-            new_machine.get_fpga_link_with_id(3, 3)
 
     @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_x_y_over_link(self, _: str, ver_num: str) -> None:

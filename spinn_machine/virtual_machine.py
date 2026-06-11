@@ -77,7 +77,6 @@ def virtual_machine_generator() -> Machine:
 
     # Work out and add the SpiNNaker links and FPGA links
     machine.add_spinnaker_links()
-    machine.add_fpga_links()
 
     logger.info("Created {}", machine.summary_string())
 
@@ -281,7 +280,6 @@ class _VirtualMachine(object):
             self._machine.add_chip(new_chip)
 
         self._machine.add_spinnaker_links()
-        self._machine.add_fpga_links()
         if validate:
             self._machine.validate()
 

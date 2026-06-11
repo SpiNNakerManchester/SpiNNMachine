@@ -70,7 +70,6 @@ def _machine_ignore(
                 chip.ip_address, chip.tag_ids)
         new_machine.add_chip(chip)
     new_machine.add_spinnaker_links()
-    new_machine.add_fpga_links()
     new_machine.validate()
     return new_machine
 

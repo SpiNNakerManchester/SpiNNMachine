@@ -158,7 +158,6 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
         machine.add_chip(chip)
 
     machine.add_spinnaker_links()
-    machine.add_fpga_links()
 
     return machine
 
