@@ -415,18 +415,6 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
-        """
-        The list of Local X, Y, link, fpga_link_id and fpga_id
-
-        These are applied local to each Ethernet Chip and even if the link is
-        connected to another board
-
-        :returns: List of Tuples of Local X, Y, link, fpga_link_id and fpga_id
-        """
-        raise NotImplementedError
-
-    @abstractmethod
     def quads_maps(self) -> Optional[Dict[int, Tuple[int, int, int]]]:
         """
         If applicable returns a map of virtual id to quad qx, qy, qp

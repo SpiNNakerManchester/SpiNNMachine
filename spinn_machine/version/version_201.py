@@ -86,9 +86,5 @@ class Version201(VersionSpin2):
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         return []
 
-    @overrides(VersionSpin2.fpga_links)
-    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
-        return []
-
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version201)
