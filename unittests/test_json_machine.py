@@ -25,7 +25,6 @@ from spinn_machine.virtual_machine import (
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.json_machine import (machine_from_json, to_json_path)
-from spinn_utilities.ordered_set import OrderedSet
 from spinn_machine.version import (BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES,
                                    Spin1Gen, Spin2Gen)
 
