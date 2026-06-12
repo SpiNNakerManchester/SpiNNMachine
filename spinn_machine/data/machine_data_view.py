@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from spinn_machine.chip import Chip
     from spinn_machine.fpga_links import FpgaLinks
     from spinn_machine.machine import Machine
+    from spinn_machine.spinnaker_links import SpinnakerLinks
     from spinn_machine.version.abstract_version import AbstractVersion
 # pylint: disable=protected-access
 
@@ -56,6 +57,7 @@ class _MachineDataModel(object):
         "_n_chips_required",
         "_n_chips_in_graph",
         "_quad_map",
+        "_spinnaker_links",
         "_user_accessed_machine",
         "_v_to_p_map"
     ]
@@ -90,6 +92,7 @@ class _MachineDataModel(object):
         self._fpga_links: Optional[FpgaLinks] = None
         self._machine: Optional[Machine] = None
         self._n_chips_in_graph: Optional[int] = None
+        self._spinnaker_links: Optional[SpinnakerLinks] = None
         self._v_to_p_map: Optional[Dict[XY, bytes]] = None
         self._user_accessed_machine = False
 
@@ -510,3 +513,17 @@ class MachineDataView(UtilsDataView):
         from spinn_machine.fpga_links import FpgaLinks
         cls.__data._fpga_links = FpgaLinks()
         return cls.__data._fpga_links
+
+    @classmethod
+    def get_spinnaker_links(cls) -> SpinnakerLinks:
+        """
+        :return: The Spinnaker links on the related machine
+        """
+        if cls.__data._spinnaker_links:
+            return cls.__data._spinnaker_links
+
+        # delayed import due to circular dependencies
+        # pylint: disable=import-outside-toplevel
+        from spinn_machine.spinnaker_links import SpinnakerLinks
+        cls.__data._spinnaker_links = SpinnakerLinks()
+        return cls.__data._spinnaker_links

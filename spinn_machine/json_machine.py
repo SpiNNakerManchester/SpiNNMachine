@@ -157,8 +157,6 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
                 _int(tag) for tag in tag_ids])
         machine.add_chip(chip)
 
-    machine.add_spinnaker_links()
-
     return machine
 
 

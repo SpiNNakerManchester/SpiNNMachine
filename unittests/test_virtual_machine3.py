@@ -119,7 +119,8 @@ class TestVirtualMachine3(unittest.TestCase):
             count += 1
         self.assertEqual(4, count)
         self.assertEqual((2, 0), vm.get_unused_xy())
-        spinnaker_links = (list(vm.spinnaker_links))
+        links = MachineDataView.get_spinnaker_links()
+        spinnaker_links = (list(links.spinnaker_links))
         expected: List = []
         sp = SpinnakerLinkData(0, 0, 0, 3, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))

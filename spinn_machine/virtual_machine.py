@@ -75,9 +75,6 @@ def virtual_machine_generator() -> Machine:
                            "machine settings ignored.")
         machine = machine_from_json(json_path)
 
-    # Work out and add the SpiNNaker links and FPGA links
-    machine.add_spinnaker_links()
-
     logger.info("Created {}", machine.summary_string())
 
     return machine
@@ -279,7 +276,6 @@ class _VirtualMachine(object):
                     xy, scamp_processors, configured_chips)
             self._machine.add_chip(new_chip)
 
-        self._machine.add_spinnaker_links()
         if validate:
             self._machine.validate()
 

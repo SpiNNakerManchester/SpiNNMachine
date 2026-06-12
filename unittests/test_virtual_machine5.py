@@ -66,7 +66,8 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual(240, count)
         count = sum(_chip.n_processors for _chip in vm.chips)
         self.assertEqual(count, 856)
-        spinnaker_links = (list(vm.spinnaker_links))
+        s_links = MachineDataView.get_spinnaker_links()
+        spinnaker_links = (list(s_links.spinnaker_links))
         expected: List = []
         sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))
@@ -164,7 +165,8 @@ class TestVirtualMachine5(unittest.TestCase):
             count += 1
         self.assertEqual(48, count)
         self.assertEqual((12, 0), vm.get_unused_xy())
-        spinnaker_links = (list(vm.spinnaker_links))
+        s_links = MachineDataView.get_spinnaker_links()
+        spinnaker_links = (list(s_links.spinnaker_links))
         expected: List = []
         self.assertEqual(expected, spinnaker_links)
         # 8 links on each of the 6 sides recorded 3 times
@@ -187,7 +189,8 @@ class TestVirtualMachine5(unittest.TestCase):
             count += 1
         self.assertEqual(48, count)
         self.assertEqual((0, 4), vm.get_unused_xy())
-        spinnaker_links = (list(vm.spinnaker_links))
+        s_links = MachineDataView.get_spinnaker_links()
+        spinnaker_links = (list(s_links.spinnaker_links))
         expected: List = []
         sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))

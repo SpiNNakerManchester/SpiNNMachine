@@ -93,7 +93,8 @@ class SpinnMachineTestCase(unittest.TestCase):
         self.assertEqual(
             "[VirtualNoWrapMachine: width=8, height=8, n_chips=48]",
             new_machine.__repr__())
-        self.assertEqual(2, len(list(new_machine.spinnaker_links)))
+        spinnaker_links = MachineDataView.get_spinnaker_links()
+        self.assertEqual(2, len(list(spinnaker_links.spinnaker_links)))
         self.assertEqual(1023, new_machine.min_n_router_enteries)
 
     def test_summary(self) -> None:
@@ -257,9 +258,6 @@ class SpinnMachineTestCase(unittest.TestCase):
             chips_in_machine = list(
                 new_machine.get_existing_xys_on_board(eth_chip))
             self.assertEqual(len(chips_in_machine), version.n_chips_per_board)
-        # TODO use version info from other PR
-        with self.assertRaises(KeyError):
-            new_machine.get_spinnaker_link_with_id(1)
 
     @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_x_y_over_link(self, _: str, ver_num: str) -> None:
