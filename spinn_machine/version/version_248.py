@@ -18,7 +18,7 @@ from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
 
 from .version_48_chips import Version48Chips
-from .version_factory import SPIN2_48CHIP
+from .version_factory import Spin2Gen
 from .version_spin2 import VersionSpin2
 
 # TODO get real values
@@ -52,7 +52,7 @@ class Version248(VersionSpin2, Version48Chips):
     @property
     @overrides(VersionSpin2.number)
     def number(self) -> int:
-        return SPIN2_48CHIP
+        return Spin2Gen.SPIN2_48CHIP.value
 
     @property
     @overrides(VersionSpin2.chip_core_map)
