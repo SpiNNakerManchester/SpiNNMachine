@@ -22,6 +22,7 @@ from spinn_machine.fpga_links import FpgaLinks
 from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
+from spinn_machine.version import Spin1Gen
 from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_chips,
     virtual_machine_by_cores)
@@ -226,7 +227,7 @@ class TestVirtualMachine3(unittest.TestCase):
 
 
     def test_fpga_links_single_board(self) -> None:
-        set_config("Machine", "version", "3")
+        set_config("Machine", "version", str(Spin1Gen.THREE.value))
         try:
             FpgaLinks.get_fpga_version()
             raise AssertionError("Should not get here")

@@ -21,7 +21,7 @@ from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.no_wrap_machine import NoWrapMachine
 from spinn_machine.machine import Machine
 
-from .version_factory import SPIN2_1CHIP
+from .version_factory import Spin2Gen
 from .version_spin2 import VersionSpin2
 
 CHIPS_PER_BOARD: Final = {(0, 0): 153}
@@ -43,7 +43,7 @@ class Version201(VersionSpin2):
     @property
     @overrides(VersionSpin2.number)
     def number(self) -> int:
-        return SPIN2_1CHIP
+        return Spin2Gen.SPIN2_1CHIP.value
 
     @property
     @overrides(VersionSpin2.board_shape)
