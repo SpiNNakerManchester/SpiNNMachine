@@ -82,8 +82,15 @@ class Version5(VersionSpin1, Version48Chips):
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         return [(0, 0, 4)]
 
-    @overrides(VersionSpin1.fpga_links)
     def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
+        """
+        The list of Local X, Y, link, fpga_link_id and fpga_id
+
+        These are applied local to each Ethernet Chip and even if the link is
+        connected to another board
+
+        :returns: List of Tuples of Local X, Y, link, fpga_link_id and fpga_id
+        """
         return [(0, 0, 3, 1, 1), (0, 0, 4, 1, 0), (0, 0, 5, 0, 15),
                 (0, 1, 3, 1, 3), (0, 1, 4, 1, 2),
                 (0, 2, 3, 1, 5), (0, 2, 4, 1, 4),

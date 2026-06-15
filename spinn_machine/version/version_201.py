@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, Final, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Final, Optional, Sequence, Tuple
 
 from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
@@ -81,14 +81,6 @@ class Version201(VersionSpin2):
     @overrides(VersionSpin2.supports_multiple_boards)
     def supports_multiple_boards(self) -> bool:
         return False
-
-    @overrides(VersionSpin2.spinnaker_links)
-    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
-        return []
-
-    @overrides(VersionSpin2.fpga_links)
-    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
-        return []
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version201)

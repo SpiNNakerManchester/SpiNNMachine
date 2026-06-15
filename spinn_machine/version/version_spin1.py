@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from typing import List, Iterable, Tuple, Final
-from spinn_utilities.abstract_base import AbstractBase
+from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
@@ -124,3 +124,15 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     def _get_core_active_energy(
             self, sum_core_active_times: float) -> float:
         return sum_core_active_times * self.WATTS_PER_CORE_ACTIVE_OVERHEAD
+
+    @abstractmethod
+    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+        """
+        The list of Local X, Y and link Id to add spinnaker links to
+
+        These are applied local to each Ethernet Chip and only if the link is
+        not connected to another board
+
+        :returns: List of Tuples of Local X, Y, and spinnaker link Id
+        """
+        raise NotImplementedError
