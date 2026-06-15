@@ -33,7 +33,7 @@ _SpinLinkKey: TypeAlias = tuple[str | XY, int]
 
 class SpinnakerLinks(object):
     """
-    Represents the spinnaker links associated with the Machine
+    Represents the Spinnaker links associated with the Machine
 
     The use case is
     spinnaker_links = View.get_fpga_links()
@@ -41,8 +41,8 @@ class SpinnakerLinks(object):
     This requires a Machine to exist or be creatable
 
 
-    A fail fast test to see if Fpga links are supported is
-    FpgaLinks.get_fpga_version()
+    A fail fast test to see if Spinnaker links are supported is
+    FPGALinks.get_fpga_version()
     This call works as soon as cfg data read in. No Machine needed.
     """
 
