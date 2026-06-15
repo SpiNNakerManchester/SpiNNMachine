@@ -695,7 +695,6 @@ class Machine(object, metaclass=AbstractBase):
         raise NotImplementedError(
             "Moved to View.get_fpga_links().get_fpga_link_with_id")
 
-
     def get_fpga_link_with_id(
             self, fpga_id: int, fpga_link_id: int,
             board_address: Optional[str] = None,

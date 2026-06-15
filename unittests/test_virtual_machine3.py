@@ -225,7 +225,6 @@ class TestVirtualMachine3(unittest.TestCase):
         # (24,36) is not on this virtual machine
         self.assertEqual(count04, 0)
 
-
     def test_fpga_links_single_board(self) -> None:
         set_config("Machine", "version", str(Spin1Gen.THREE.value))
         try:
@@ -238,7 +237,6 @@ class TestVirtualMachine3(unittest.TestCase):
             raise AssertionError("Should not get here")
         except SpinnMachineException as ex:
             self.assertIn("does not support FPGA links", str(ex))
-
 
     def test_size_2_2(self) -> None:
         set_config("Machine", "version", "2")

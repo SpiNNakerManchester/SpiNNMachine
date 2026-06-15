@@ -100,7 +100,6 @@ class FpgaLinks(object):
             return fpga_id + 1, 0
         return fpga_id, fpga_link + 1
 
-
     def get_fpga_link_with_id(
             self, fpga_id: int, fpga_link_id: int,
             board_address: Optional[str] = None,
@@ -164,7 +163,6 @@ class FpgaLinks(object):
         The number of FPGA links in the machine.
         """
         return len(self._fpga_links)
-
 
     def __str__(self) -> str:
         return f"{self.n_fpga_links} FPGA Links"

@@ -206,8 +206,8 @@ class TestVirtualMachine5(unittest.TestCase):
 
     @staticmethod
     def _assert_fpga_link(
-            fpga_links_object: FpgaLinks, fpga: int, fpga_link: int, x: int, y: int,
-            link_id: int, ip: Optional[str] = None) -> None:
+            fpga_links_object: FpgaLinks, fpga: int, fpga_link: int,
+            x: int, y: int, link_id: int, ip: Optional[str] = None) -> None:
         link = fpga_links_object.get_fpga_link_with_id(fpga, fpga_link, ip)
         assert link.connected_chip_x == x
         assert link.connected_chip_y == y
