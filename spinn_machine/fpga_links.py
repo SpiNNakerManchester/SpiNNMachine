@@ -31,9 +31,9 @@ logger = FormatAdapter(logging.getLogger(__name__))
 _FpgaLinkKey: TypeAlias = tuple[str | XY, int, int]
 
 
-class FpgaLinks(object):
+class FPGALinks(object):
     """
-    Represents the Fpga links associated with the Machine
+    Represents the FPGA links associated with the Machine
 
     The use case is
     fpga_links = View.get_fpga_links()
@@ -41,8 +41,8 @@ class FpgaLinks(object):
     This requires a Machine to exist or be creatable
 
 
-    A fail fast test to see if Fpga links are supported is
-    FpgaLinks.get_fpga_version()
+    A fail fast test to see if FPGA links are supported is
+    FPGALinks.get_fpga_version()
     This call works as soon as cfg data read in. No Machine needed.
     """
 

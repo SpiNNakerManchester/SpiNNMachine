@@ -700,7 +700,7 @@ class Machine(object, metaclass=AbstractBase):
             board_address: Optional[str] = None,
             chip_coords: Optional[XY] = None) -> Never:
         """
-        Moved to FpgaLinks Object
+        Moved to FPGALinks Object
 
         Use View.get_fpga_links().get_fpga_link_with_id instead
 

@@ -21,7 +21,7 @@ from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
 from spinn_machine.version import Spin2Gen
-from spinn_machine.fpga_links import FpgaLinks
+from spinn_machine.fpga_links import FPGALinks
 from spinn_machine.spinnaker_links import SpinnakerLinks
 from spinn_machine.virtual_machine import (
     virtual_machine_by_boards, virtual_machine_by_chips,
@@ -79,7 +79,7 @@ class TestVirtualMachine201(unittest.TestCase):
         except SpinnMachineException as ex:
             self.assertIn("does not support Spinnaker links", str(ex))
         try:
-            FpgaLinks.get_fpga_version()
+            FPGALinks.get_fpga_version()
             raise AssertionError("Should not get here")
         except SpinnMachineException as ex:
             self.assertIn("does not support FPGA links", str(ex))

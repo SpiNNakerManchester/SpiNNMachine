@@ -20,7 +20,7 @@ from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version.version_factory import version_factory
 if TYPE_CHECKING:
     from spinn_machine.chip import Chip
-    from spinn_machine.fpga_links import FpgaLinks
+    from spinn_machine.fpga_links import FPGALinks
     from spinn_machine.machine import Machine
     from spinn_machine.spinnaker_links import SpinnakerLinks
     from spinn_machine.version.abstract_version import AbstractVersion
@@ -89,7 +89,7 @@ class _MachineDataModel(object):
         self._soft_reset()
         self._all_monitor_cores: int = 0
         self._ethernet_monitor_cores: int = 0
-        self._fpga_links: Optional[FpgaLinks] = None
+        self._fpga_links: Optional[FPGALinks] = None
         self._machine: Optional[Machine] = None
         self._n_chips_in_graph: Optional[int] = None
         self._spinnaker_links: Optional[SpinnakerLinks] = None
@@ -501,7 +501,7 @@ class MachineDataView(UtilsDataView):
         return "No requirements known"
 
     @classmethod
-    def get_fpga_links(cls) -> FpgaLinks:
+    def get_fpga_links(cls) -> FPGALinks:
         """
         :return: The FPGA links on the related machine
         """
@@ -510,8 +510,8 @@ class MachineDataView(UtilsDataView):
 
         # delayed import due to circular dependencies
         # pylint: disable=import-outside-toplevel
-        from spinn_machine.fpga_links import FpgaLinks
-        cls.__data._fpga_links = FpgaLinks()
+        from spinn_machine.fpga_links import FPGALinks
+        cls.__data._fpga_links = FPGALinks()
         return cls.__data._fpga_links
 
     @classmethod

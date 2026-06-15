@@ -18,7 +18,7 @@ from spinn_utilities.config_holder import set_config
 from spinn_machine import Chip, Link, Router, virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
-from spinn_machine.fpga_links import FpgaLinks
+from spinn_machine.fpga_links import FPGALinks
 from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
@@ -131,7 +131,7 @@ class TestVirtualMachine3(unittest.TestCase):
         expected.append((((1, 0), 1), sp))
         self.assertEqual(expected, spinnaker_links)
         try:
-            FpgaLinks.get_fpga_version()
+            FPGALinks.get_fpga_version()
             raise AssertionError("Should not get here")
         except SpinnMachineException as ex:
             self.assertIn("does not support FPGA links", str(ex))
@@ -228,7 +228,7 @@ class TestVirtualMachine3(unittest.TestCase):
     def test_fpga_links_single_board(self) -> None:
         set_config("Machine", "version", str(Spin1Gen.THREE.value))
         try:
-            FpgaLinks.get_fpga_version()
+            FPGALinks.get_fpga_version()
             raise AssertionError("Should not get here")
         except SpinnMachineException as ex:
             self.assertIn("does not support FPGA links", str(ex))

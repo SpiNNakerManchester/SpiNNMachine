@@ -20,7 +20,7 @@ from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
-from spinn_machine.fpga_links import FpgaLinks
+from spinn_machine.fpga_links import FPGALinks
 from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.version import Spin1Gen
 from spinn_machine.version.version_5 import CHIPS_PER_BOARD
@@ -206,7 +206,7 @@ class TestVirtualMachine5(unittest.TestCase):
 
     @staticmethod
     def _assert_fpga_link(
-            fpga_links_object: FpgaLinks, fpga: int, fpga_link: int,
+            fpga_links_object: FPGALinks, fpga: int, fpga_link: int,
             x: int, y: int, link_id: int, ip: Optional[str] = None) -> None:
         link = fpga_links_object.get_fpga_link_with_id(fpga, fpga_link, ip)
         assert link.connected_chip_x == x
