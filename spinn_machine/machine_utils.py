@@ -36,6 +36,7 @@ def contact_email() -> str:
     """
     The best contact email address depending on the cfg settings
 
+    :return: the best email or emails for users to contact
     """
     email = _contact_email_by_cfg("spalloc_server")
     if email:
