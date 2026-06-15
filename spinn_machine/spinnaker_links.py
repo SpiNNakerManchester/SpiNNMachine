@@ -16,7 +16,7 @@
 FPGA Links on a SpiNNaker machine
 """
 import logging
-from typing import Iterator, Optional, TypeAlias, Union
+from typing import Iterator, Optional, TypeAlias
 
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY

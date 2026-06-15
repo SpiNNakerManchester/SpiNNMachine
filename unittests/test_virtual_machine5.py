@@ -16,7 +16,7 @@ from typing import List, Optional
 import unittest
 from spinn_utilities.config_holder import set_config
 
-from spinn_machine import Machine, virtual_machine
+from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.data.machine_data_writer import MachineDataWriter
@@ -178,7 +178,6 @@ class TestVirtualMachine5(unittest.TestCase):
     def test_version_5_16_by_16(self) -> None:
         set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         vm = virtual_machine(height=16, width=16, validate=True)
-        machine = virtual_machine(width=12, height=12)
         MachineDataWriter.mock().set_machine(vm)
         self.assertEqual(144, vm.n_chips)
         self.assertEqual(3, len(vm.ethernet_connected_chips))
