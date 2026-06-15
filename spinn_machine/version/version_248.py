@@ -59,10 +59,5 @@ class Version248(VersionSpin2, Version48Chips):
     def chip_core_map(self) -> Dict[XY, int]:
         return CHIPS_PER_BOARD
 
-    @overrides(VersionSpin2.spinnaker_links)
-    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
-        # TODO
-        return []
-
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version248)

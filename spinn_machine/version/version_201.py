@@ -82,9 +82,5 @@ class Version201(VersionSpin2):
     def supports_multiple_boards(self) -> bool:
         return False
 
-    @overrides(VersionSpin2.spinnaker_links)
-    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
-        return []
-
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Version201)
