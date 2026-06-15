@@ -24,26 +24,24 @@ from spinn_utilities.config_holder import (
     has_config_option)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
+from .spin1_gen import Spin1Gen
+from .spin2_gen import Spin2Gen
+
 if TYPE_CHECKING:
     from .abstract_version import AbstractVersion
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
-# Constant when wanting a specific version
-THREE = 3
-FIVE = 5
-# New value subject to change
-SPIN2_1CHIP = 201
-SPIN2_48CHIP = 248
-
-ALL_BOARD_TYPES = [["THREE", str(THREE)], ["FIVE", str(FIVE)],
-                   ["SPIN2_1CHIP", str(SPIN2_1CHIP)],
-                   ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
-FOUR_PLUS_BOARD_TYPES = [["THREE", THREE], ["FIVE", str(FIVE)],
-                         ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
-BIG_BOARD_TYPES = [["FIVE", str(FIVE)],
-                   ["SPIN2_48CHIP", str(SPIN2_48CHIP)]]
-FPGA_BOARD_TYPES = [["FIVE", str(FIVE)]]
+ALL_BOARD_TYPES = [["THREE", str(Spin1Gen.THREE.value)],
+                   ["FIVE", str(Spin1Gen.FIVE.value)],
+                   ["SPIN2_1CHIP", str(Spin2Gen.SPIN2_1CHIP.value)],
+                   ["SPIN2_48CHIP", str(Spin2Gen.SPIN2_48CHIP.value)]]
+FOUR_PLUS_BOARD_TYPES = [["THREE", str(Spin1Gen.THREE.value)],
+                         ["FIVE", str(Spin1Gen.FIVE.value)],
+                         ["SPIN2_48CHIP", str(Spin2Gen.SPIN2_48CHIP.value)]]
+BIG_BOARD_TYPES = [["FIVE", str(Spin1Gen.FIVE.value)],
+                   ["SPIN2_48CHIP", str(Spin2Gen.SPIN2_48CHIP.value)]]
+FPGA_BOARD_TYPES = [["FIVE", str(Spin1Gen.FIVE.value)]]
 if os.environ.get("SPINNAKER_TEST_ALL") == "true":
     MANY_BOARD_TYPES = ALL_BOARD_TYPES
 else:
@@ -173,16 +171,16 @@ def _number_to_version(version: int) -> AbstractVersion:
     from .version_201 import Version201
     from .version_248 import Version248
 
-    if version in [2, 3]:
+    if version in [2, Spin1Gen.THREE.value]:
         return Version3()
 
-    if version in [4, 5]:
+    if version in [4, Spin1Gen.FIVE.value]:
         return Version5()
 
-    if version == SPIN2_1CHIP:
+    if version == Spin2Gen.SPIN2_1CHIP.value:
         return Version201()
 
-    if version == SPIN2_48CHIP:
+    if version == Spin2Gen.SPIN2_48CHIP.value:
         return Version248()
 
     raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")

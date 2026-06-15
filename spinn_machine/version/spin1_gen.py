@@ -1,4 +1,5 @@
-# Copyright (c) 2023 The University of Manchester
+# Copyright (c) 2026 SpiNNcloud
+# Copyright (c) 2026 The University of Manchester
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .spin1_gen import Spin1Gen
-from .spin2_gen import Spin2Gen
-from .version_factory import (
-    ALL_BOARD_TYPES, BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES,
-    FPGA_BOARD_TYPES, MANY_BOARD_TYPES, version_factory)
+from enum import IntEnum
 
-__all__ = ["ALL_BOARD_TYPES", "BIG_BOARD_TYPES", "FOUR_PLUS_BOARD_TYPES",
-           "FPGA_BOARD_TYPES", "MANY_BOARD_TYPES", "version_factory",
-           "Spin1Gen", "Spin2Gen"]
+
+class Spin1Gen(IntEnum):
+    """
+    Spin1 Generation boards
+    """
+    THREE = 3
+    FIVE = 5
