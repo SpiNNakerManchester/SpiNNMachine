@@ -46,7 +46,8 @@ class TestingUtils(unittest.TestCase):
         self.assertEqual(SPINNAKERTEAM, contact_email())
 
     def test_manchester_remote(self) -> None:
-        set_config("Machine", "remote_spinnaker_url", "somewhere.manchester.ac.uk")
+        set_config("Machine", "remote_spinnaker_url",
+                   "somewhere.manchester.ac.uk")
         set_config("Machine", "version", str(Spin2Gen.SPIN2_1CHIP.value))
         self.assertEqual(SPINNAKERTEAM, contact_email())
 

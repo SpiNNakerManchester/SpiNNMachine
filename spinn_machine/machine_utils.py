@@ -21,6 +21,7 @@ from spinn_machine.version.version_spin2 import VersionSpin2
 SPINNAKERTEAM = "spinnakerusers@googlegroups.com"
 SPINNCLOUD = "info@spinncloud.com"
 
+
 def _contact_email_by_cfg(option: str) -> Optional[str]:
     config = get_config_str_or_none("Machine", option)
     if config:
