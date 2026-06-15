@@ -46,8 +46,7 @@ class SpinnakerLinks(object):
     This call works as soon as cfg data read in. No Machine needed.
     """
 
-    __slots__ = (
-        "_spinnaker_links")
+    __slots__ = ("_spinnaker_links",)
 
     @staticmethod
     def get_spinnaker_version() -> VersionSpin1:

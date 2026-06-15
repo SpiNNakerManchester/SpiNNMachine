@@ -46,8 +46,7 @@ class FPGALinks(object):
     This call works as soon as cfg data read in. No Machine needed.
     """
 
-    __slots__ = (
-        "_fpga_links")
+    __slots__ = ("_fpga_links",)
 
     @staticmethod
     def get_fpga_version() -> Version5:
