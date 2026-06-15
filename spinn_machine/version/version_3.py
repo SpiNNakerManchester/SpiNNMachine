@@ -87,10 +87,6 @@ class Version3(VersionSpin1):
     def spinnaker_links(self) -> List[Tuple[int, int, int]]:
         return [(0, 0, 3), (1, 0, 0)]
 
-    @overrides(VersionSpin1.fpga_links)
-    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
-        return []
-
     @overrides(VersionSpin1.get_idle_energy)
     def get_idle_energy(
             self, time_s: float, n_frames: int, n_boards: int,
