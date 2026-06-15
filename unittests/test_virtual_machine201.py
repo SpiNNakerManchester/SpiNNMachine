@@ -20,7 +20,7 @@ from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
-from spinn_machine.version import Spin1Gen, Spin2Gen
+from spinn_machine.version import Spin2Gen
 from spinn_machine.fpga_links import FpgaLinks
 from spinn_machine.spinnaker_links import SpinnakerLinks
 from spinn_machine.virtual_machine import (
