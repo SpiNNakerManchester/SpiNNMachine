@@ -50,4 +50,4 @@ def contact_email() -> str:
         else:
             return SPINNAKERTEAM
     except Exception:
-        return SPINNAKERTEAM
+        return SPINNAKERTEAM + " or " + SPINNCLOUD
