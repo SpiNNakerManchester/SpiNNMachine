@@ -690,9 +690,9 @@ class Machine(object, metaclass=AbstractBase):
 
         Use View.get_spinnaker_links().get_spinnaker_link_with_id instead
 
-        :raises NotImplementedError
+        :raises SpinnMachineException
         """
-        raise NotImplementedError(
+        raise SpinnMachineException(
             "Moved to View.get_fpga_links().get_fpga_link_with_id")
 
     def get_fpga_link_with_id(
@@ -704,9 +704,9 @@ class Machine(object, metaclass=AbstractBase):
 
         Use View.get_fpga_links().get_fpga_link_with_id instead
 
-        :raises NotImplementedError
+        :raises SpinnMachineException
         """
-        raise NotImplementedError(
+        raise SpinnMachineException(
             "Moved to View.get_fpga_links().get_fpga_link_with_id")
 
     def __str__(self) -> str:
