@@ -118,7 +118,7 @@ class SpinnakerLinks(object):
             if link_data is not None:
                 return link_data
             machine = MachineDataView.get_machine()
-            if chip_coords not in machine._chips:
+            if chip_coords not in machine.chips:
                 raise KeyError(f"No chip {chip_coords} found!")
             raise KeyError(
                 f"SpiNNaker link {spinnaker_link_id} not found"
