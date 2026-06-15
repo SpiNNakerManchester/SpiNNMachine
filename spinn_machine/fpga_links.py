@@ -28,7 +28,7 @@ from spinn_machine.version.version_5 import Version5
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
-_FpgaLinkKey: TypeAlias = tuple[[str | XY], int, int]
+_FpgaLinkKey: TypeAlias = tuple[str | XY, int, int]
 
 
 class FpgaLinks(object):
@@ -64,7 +64,7 @@ class FpgaLinks(object):
             raise SpinnMachineException(
                 f"{version=} does not support FPGA links")
 
-    def __init__(self):
+    def __init__(self) -> None:
         version = self.get_fpga_version()
         self._fpga_links: dict[_FpgaLinkKey, FPGALinkData] = dict()
 

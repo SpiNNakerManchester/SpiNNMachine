@@ -16,7 +16,7 @@
 FPGA Links on a SpiNNaker machine
 """
 import logging
-from typing import Iterator, Optional, TypeAlias
+from typing import Iterator, Optional, TypeAlias, Union
 
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
@@ -28,7 +28,7 @@ from spinn_machine.version.version_spin1 import VersionSpin1
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
-_SpinLinkKey: TypeAlias = tuple[[str | XY], int]
+_SpinLinkKey: TypeAlias = tuple[str | XY, int]
 
 
 class SpinnakerLinks(object):
@@ -64,7 +64,7 @@ class SpinnakerLinks(object):
             raise SpinnMachineException(
                 f"{version=} does not support Spinnaker links")
 
-    def __init__(self):
+    def __init__(self) -> None:
         version = self.get_spinnaker_version()
         # The dictionary of SpiNNaker links by board address and "ID" (int)
         self._spinnaker_links: dict[_SpinLinkKey, SpinnakerLinkData] = dict()
@@ -146,7 +146,7 @@ class SpinnakerLinks(object):
         self._spinnaker_links[(x, y), spinnaker_link_id] = link_data
 
     def __str__(self) -> str:
-        return f"{len(self.self._spinnaker_links)} Spinnaker Links"
+        return f"{len(self._spinnaker_links)} Spinnaker Links"
 
     def __repr__(self) -> str:
         return self.__str__()

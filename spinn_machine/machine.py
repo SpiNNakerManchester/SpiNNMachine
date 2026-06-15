@@ -15,8 +15,10 @@ from __future__ import annotations
 from collections import Counter
 import logging
 from typing import (
-    Dict, Iterable, Iterator, List, Optional, Never, Sequence, Set, Tuple,
+    Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple,
     TYPE_CHECKING)
+
+from typing_extensions import Never
 
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
