@@ -70,8 +70,6 @@ def _machine_ignore(
                 chip.nearest_ethernet_x, chip.nearest_ethernet_y,
                 chip.ip_address, chip.tag_ids)
         new_machine.add_chip(chip)
-    new_machine.add_spinnaker_links()
-    new_machine.add_fpga_links()
     new_machine.validate()
     return new_machine
 

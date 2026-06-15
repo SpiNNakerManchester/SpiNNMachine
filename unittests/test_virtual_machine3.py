@@ -17,6 +17,8 @@ import unittest
 from spinn_utilities.config_holder import set_config
 from spinn_machine import Chip, Link, Router, virtual_machine
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.data import MachineDataView
+from spinn_machine.fpga_links import FPGALinks
 from spinn_machine.link_data_objects import SpinnakerLinkData
 from spinn_machine.exceptions import (
     SpinnMachineException, SpinnMachineAlreadyExistsException)
@@ -118,7 +120,8 @@ class TestVirtualMachine3(unittest.TestCase):
             count += 1
         self.assertEqual(4, count)
         self.assertEqual((2, 0), vm.get_unused_xy())
-        spinnaker_links = (list(vm.spinnaker_links))
+        links = MachineDataView.get_spinnaker_links()
+        spinnaker_links = (list(links.spinnaker_links))
         expected: List = []
         sp = SpinnakerLinkData(0, 0, 0, 3, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))
@@ -127,7 +130,11 @@ class TestVirtualMachine3(unittest.TestCase):
         expected.append((('127.0.0.0', 1), sp))
         expected.append((((1, 0), 1), sp))
         self.assertEqual(expected, spinnaker_links)
-        self.assertEqual(0, len(vm._fpga_links))
+        try:
+            FPGALinks.get_fpga_version()
+            raise AssertionError("Should not get here")
+        except SpinnMachineException as ex:
+            self.assertIn("does not support FPGA links", str(ex))
 
     def test_new_vm_with_max_cores(self) -> None:
         set_config("Machine", "version", "2")
@@ -220,9 +227,16 @@ class TestVirtualMachine3(unittest.TestCase):
 
     def test_fpga_links_single_board(self) -> None:
         set_config("Machine", "version", str(Spin1Gen.THREE.value))
-        machine = virtual_machine(width=2, height=2)
-        machine.add_fpga_links()
-        self.assertEqual(0, len(machine._fpga_links))
+        try:
+            FPGALinks.get_fpga_version()
+            raise AssertionError("Should not get here")
+        except SpinnMachineException as ex:
+            self.assertIn("does not support FPGA links", str(ex))
+        try:
+            MachineDataView.get_fpga_links()
+            raise AssertionError("Should not get here")
+        except SpinnMachineException as ex:
+            self.assertIn("does not support FPGA links", str(ex))
 
     def test_size_2_2(self) -> None:
         set_config("Machine", "version", "2")

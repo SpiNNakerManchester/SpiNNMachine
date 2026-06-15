@@ -20,7 +20,9 @@ from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version.version_factory import version_factory
 if TYPE_CHECKING:
     from spinn_machine.chip import Chip
+    from spinn_machine.fpga_links import FPGALinks
     from spinn_machine.machine import Machine
+    from spinn_machine.spinnaker_links import SpinnakerLinks
     from spinn_machine.version.abstract_version import AbstractVersion
 # pylint: disable=protected-access
 
@@ -48,12 +50,14 @@ class _MachineDataModel(object):
         # Data values cached
         "_all_monitor_cores",
         "_ethernet_monitor_cores",
+        "_fpga_links",
         "_machine",
         "_machine_version",
         "_n_boards_required",
         "_n_chips_required",
         "_n_chips_in_graph",
         "_quad_map",
+        "_spinnaker_links",
         "_user_accessed_machine",
         "_v_to_p_map"
     ]
@@ -85,8 +89,10 @@ class _MachineDataModel(object):
         self._soft_reset()
         self._all_monitor_cores: int = 0
         self._ethernet_monitor_cores: int = 0
+        self._fpga_links: Optional[FPGALinks] = None
         self._machine: Optional[Machine] = None
         self._n_chips_in_graph: Optional[int] = None
+        self._spinnaker_links: Optional[SpinnakerLinks] = None
         self._v_to_p_map: Optional[Dict[XY, bytes]] = None
         self._user_accessed_machine = False
 
@@ -493,3 +499,31 @@ class MachineDataView(UtilsDataView):
             return (f"Graph requires "
                     f"{cls.__data._n_chips_in_graph} Chips")
         return "No requirements known"
+
+    @classmethod
+    def get_fpga_links(cls) -> FPGALinks:
+        """
+        :return: The FPGA links on the related machine
+        """
+        if cls.__data._fpga_links:
+            return cls.__data._fpga_links
+
+        # delayed import due to circular dependencies
+        # pylint: disable=import-outside-toplevel
+        from spinn_machine.fpga_links import FPGALinks
+        cls.__data._fpga_links = FPGALinks()
+        return cls.__data._fpga_links
+
+    @classmethod
+    def get_spinnaker_links(cls) -> SpinnakerLinks:
+        """
+        :return: The Spinnaker links on the related machine
+        """
+        if cls.__data._spinnaker_links:
+            return cls.__data._spinnaker_links
+
+        # delayed import due to circular dependencies
+        # pylint: disable=import-outside-toplevel
+        from spinn_machine.spinnaker_links import SpinnakerLinks
+        cls.__data._spinnaker_links = SpinnakerLinks()
+        return cls.__data._spinnaker_links
