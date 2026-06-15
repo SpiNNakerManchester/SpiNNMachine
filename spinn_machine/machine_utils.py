@@ -34,7 +34,7 @@ def _contact_email_by_cfg(option: str) -> Optional[str]:
 
 def contact_email() -> str:
     """
-    The best contact email addr ess depeding on the cfg settings
+    The best contact email address depending on the cfg settings
 
     """
     email = _contact_email_by_cfg("spalloc_server")
