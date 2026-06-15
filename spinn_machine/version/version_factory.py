@@ -14,27 +14,38 @@
 
 from __future__ import annotations
 import logging
-import sys
 from typing import Optional, TYPE_CHECKING
+import os
 
 from typing_extensions import Never
 
 from spinn_utilities.config_holder import (
-    get_config_bool, get_config_int_or_none, get_config_str_or_none)
+    get_config_bool, get_config_int_or_none, get_config_str_or_none,
+    has_config_option)
 from spinn_utilities.log import FormatAdapter
 from spinn_machine.exceptions import SpinnMachineException
-from .version_strings import VersionStrings
+from .spin1_gen import Spin1Gen
+from .spin2_gen import Spin2Gen
+
 if TYPE_CHECKING:
     from .abstract_version import AbstractVersion
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
-# Constant when wanting a specific version
-THREE = 3
-FIVE = 5
-# New value subject to change
-SPIN2_1CHIP = 201
-SPIN2_48CHIP = 248
+ALL_BOARD_TYPES = [["THREE", str(Spin1Gen.THREE.value)],
+                   ["FIVE", str(Spin1Gen.FIVE.value)],
+                   ["SPIN2_1CHIP", str(Spin2Gen.SPIN2_1CHIP.value)],
+                   ["SPIN2_48CHIP", str(Spin2Gen.SPIN2_48CHIP.value)]]
+FOUR_PLUS_BOARD_TYPES = [["THREE", str(Spin1Gen.THREE.value)],
+                         ["FIVE", str(Spin1Gen.FIVE.value)],
+                         ["SPIN2_48CHIP", str(Spin2Gen.SPIN2_48CHIP.value)]]
+BIG_BOARD_TYPES = [["FIVE", str(Spin1Gen.FIVE.value)],
+                   ["SPIN2_48CHIP", str(Spin2Gen.SPIN2_48CHIP.value)]]
+FPGA_BOARD_TYPES = [["FIVE", str(Spin1Gen.FIVE.value)]]
+if os.environ.get("SPINNAKER_TEST_ALL") == "true":
+    MANY_BOARD_TYPES = ALL_BOARD_TYPES
+else:
+    MANY_BOARD_TYPES = BIG_BOARD_TYPES
 
 
 def version_factory() -> AbstractVersion:
@@ -86,16 +97,9 @@ def version_factory() -> AbstractVersion:
 
 def _get_cfg_version() -> Optional[int]:
     version = get_config_int_or_none("Machine", "version")
-    versions = get_config_str_or_none("Machine", "versions")
-    if versions is not None:
-        if version is not None:
-            raise SpinnMachineException(
-                f"Both {version=} and {versions=} found in cfg")
-        vs = VersionStrings.from_string(versions)
-        options = vs.options
-        # Use the fact that we run actions against different python versions
-        minor = sys.version_info.minor
-        version = options[minor % len(options)]
+    if has_config_option("Machine", "versions"):
+        raise SpinnMachineException(
+            "versions in cfg is no longer supported.")
     if version is None:
         logger.warning(
             "The cfg has no version. This is deprecated! Please add a version")
@@ -167,16 +171,16 @@ def _number_to_version(version: int) -> AbstractVersion:
     from .version_201 import Version201
     from .version_248 import Version248
 
-    if version in [2, 3]:
+    if version in [2, Spin1Gen.THREE.value]:
         return Version3()
 
-    if version in [4, 5]:
+    if version in [4, Spin1Gen.FIVE.value]:
         return Version5()
 
-    if version == SPIN2_1CHIP:
+    if version == Spin2Gen.SPIN2_1CHIP.value:
         return Version201()
 
-    if version == SPIN2_48CHIP:
+    if version == Spin2Gen.SPIN2_48CHIP.value:
         return Version248()
 
     raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")

@@ -20,6 +20,7 @@ from spinn_utilities.config_holder import set_config
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 from spinn_machine.exceptions import SpinnMachineException
+from spinn_machine.version import Spin1Gen
 from spinn_machine.virtual_machine import virtual_machine_generator
 
 
@@ -29,14 +30,14 @@ class TestVirtualMachineGenerator(unittest.TestCase):
         unittest_setup()
 
     def test_only_width(self) -> None:
-        set_config("Machine", "version", "5")
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         set_config("Machine", "virtual_board", "True")
         set_config("Machine", "width", "8")
         with self.assertRaises(SpinnMachineException):
             virtual_machine_generator()
 
     def test_by_boards(self) -> None:
-        set_config("Machine", "version", "5")
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         set_config("Machine", "virtual_board", "True")
         # Called by sim.setup
         MachineDataWriter.mock().set_n_required(3, None)
@@ -44,7 +45,7 @@ class TestVirtualMachineGenerator(unittest.TestCase):
         self.assertEqual(3, len(machine.ethernet_connected_chips))
 
     def test_by_set_chips(self) -> None:
-        set_config("Machine", "version", "5")
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         set_config("Machine", "virtual_board", "True")
         # Called by sim.setup
         MachineDataWriter.mock().set_n_chips_in_graph(100)
@@ -52,7 +53,7 @@ class TestVirtualMachineGenerator(unittest.TestCase):
         self.assertEqual(3, len(machine.ethernet_connected_chips))
 
     def test_by_chips(self) -> None:
-        set_config("Machine", "version", "5")
+        set_config("Machine", "version", str(Spin1Gen.FIVE.value))
         set_config("Machine", "virtual_board", "True")
         # Called after partitioning
         MachineDataWriter.mock().set_n_chips_in_graph(1)

@@ -59,6 +59,7 @@ Spin2_code = "https://gitlab.com/spinnaker2/SpiNNUtils2"
 [project.optional-dependencies]
 test = [
     "deepdiff",
+    "parameterized",
     "pytest-cov",
     "testfixtures",
     "httpretty != 1.0.0",
@@ -77,3 +78,6 @@ include = ["spinn_machine", "spinn_machine.*"]
     "py.typed"
 ]
 
+[[tool.mypy.overrides]]
+module = ["parameterized"]
+ignore_missing_imports = true
