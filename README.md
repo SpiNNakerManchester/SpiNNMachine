@@ -49,6 +49,10 @@ To be able to run the unitests add [Test] to the pip installs above
 
     pip install -e .[Test]
 
+Spinnaker2
+==========
+The dedicated spinnaker2 code can be found at: https://gitlab.com/spinnaker2/SpiNNMachine2/
+
 Documentation
 =============
 [SpiNNMachine python documentation](http://spinnmachine.readthedocs.io/en/latest)
