@@ -16,14 +16,15 @@ from typing import (
     Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
 
 from spinn_machine.data import MachineDataView
-
-from .exceptions import (
+from .exceptions import (SpinnMachineException,
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 if TYPE_CHECKING:
     from .link import Link
     from .multicast_routing_entry import MulticastRoutingEntry
     from .routing_entry import RoutingEntry
 
+SPINN1_MAX_CORES_PER_ROUTER = 18
+SPINN2_MAX_CORES_PER_ROUTER = 152
 
 class Router(object):
     """
@@ -135,6 +136,16 @@ class Router(object):
         The number of available multicast entries in the routing tables.
         """
         return self._n_available_multicast_entries
+    
+    @staticmethod
+    def max_cores_per_router() -> int:
+        """ Semantic sugar for max_cores_per_chip
+
+        Use not recommended.
+
+        :returns: max_cores_per_chip
+        """
+        return MachineDataView.get_machine_version().max_cores_per_chip
 
     @staticmethod
     def convert_routing_table_entry_to_spinnaker_route(
@@ -151,7 +162,7 @@ class Router(object):
         route_entry = 0
         max_cores = MachineDataView.get_machine_version().max_cores_per_chip
         for processor_id in routing_table_entry.processor_ids:
-            if 0 > processor_id >= max_cores:
+            if processor_id >= max_cores or processor_id < 0:
                 raise SpinnMachineInvalidParameterException(
                     "route.processor_ids",
                     str(routing_table_entry.processor_ids),
