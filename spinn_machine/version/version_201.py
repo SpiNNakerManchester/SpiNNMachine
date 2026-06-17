@@ -24,7 +24,7 @@ from spinn_machine.machine import Machine
 from .version_factory import Spin2Gen
 from .version_spin2 import VersionSpin2
 
-CHIPS_PER_BOARD: Final = {(0, 0): 153}
+CHIPS_PER_BOARD: Final = {(0, 0): 152}
 
 
 class Version201(VersionSpin2):

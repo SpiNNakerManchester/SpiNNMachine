@@ -74,7 +74,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     __slots__ = ["_reverse_quad_map"]
 
     def __init__(self) -> None:
-        super().__init__(max_cores_per_chip=153,
+        super().__init__(max_cores_per_chip=152,
                          max_sdram_per_chip=1073741824)
         self._reverse_quad_map: Dict[Tuple[int, int, int], int] = (
             dict((v, k) for k, v in QUAD_MAP.items()))

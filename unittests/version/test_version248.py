@@ -30,7 +30,7 @@ class TestVersion201(unittest.TestCase):
 
     def test_attributes(self) -> None:
         version = Version248()
-        self.assertEqual(153, version.max_cores_per_chip)
+        self.assertEqual(152, version.max_cores_per_chip)
         self.assertEqual(2**30, version.max_sdram_per_chip)
         self.assertEqual(2, version.n_scamp_cores)
         self.assertEqual("Spin2 48 Chips", version.name)

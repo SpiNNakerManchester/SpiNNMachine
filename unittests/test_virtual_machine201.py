@@ -102,7 +102,7 @@ class TestVirtualMachine201(unittest.TestCase):
             for _link in _chip.router.links:
                 count += 1
         self.assertEqual(0, count)
-        self.assertEqual(153, vm.get_cores_count())
+        self.assertEqual(152, vm.get_cores_count())
         self.assertEqual(0, vm.get_links_count())
         count = 0
         for _xy in vm.get_existing_xys_on_board(vm[0, 0]):
@@ -122,7 +122,7 @@ class TestVirtualMachine201(unittest.TestCase):
 
     def test_new_vm_with_max_cores(self) -> None:
         set_config("Machine", "version", str(Spin2Gen.SPIN2_1CHIP.value))
-        n_cpus = 153
+        n_cpus = 152
         n_scamp = 2
         set_config("Machine", "max_machine_core", str(n_cpus))
         vm = virtual_machine(1, 1, validate=True)
@@ -241,9 +241,9 @@ class TestVirtualMachine201(unittest.TestCase):
         machine = virtual_machine(1, 1)
         n_cores = sum(
             cores for (_, cores) in machine.get_xy_cores_by_ethernet(0, 0))
-        self.assertEqual(n_cores, 153)
+        self.assertEqual(n_cores, 152)
         n_cores = sum(chip.n_processors for chip in machine.chips)
-        self.assertEqual(n_cores, 153)
+        self.assertEqual(n_cores, 152)
 
     def test_by(self) -> None:
         set_config("Machine", "version", str(Spin2Gen.SPIN2_1CHIP.value))
