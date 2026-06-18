@@ -16,7 +16,7 @@ from typing import (
     Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
 
 from spinn_machine.data import MachineDataView
-from .exceptions import (SpinnMachineException,
+from .exceptions import (
     SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
 if TYPE_CHECKING:
     from .link import Link
