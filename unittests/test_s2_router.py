@@ -26,11 +26,12 @@ from spinn_machine import MulticastRoutingEntry, RoutingEntry
 from spinn_machine.exceptions import (SpinnMachineException,
                                       SpinnMachineInvalidParameterException)
 
+
 class TestingS2Router(unittest.TestCase):
 
     def setUp(self) -> None:
-        unittest_setup()  
-    
+        unittest_setup()
+
     def test_default_max_cores_in_router(self) -> None:
         """If no version is specified error
         """
@@ -65,7 +66,7 @@ class TestingS2Router(unittest.TestCase):
         links: list[Link] = list()
         r = Router(links, 1024)
 
-        route1 = 1398101 
+        route1 = 1398101
         proc_ids1 = [0, 2, 4, 6, 8, 10, 12, 14]
         link_ids1 = [0, 2, 4]
         proc_ids, link_ids = r.convert_spinnaker_route_to_routing_ids(route1)
@@ -90,7 +91,7 @@ class TestingS2Router(unittest.TestCase):
 
         # consider route that requires 152 cores and
         # 6 link which will have 158 values in binary representation
-        route1 = (2**158) - 1 
+        route1 = (2 ** 158) - 1
         len_proc_ids1 = 152
         len_link_ids1 = 6
         proc_ids, link_ids = r.convert_spinnaker_route_to_routing_ids(route1)
@@ -125,7 +126,7 @@ class TestingS2Router(unittest.TestCase):
         multicast1 = MulticastRoutingEntry(
             key, mask, RoutingEntry(processor_ids=proc_ids, link_ids=link_ids))
         route1 = 16777215
-        
+
         route = r.convert_routing_table_entry_to_spinnaker_route(multicast1)
         self.assertEqual(route1, route)
 
@@ -141,10 +142,11 @@ class TestingS2Router(unittest.TestCase):
         mask = 1
         multicast1 = MulticastRoutingEntry(
             key, mask, RoutingEntry(processor_ids=proc_ids, link_ids=link_ids))
-        
-        with self.assertRaises(SpinnMachineInvalidParameterException) as context:
+
+        with self.assertRaises(
+                SpinnMachineInvalidParameterException) as context:
             r.convert_routing_table_entry_to_spinnaker_route(multicast1)
-        
+
         actual_error = context.exception
         error = ("It is invalid to set route.processor_ids to frozenset("
                  "{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, "
@@ -174,7 +176,7 @@ class TestingS2Router(unittest.TestCase):
         multicast1 = MulticastRoutingEntry(
             key, mask, RoutingEntry(processor_ids=proc_ids, link_ids=link_ids))
         route1 = 72057594037927935
-        
+
         route = r.convert_routing_table_entry_to_spinnaker_route(multicast1)
         self.assertEqual(route1, route)
 
@@ -190,10 +192,11 @@ class TestingS2Router(unittest.TestCase):
         mask = 1
         multicast1 = MulticastRoutingEntry(
             key, mask, RoutingEntry(processor_ids=proc_ids, link_ids=link_ids))
-        
-        with self.assertRaises(SpinnMachineInvalidParameterException) as context:
+
+        with self.assertRaises(
+                SpinnMachineInvalidParameterException) as context:
             r.convert_routing_table_entry_to_spinnaker_route(multicast1)
-        
+
         actual_error = context.exception
         error = ("It is invalid to set route.processor_ids to frozenset("
                  "{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, "

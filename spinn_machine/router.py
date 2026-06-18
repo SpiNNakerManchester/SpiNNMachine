@@ -23,8 +23,6 @@ if TYPE_CHECKING:
     from .multicast_routing_entry import MulticastRoutingEntry
     from .routing_entry import RoutingEntry
 
-SPINN1_MAX_CORES_PER_ROUTER = 18
-SPINN2_MAX_CORES_PER_ROUTER = 152
 
 class Router(object):
     """
@@ -136,7 +134,7 @@ class Router(object):
         The number of available multicast entries in the routing tables.
         """
         return self._n_available_multicast_entries
-    
+
     @staticmethod
     def max_cores_per_router() -> int:
         """ Semantic sugar for max_cores_per_chip
