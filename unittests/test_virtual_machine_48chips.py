@@ -556,10 +556,9 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         self.assertEqual(16, machine.height)
         self.assertEqual(n_cores * 6, machine.total_available_user_cores)
 
-    #@parameterized.expand(BIG_BOARD_TYPES)
-    #def test_8_8_by_cores_12_boards(self, _: str, ver_num: str) -> None:
-    def test_8_8_by_cores_12_boards(self) -> None:
-        set_config("Machine", "version", 248)
+    @parameterized.expand(BIG_BOARD_TYPES)
+    def test_8_8_by_cores_12_boards(self, _: str, ver_num: str) -> None:
+        set_config("Machine", "version", ver_num)
         version = MachineDataView.get_machine_version()
         n_cores = sum(version.chip_core_map.values())
         n_cores -= version.n_chips_per_board * version.n_scamp_cores
