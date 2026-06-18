@@ -16,8 +16,10 @@ from .spin1_gen import Spin1Gen
 from .spin2_gen import Spin2Gen
 from .version_factory import (
     ALL_BOARD_TYPES, BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES,
-    FPGA_BOARD_TYPES, MANY_BOARD_TYPES, version_factory)
+    FPGA_BOARD_TYPES, GEN1_BOARD_TYPES, GEN2_BOARD_TYPES,
+    MANY_BOARD_TYPES, version_factory)
 
 __all__ = ["ALL_BOARD_TYPES", "BIG_BOARD_TYPES", "FOUR_PLUS_BOARD_TYPES",
-           "FPGA_BOARD_TYPES", "MANY_BOARD_TYPES", "version_factory",
+           "FPGA_BOARD_TYPES", "GEN1_BOARD_TYPES", "GEN2_BOARD_TYPES",
+           "MANY_BOARD_TYPES", "version_factory",
            "Spin1Gen", "Spin2Gen"]
