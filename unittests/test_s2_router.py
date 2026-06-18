@@ -1,7 +1,23 @@
+# Copyright (c) 2026 SpiNNcloud
+# Copyright (c) 2026 The University of Manchester
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import unittest
 
 from parameterized import parameterized
 
+from spinn_machine.link import Link
 from spinn_machine.router import Router
 from spinn_machine.config_setup import unittest_setup
 from spinn_utilities.config_holder import set_config
@@ -15,10 +31,10 @@ class TestingS2Router(unittest.TestCase):
     def setUp(self):
         unittest_setup()  
     
-    def test_default_max_cores_in_router(self):
+    def test_default_max_cores_in_router(self) -> None:
         """If no version is specified error
         """
-        links = list()
+        links: list[Link] = list()
         r = Router(links, 1024)
         with self.assertRaises(SpinnMachineException):
             r.max_cores_per_router()
@@ -26,7 +42,7 @@ class TestingS2Router(unittest.TestCase):
     @parameterized.expand(GEN1_BOARD_TYPES)
     def test_max_cores_s1_router(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
-        links = list()
+        links: list[Link] = list()
         r = Router(links, 1024)
         n_cores = r.max_cores_per_router()
 
@@ -36,7 +52,7 @@ class TestingS2Router(unittest.TestCase):
     def test_max_cores_s2_router(self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
         # use defalut config to get machine with s2 chip
-        links = list()
+        links: list[Link] = list()
         r = Router(links, 1024)
         n_cores = r.max_cores_per_router()
 
@@ -46,7 +62,7 @@ class TestingS2Router(unittest.TestCase):
     def test_convert_spinnaker1_route_to_routing_ids(
             self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
-        links = list()
+        links: list[Link] = list()
         r = Router(links, 1024)
 
         route1 = 1398101 
@@ -69,7 +85,7 @@ class TestingS2Router(unittest.TestCase):
     def test_convert_spinnaker2_route_to_routing_ids(
             self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
-        links = list()
+        links: list[Link] = list()
         r = Router(links, 1024)
 
         # consider route that requires 152 cores and
@@ -94,7 +110,7 @@ class TestingS2Router(unittest.TestCase):
     def test_routing_table_entry_to_spinnaker1_route(
             self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
-        links = list()
+        links: list[Link] = list()
         r = Router(links, 1024)
         proc_ids = list()
         link_ids = list()
@@ -143,7 +159,7 @@ class TestingS2Router(unittest.TestCase):
     def test_routing_table_entry_to_spinnaker2_route(
             self, _: str, ver_num: str) -> None:
         set_config("Machine", "version", ver_num)
-        links = list()
+        links: list[Link] = list()
         r = Router(links, 1024)
         proc_ids = list()
         link_ids = list()
