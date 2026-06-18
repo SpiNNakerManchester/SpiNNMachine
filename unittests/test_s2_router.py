@@ -28,7 +28,7 @@ from spinn_machine.exceptions import (SpinnMachineException,
 
 class TestingS2Router(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         unittest_setup()  
     
     def test_default_max_cores_in_router(self) -> None:
