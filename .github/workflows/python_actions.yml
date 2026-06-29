@@ -21,7 +21,7 @@ jobs:
   call:
     uses: SpiNNakerManchester/SupportScripts/.github/workflows/python_checks.yml@main
     with:
-      dependencies: SpiNNUtils
+      dependencies:
       test-directories: unittests
       coverage-package: spinn_machine
       flake8-packages: spinn_machine unittests
