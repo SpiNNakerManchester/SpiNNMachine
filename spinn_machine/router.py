@@ -149,7 +149,7 @@ class Router(object):
             of all chip links and core links.
         """
         route_entry = 0
-        max_cores = MachineDataView.get_machine_version().max_cores_per_chip
+        max_cores = MachineDataView.get_machine_version().max_cores_per_router
         for processor_id in routing_table_entry.processor_ids:
             if 0 > processor_id >= max_cores:
                 raise SpinnMachineInvalidParameterException(
@@ -177,7 +177,7 @@ class Router(object):
         :param route: The routing table entry
         :return: The list of processor IDs, and the list of link IDs.
         """
-        max_cores = MachineDataView.get_machine_version().max_cores_per_chip
+        max_cores = MachineDataView.get_machine_version().max_cores_per_router
         processor_ids = [pi for pi in range(0, max_cores)
                          if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
         link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
