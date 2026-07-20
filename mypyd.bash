@@ -14,10 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This bash assumes that other repositories are installed in paralled
+# This bash assumes that other repositories are installed in parallel
 
-# requires the latest mypy
-# pip install --upgrade mypy
+python3 -m venv ../SupportScripts/venv/mypy_runner
+source ../SupportScripts/venv/mypy_runner/bin/activate
+pip3 install --upgrade ../SpiNNUtils
+pip3 install --upgrade ../SpiNNMachine[test]
+
+python3 -m pip install --upgrade mypy
 
 utils="../SpiNNUtils/spinn_utilities"
 
