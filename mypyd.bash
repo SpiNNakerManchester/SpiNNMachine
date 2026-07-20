@@ -16,12 +16,17 @@
 
 # This bash assumes that other repositories are installed in parallel
 
-python3 -m venv ../SupportScripts/venv/mypy_runner
-source ../SupportScripts/venv/mypy_runner/bin/activate
-pip3 install --upgrade ../SpiNNUtils
-pip3 install --upgrade ../SpiNNMachine[test]
-
-python3 -m pip install --upgrade mypy
+if [ "$#" -eq  "0" ]
+  then
+    echo "Provide any argument to run setup"
+    source ../SupportScripts/venv/mypy_runner/bin/activate
+else
+    python3 -m venv ../SupportScripts/venv/mypy_runner
+    source ../SupportScripts/venv/mypy_runner/bin/activate
+    pip3 install --upgrade ../SpiNNUtils
+    pip3 install --upgrade ../SpiNNMachine[test]
+    python3 -m pip install --upgrade mypy
+fi
 
 utils="../SpiNNUtils/spinn_utilities"
 
