@@ -18,7 +18,7 @@
 
 if [ "$#" -eq  "0" ]
   then
-    echo "Provide any argument to run setup"
+    echo "Using previous setup. Provide an argument to run setup"
     source ../SupportScripts/venv/mypy_runner/bin/activate
 else
     python3 -m venv ../SupportScripts/venv/mypy_runner
@@ -28,6 +28,4 @@ else
     python3 -m pip install --upgrade mypy
 fi
 
-utils="../SpiNNUtils/spinn_utilities"
-
-mypy --disallow-untyped-defs $utils spinn_machine unittests
+mypy --disallow-untyped-defs spinn_machine unittests
