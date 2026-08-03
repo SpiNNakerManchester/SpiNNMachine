@@ -24,8 +24,6 @@ if [ "$#" -eq  "0" ]
 else
   python3 -m venv ../SupportScripts/venv/ruff_runner
   source ../SupportScripts/venv/ruff_runner/bin/activate
-  pip3 install --upgrade ../SpiNNUtils
-  pip3 install --upgrade ../SpiNNMachine[test]
   python3 -m pip install --upgrade ruff
 fi
 
