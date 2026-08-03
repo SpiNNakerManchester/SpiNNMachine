@@ -50,6 +50,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
     __slots__ = (
         # the board address associated with this tag
         "_max_cores_per_chip",
+        "_max_cores_per_router",
         "_max_sdram_per_chip")
 
     def __init__(self, max_cores_per_chip: int, max_sdram_per_chip: int):
@@ -64,6 +65,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         self.__verify_config_width_height()
         self.__set_max_cores_per_chip(max_cores_per_chip)
         self.__set_max_sdram_per_chip(max_sdram_per_chip)
+        self._max_cores_per_router = max_cores_per_chip
 
     def __verify_config_width_height(self) -> None:
         """
@@ -155,6 +157,15 @@ class AbstractVersion(object, metaclass=AbstractBase):
         cores, only that there will be no cores with more.
         """
         return self._max_cores_per_chip
+
+    @property
+    def max_cores_per_router(self) -> int:
+        """
+        The theoretical maximum number of off Core links in any router
+
+        There is no guarantee that any route will use this many cores
+        """
+        return self._max_cores_per_router
 
     @property
     @abstractmethod

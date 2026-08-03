@@ -216,7 +216,7 @@ class RoutingEntry(object):
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.
         """
-        max_cores = MachineDataView.get_machine_version().max_cores_per_chip
+        max_cores = MachineDataView.get_machine_version().max_cores_per_router
         processor_ids = (pi for pi in range(0, max_cores)
                          if self._spinnaker_route & 1 <<
                          (Router.MAX_LINKS_PER_ROUTER + pi))
