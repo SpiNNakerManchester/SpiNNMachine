@@ -27,4 +27,5 @@ jobs:
       flake8-packages: spinn_machine unittests
       pylint-packages: spinn_machine
       mypy-full-packages: spinn_machine unittests
+      ruff-packages: spinn_machine unittests
     secrets: inherit
