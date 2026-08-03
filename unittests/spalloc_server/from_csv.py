@@ -13,7 +13,10 @@
 # limitations under the License.
 
 from spinn_machine.spalloc_server.configuration import (
-    MachineConfig, board_locations_from_spinner, Configuration)
+    Configuration,
+    MachineConfig,
+    board_locations_from_spinner,
+)
 
 machine = MachineConfig.with_standard_ips(
     "SpiNNaker1M", tags=frozenset(["default", "machine-room"]),

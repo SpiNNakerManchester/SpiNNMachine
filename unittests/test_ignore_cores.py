@@ -23,8 +23,8 @@ from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinn_machine.version import MANY_BOARD_TYPES, Spin2Gen
-from spinn_machine.version.version_201 import Version201
 from spinn_machine.version.version_5 import Version5
+from spinn_machine.version.version_201 import Version201
 
 
 class TestDownCores(unittest.TestCase):

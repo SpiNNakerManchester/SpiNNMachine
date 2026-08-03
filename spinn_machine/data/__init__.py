@@ -14,5 +14,4 @@
 
 from .machine_data_view import MachineDataView
 
-
 __all__ = ["MachineDataView"]

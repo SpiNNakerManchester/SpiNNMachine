@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import spinn_utilities
+
 import spinn_machine
 from spinn_machine.config_setup import unittest_setup
 

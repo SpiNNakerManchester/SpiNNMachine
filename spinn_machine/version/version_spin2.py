@@ -13,14 +13,15 @@
 # limitations under the License.
 
 import re
-from typing import Dict, Final, List, Iterable, Tuple
+from typing import Dict, Final, Iterable, List, Tuple
 
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
 from spinn_machine.exceptions import SpinnMachineException
-from .abstract_version import (AbstractVersion, RouterPackets)
+
+from .abstract_version import AbstractVersion, RouterPackets
 
 CHIPS_PER_BOARD: Final = {(0, 0): 152}
 CORE_QX_QY_QP = re.compile(r"(\d)\.(\d)\.(\d)")

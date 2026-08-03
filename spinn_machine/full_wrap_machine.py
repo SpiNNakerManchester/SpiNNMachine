@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Iterable, Tuple
+
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
-from .machine import Machine
+
 from .chip import Chip
+from .machine import Machine
 
 
 class FullWrapMachine(Machine):

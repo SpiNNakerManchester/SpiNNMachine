@@ -12,11 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from collections import Counter
+
 import logging
+from collections import Counter
 from typing import (
-    Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple,
-    TYPE_CHECKING)
+    TYPE_CHECKING,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+)
 
 from typing_extensions import Never
 
@@ -25,8 +34,11 @@ from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
 
 from spinn_machine.data import MachineDataView
+
 from .exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineException)
+    SpinnMachineAlreadyExistsException,
+    SpinnMachineException,
+)
 
 if TYPE_CHECKING:
     from .chip import Chip

@@ -11,8 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Sequence, Optional, Tuple
+from typing import Optional, Sequence, Tuple
+
 from typing_extensions import TypeAlias
+
 from spinn_utilities.typing.coords import XY
 
 _Centre: TypeAlias = Tuple[float, float]

@@ -12,24 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parameterized import parameterized
-from typing import Tuple
 import unittest
+from typing import Tuple
+
+from parameterized import parameterized
 
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.typing.coords import XY
 
-from spinn_machine.config_setup import unittest_setup
 from spinn_machine import virtual_machine
-from spinn_machine.virtual_machine import (
-    virtual_machine_by_boards, virtual_machine_by_min_size)
+from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
-from spinn_machine.exceptions import (SpinnMachineException)
+from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.machine_factory import machine_repair
 from spinn_machine.version import (
-    ALL_BOARD_TYPES, BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES)
-from .geometry import (to_xyz, shortest_mesh_path_length,
-                       shortest_torus_path_length, minimise_xyz)
+    ALL_BOARD_TYPES,
+    BIG_BOARD_TYPES,
+    FOUR_PLUS_BOARD_TYPES,
+)
+from spinn_machine.virtual_machine import (
+    virtual_machine_by_boards,
+    virtual_machine_by_min_size,
+)
+
+from .geometry import (
+    minimise_xyz,
+    shortest_mesh_path_length,
+    shortest_torus_path_length,
+    to_xyz,
+)
 
 
 class TestUsingVirtualMachine(unittest.TestCase):

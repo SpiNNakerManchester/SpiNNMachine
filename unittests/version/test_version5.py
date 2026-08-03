@@ -16,14 +16,16 @@
 Testing Version5
 """
 import unittest
+
 from spinn_utilities.config_holder import set_config
-from spinn_machine.full_wrap_machine import FullWrapMachine
-from spinn_machine.no_wrap_machine import NoWrapMachine
-from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
-from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
-from spinn_machine.version.version_5 import Version5
+
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineException
+from spinn_machine.full_wrap_machine import FullWrapMachine
+from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
+from spinn_machine.no_wrap_machine import NoWrapMachine
+from spinn_machine.version.version_5 import Version5
+from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
 
 
 class TestVersion5(unittest.TestCase):

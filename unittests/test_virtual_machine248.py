@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+
 from spinn_utilities.config_holder import set_config
 
 from spinn_machine import virtual_machine

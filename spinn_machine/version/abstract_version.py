@@ -12,18 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
+
 import logging
 import re
 from typing import (
-    Dict, Iterable, List, Optional, Sequence, Tuple, TYPE_CHECKING)
+    TYPE_CHECKING,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+)
+
 from typing_extensions import TypeAlias
 
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
-from spinn_utilities.log import FormatAdapter
 from spinn_utilities.config_holder import get_config_int_or_none
+from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
+
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
+
 if TYPE_CHECKING:
     from spinn_machine.machine import Machine
 

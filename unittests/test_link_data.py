@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.link_data_objects import FPGALinkData, SpinnakerLinkData
 

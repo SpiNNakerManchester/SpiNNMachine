@@ -13,10 +13,11 @@
 # limitations under the License.
 
 import unittest
+
 from spinn_utilities.config_holder import set_config
+
 from spinn_machine.config_setup import unittest_setup
-from spinn_machine.exceptions import (
-    SpinnMachineException)
+from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version.version_5 import Version5
 from spinn_machine.version.version_factory import version_factory
 

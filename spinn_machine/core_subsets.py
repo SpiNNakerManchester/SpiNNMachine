@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Dict, Iterable, Iterator, Union
+
 from spinn_utilities.typing.coords import XY, XYP
+
 from .core_subset import CoreSubset
 
 

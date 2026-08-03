@@ -13,9 +13,10 @@
 # limitations under the License.
 
 import os
-from spinn_utilities.config_holder import (
-    add_default_cfg, clear_cfg_files)
+
+from spinn_utilities.config_holder import add_default_cfg, clear_cfg_files
 from spinn_utilities.config_setup import add_spinn_utilities_cfg
+
 from spinn_machine.data.machine_data_writer import MachineDataWriter
 
 BASE_CONFIG_FILE = "spinn_machine.cfg"

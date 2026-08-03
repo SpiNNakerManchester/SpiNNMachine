@@ -12,15 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections import defaultdict
 import logging
+from collections import defaultdict
 from typing import Collection, Iterable, Set, Tuple
+
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
-from spinn_machine import Chip, Router, Machine
+
+from spinn_machine import Chip, Machine, Router
 from spinn_machine.data import MachineDataView
 from spinn_machine.machine_utils import contact_email
+
 from .exceptions import SpinnMachineException
 
 logger = FormatAdapter(logging.getLogger(__name__))

@@ -14,7 +14,6 @@
 
 import unittest
 
-
 from spinn_utilities.config_holder import set_config
 
 from spinn_machine.config_setup import unittest_setup

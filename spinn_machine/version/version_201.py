@@ -14,12 +14,12 @@
 
 from typing import Any, Dict, Final, Optional, Sequence, Tuple
 
-from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
+from spinn_utilities.typing.coords import XY
 
 from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.no_wrap_machine import NoWrapMachine
 from spinn_machine.machine import Machine
+from spinn_machine.no_wrap_machine import NoWrapMachine
 
 from .version_factory import Spin2Gen
 from .version_spin2 import VersionSpin2

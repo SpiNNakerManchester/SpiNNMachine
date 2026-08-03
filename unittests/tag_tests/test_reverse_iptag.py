@@ -16,8 +16,9 @@
 TestingReverseIptag
 """
 import unittest
-from spinn_machine.tags import ReverseIPTag
+
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.tags import ReverseIPTag
 
 
 class TestingReverseIptag(unittest.TestCase):

@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import pickle
-from typing import List
 import unittest
+from typing import List
 
 from spinn_utilities.config_holder import set_config
 

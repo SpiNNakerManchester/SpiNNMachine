@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from spinn_machine import CoreSubsets, CoreSubset
+from spinn_machine import CoreSubset, CoreSubsets
 from spinn_machine.config_setup import unittest_setup
 
 

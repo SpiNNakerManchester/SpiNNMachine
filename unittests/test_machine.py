@@ -15,21 +15,31 @@
 """
 test for testing the python representation of a spinnaker machine
 """
-from parameterized import parameterized
-
-from testfixtures import LogCapture  # type: ignore[import]
 import unittest
+
+from parameterized import parameterized
+from testfixtures import LogCapture  # type: ignore[import]
+
 from spinn_utilities.config_holder import set_config
 from spinn_utilities.testing import log_checker
+
 from spinn_machine import Chip, Link, Machine, Router
-from spinn_machine.version import (
-    ALL_BOARD_TYPES, BIG_BOARD_TYPES, FOUR_PLUS_BOARD_TYPES, Spin1Gen)
-from spinn_machine.virtual_machine import (
-    virtual_machine_by_boards, virtual_machine_by_min_size)
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineException)
+    SpinnMachineAlreadyExistsException,
+    SpinnMachineException,
+)
+from spinn_machine.version import (
+    ALL_BOARD_TYPES,
+    BIG_BOARD_TYPES,
+    FOUR_PLUS_BOARD_TYPES,
+    Spin1Gen,
+)
+from spinn_machine.virtual_machine import (
+    virtual_machine_by_boards,
+    virtual_machine_by_min_size,
+)
 
 
 class SpinnMachineTestCase(unittest.TestCase):

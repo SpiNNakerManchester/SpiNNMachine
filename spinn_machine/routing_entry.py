@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import (Any, Collection, FrozenSet, Optional, overload, Tuple,
-                    Union)
+
+from typing import Any, Collection, FrozenSet, Optional, Tuple, Union, overload
+
 from spinn_machine.router import Router
+
 from .data import MachineDataView
-from .exceptions import (SpinnMachineInvalidParameterException)
+from .exceptions import SpinnMachineInvalidParameterException
 
 
 class RoutingEntry(object):

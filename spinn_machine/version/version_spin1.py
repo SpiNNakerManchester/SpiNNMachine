@@ -12,13 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Iterable, Tuple, Final
+from typing import Final, Iterable, List, Tuple
+
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.exceptions import ConfigException
 from spinn_utilities.overrides import overrides
 
 from spinn_machine.exceptions import SpinnMachineException
-from .abstract_version import (AbstractVersion, RouterPackets)
+
+from .abstract_version import AbstractVersion, RouterPackets
 
 
 class VersionSpin1(AbstractVersion, metaclass=AbstractBase):

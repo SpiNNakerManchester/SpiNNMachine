@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Dict, Optional, Set, Tuple, TYPE_CHECKING, Union
-from spinn_utilities.typing.coords import XY
+
+from typing import TYPE_CHECKING, Dict, Optional, Set, Tuple, Union
+
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.data import UtilsDataView
+from spinn_utilities.typing.coords import XY
+
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version.version_factory import version_factory
+
 if TYPE_CHECKING:
     from spinn_machine.chip import Chip
     from spinn_machine.fpga_links import FPGALinks
@@ -166,8 +170,9 @@ class MachineDataView(UtilsDataView):
             if cls._is_mocked():
                 # delayed import due to circular dependencies
                 # pylint: disable=import-outside-toplevel
-                from spinn_machine.virtual_machine import \
-                    virtual_machine_by_boards
+                from spinn_machine.virtual_machine import (
+                    virtual_machine_by_boards,
+                )
                 cls.__data._machine = virtual_machine_by_boards(1)
             if cls.__data._machine is None:
                 raise cls._exception("machine")
