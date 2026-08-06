@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parameterized import parameterized
 import unittest
 
+from parameterized import parameterized
+
 from spinn_utilities.config_holder import set_config
-from spinn_utilities.exceptions import (ConfigException, DataNotYetAvialable)
+from spinn_utilities.exceptions import ConfigException, DataNotYetAvialable
 
 from spinn_machine import virtual_machine
 from spinn_machine.config_setup import unittest_setup

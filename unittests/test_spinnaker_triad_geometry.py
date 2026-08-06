@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+
 from spinn_machine import SpiNNakerTriadGeometry
 from spinn_machine.config_setup import unittest_setup
 

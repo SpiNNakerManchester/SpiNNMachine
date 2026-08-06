@@ -13,8 +13,10 @@
 # limitations under the License.
 
 from typing import Dict, Iterable
-from spinn_utilities.typing.coords import XY
+
 from spinn_utilities.overrides import overrides
+from spinn_utilities.typing.coords import XY
+
 from .core_subset import CoreSubset
 from .core_subsets import CoreSubsets
 

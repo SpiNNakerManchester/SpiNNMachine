@@ -11,16 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Dict, List
-
-from argparse import ArgumentParser
 import json
+from argparse import ArgumentParser
 from collections import defaultdict
-
+from typing import Dict, List
 
 from spinn_machine.spalloc_server import configuration, coordinates
 from spinn_machine.spalloc_server.configuration import (
-    Configuration, MachineConfig)
+    Configuration,
+    MachineConfig,
+)
 
 
 def _parse_config(config_file_contents: str) -> Dict:

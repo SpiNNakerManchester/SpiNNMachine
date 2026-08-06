@@ -12,13 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
+
 from typing import (
-    Dict, Iterable, Iterator, List, Optional, Tuple, Union, TYPE_CHECKING)
+    TYPE_CHECKING,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from spinn_machine.data import MachineDataView
 
 from .exceptions import (
-    SpinnMachineAlreadyExistsException, SpinnMachineInvalidParameterException)
+    SpinnMachineAlreadyExistsException,
+    SpinnMachineInvalidParameterException,
+)
+
 if TYPE_CHECKING:
     from .link import Link
     from .multicast_routing_entry import MulticastRoutingEntry

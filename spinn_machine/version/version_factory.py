@@ -13,17 +13,24 @@
 # limitations under the License.
 
 from __future__ import annotations
+
 import logging
-from typing import Optional, TYPE_CHECKING
 import os
+from typing import TYPE_CHECKING, Optional
 
 from typing_extensions import Never
 
 from spinn_utilities.config_holder import (
-    check_user_cfg, get_config_bool, get_config_int_or_none,
-    get_config_str_or_none, has_config_option)
+    check_user_cfg,
+    get_config_bool,
+    get_config_int_or_none,
+    get_config_str_or_none,
+    has_config_option,
+)
 from spinn_utilities.log import FormatAdapter
+
 from spinn_machine.exceptions import SpinnMachineException
+
 from .spin1_gen import Spin1Gen
 from .spin2_gen import Spin2Gen
 

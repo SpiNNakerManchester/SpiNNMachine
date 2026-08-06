@@ -14,8 +14,8 @@
 
 from typing import Any, Dict, Final
 
-from spinn_utilities.typing.coords import XY
 from spinn_utilities.overrides import overrides
+from spinn_utilities.typing.coords import XY
 
 from .version_48_chips import Version48Chips
 from .version_factory import Spin2Gen

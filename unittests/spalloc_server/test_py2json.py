@@ -11,13 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from os import chdir
-import os.path
-from spinn_machine.spalloc_server.py2json import (
-    read_config_file, convert_config_to_json)
-from spinn_machine.spalloc_server.links import Links
 import json
+import os.path
+from os import chdir
+
 import deepdiff
+
+from spinn_machine.spalloc_server.links import Links
+from spinn_machine.spalloc_server.py2json import (
+    convert_config_to_json,
+    read_config_file,
+)
 
 
 def test_single_board() -> None:

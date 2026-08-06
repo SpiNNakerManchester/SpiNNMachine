@@ -12,20 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List
 import unittest
+from typing import List
+
 from spinn_utilities.config_holder import set_config
+
 from spinn_machine import Chip, Link, Router, virtual_machine
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.data import MachineDataView
+from spinn_machine.exceptions import (
+    SpinnMachineAlreadyExistsException,
+    SpinnMachineException,
+)
 from spinn_machine.fpga_links import FPGALinks
 from spinn_machine.link_data_objects import SpinnakerLinkData
-from spinn_machine.exceptions import (
-    SpinnMachineException, SpinnMachineAlreadyExistsException)
 from spinn_machine.version import Spin1Gen
 from spinn_machine.virtual_machine import (
-    virtual_machine_by_boards, virtual_machine_by_chips,
-    virtual_machine_by_cores)
+    virtual_machine_by_boards,
+    virtual_machine_by_chips,
+    virtual_machine_by_cores,
+)
 
 
 class TestVirtualMachine3(unittest.TestCase):

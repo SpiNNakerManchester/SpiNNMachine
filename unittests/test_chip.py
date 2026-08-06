@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
 import unittest
+from typing import Optional
 
 from spinn_utilities.ordered_set import OrderedSet
-from spinn_machine import Link, Router, Chip
+
+from spinn_machine import Chip, Link, Router
 from spinn_machine.config_setup import unittest_setup
 
 

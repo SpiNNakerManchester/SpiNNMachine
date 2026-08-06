@@ -13,10 +13,11 @@
 # limitations under the L
 
 from typing import Optional
+
 from spinn_utilities.config_holder import get_config_str_or_none
+
 from spinn_machine.data import MachineDataView
 from spinn_machine.version.version_spin2 import VersionSpin2
-
 
 SPINNAKERTEAM = "spinnakerusers@googlegroups.com"
 SPINNCLOUD = "info@spinncloud.com"

@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parameterized import parameterized
 import unittest
+
+from parameterized import parameterized
+
 from spinn_utilities.config_holder import set_config
 
 from spinn_machine import virtual_machine
@@ -22,8 +24,11 @@ from spinn_machine.data import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version import BIG_BOARD_TYPES
 from spinn_machine.virtual_machine import (
-    virtual_machine_by_boards, virtual_machine_by_chips,
-    virtual_machine_by_cores, virtual_machine_by_min_size)
+    virtual_machine_by_boards,
+    virtual_machine_by_chips,
+    virtual_machine_by_cores,
+    virtual_machine_by_min_size,
+)
 
 
 class TestVirtualMachine48Chips(unittest.TestCase):

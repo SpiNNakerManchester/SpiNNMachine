@@ -13,12 +13,13 @@
 # limitations under the License.
 
 from typing import Any, Dict, Final, List, Tuple
+
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 
+from .abstract_version import RouterPackets
 from .version_48_chips import Version48Chips
 from .version_spin1 import VersionSpin1
-from .abstract_version import RouterPackets
 
 CHIPS_PER_BOARD: Final = {
     (0, 0): 18, (0, 1): 18, (0, 2): 18, (0, 3): 18, (1, 0): 18, (1, 1): 17,

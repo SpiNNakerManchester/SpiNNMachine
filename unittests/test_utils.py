@@ -13,10 +13,15 @@
 # limitations under the License.
 
 import unittest
+
 from spinn_utilities.config_holder import set_config
+
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.machine_utils import (
-    contact_email, SPINNAKERTEAM, SPINNCLOUD)
+    SPINNAKERTEAM,
+    SPINNCLOUD,
+    contact_email,
+)
 from spinn_machine.version import Spin1Gen, Spin2Gen
 
 

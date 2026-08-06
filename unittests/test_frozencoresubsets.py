@@ -13,7 +13,8 @@
 # limitations under the License.
 
 import unittest
-from spinn_machine import FrozenCoreSubsets, CoreSubset
+
+from spinn_machine import CoreSubset, FrozenCoreSubsets
 from spinn_machine.config_setup import unittest_setup
 
 

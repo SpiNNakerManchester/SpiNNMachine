@@ -13,7 +13,9 @@
 # limitations under the License.
 
 from spinn_machine.spalloc_server.configuration import (
-    MachineConfig, Configuration)
+    Configuration,
+    MachineConfig,
+)
 from spinn_machine.spalloc_server.links import Links
 
 m = MachineConfig(

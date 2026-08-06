@@ -12,16 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import json
+import logging
 from typing import NamedTuple, Union
+
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.json import JsonArray, JsonObject, JsonValue
+
 from spinn_machine.data import MachineDataView
+
 from .chip import Chip
-from .router import Router
 from .link import Link
 from .machine import Machine
+from .router import Router
 
 logger = FormatAdapter(logging.getLogger(__name__))
 JAVA_MAX_INT = 2147483647

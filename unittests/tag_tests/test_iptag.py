@@ -16,8 +16,9 @@
 TestingIptag
 """
 import unittest
-from spinn_machine.tags import IPTag
+
 from spinn_machine.config_setup import unittest_setup
+from spinn_machine.tags import IPTag
 
 
 class TestingIptag(unittest.TestCase):

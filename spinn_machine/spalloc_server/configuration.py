@@ -11,13 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from collections import namedtuple
-import re
 import csv
+import re
+from collections import namedtuple
 from itertools import chain
-from typing import List, Set, Optional, Tuple, Dict, FrozenSet
-from .links import Links
+from typing import Dict, FrozenSet, List, Optional, Set, Tuple
+
 from .coordinates import chip_to_board
+from .links import Links
 
 
 class Configuration(namedtuple(

@@ -16,11 +16,13 @@
 Testing Version5
 """
 import unittest
+
 from spinn_utilities.config_holder import set_config
-from spinn_machine.no_wrap_machine import NoWrapMachine
-from spinn_machine.version.version_201 import Version201
+
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineException
+from spinn_machine.no_wrap_machine import NoWrapMachine
+from spinn_machine.version.version_201 import Version201
 
 
 class TestVersion201(unittest.TestCase):

@@ -13,7 +13,8 @@
 # limitations under the License.
 
 import unittest
-from spinn_machine import Router, Link
+
+from spinn_machine import Link, Router
 from spinn_machine.config_setup import unittest_setup
 from spinn_machine.exceptions import SpinnMachineAlreadyExistsException
 

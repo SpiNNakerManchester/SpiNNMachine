@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Any, Optional, Set, Union
+
 from typing_extensions import TypeAlias
+
 _Intable: TypeAlias = Union[int, str]
 
 

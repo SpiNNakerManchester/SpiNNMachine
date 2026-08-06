@@ -11,25 +11,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import logging
 import math
 from collections import defaultdict
-import logging
 from typing import Dict, List, Optional, Set, Tuple
 
 from spinn_utilities.config_holder import (
-    get_config_int, get_config_int_or_none, get_config_str_or_none,
-    is_config_none)
+    get_config_int,
+    get_config_int_or_none,
+    get_config_str_or_none,
+    is_config_none,
+)
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
 
 from spinn_machine.data import MachineDataView
 from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
+
 from .chip import Chip
 from .exceptions import SpinnMachineException
 from .json_machine import machine_from_json
-from .router import Router
 from .link import Link
 from .machine import Machine
+from .router import Router
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
