@@ -43,7 +43,7 @@ class TestVirtualMachine201(unittest.TestCase):
 
         n_processors = 18
 
-        links = list()
+        links = []
         links.append(Link(0, 0, 0, 1, 1))
         links.append(Link(0, 1, 1, 1, 0))
         links.append(Link(1, 1, 2, 0, 0))

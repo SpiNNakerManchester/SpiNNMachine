@@ -33,7 +33,7 @@ class FrozenCoreSubsets(CoreSubsets):
         :param core_subsets:
             The cores for each desired chip
         """
-        self._core_subsets: Dict[XY, CoreSubset] = dict()
+        self._core_subsets: Dict[XY, CoreSubset] = {}
         # Do the load here so that the blocked add_processor is not called
         for core_subset in core_subsets:
             x = core_subset.x

@@ -30,8 +30,8 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         unittest_setup()
 
     def test_creating_new_multicast_routing_entry(self) -> None:
-        link_ids = list()
-        proc_ids = list()
+        link_ids = []
+        proc_ids = []
         for i in range(6):
             link_ids.append(i)
         for i in range(18):
@@ -57,8 +57,8 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         hash(a_multicast)
 
     def test_creating_defaulatble_multicast_routing_entry(self) -> None:
-        link_ids = list()
-        proc_ids: List[int] = list()
+        link_ids = []
+        proc_ids: List[int] = []
         link_ids.append(2)
         key = 1
         mask = 1
@@ -99,10 +99,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
 
     def test_merger(self) -> None:
         set_config("Machine", "version", str(Spin1Gen.FIVE.value))
-        link_ids = list()
-        link_ids2 = list()
-        proc_ids = list()
-        proc_ids2 = list()
+        link_ids = []
+        link_ids2 = []
+        proc_ids = []
+        proc_ids2 = []
         for i in range(3):
             link_ids.append(i)
         for i in range(3, 6):
@@ -120,8 +120,8 @@ class TestMulticastRoutingEntry(unittest.TestCase):
             processor_ids=proc_ids2, link_ids=link_ids2))
 
         result_multicast = a_multicast.merge(b_multicast)
-        comparison_link_ids = list()
-        comparison_proc_ids = list()
+        comparison_link_ids = []
+        comparison_proc_ids = []
         for i in range(6):
             comparison_link_ids.append(i)
         self.assertEqual(link_ids + link_ids2, comparison_link_ids)
@@ -156,10 +156,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         assert not result_multicast.defaultable
 
     def test_merger_with_invalid_parameter_key(self) -> None:
-        link_ids = list()
-        link_ids2 = list()
-        proc_ids = list()
-        proc_ids2 = list()
+        link_ids = []
+        link_ids2 = []
+        proc_ids = []
+        proc_ids2 = []
         for i in range(3):
             link_ids.append(i)
         for i in range(3, 6):
@@ -181,10 +181,10 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         self.assertEqual(e.exception.problem, "The key does not match 0x1")
 
     def test_merger_with_invalid_parameter_mask(self) -> None:
-        link_ids = list()
-        link_ids2 = list()
-        proc_ids = list()
-        proc_ids2 = list()
+        link_ids = []
+        link_ids2 = []
+        proc_ids = []
+        proc_ids2 = []
         for i in range(3):
             link_ids.append(i)
         for i in range(3, 6):

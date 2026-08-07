@@ -25,7 +25,7 @@ class TestingRouter(unittest.TestCase):
         unittest_setup()
 
     def test_creating_new_router(self) -> None:
-        links = list()
+        links = []
         links.append(Link(0, 0, 0, 1, 1))
         links.append(Link(0, 1, 1, 1, 0))
         links.append(Link(1, 1, 2, 0, 0))
@@ -65,7 +65,7 @@ class TestingRouter(unittest.TestCase):
             "destination_x=0, destination_y=1]]]")
 
     def test_creating_new_router_with_duplicate_links(self) -> None:
-        links = list()
+        links = []
         (e, ne, n, w, sw, s) = range(6)
         links.append(Link(0, 0, 0, 0, 1))
         links.append(Link(0, 1, 0, 0, 1))

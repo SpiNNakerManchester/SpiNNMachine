@@ -66,7 +66,7 @@ class SpinnakerLinks(object):
     def __init__(self) -> None:
         version = self.get_spinnaker_version()
         # The dictionary of SpiNNaker links by board address and "ID" (int)
-        self._spinnaker_links: dict[_SpinLinkKey, SpinnakerLinkData] = dict()
+        self._spinnaker_links: dict[_SpinLinkKey, SpinnakerLinkData] = {}
 
         machine = MachineDataView.get_machine()
         for ethernet in machine.ethernet_connected_chips:

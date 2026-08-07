@@ -24,7 +24,7 @@ class TestingLinks(unittest.TestCase):
         unittest_setup()
 
     def test_create_new_link(self) -> None:
-        links = list()
+        links = []
         links.append(Link(0, 0, 0, 0, 1))
         self.assertEqual(links[0].source_x, 0)
         self.assertEqual(links[0].source_y, 0)

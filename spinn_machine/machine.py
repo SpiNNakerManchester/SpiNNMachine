@@ -109,12 +109,12 @@ class Machine(object, metaclass=AbstractBase):
         self._chip_core_map = chip_core_map
 
         # The list of chips with Ethernet connections
-        self._ethernet_connected_chips: List[Chip] = list()
+        self._ethernet_connected_chips: List[Chip] = []
         # Store the boot chip information
         self._boot_ethernet_address: Optional[str] = None
 
         # The dictionary of chips
-        self._chips: Dict[XY, Chip] = dict()
+        self._chips: Dict[XY, Chip] = {}
 
         self._origin = origin
 
@@ -860,7 +860,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
         """
-        removable_coords: List[XY] = list()
+        removable_coords: List[XY] = []
         for (x, y) in self.chip_coordinates:
             # If no links out of the chip work, remove it
             for link in range(6):
@@ -879,7 +879,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
         """
-        removable_coords: List[XY] = list()
+        removable_coords: List[XY] = []
         for (x, y) in self.chip_coordinates:
             # Go through all the chips that surround this one
             moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
@@ -902,7 +902,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
         """
-        removable_coords: List[XY] = list()
+        removable_coords: List[XY] = []
         for chip in self._chips.values():
             # If no links out of the chip work, remove it
             moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
@@ -933,7 +933,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
         """
-        removable_coords: List[XY] = list()
+        removable_coords: List[XY] = []
         for chip in self._chips.values():
             x, y = chip
             nearest_ethernet_x = chip.nearest_ethernet_x
