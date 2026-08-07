@@ -113,7 +113,7 @@ class TestSimulatorData(unittest.TestCase):
         self.assertEqual("", writer.get_physical_string((1, 2), 3))
 
         # Set a v_to_p
-        v_to_p = dict()
+        v_to_p = {}
         v_to_p[(1, 2)] = bytes([10, 11, 12, 13, 14])
         writer.set_v_to_p_map(v_to_p)
         # XY that exists

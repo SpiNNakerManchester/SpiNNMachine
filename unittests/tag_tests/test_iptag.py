@@ -81,7 +81,7 @@ class TestingIptag(unittest.TestCase):
             "traffic_identifier=DEFAULT)")
 
     def test_in_dict(self) -> None:
-        d = dict()
+        d = {}
         iptag_1 = IPTag("", 0, 0, 0, "", 1)
         d[iptag_1] = 1
         iptag_2 = IPTag("", 0, 0, 0, "", 1, traffic_identifier="FOO")

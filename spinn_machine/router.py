@@ -65,7 +65,7 @@ class Router(object):
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If any two links have the same ``source_link_id``
         """
-        self._links: Dict[int, Link] = dict()
+        self._links: Dict[int, Link] = {}
         for link in links:
             self.add_link(link)
 

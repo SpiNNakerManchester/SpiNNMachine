@@ -37,7 +37,7 @@ class TestingLinks(unittest.TestCase):
         self.assertNotEqual(ld, ld3)
         self.assertFalse(ld == "Foo")
         self.assertNotEqual(ld, "Foo")
-        d = dict()
+        d = {}
         d[ld] = 1
         d[ld2] = 2
         d[ld3] = 3
@@ -56,7 +56,7 @@ class TestingLinks(unittest.TestCase):
         self.assertNotEqual(ld, ld3)
         self.assertFalse(id == "Foo")
         self.assertNotEqual(ld, "Foo")
-        d = dict()
+        d = {}
         d[ld] = 1
         d[ld2] = 2
         d[ld3] = 3

@@ -193,7 +193,7 @@ def _describe_chip(chip: Chip, standard: _Desc, ethernet: _Desc) -> JsonArray:
     if dead_links:
         details["deadLinks"] = dead_links
 
-    exceptions: JsonObject = dict()
+    exceptions: JsonObject = {}
     router_entries = _int_value(
         chip.router.n_available_multicast_entries)
     tags: JsonArray = list(chip.tag_ids)

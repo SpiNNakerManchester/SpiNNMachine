@@ -65,7 +65,7 @@ class FPGALinks(object):
 
     def __init__(self) -> None:
         version = self.get_fpga_version()
-        self._fpga_links: dict[_FpgaLinkKey, FPGALinkData] = dict()
+        self._fpga_links: dict[_FpgaLinkKey, FPGALinkData] = {}
 
         machine = MachineDataView.get_machine()
         for ethernet in machine._ethernet_connected_chips:

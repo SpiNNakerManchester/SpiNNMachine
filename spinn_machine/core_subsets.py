@@ -31,7 +31,7 @@ class CoreSubsets(object):
         :param core_subsets:
             The cores for each desired chip
         """
-        self._core_subsets: Dict[XY, CoreSubset] = dict()
+        self._core_subsets: Dict[XY, CoreSubset] = {}
         for core_subset in core_subsets:
             self.add_core_subset(core_subset)
 

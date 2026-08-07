@@ -257,7 +257,7 @@ class _VirtualMachine(object):
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
-        configured_chips: Dict[XY, Tuple[XY, int]] = dict()
+        configured_chips: Dict[XY, Tuple[XY, int]] = {}
         for eth in ethernet_chips:
             for (xy, n_cores) in self._machine.get_xy_cores_by_ethernet(
                     *eth):
@@ -315,7 +315,7 @@ class _VirtualMachine(object):
         Calculate the links needed for a machine structure
         """
         x, y = xy
-        links = list()
+        links = []
         for link_id in range(6):
             if (x, y, link_id) not in self._unused_links:
                 link_x_y = self._machine.xy_over_link(x, y, link_id)
