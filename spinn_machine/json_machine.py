@@ -151,7 +151,7 @@ def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
                     destination_y))
         router = Router(links, router_entries)
 
-        scamp_processors = list(range(0, monitors))
+        scamp_processors = list(range(monitors))
         # Create and add a chip with this router
         n_cores = _int(details["cores"])
         chip = Chip(

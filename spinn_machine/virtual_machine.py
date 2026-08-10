@@ -269,7 +269,7 @@ class _VirtualMachine(object):
         # for chip in self._unreachable_incoming_chips:
         #    configured_chips.remove(chip)
 
-        scamp_processors = list(range(0, version.n_scamp_cores))
+        scamp_processors = list(range(version.n_scamp_cores))
         for xy in configured_chips:
             if xy in ethernet_chips:
                 x, y = xy
