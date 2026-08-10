@@ -22,11 +22,11 @@ class AbstractTag(object):
         # the board address associated with this tag
         "_board_address",
 
+        # the port number associated with this tag
+        "_port",
+
         # the tag ID associated with this tag
         "_tag",
-
-        # the port number associated with this tag
-        "_port"
     ]
 
     def __init__(self, board_address: str, tag: int, port: int):

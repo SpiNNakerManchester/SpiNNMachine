@@ -22,7 +22,9 @@ class CoreSubset(object):
     """
 
     __slots__ = (
-        "_x", "_y", "_processor_ids"
+        "_processor_ids",
+        "_x",
+        "_y"
     )
 
     def __init__(self, x: int, y: int, processor_ids: Iterable[int]):

@@ -21,9 +21,9 @@ class ReverseIPTag(AbstractTag):
     """
 
     __slots__ = [
+        "_destination_p",
         "_destination_x",
         "_destination_y",
-        "_destination_p",
         "_sdp_port"
     ]
 

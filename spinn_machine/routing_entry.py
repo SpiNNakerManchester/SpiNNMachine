@@ -27,8 +27,12 @@ class RoutingEntry(object):
     """
 
     __slots__ = (
-        "_defaultable", "_processor_ids",
-        "_link_ids", "_spinnaker_route", "__repr")
+        "__repr",
+        "_defaultable",
+        "_link_ids",
+        "_processor_ids",
+        "_spinnaker_route",
+    )
 
     @overload
     def __init__(self, *, processor_ids: Union[int, Collection[int]],

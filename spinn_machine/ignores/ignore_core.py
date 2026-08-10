@@ -29,7 +29,7 @@ class IgnoreCore(object):
     Represents a core to be ignored when building a machine.
     """
 
-    __slots__ = ["x", "y", "p", "ip_address"]
+    __slots__ = ["ip_address", "p", "x", "y"]
 
     def __init__(self, x: _Intable, y: _Intable, p: _Intable,
                  ip_address: Optional[str] = None):
