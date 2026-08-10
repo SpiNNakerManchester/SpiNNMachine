@@ -347,7 +347,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
         self.assertTrue(router.is_link(3))
 
         chip = machine[0, 0]
-        for i in range(0, 5):
+        for i in range(5):
             self.assertTrue(chip.is_processor_with_id(i))
         for i in range(5, 11):
             self.assertFalse(chip.is_processor_with_id(i))

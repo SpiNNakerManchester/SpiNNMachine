@@ -223,9 +223,9 @@ class RoutingEntry(object):
         route IDs usable in a routing table entry represented in software.
         """
         max_cores = MachineDataView.get_machine_version().max_cores_per_router
-        processor_ids = (pi for pi in range(0, max_cores)
+        processor_ids = (pi for pi in range(max_cores)
                          if self._spinnaker_route & 1 <<
                          (Router.MAX_LINKS_PER_ROUTER + pi))
-        link_ids = (li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
+        link_ids = (li for li in range(Router.MAX_LINKS_PER_ROUTER)
                     if self._spinnaker_route & 1 << li)
         return frozenset(processor_ids), frozenset(link_ids)

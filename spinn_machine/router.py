@@ -190,9 +190,9 @@ class Router(object):
         :return: The list of processor IDs, and the list of link IDs.
         """
         max_cores = MachineDataView.get_machine_version().max_cores_per_router
-        processor_ids = [pi for pi in range(0, max_cores)
+        processor_ids = [pi for pi in range(max_cores)
                          if route & 1 << (Router.MAX_LINKS_PER_ROUTER + pi)]
-        link_ids = [li for li in range(0, Router.MAX_LINKS_PER_ROUTER)
+        link_ids = [li for li in range(Router.MAX_LINKS_PER_ROUTER)
                     if route & 1 << li]
         return processor_ids, link_ids
 
