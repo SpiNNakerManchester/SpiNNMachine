@@ -33,12 +33,13 @@ class SpiNNakerTriadGeometry(object):
         triad.
     """
     __slots__ = (
-        "_ethernet_offset",
-        "_triad_height",
-        "_triad_width",
         "_board_height",
         "_board_width",
-        "_roots")
+        "_ethernet_offset",
+        "_roots",
+        "_triad_height",
+        "_triad_width",
+    )
 
     # Stored singleton
     spinn5_triad_geometry: Optional['SpiNNakerTriadGeometry'] = None

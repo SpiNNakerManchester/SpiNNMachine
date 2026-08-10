@@ -23,12 +23,12 @@ class IPTag(AbstractTag):
     """
 
     __slots__ = [
+        "_destination_x",
+        "_destination_y",
         "_ip_address",
         # Indicates whether the SDP header should be removed
         "_strip_sdp",
         "_traffic_identifier",
-        "_destination_x",
-        "_destination_y"
     ]
 
     def __init__(

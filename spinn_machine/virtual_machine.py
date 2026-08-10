@@ -199,11 +199,11 @@ class _VirtualMachine(object):
     """
 
     __slots__ = (
+        "_machine",
+        "_n_router_entries",
         "_unused_cores",
         "_unused_links",
-        "_machine",
-        "_with_monitors",
-        "_n_router_entries"
+        "_with_monitors"
     )
 
     _4_chip_down_links = {

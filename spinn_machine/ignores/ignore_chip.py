@@ -24,7 +24,7 @@ class IgnoreChip(object):
     typically because it has a fault in the SpiNNaker router.
     """
 
-    __slots__ = ["x", "y", "ip_address"]
+    __slots__ = ["ip_address", "x", "y"]
 
     def __init__(self, x: _Intable, y: _Intable,
                  ip_address: Optional[str] = None):

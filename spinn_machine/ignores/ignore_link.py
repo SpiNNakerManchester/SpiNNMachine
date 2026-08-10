@@ -23,7 +23,7 @@ class IgnoreLink(object):
     Represents a link that should be ignored when building a machine.
     """
 
-    __slots__ = ["x", "y", "link", "ip_address"]
+    __slots__ = ["ip_address", "link", "x", "y"]
 
     def __init__(self, x: _Intable, y: _Intable, link: _Intable,
                  ip_address: Optional[str] = None):
