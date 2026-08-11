@@ -11,14 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any, Optional, Set, Union
+from typing import Any, Optional, Union
 
 from typing_extensions import TypeAlias
 
 _Intable: TypeAlias = Union[int, str]
 
 
-class IgnoreLink(object):
+class IgnoreLink:
     """
     Represents a link that should be ignored when building a machine.
     """
@@ -76,7 +76,7 @@ class IgnoreLink(object):
                 f"Unexpected downed_link: {downed_link}")
 
     @staticmethod
-    def parse_string(downed_links: Optional[str]) -> Set['IgnoreLink']:
+    def parse_string(downed_links: Optional[str]) -> set['IgnoreLink']:
         """
         Converts a string into a (possibly empty) set of
         :py:class:`IgnoreLink` objects
@@ -100,7 +100,7 @@ class IgnoreLink(object):
         :param downed_links: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreLinks
         """
-        ignored_links: Set['IgnoreLink'] = set()
+        ignored_links: set['IgnoreLink'] = set()
         if downed_links is None:
             return ignored_links
         if downed_links.lower() == "none":

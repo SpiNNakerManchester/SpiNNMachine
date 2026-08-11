@@ -15,12 +15,9 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Dict,
     Iterable,
     Iterator,
-    List,
     Optional,
-    Tuple,
     Union,
 )
 
@@ -37,7 +34,7 @@ if TYPE_CHECKING:
     from .routing_entry import RoutingEntry
 
 
-class Router(object):
+class Router:
     """
     Represents a router of a chip, with a set of available links.
     The router is iterable over the links, providing (source_link_id,
@@ -65,7 +62,7 @@ class Router(object):
         :raise ~spinn_machine.exceptions.SpinnMachineAlreadyExistsException:
             If any two links have the same ``source_link_id``
         """
-        self._links: Dict[int, Link] = {}
+        self._links: dict[int, Link] = {}
         for link in links:
             self.add_link(link)
 
@@ -123,7 +120,7 @@ class Router(object):
         """
         return iter(self._links.values())
 
-    def __iter__(self) -> Iterator[Tuple[int, Link]]:
+    def __iter__(self) -> Iterator[tuple[int, Link]]:
         """
         Get an iterable of source link IDs and links in the router.
 
@@ -180,8 +177,8 @@ class Router(object):
         return route_entry
 
     @staticmethod
-    def convert_spinnaker_route_to_routing_ids(route: int) -> Tuple[
-            List[int], List[int]]:
+    def convert_spinnaker_route_to_routing_ids(route: int) -> tuple[
+            list[int], list[int]]:
         """
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.
@@ -196,7 +193,7 @@ class Router(object):
                     if route & 1 << li]
         return processor_ids, link_ids
 
-    def get_neighbouring_chips_coords(self) -> List[Dict[str, int]]:
+    def get_neighbouring_chips_coords(self) -> list[dict[str, int]]:
         """
         Utility method to convert links into x and y coordinates.
 

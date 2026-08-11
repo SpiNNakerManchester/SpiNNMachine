@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Iterable, Tuple
+from typing import Iterable
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -40,7 +40,7 @@ class HorizontalWrapMachine(Machine):
     @overrides(Machine.get_xy_cores_by_ethernet)
     def get_xy_cores_by_ethernet(
             self, ethernet_x: int, ethernet_y: int) -> Iterable[
-                Tuple[XY, int]]:
+                tuple[XY, int]]:
         for (x, y), n_cores in self._chip_core_map.items():
             yield ((x + ethernet_x) % self._width, (y + ethernet_y)), n_cores
 
@@ -115,7 +115,7 @@ class HorizontalWrapMachine(Machine):
             return len_left
 
     @overrides(Machine.get_vector)
-    def get_vector(self, source: XY, destination: XY) -> Tuple[int, int, int]:
+    def get_vector(self, source: XY, destination: XY) -> tuple[int, int, int]:
         # Aliases for convenience
         w = self._width
 

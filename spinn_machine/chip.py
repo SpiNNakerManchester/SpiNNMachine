@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Iterable, Iterator, Optional, Tuple
+from typing import Iterable, Iterator, Optional
 
 from typing_extensions import Self
 
@@ -127,7 +127,7 @@ class Chip(XY):
         return len(self._scamp_processors) + len(self._placable_processors)
 
     @property
-    def placable_processors_ids(self) -> Tuple[int, ...]:
+    def placable_processors_ids(self) -> tuple[int, ...]:
         """
         An iterable of available placeable/ non scamp processor ids.
         """
@@ -141,7 +141,7 @@ class Chip(XY):
         return len(self._placable_processors)
 
     @property
-    def scamp_processors_ids(self) -> Tuple[int, ...]:
+    def scamp_processors_ids(self) -> tuple[int, ...]:
         """
         An iterable of available scamp processors.
         """

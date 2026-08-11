@@ -17,16 +17,16 @@ From https://github.com/project-rig/rig/blob/master/rig/geometry.py
 """
 
 import random
-from typing import Iterable, Tuple
+from typing import Iterable
 
 
-def to_xyz(xy: Tuple[int, int]) -> Tuple[int, int, int]:
+def to_xyz(xy: tuple[int, int]) -> tuple[int, int, int]:
     """Convert a two-tuple (x, y) coordinate into an (x, y, 0) coordinate."""
     x, y = xy
     return (x, y, 0)
 
 
-def minimise_xyz(xyz: Iterable[int]) -> Tuple[int, int, int]:
+def minimise_xyz(xyz: Iterable[int]) -> tuple[int, int, int]:
     """Minimise an (x, y, z) coordinate."""
     x, y, z = xyz
     m = max(min(x, y), min(max(x, y), z))
@@ -34,8 +34,8 @@ def minimise_xyz(xyz: Iterable[int]) -> Tuple[int, int, int]:
 
 
 def shortest_mesh_path_length(
-        source: Tuple[int, int, int],
-        destination: Tuple[int, int, int]) -> int:
+        source: tuple[int, int, int],
+        destination: tuple[int, int, int]) -> int:
     """Get the length of a shortest path from source to destination without
     using wrap-around links.
 
@@ -75,8 +75,8 @@ def shortest_mesh_path_length(
 
 
 def shortest_mesh_path(
-        source: Tuple[int, int, int],
-        destination: Tuple[int, int, int]) -> Tuple[int, int, int]:
+        source: tuple[int, int, int],
+        destination: tuple[int, int, int]) -> tuple[int, int, int]:
     """Calculate the shortest vector from source to destination without using
     wrap-around links.
 
@@ -85,7 +85,7 @@ def shortest_mesh_path(
 
 
 def shortest_torus_path_length(
-        source: Tuple[int, int, int], destination: Tuple[int, int, int],
+        source: tuple[int, int, int], destination: tuple[int, int, int],
         width: int, height: int) -> int:
     """Get the length of a shortest path from source to destination using
     wrap-around links.
@@ -144,8 +144,8 @@ def shortest_torus_path_length(
 
 
 def shortest_torus_path(
-        source: Tuple[int, int, int], destination: Tuple[int, int, int],
-        width: int, height: int) -> Tuple[int, int, int]:
+        source: tuple[int, int, int], destination: tuple[int, int, int],
+        width: int, height: int) -> tuple[int, int, int]:
     """Calculate the shortest vector from source to destination using
     wrap-around links.
 

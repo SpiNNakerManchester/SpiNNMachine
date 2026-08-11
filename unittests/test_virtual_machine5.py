@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import unittest
-from typing import List, Optional
+from typing import Optional
 
 from spinn_utilities.config_holder import set_config
 
@@ -69,7 +69,7 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual(count, 856)
         s_links = MachineDataView.get_spinnaker_links()
         spinnaker_links = (list(s_links.spinnaker_links))
-        expected: List = []
+        expected: list = []
         sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))
         expected.append((((0, 0), 0), sp))
@@ -168,7 +168,7 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual((12, 0), vm.get_unused_xy())
         s_links = MachineDataView.get_spinnaker_links()
         spinnaker_links = (list(s_links.spinnaker_links))
-        expected: List = []
+        expected: list = []
         self.assertEqual(expected, spinnaker_links)
         # 8 links on each of the 6 sides recorded 3 times
         # Except for the Ethernet Chip's 3 links which are only recorded twice
@@ -191,7 +191,7 @@ class TestVirtualMachine5(unittest.TestCase):
         self.assertEqual((0, 4), vm.get_unused_xy())
         s_links = MachineDataView.get_spinnaker_links()
         spinnaker_links = (list(s_links.spinnaker_links))
-        expected: List = []
+        expected: list = []
         sp = SpinnakerLinkData(0, 0, 0, 4, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))
         expected.append((((0, 0), 0), sp))

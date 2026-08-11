@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import annotations
 
-from typing import Any, Collection, FrozenSet, Optional, Tuple, Union, overload
+from typing import Any, Collection, Optional, Union, overload
 
 from spinn_machine.router import Router
 
@@ -21,7 +21,7 @@ from .data import MachineDataView
 from .exceptions import SpinnMachineInvalidParameterException
 
 
-class RoutingEntry(object):
+class RoutingEntry:
     """
     Represents an entry in a SpiNNaker chip's multicast routing table.
     """
@@ -79,8 +79,8 @@ class RoutingEntry(object):
             processor_ids or link_ids is missing or `None`
         """
         self.__repr: Optional[str] = None
-        self._link_ids: Optional[FrozenSet[int]]
-        self._processor_ids: Optional[FrozenSet[int]]
+        self._link_ids: Optional[frozenset[int]]
+        self._processor_ids: Optional[frozenset[int]]
 
         # Add processor IDs, ignore duplicates
         if spinnaker_route is None:
@@ -122,7 +122,7 @@ class RoutingEntry(object):
                 self._defaultable = False
 
     @property
-    def processor_ids(self) -> FrozenSet[int]:
+    def processor_ids(self) -> frozenset[int]:
         """
         The destination processor IDs.
         """
@@ -131,7 +131,7 @@ class RoutingEntry(object):
         return self._processor_ids
 
     @property
-    def link_ids(self) -> FrozenSet[int]:
+    def link_ids(self) -> frozenset[int]:
         """
         The destination link IDs.
         """
@@ -217,7 +217,7 @@ class RoutingEntry(object):
             route_entry |= (1 << link_id)
         return route_entry
 
-    def _calc_routing_ids(self) -> Tuple[FrozenSet[int], FrozenSet[int]]:
+    def _calc_routing_ids(self) -> tuple[frozenset[int], frozenset[int]]:
         """
         Convert a binary routing table entry usable on the machine to lists of
         route IDs usable in a routing table entry represented in software.

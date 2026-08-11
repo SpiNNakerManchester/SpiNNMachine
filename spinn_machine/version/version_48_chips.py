@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import math
-from typing import Optional, Sequence, Tuple
+from typing import Optional, Sequence
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -40,7 +40,7 @@ class Version48Chips(AbstractVersion):
 
     @property
     @overrides(AbstractVersion.board_shape)
-    def board_shape(self) -> Tuple[int, int]:
+    def board_shape(self) -> tuple[int, int]:
         return (8, 8)
 
     @overrides(AbstractVersion.get_potential_ethernet_chips)
@@ -96,7 +96,7 @@ class Version48Chips(AbstractVersion):
         return None
 
     @overrides(AbstractVersion.size_from_n_boards)
-    def size_from_n_boards(self, n_boards: int) -> Tuple[int, int]:
+    def size_from_n_boards(self, n_boards: int) -> tuple[int, int]:
         if n_boards <= 1:
             return 8, 8
         # This replicates how spalloc does it

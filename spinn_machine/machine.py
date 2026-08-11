@@ -17,14 +17,10 @@ import logging
 from collections import Counter
 from typing import (
     TYPE_CHECKING,
-    Dict,
     Iterable,
     Iterator,
-    List,
     Optional,
     Sequence,
-    Set,
-    Tuple,
 )
 
 from typing_extensions import Never
@@ -46,7 +42,7 @@ if TYPE_CHECKING:
 logger = FormatAdapter(logging.getLogger(__name__))
 
 
-class Machine(object, metaclass=AbstractBase):
+class Machine(metaclass=AbstractBase):
     """
     A representation of a SpiNNaker Machine with a number of Chips.
     Machine is also iterable, providing ``((x, y), chip)`` where:
@@ -88,7 +84,7 @@ class Machine(object, metaclass=AbstractBase):
         "_width"
     )
 
-    def __init__(self, width: int, height: int, chip_core_map: Dict[XY, int],
+    def __init__(self, width: int, height: int, chip_core_map: dict[XY, int],
                  origin: str = ""):
         """
         :param width: The width of the machine excluding
@@ -109,12 +105,12 @@ class Machine(object, metaclass=AbstractBase):
         self._chip_core_map = chip_core_map
 
         # The list of chips with Ethernet connections
-        self._ethernet_connected_chips: List[Chip] = []
+        self._ethernet_connected_chips: list[Chip] = []
         # Store the boot chip information
         self._boot_ethernet_address: Optional[str] = None
 
         # The dictionary of chips
-        self._chips: Dict[XY, Chip] = {}
+        self._chips: dict[XY, Chip] = {}
 
         self._origin = origin
 
@@ -154,7 +150,7 @@ class Machine(object, metaclass=AbstractBase):
     @abstractmethod
     def get_xy_cores_by_ethernet(
             self, ethernet_x: int, ethernet_y: int) -> Iterable[
-                Tuple[XY, int]]:
+                tuple[XY, int]]:
         """
         Yields the potential (x,y) locations and the typical number of cores
         of all the chips on the board with this Ethernet-enabled chip.
@@ -405,7 +401,7 @@ class Machine(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def get_vector(self, source: XY, destination: XY) -> Tuple[int, int, int]:
+    def get_vector(self, source: XY, destination: XY) -> tuple[int, int, int]:
         """
         Get mathematical shortest vector (x, y, z) from source to destination.
         The z direction uses the diagonal inter-chip links; (0,0,1) is
@@ -583,7 +579,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return iter(self._chips.keys())
 
-    def __iter__(self) -> Iterator[Tuple[XY, Chip]]:
+    def __iter__(self) -> Iterator[tuple[XY, Chip]]:
         """
         Get an iterable of the chip coordinates and chips.
 
@@ -851,7 +847,7 @@ class Machine(object, metaclass=AbstractBase):
         """
         return sum(chip.n_processors for chip in self.chips)
 
-    def unreachable_outgoing_chips(self) -> List[XY]:
+    def unreachable_outgoing_chips(self) -> list[XY]:
         """
         Detects chips that can not reach any of their neighbours.
 
@@ -860,7 +856,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
         """
-        removable_coords: List[XY] = []
+        removable_coords: list[XY] = []
         for (x, y) in self.chip_coordinates:
             # If no links out of the chip work, remove it
             for link in range(6):
@@ -870,7 +866,7 @@ class Machine(object, metaclass=AbstractBase):
                 removable_coords.append((x, y))
         return removable_coords
 
-    def unreachable_incoming_chips(self) -> List[XY]:
+    def unreachable_incoming_chips(self) -> list[XY]:
         """
         Detects chips that are not reachable from any of their neighbours.
 
@@ -879,7 +875,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
         """
-        removable_coords: List[XY] = []
+        removable_coords: list[XY] = []
         for (x, y) in self.chip_coordinates:
             # Go through all the chips that surround this one
             moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
@@ -893,7 +889,7 @@ class Machine(object, metaclass=AbstractBase):
                 removable_coords.append((x, y))
         return removable_coords
 
-    def unreachable_outgoing_local_chips(self) -> List[XY]:
+    def unreachable_outgoing_local_chips(self) -> list[XY]:
         """
         Detects chips that can not reach any of their *local* neighbours.
 
@@ -902,7 +898,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
         """
-        removable_coords: List[XY] = []
+        removable_coords: list[XY] = []
         for chip in self._chips.values():
             # If no links out of the chip work, remove it
             moves = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
@@ -923,7 +919,7 @@ class Machine(object, metaclass=AbstractBase):
                 removable_coords.append((x, y))
         return removable_coords
 
-    def unreachable_incoming_local_chips(self) -> List[XY]:
+    def unreachable_incoming_local_chips(self) -> list[XY]:
         """
         Detects chips that are not reachable from any of their *local*
         neighbours.
@@ -933,7 +929,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: List (hopefully empty) if the (x,y) coordinates of
             unreachable chips.
         """
-        removable_coords: List[XY] = []
+        removable_coords: list[XY] = []
         for chip in self._chips.values():
             x, y = chip
             nearest_ethernet_x = chip.nearest_ethernet_x
@@ -954,7 +950,7 @@ class Machine(object, metaclass=AbstractBase):
                 removable_coords.append((x, y))
         return removable_coords
 
-    def one_way_links(self) -> Iterable[Tuple[int, int, int, int]]:
+    def one_way_links(self) -> Iterable[tuple[int, int, int, int]]:
         """
         Links with no link going the opposite way
 
@@ -972,7 +968,7 @@ class Machine(object, metaclass=AbstractBase):
                         yield chip.x, chip.y, out, back
 
     @staticmethod
-    def _minimize_vector(x: int, y: int) -> Tuple[int, int, int]:
+    def _minimize_vector(x: int, y: int) -> tuple[int, int, int]:
         """
         Minimises an (x, y, 0) vector.
 
@@ -1040,7 +1036,7 @@ class Machine(object, metaclass=AbstractBase):
         :return: an unused (x,y) coordinate
         """
         # get a set of xys that could be connected to any existing Ethernet
-        xys_by_ethernet: Set[XY] = set()
+        xys_by_ethernet: set[XY] = set()
         for ethernet_x, ethernet_y in self.ethernet_connected_chips:
             xys_by_ethernet.update(self.get_xys_by_ethernet(
                 ethernet_x, ethernet_y))

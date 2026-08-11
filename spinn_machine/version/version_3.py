@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, Final, List, Optional, Sequence, Tuple
+from typing import Any, Final, Optional, Sequence
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -51,12 +51,12 @@ class Version3(VersionSpin1):
 
     @property
     @overrides(VersionSpin1.board_shape)
-    def board_shape(self) -> Tuple[int, int]:
+    def board_shape(self) -> tuple[int, int]:
         return (2, 2)
 
     @property
     @overrides(VersionSpin1.chip_core_map)
-    def chip_core_map(self) -> Dict[XY, int]:
+    def chip_core_map(self) -> dict[XY, int]:
         return CHIPS_PER_BOARD
 
     @overrides(VersionSpin1.get_potential_ethernet_chips)
@@ -87,7 +87,7 @@ class Version3(VersionSpin1):
         return False
 
     @overrides(VersionSpin1.spinnaker_links)
-    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+    def spinnaker_links(self) -> list[tuple[int, int, int]]:
         return [(0, 0, 3), (1, 0, 0)]
 
     @overrides(VersionSpin1.get_idle_energy)

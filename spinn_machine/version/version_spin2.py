@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import re
-from typing import Dict, Final, Iterable, List, Tuple
+from typing import Final, Iterable
 
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.exceptions import ConfigException
@@ -77,7 +77,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
     def __init__(self) -> None:
         super().__init__(max_cores_per_chip=153,
                          max_sdram_per_chip=1073741824)
-        self._reverse_quad_map: Dict[Tuple[int, int, int], int] = (
+        self._reverse_quad_map: dict[tuple[int, int, int], int] = (
             dict((v, k) for k, v in QUAD_MAP.items()))
 
     @property
@@ -97,7 +97,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
 
     @property
     @overrides(AbstractVersion.clock_speeds_hz)
-    def clock_speeds_hz(self) -> List[int]:
+    def clock_speeds_hz(self) -> list[int]:
         return [150000000, 300000000]
 
     @property
@@ -106,7 +106,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
         raise SpinnMachineException("Spin2 dtcm bytes unknown.")
 
     @overrides(AbstractVersion.quads_maps)
-    def quads_maps(self) -> Dict[int, Tuple[int, int, int]]:
+    def quads_maps(self) -> dict[int, tuple[int, int, int]]:
         return QUAD_MAP
 
     @overrides(AbstractVersion.qx_qy_qp_to_id)
@@ -114,7 +114,7 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
         return self._reverse_quad_map[(qx, qy, qp)]
 
     @overrides(AbstractVersion.id_to_qx_qy_qp)
-    def id_to_qx_qy_qp(self, core_id: int) -> Tuple[int, int, int]:
+    def id_to_qx_qy_qp(self, core_id: int) -> tuple[int, int, int]:
         return QUAD_MAP[core_id]
 
     @overrides(AbstractVersion.version_parse_cores_string)
@@ -145,6 +145,6 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
         raise SpinnMachineException("Spin2 active energy unknown.")
 
     @overrides(AbstractVersion.get_router_report_packet_types)
-    def get_router_report_packet_types(self) -> List[str]:
+    def get_router_report_packet_types(self) -> list[str]:
         # TODO: Work this out for SpiNNaker 2
         raise SpinnMachineException("Spin2 router report packet types unknown")

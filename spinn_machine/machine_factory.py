@@ -14,7 +14,7 @@
 
 import logging
 from collections import defaultdict
-from typing import Collection, Iterable, Set, Tuple
+from typing import Collection, Iterable
 
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter
@@ -31,7 +31,7 @@ logger = FormatAdapter(logging.getLogger(__name__))
 
 def _machine_ignore(
         original: Machine, dead_chips: Collection[XY],
-        dead_links: Set[Tuple[int, int, int, int]]) -> Machine:
+        dead_links: set[tuple[int, int, int, int]]) -> Machine:
     """
     Creates a near copy of the machine without the dead bits.
 
@@ -139,8 +139,8 @@ def machine_repair(
     :return: Either the original machine or a repaired replacement
     """
     repair_machine = get_config_bool("Machine", "repair_machine")
-    dead_chips: Set[XY] = set()
-    dead_links: Set[Tuple[int, int, int, int]] = set()
+    dead_chips: set[XY] = set()
+    dead_links: set[tuple[int, int, int, int]] = set()
 
     # holder for error message
     error_message = ""

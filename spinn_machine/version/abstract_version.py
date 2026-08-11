@@ -17,12 +17,9 @@ import logging
 import re
 from typing import (
     TYPE_CHECKING,
-    Dict,
     Iterable,
-    List,
     Optional,
     Sequence,
-    Tuple,
 )
 
 from typing_extensions import TypeAlias
@@ -41,13 +38,13 @@ if TYPE_CHECKING:
 logger = FormatAdapter(logging.getLogger(__name__))
 
 # Dict of the number of packets sent by each router in each category
-RouterPackets: TypeAlias = Dict[XY, Dict[str, int]]
+RouterPackets: TypeAlias = dict[XY, dict[str, int]]
 
 CORE_RANGE = re.compile(r"(\d+)-(\d+)")
 CORE_SINGLE = re.compile(r"(-*)(\d+)")
 
 
-class AbstractVersion(object, metaclass=AbstractBase):
+class AbstractVersion(metaclass=AbstractBase):
     """
     Base class for the version classes.
 
@@ -153,7 +150,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def board_shape(self) -> Tuple[int, int]:
+    def board_shape(self) -> tuple[int, int]:
         """
         The width and height of a single board of this type
         """
@@ -227,7 +224,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def chip_core_map(self) -> Dict[XY, int]:
+    def chip_core_map(self) -> dict[XY, int]:
         """
         A map off the expected x,y coordinates on a standard board to
         the most likely number of cores on that chip.
@@ -236,7 +233,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
 
     @property
     @abstractmethod
-    def clock_speeds_hz(self) -> List[int]:
+    def clock_speeds_hz(self) -> list[int]:
         """
         The processor clock speeds in Hz this processor can run at
         """
@@ -363,7 +360,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         """
         raise NotImplementedError
 
-    def size_from_n_cores(self, n_cores: int) -> Tuple[int, int]:
+    def size_from_n_cores(self, n_cores: int) -> tuple[int, int]:
         """
         Returns the size needed to support this many cores.
 
@@ -384,7 +381,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         # Double minus to round up
         return self.size_from_n_boards(-(-n_cores // cores_per_board))
 
-    def size_from_n_chips(self, n_chips: int) -> Tuple[int, int]:
+    def size_from_n_chips(self, n_chips: int) -> tuple[int, int]:
         """
         Returns the size needed to support this many chips.
 
@@ -399,7 +396,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         # Double minus to round up
         return self.size_from_n_boards(-(-n_chips // self.n_chips_per_board))
 
-    def size_from_n_boards(self, n_boards: int) -> Tuple[int, int]:
+    def size_from_n_boards(self, n_boards: int) -> tuple[int, int]:
         """
         Returns the size needed to support this many boards.
 
@@ -425,7 +422,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def quads_maps(self) -> Optional[Dict[int, Tuple[int, int, int]]]:
+    def quads_maps(self) -> Optional[dict[int, tuple[int, int, int]]]:
         """
         If applicable returns a map of virtual id to quad qx, qy, qp
 
@@ -451,7 +448,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def id_to_qx_qy_qp(self, core_id: int) -> Tuple[int, int, int]:
+    def id_to_qx_qy_qp(self, core_id: int) -> tuple[int, int, int]:
         """
         Converts core id to quad coordinates
 
@@ -534,7 +531,7 @@ class AbstractVersion(object, metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def get_router_report_packet_types(self) -> List[str]:
+    def get_router_report_packet_types(self) -> list[str]:
         """
         :returns: The list of packet types that the router can send
         """

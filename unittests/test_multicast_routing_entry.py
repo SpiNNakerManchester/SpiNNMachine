@@ -14,7 +14,6 @@
 
 import pickle
 import unittest
-from typing import List
 
 from spinn_utilities.config_holder import set_config
 
@@ -58,7 +57,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
 
     def test_creating_defaulatble_multicast_routing_entry(self) -> None:
         link_ids = []
-        proc_ids: List[int] = []
+        proc_ids: list[int] = []
         link_ids.append(2)
         key = 1
         mask = 1

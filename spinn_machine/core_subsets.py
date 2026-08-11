@@ -11,14 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Dict, Iterable, Iterator, Union
+from typing import Iterable, Iterator, Union
 
 from spinn_utilities.typing.coords import XY, XYP
 
 from .core_subset import CoreSubset
 
 
-class CoreSubsets(object):
+class CoreSubsets:
     """
     Represents a group of CoreSubsets, with a maximum of one per
     SpiNNaker chip.
@@ -31,7 +31,7 @@ class CoreSubsets(object):
         :param core_subsets:
             The cores for each desired chip
         """
-        self._core_subsets: Dict[XY, CoreSubset] = {}
+        self._core_subsets: dict[XY, CoreSubset] = {}
         for core_subset in core_subsets:
             self.add_core_subset(core_subset)
 

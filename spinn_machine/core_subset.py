@@ -16,7 +16,7 @@ from typing import Any, Iterable, Iterator
 from spinn_utilities.ordered_set import OrderedSet
 
 
-class CoreSubset(object):
+class CoreSubset:
     """
     Represents a subset of the cores on a SpiNNaker chip.
     """

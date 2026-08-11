@@ -17,7 +17,7 @@ a Link in a SpiNNaker machine
 """
 
 
-class Link(object):
+class Link:
     """
     Represents a directional link between SpiNNaker chips in the machine.
     """

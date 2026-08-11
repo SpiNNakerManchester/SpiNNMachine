@@ -13,13 +13,13 @@
 # limitations under the License.
 from __future__ import annotations
 
-from typing import Any, FrozenSet
+from typing import Any
 
 from .exceptions import SpinnMachineInvalidParameterException
 from .routing_entry import RoutingEntry
 
 
-class MulticastRoutingEntry(object):
+class MulticastRoutingEntry:
     """
     Represents an entry in a SpiNNaker chip's routing table,
     including the key and mask
@@ -62,14 +62,14 @@ class MulticastRoutingEntry(object):
         return self._mask
 
     @property
-    def processor_ids(self) -> FrozenSet[int]:
+    def processor_ids(self) -> frozenset[int]:
         """
         The destination processor IDs.
         """
         return self._routing_entry.processor_ids
 
     @property
-    def link_ids(self) -> FrozenSet[int]:
+    def link_ids(self) -> frozenset[int]:
         """
         The destination link IDs.
         """

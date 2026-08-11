@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Final, Iterable, List, Tuple
+from typing import Final, Iterable
 
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.exceptions import ConfigException
@@ -87,7 +87,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
 
     @property
     @overrides(AbstractVersion.clock_speeds_hz)
-    def clock_speeds_hz(self) -> List[int]:
+    def clock_speeds_hz(self) -> list[int]:
         return [200000000]
 
     @property
@@ -104,7 +104,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
         raise SpinnMachineException("Not supported in Version 1")
 
     @overrides(AbstractVersion.id_to_qx_qy_qp)
-    def id_to_qx_qy_qp(self, core_id: int) -> Tuple[int, int, int]:
+    def id_to_qx_qy_qp(self, core_id: int) -> tuple[int, int, int]:
         raise SpinnMachineException("Not supported in Version 1")
 
     @overrides(AbstractVersion.version_parse_cores_string)
@@ -113,7 +113,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
             f"{core_string} does not represent cores for Version 1 boards")
 
     @overrides(AbstractVersion.get_router_report_packet_types)
-    def get_router_report_packet_types(self) -> List[str]:
+    def get_router_report_packet_types(self) -> list[str]:
         return list(self.COST_PER_PACKET_TYPE.keys())
 
     def _get_router_active_energy(
@@ -128,7 +128,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
         return sum_core_active_times * self.WATTS_PER_CORE_ACTIVE_OVERHEAD
 
     @abstractmethod
-    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+    def spinnaker_links(self) -> list[tuple[int, int, int]]:
         """
         The list of Local X, Y and link Id to add spinnaker links to
 
