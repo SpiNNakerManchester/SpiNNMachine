@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-class AbstractLinkData(object):
+class AbstractLinkData:
     """
     Data object for SpiNNaker links.
     """

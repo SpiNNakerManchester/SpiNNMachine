@@ -15,7 +15,7 @@ import csv
 import re
 from collections import namedtuple
 from itertools import chain
-from typing import Dict, FrozenSet, List, Optional, Set, Tuple
+from typing import Optional
 
 from .coordinates import chip_to_board
 from .links import Links
@@ -29,7 +29,7 @@ class Configuration(namedtuple(
     various parameters for the server.
     """
 
-    def __new__(cls, machines: Optional[List["MachineConfig"]] = None,
+    def __new__(cls, machines: Optional[list["MachineConfig"]] = None,
                 port: int = 22244, ip_address: str = "",
                 timeout_check_interval: float = 5.0,
                 max_retired_jobs: int = 1200,
@@ -46,9 +46,9 @@ class Configuration(namedtuple(
         # pylint: disable=too-many-arguments
 
         # Validate machine definitions
-        used_names: Set[str] = set()
-        used_bmp_ips: Set[str] = set()
-        used_spinnaker_ips: Set[str] = set()
+        used_names: set[str] = set()
+        used_bmp_ips: set[str] = set()
+        used_spinnaker_ips: set[str] = set()
         machines = list([] if machines is None else machines)
         for m in machines:
             if not isinstance(m, MachineConfig):
@@ -86,14 +86,14 @@ class MachineConfig(namedtuple(
     links, board locations, and IP addresses for the BMPs and SpiNNaker boards.
     """
     def __new__(
-            cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
+            cls, name: str, tags: frozenset[str] = frozenset(["default"]),
             width: Optional[int] = None, height: Optional[int] = None,
-            dead_boards: FrozenSet[Tuple[int, int, int]] = frozenset(),
-            dead_links: FrozenSet[Tuple[int, int, int, Links]] = frozenset(),
-            board_locations: Optional[Dict[Tuple[int, int, int],
-                                           Tuple[int, int, int]]] = None,
-            bmp_ips: Optional[Dict[Tuple[int, int], str]] = None,
-            spinnaker_ips: Optional[Dict[Tuple[int, int, int], str]] = None
+            dead_boards: frozenset[tuple[int, int, int]] = frozenset(),
+            dead_links: frozenset[tuple[int, int, int, Links]] = frozenset(),
+            board_locations: Optional[dict[tuple[int, int, int],
+                                           tuple[int, int, int]]] = None,
+            bmp_ips: Optional[dict[tuple[int, int], str]] = None,
+            spinnaker_ips: Optional[dict[tuple[int, int, int], str]] = None
             ) -> "MachineConfig":
         """
 
@@ -193,7 +193,7 @@ class MachineConfig(namedtuple(
 
     @classmethod
     def single_board(
-            cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
+            cls, name: str, tags: frozenset[str] = frozenset(["default"]),
             bmp_ip: Optional[str] = None,
             spinnaker_ip: Optional[str] = None) -> "MachineConfig":
         """
@@ -220,12 +220,12 @@ class MachineConfig(namedtuple(
 
     @classmethod
     def with_standard_ips(
-            cls, name: str, tags: FrozenSet[str] = frozenset(["default"]),
+            cls, name: str, tags: frozenset[str] = frozenset(["default"]),
             width: Optional[int] = None, height: Optional[int] = None,
-            dead_boards: FrozenSet[Tuple[int, int, int]] = frozenset(),
-            dead_links: FrozenSet[Tuple[int, int, int, Links]] = frozenset(),
-            board_locations: Optional[Dict[Tuple[int, int, int],
-                                           Tuple[int, int, int]]] = None,
+            dead_boards: frozenset[tuple[int, int, int]] = frozenset(),
+            dead_links: frozenset[tuple[int, int, int, Links]] = frozenset(),
+            board_locations: Optional[dict[tuple[int, int, int],
+                                           tuple[int, int, int]]] = None,
             base_ip: str = "192.168.0.0",
             cabinet_stride: str = "0.0.5.0",
             frame_stride: str = "0.0.1.0",
@@ -316,8 +316,8 @@ class MachineConfig(namedtuple(
                    bmp_ips=bmp_ips, spinnaker_ips=spinnaker_ips)
 
 
-def board_locations_from_spinner(filename: str) -> Dict[Tuple[int, int, int],
-                                                        Tuple[int, int, int]]:
+def board_locations_from_spinner(filename: str) -> dict[tuple[int, int, int],
+                                                        tuple[int, int, int]]:
     """
     Extract board locations from a CSV file containing Ethernet connected
     chips and their locations.
@@ -327,14 +327,14 @@ def board_locations_from_spinner(filename: str) -> Dict[Tuple[int, int, int],
              locations (cabinet, frame, board).
     """
     # Extract lookup from Ethernet connected chips to locations
-    chip_locations: Dict[Tuple[int, int], Tuple[int, int, int]] = {}
+    chip_locations: dict[tuple[int, int], tuple[int, int, int]] = {}
     with open(filename, "r", encoding='utf8') as f:
         for entry in csv.DictReader(f):
-            cfb: Tuple[int, int, int] = (
+            cfb: tuple[int, int, int] = (
                 int(entry["cabinet"]), int(entry["frame"]),
                 int(entry["board"]))
 
-            chip_xy: Tuple[int, int] = (int(entry["x"]), int(entry["y"]))
+            chip_xy: tuple[int, int] = (int(entry["x"]), int(entry["y"]))
 
             assert chip_xy not in chip_locations
             chip_locations[chip_xy] = cfb

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, Final
+from typing import Any, Final
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -56,7 +56,7 @@ class Version248(VersionSpin2, Version48Chips):
 
     @property
     @overrides(VersionSpin2.chip_core_map)
-    def chip_core_map(self) -> Dict[XY, int]:
+    def chip_core_map(self) -> dict[XY, int]:
         return CHIPS_PER_BOARD
 
     def __eq__(self, other: Any) -> bool:

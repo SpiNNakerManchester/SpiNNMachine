@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-class AbstractTag(object):
+class AbstractTag:
     """
     Common properties of SpiNNaker IP tags and reverse IP tags.
     """

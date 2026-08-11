@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Iterable
+from typing import Iterable
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -33,7 +33,7 @@ class FrozenCoreSubsets(CoreSubsets):
         :param core_subsets:
             The cores for each desired chip
         """
-        self._core_subsets: Dict[XY, CoreSubset] = {}
+        self._core_subsets: dict[XY, CoreSubset] = {}
         # Do the load here so that the blocked add_processor is not called
         for core_subset in core_subsets:
             x = core_subset.x

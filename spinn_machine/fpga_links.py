@@ -31,7 +31,7 @@ logger = FormatAdapter(logging.getLogger(__name__))
 _FpgaLinkKey: TypeAlias = tuple[str | XY, int, int]
 
 
-class FPGALinks(object):
+class FPGALinks:
     """
     Represents the FPGA links associated with the Machine
 

@@ -11,12 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Tuple
 
 from spinn_machine import SpiNNakerTriadGeometry
 
 
-def chip_to_board(x: int, y: int, w: int, h: int) -> Tuple[int, int, int]:
+def chip_to_board(x: int, y: int, w: int, h: int) -> tuple[int, int, int]:
     """
     Get the board coordinates from the chip coordinates.
 

@@ -11,14 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any, Optional, Set, Union
+from typing import Any, Optional, Union
 
 from typing_extensions import TypeAlias
 
 _Intable: TypeAlias = Union[int, str]
 
 
-class IgnoreChip(object):
+class IgnoreChip:
     """
     Represents a chip to be ignored when building a machine. This is
     typically because it has a fault in the SpiNNaker router.
@@ -78,7 +78,7 @@ class IgnoreChip(object):
                 f"Unexpected downed_chip: {downed_chip}")
 
     @staticmethod
-    def parse_string(downed_chips: Optional[str]) -> Set['IgnoreChip']:
+    def parse_string(downed_chips: Optional[str]) -> set['IgnoreChip']:
         """
         Converts a string into a (possibly empty) set of
         :py:class:`IgnoreChip` objects.
@@ -105,7 +105,7 @@ class IgnoreChip(object):
         :param downed_chips: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreChips
         """
-        ignored_chips: Set['IgnoreChip'] = set()
+        ignored_chips: set['IgnoreChip'] = set()
         if downed_chips is None:
             return ignored_chips
         if downed_chips.lower() == "none":

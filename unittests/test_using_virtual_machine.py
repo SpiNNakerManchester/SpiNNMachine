@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-from typing import Tuple
 
 from parameterized import parameterized
 
@@ -96,7 +95,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
             self.assertNotIn(_chip, down_chips)
         self.assertEqual(n_chips - 1, count)
 
-    def _check_path(self, source: XY, target: XY, path: Tuple[int, int, int],
+    def _check_path(self, source: XY, target: XY, path: tuple[int, int, int],
                     width: int, height: int) -> None:
         new_target = ((source[0] + path[0] - path[2]) % width,
                       (source[1] + path[1] - path[2]) % height)

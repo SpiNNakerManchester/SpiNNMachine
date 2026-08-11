@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, Optional, Set, Tuple, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.data import UtilsDataView
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 NONE_CORE = 255
 
 
-class _MachineDataModel(object):
+class _MachineDataModel:
     """
     Singleton data model.
 
@@ -82,7 +82,7 @@ class _MachineDataModel(object):
         self._machine_version: Optional[AbstractVersion] = None
         self._n_boards_required: Optional[int] = None
         self._n_chips_required: Optional[int] = None
-        self._quad_map: Optional[Dict[int, Tuple[int, int, int]]] = None
+        self._quad_map: Optional[dict[int, tuple[int, int, int]]] = None
 
     def _hard_reset(self) -> None:
         """
@@ -97,7 +97,7 @@ class _MachineDataModel(object):
         self._machine: Optional[Machine] = None
         self._n_chips_in_graph: Optional[int] = None
         self._spinnaker_links: Optional[SpinnakerLinks] = None
-        self._v_to_p_map: Optional[Dict[XY, bytes]] = None
+        self._v_to_p_map: Optional[dict[XY, bytes]] = None
         self._user_accessed_machine = False
 
     def _soft_reset(self) -> None:
@@ -297,7 +297,7 @@ class MachineDataView(UtilsDataView):
         return cls.__data._machine_version
 
     @classmethod
-    def set_v_to_p_map(cls, v_to_p_map: Dict[XY, bytes]) -> None:
+    def set_v_to_p_map(cls, v_to_p_map: dict[XY, bytes]) -> None:
         """
         Registers the mapping from Virtual to int physical core ids
 
@@ -334,7 +334,7 @@ class MachineDataView(UtilsDataView):
         return cls.__data._v_to_p_map[xy][virtual_p]
 
     @classmethod
-    def get_physical_quad(cls, virtual_p: int) -> Tuple[int, int, int]:
+    def get_physical_quad(cls, virtual_p: int) -> tuple[int, int, int]:
         """
         Returns the quad qx, qy and qp for this virtual id
 
@@ -362,7 +362,7 @@ class MachineDataView(UtilsDataView):
         :param virtual_p: The virtual (python) id for the core
         :return: A report / debug representation of the Chip and physical core
         """
-        physical_p: Union[int, Tuple[int, int, int]]
+        physical_p: Union[int, tuple[int, int, int]]
         try:
             if cls.__data._v_to_p_map is not None:
                 physical_p = cls.get_physical_core_id(xy, virtual_p)
@@ -376,7 +376,7 @@ class MachineDataView(UtilsDataView):
             return ""
 
     @classmethod
-    def get_physical_cores(cls, xy: XY) -> Set[int]:
+    def get_physical_cores(cls, xy: XY) -> set[int]:
         """
         The Physical cores that have been mapped for this Chip
 

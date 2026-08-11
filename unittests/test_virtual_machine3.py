@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-from typing import List
 
 from spinn_utilities.config_holder import set_config
 
@@ -128,7 +127,7 @@ class TestVirtualMachine3(unittest.TestCase):
         self.assertEqual((2, 0), vm.get_unused_xy())
         links = MachineDataView.get_spinnaker_links()
         spinnaker_links = (list(links.spinnaker_links))
-        expected: List = []
+        expected: list = []
         sp = SpinnakerLinkData(0, 0, 0, 3, '127.0.0.0')
         expected.append((('127.0.0.0', 0), sp))
         expected.append((((0, 0), 0), sp))

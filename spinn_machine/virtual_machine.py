@@ -14,7 +14,7 @@
 import logging
 import math
 from collections import defaultdict
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Optional
 
 from spinn_utilities.config_holder import (
     get_config_int,
@@ -193,7 +193,7 @@ def virtual_machine_by_boards(n_boards: int, validate: bool = True) -> Machine:
     return virtual_machine(width, height, validate)
 
 
-class _VirtualMachine(object):
+class _VirtualMachine:
     """
     A Virtual SpiNNaker machine factory
     """
@@ -235,14 +235,14 @@ class _VirtualMachine(object):
             if down_chip.ip_address is None:
                 unused_chips.append((down_chip.x, down_chip.y))
 
-        self._unused_cores: Dict[XY, Set[int]] = defaultdict(set)
+        self._unused_cores: dict[XY, set[int]] = defaultdict(set)
         for down_core in IgnoreCore.parse_string(get_config_str_or_none(
                 "Machine", "down_cores")):
             if down_core.ip_address is None:
                 self._unused_cores[down_core.x, down_core.y].add(
                     down_core.virtual_p)
 
-        self._unused_links: Set[Tuple[int, int, int]] = set()
+        self._unused_links: set[tuple[int, int, int]] = set()
         for down_link in IgnoreLink.parse_string(get_config_str_or_none(
                 "Machine", "down_links")):
             if down_link.ip_address is None:
@@ -257,7 +257,7 @@ class _VirtualMachine(object):
         # Compute list of chips that are possible based on configuration
         # If there are no wrap arounds, and the the size is not 2 * 2,
         # the possible chips depend on the 48 chip board's gaps
-        configured_chips: Dict[XY, Tuple[XY, int]] = {}
+        configured_chips: dict[XY, tuple[XY, int]] = {}
         for eth in ethernet_chips:
             for (xy, n_cores) in self._machine.get_xy_cores_by_ethernet(
                     *eth):
@@ -291,7 +291,7 @@ class _VirtualMachine(object):
         return self._machine
 
     def _create_chip(self, xy: XY, scamp_processors: list[int],
-                     configured_chips: Dict[XY, Tuple[XY, int]],
+                     configured_chips: dict[XY, tuple[XY, int]],
                      ip_address: Optional[str] = None) -> Chip:
         chip_links = self._calculate_links(xy, configured_chips)
         chip_router = Router(chip_links, self._n_router_entries)
@@ -309,8 +309,8 @@ class _VirtualMachine(object):
             ip_address)
 
     def _calculate_links(
-            self, xy: XY, configured_chips: Dict[XY, Tuple[XY, int]]
-            ) -> List[Link]:
+            self, xy: XY, configured_chips: dict[XY, tuple[XY, int]]
+            ) -> list[Link]:
         """
         Calculate the links needed for a machine structure
         """

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, Final, List, Tuple
+from typing import Any, Final
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -76,14 +76,14 @@ class Version5(VersionSpin1, Version48Chips):
 
     @property
     @overrides(VersionSpin1.chip_core_map)
-    def chip_core_map(self) -> Dict[XY, int]:
+    def chip_core_map(self) -> dict[XY, int]:
         return CHIPS_PER_BOARD
 
     @overrides(VersionSpin1.spinnaker_links)
-    def spinnaker_links(self) -> List[Tuple[int, int, int]]:
+    def spinnaker_links(self) -> list[tuple[int, int, int]]:
         return [(0, 0, 4)]
 
-    def fpga_links(self) -> List[Tuple[int, int, int, int, int]]:
+    def fpga_links(self) -> list[tuple[int, int, int, int, int]]:
         """
         The list of Local X, Y, link, fpga_link_id and fpga_id
 

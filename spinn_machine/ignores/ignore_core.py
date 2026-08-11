@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any, List, Optional, Set, Union
+from typing import Any, Optional, Union
 
 from typing_extensions import TypeAlias
 
@@ -24,7 +24,7 @@ TYPICAL_PHYSICAL_VIRTUAL_MAP = {
     12: 13, 13: 14, 14: 15, 15: 16, 16: 17, 17: 18}
 
 
-class IgnoreCore(object):
+class IgnoreCore:
     """
     Represents a core to be ignored when building a machine.
     """
@@ -67,7 +67,7 @@ class IgnoreCore(object):
             return TYPICAL_PHYSICAL_VIRTUAL_MAP[0-self.p]
 
     @staticmethod
-    def parse_single_string(downed_core: str) -> List['IgnoreCore']:
+    def parse_single_string(downed_core: str) -> list['IgnoreCore']:
         """
         Converts a string into an :py:class:`IgnoreCore` object.
 
@@ -107,7 +107,7 @@ class IgnoreCore(object):
             raise ValueError(f"Unexpected downed_core: {downed_core}")
 
     @staticmethod
-    def parse_string(downed_cores: Optional[str]) -> Set['IgnoreCore']:
+    def parse_string(downed_cores: Optional[str]) -> set['IgnoreCore']:
         """
         Converts a string into a (possibly empty) set of
         :py:class:`IgnoreCore` objects.
@@ -137,7 +137,7 @@ class IgnoreCore(object):
         :param downed_cores: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreCores
         """
-        ignored_cores: Set['IgnoreCore'] = set()
+        ignored_cores: set['IgnoreCore'] = set()
         if downed_cores is None:
             return ignored_cores
         if downed_cores.lower() == "none":

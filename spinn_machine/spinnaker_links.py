@@ -31,7 +31,7 @@ logger = FormatAdapter(logging.getLogger(__name__))
 _SpinLinkKey: TypeAlias = tuple[str | XY, int]
 
 
-class SpinnakerLinks(object):
+class SpinnakerLinks:
     """
     Represents the Spinnaker links associated with the Machine
 

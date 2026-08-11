@@ -14,7 +14,6 @@
 import json
 from argparse import ArgumentParser
 from collections import defaultdict
-from typing import Dict, List
 
 from spinn_machine.spalloc_server import configuration, coordinates
 from spinn_machine.spalloc_server.configuration import (
@@ -23,15 +22,15 @@ from spinn_machine.spalloc_server.configuration import (
 )
 
 
-def _parse_config(config_file_contents: str) -> Dict:
-    g: Dict = {}
+def _parse_config(config_file_contents: str) -> dict:
+    g: dict = {}
     g.update(configuration.__dict__)
     g.update(coordinates.__dict__)
     exec(config_file_contents, g)  # pylint: disable=exec-used
     return g
 
 
-def _validate_config(parsed_config: Dict) -> Configuration:
+def _validate_config(parsed_config: dict) -> Configuration:
     new = parsed_config.get("configuration", None)
     if new is None or not isinstance(new, Configuration):
         raise ValueError("Missing configuration object in parsed config")
@@ -51,7 +50,7 @@ def read_config_file(config_filename: str) -> Configuration:
     return _validate_config(parsed_config)
 
 
-def gather_links(machine: MachineConfig) -> Dict[str, List[str]]:
+def gather_links(machine: MachineConfig) -> dict[str, list[str]]:
     """
     Gather the links for a machine.
 
