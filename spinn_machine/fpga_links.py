@@ -16,7 +16,7 @@
 FPGA Links on a SpiNNaker machine
 """
 import logging
-from typing import Optional, TypeAlias
+from typing import TypeAlias
 
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
@@ -101,8 +101,8 @@ class FPGALinks:
 
     def get_fpga_link_with_id(
             self, fpga_id: int, fpga_link_id: int,
-            board_address: Optional[str] = None,
-            chip_coords: Optional[XY] = None) -> FPGALinkData:
+            board_address: str | None = None,
+            chip_coords: XY | None = None) -> FPGALinkData:
         """
         Get an FPGA link data item that corresponds to the FPGA and FPGA
         link for a given board address.

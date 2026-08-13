@@ -18,7 +18,6 @@ import re
 from typing import (
     TYPE_CHECKING,
     Iterable,
-    Optional,
     Sequence,
 )
 
@@ -266,7 +265,7 @@ class AbstractVersion(metaclass=AbstractBase):
         """
         raise NotImplementedError
 
-    def verify_size(self, width: Optional[int], height: Optional[int]) -> None:
+    def verify_size(self, width: int | None, height: int | None) -> None:
         """
         Checks that the width and height are allowed for this version.
 
@@ -298,8 +297,8 @@ class AbstractVersion(metaclass=AbstractBase):
         raise NotImplementedError
 
     def create_machine(
-            self, width: Optional[int], height: Optional[int],
-            origin: Optional[str] = None) -> Machine:
+            self, width: int | None, height: int | None,
+            origin: str | None = None) -> Machine:
         """
         Creates a new empty machine based on the width, height and version.
 
@@ -342,7 +341,7 @@ class AbstractVersion(metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
+    def illegal_ethernet_message(self, x: int, y: int) -> str | None:
         """
         Checks if x and y could be for an Ethernet.
 
@@ -422,7 +421,7 @@ class AbstractVersion(metaclass=AbstractBase):
         raise NotImplementedError
 
     @abstractmethod
-    def quads_maps(self) -> Optional[dict[int, tuple[int, int, int]]]:
+    def quads_maps(self) -> dict[int, tuple[int, int, int]] | None:
         """
         If applicable returns a map of virtual id to quad qx, qy, qp
 

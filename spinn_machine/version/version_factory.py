@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from typing_extensions import Never
 
@@ -66,7 +66,7 @@ def version_factory() -> AbstractVersion:
     url_version = _get_url_version()
     size_version = _get_size_version()
 
-    version: Optional[AbstractVersion] = None
+    version: AbstractVersion | None = None
     if cfg_version is None:
         if url_version is None:
             version = None
@@ -102,7 +102,7 @@ def version_factory() -> AbstractVersion:
     raise SpinnMachineException("Should not get here")
 
 
-def _get_cfg_version() -> Optional[int]:
+def _get_cfg_version() -> int | None:
     version = get_config_int_or_none("Machine", "version")
     if has_config_option("Machine", "versions"):
         raise SpinnMachineException(
@@ -113,7 +113,7 @@ def _get_cfg_version() -> Optional[int]:
     return version
 
 
-def _get_url_version() -> Optional[int]:
+def _get_url_version() -> int | None:
     spalloc_server = get_config_str_or_none("Machine", "spalloc_server")
     remote_spinnaker_url = get_config_str_or_none(
         "Machine", "remote_spinnaker_url")
@@ -150,7 +150,7 @@ def _get_url_version() -> Optional[int]:
     return None
 
 
-def _get_size_version() -> Optional[int]:
+def _get_size_version() -> int | None:
     height = get_config_int_or_none("Machine", "height")
     width = get_config_int_or_none("Machine", "width")
     if height is None:
@@ -193,7 +193,7 @@ def _number_to_version(version: int) -> AbstractVersion:
     raise SpinnMachineException(f"Unexpected cfg [Machine]version {version}")
 
 
-def raise_version_error(error: str, version: Optional[int]) -> Never:
+def raise_version_error(error: str, version: int | None) -> Never:
     """
     Collects main cfg values and raises an exception
 

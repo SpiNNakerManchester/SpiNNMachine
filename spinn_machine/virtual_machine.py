@@ -14,7 +14,6 @@
 import logging
 import math
 from collections import defaultdict
-from typing import Optional
 
 from spinn_utilities.config_holder import (
     get_config_int,
@@ -292,7 +291,7 @@ class _VirtualMachine:
 
     def _create_chip(self, xy: XY, scamp_processors: list[int],
                      configured_chips: dict[XY, tuple[XY, int]],
-                     ip_address: Optional[str] = None) -> Chip:
+                     ip_address: str | None = None) -> Chip:
         chip_links = self._calculate_links(xy, configured_chips)
         chip_router = Router(chip_links, self._n_router_entries)
 

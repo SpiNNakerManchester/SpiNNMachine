@@ -17,8 +17,6 @@ from typing import (
     TYPE_CHECKING,
     Iterable,
     Iterator,
-    Optional,
-    Union,
 )
 
 from spinn_machine.data import MachineDataView
@@ -97,7 +95,7 @@ class Router:
         """
         return self.is_link(source_link_id)
 
-    def get_link(self, source_link_id: int) -> Optional[Link]:
+    def get_link(self, source_link_id: int) -> Link | None:
         """
         Get the link with the given ID, or `None` if no such link.
         Also implemented as ``__getitem__(source_link_id)``
@@ -107,7 +105,7 @@ class Router:
         """
         return self._links.get(source_link_id)
 
-    def __getitem__(self, source_link_id: int) -> Optional[Link]:
+    def __getitem__(self, source_link_id: int) -> Link | None:
         """
         See :py:meth:`get_link`
         """
@@ -147,8 +145,7 @@ class Router:
 
     @staticmethod
     def convert_routing_table_entry_to_spinnaker_route(
-            routing_table_entry: Union[
-                MulticastRoutingEntry, RoutingEntry]) -> int:
+            routing_table_entry: MulticastRoutingEntry | RoutingEntry) -> int:
         """
         Convert a routing table entry represented in software to a
         binary routing table entry usable on the machine.

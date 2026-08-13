@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Final, Optional, Sequence
+from typing import Any, Final, Sequence
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -76,7 +76,7 @@ class Version3(VersionSpin1):
         return FullWrapMachine(width, height, CHIPS_PER_BOARD, origin)
 
     @overrides(VersionSpin1.illegal_ethernet_message)
-    def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
+    def illegal_ethernet_message(self, x: int, y: int) -> str | None:
         if x != 0 or y != 0:
             return "Only Chip 0, 0 may be an Ethernet Chip"
         return None

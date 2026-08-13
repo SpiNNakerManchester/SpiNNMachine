@@ -11,13 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any, Optional, Union
+from typing import Any
 
 from typing_extensions import TypeAlias
 
 from spinn_machine.data import MachineDataView
 
-_Intable: TypeAlias = Union[int, str]
+_Intable: TypeAlias = int | str
 
 TYPICAL_PHYSICAL_VIRTUAL_MAP = {
     0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 0, 11: 12,
@@ -32,7 +32,7 @@ class IgnoreCore:
     __slots__ = ["ip_address", "p", "x", "y"]
 
     def __init__(self, x: _Intable, y: _Intable, p: _Intable,
-                 ip_address: Optional[str] = None):
+                 ip_address: str | None = None):
         """
         :param x: X coordinate of a core to ignore
         :param y: Y coordinate of a core to ignore
@@ -107,7 +107,7 @@ class IgnoreCore:
             raise ValueError(f"Unexpected downed_core: {downed_core}")
 
     @staticmethod
-    def parse_string(downed_cores: Optional[str]) -> set['IgnoreCore']:
+    def parse_string(downed_cores: str | None) -> set['IgnoreCore']:
         """
         Converts a string into a (possibly empty) set of
         :py:class:`IgnoreCore` objects.

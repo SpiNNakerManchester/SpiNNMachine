@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-from typing import Optional
 
 from spinn_utilities.ordered_set import OrderedSet
 
@@ -43,7 +42,7 @@ class TestingChip(unittest.TestCase):
         self._ip = "192.162.240.253"
 
     def _create_chip(self, x: int, y: int, processors: int, r: Router,
-                     sdram: int, ip: Optional[str]) -> Chip:
+                     sdram: int, ip: str | None) -> Chip:
         return Chip(x, y, [0], range(1, processors), r, sdram, 0, 0, ip)
 
     def test_create_chip(self) -> None:

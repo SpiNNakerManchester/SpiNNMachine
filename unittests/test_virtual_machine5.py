@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-from typing import Optional
 
 from spinn_utilities.config_holder import set_config
 
@@ -208,7 +207,7 @@ class TestVirtualMachine5(unittest.TestCase):
     @staticmethod
     def _assert_fpga_link(
             fpga_links_object: FPGALinks, fpga: int, fpga_link: int,
-            x: int, y: int, link_id: int, ip: Optional[str] = None) -> None:
+            x: int, y: int, link_id: int, ip: str | None = None) -> None:
         link = fpga_links_object.get_fpga_link_with_id(fpga, fpga_link, ip)
         assert link.connected_chip_x == x
         assert link.connected_chip_y == y

@@ -14,7 +14,7 @@
 
 import json
 import logging
-from typing import NamedTuple, Union
+from typing import NamedTuple
 
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.json import JsonArray, JsonObject, JsonValue
@@ -76,7 +76,7 @@ def _obj(value: JsonValue) -> JsonObject:
         f"unsupported value type for object field: {type(value)}")
 
 
-def machine_from_json(j_machine: Union[JsonObject, str]) -> Machine:
+def machine_from_json(j_machine: JsonObject | str) -> Machine:
     """
     Generate a model of a machine from a JSON description of that machine.
 

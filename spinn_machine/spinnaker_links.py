@@ -16,7 +16,7 @@
 FPGA Links on a SpiNNaker machine
 """
 import logging
-from typing import Iterator, Optional, TypeAlias
+from typing import Iterator, TypeAlias
 
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
@@ -90,8 +90,8 @@ class SpinnakerLinks:
         return iter(self._spinnaker_links.items())
 
     def get_spinnaker_link_with_id(
-            self, spinnaker_link_id: int, board_address: Optional[str] = None,
-            chip_coords: Optional[XY] = None) -> SpinnakerLinkData:
+            self, spinnaker_link_id: int, board_address: str | None = None,
+            chip_coords: XY | None = None) -> SpinnakerLinkData:
         """
         Get a SpiNNaker link with a given ID.
 

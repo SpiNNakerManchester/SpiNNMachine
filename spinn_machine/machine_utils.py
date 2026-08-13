@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the L
 
-from typing import Optional
 
 from spinn_utilities.config_holder import get_config_str_or_none
 
@@ -23,7 +22,7 @@ SPINNAKERTEAM = "spinnakerusers@googlegroups.com"
 SPINNCLOUD = "info@spinncloud.com"
 
 
-def _contact_email_by_cfg(option: str) -> Optional[str]:
+def _contact_email_by_cfg(option: str) -> str | None:
     config = get_config_str_or_none("Machine", option)
     if config:
         if "man.ac.uk" in config:

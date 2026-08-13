@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.data import UtilsDataView
@@ -48,7 +48,7 @@ class _MachineDataModel:
     What data is held where and how can change without notice.
     """
 
-    __singleton: Optional['_MachineDataModel'] = None
+    __singleton: '_MachineDataModel' | None = None
 
     __slots__ = [
         # Data values cached
@@ -79,10 +79,10 @@ class _MachineDataModel:
         Clears out all data
         """
         self._hard_reset()
-        self._machine_version: Optional[AbstractVersion] = None
-        self._n_boards_required: Optional[int] = None
-        self._n_chips_required: Optional[int] = None
-        self._quad_map: Optional[dict[int, tuple[int, int, int]]] = None
+        self._machine_version: AbstractVersion | None = None
+        self._n_boards_required: int | None = None
+        self._n_chips_required: int | None = None
+        self._quad_map: dict[int, tuple[int, int, int]] | None = None
 
     def _hard_reset(self) -> None:
         """
@@ -93,11 +93,11 @@ class _MachineDataModel:
         self._soft_reset()
         self._all_monitor_cores: int = 0
         self._ethernet_monitor_cores: int = 0
-        self._fpga_links: Optional[FPGALinks] = None
-        self._machine: Optional[Machine] = None
-        self._n_chips_in_graph: Optional[int] = None
-        self._spinnaker_links: Optional[SpinnakerLinks] = None
-        self._v_to_p_map: Optional[dict[XY, bytes]] = None
+        self._fpga_links: FPGALinks | None = None
+        self._machine: Machine | None = None
+        self._n_chips_in_graph: int | None = None
+        self._spinnaker_links: SpinnakerLinks | None = None
+        self._v_to_p_map: dict[XY, bytes] | None = None
         self._user_accessed_machine = False
 
     def _soft_reset(self) -> None:
@@ -362,7 +362,7 @@ class MachineDataView(UtilsDataView):
         :param virtual_p: The virtual (python) id for the core
         :return: A report / debug representation of the Chip and physical core
         """
-        physical_p: Union[int, tuple[int, int, int]]
+        physical_p: int | tuple[int, int, int]
         try:
             if cls.__data._v_to_p_map is not None:
                 physical_p = cls.get_physical_core_id(xy, virtual_p)

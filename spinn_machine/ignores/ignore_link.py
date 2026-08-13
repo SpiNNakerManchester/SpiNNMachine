@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any, Optional, Union
+from typing import Any
 
 from typing_extensions import TypeAlias
 
-_Intable: TypeAlias = Union[int, str]
+_Intable: TypeAlias = int | str
 
 
 class IgnoreLink:
@@ -26,7 +26,7 @@ class IgnoreLink:
     __slots__ = ["ip_address", "link", "x", "y"]
 
     def __init__(self, x: _Intable, y: _Intable, link: _Intable,
-                 ip_address: Optional[str] = None):
+                 ip_address: str | None = None):
         """
         :param x: X coordinate of a chip with a link to ignore
         :param y: Y coordinate of a chip with a link to ignore
@@ -76,7 +76,7 @@ class IgnoreLink:
                 f"Unexpected downed_link: {downed_link}")
 
     @staticmethod
-    def parse_string(downed_links: Optional[str]) -> set['IgnoreLink']:
+    def parse_string(downed_links: str | None) -> set['IgnoreLink']:
         """
         Converts a string into a (possibly empty) set of
         :py:class:`IgnoreLink` objects
