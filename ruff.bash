@@ -27,11 +27,8 @@ else
   python3 -m pip install --upgrade ruff
 fi
 
-echo using ruff.toml
-ruff check ../SpiNNUtils/spinn_utilities ../SpiNNUtils/unittests \
-    spinn_machine unittests \
-    --target-version py310 --config ../SupportScripts/actions/ruff/ruff.toml
-echo using ruff_up.toml
-ruff check ../SpiNNUtils/spinn_utilities ../SpiNNUtils/unittests \
-    spinn_machine unittests \
-    --target-version py310 --config ../SupportScripts/actions/ruff/ruff_up.toml
+echo ruff using ruff.toml
+ruff check spinn_machine unittests \
+    --target-version py310 --config ../SupportScripts/actions/ruff/ruff_ignore.toml --fix
+echo flake8
+flake8 spinn_machine unittests
