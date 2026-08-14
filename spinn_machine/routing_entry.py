@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import annotations
 
-from typing import Any, Collection, Optional, Union, overload
+from typing import Any, Collection, overload
 
 from spinn_machine.router import Router
 
@@ -35,10 +35,10 @@ class RoutingEntry:
     )
 
     @overload
-    def __init__(self, *, processor_ids: Union[int, Collection[int]],
-                 link_ids: Union[int, Collection[int]],
-                 incoming_processor: Optional[int] = None,
-                 incoming_link: Optional[int] = None,
+    def __init__(self, *, processor_ids: int | Collection[int],
+                 link_ids: int | Collection[int],
+                 incoming_processor: int | None = None,
+                 incoming_link: int | None = None,
                  defaultable: None = None,
                  spinnaker_route: None = None):
         ...
@@ -48,17 +48,17 @@ class RoutingEntry:
                  link_ids: None = None,
                  incoming_processor: None = None,
                  incoming_link: None = None,
-                 defaultable: Optional[bool] = False,
+                 defaultable: bool | None = False,
                  spinnaker_route: int):
         ...
 
     def __init__(self, *,
-                 processor_ids: Optional[Union[int, Collection[int]]] = None,
-                 link_ids: Optional[Union[int, Collection[int]]] = None,
-                 incoming_processor: Optional[int] = None,
-                 incoming_link: Optional[int] = None,
-                 defaultable: Optional[bool] = None,
-                 spinnaker_route: Optional[int] = None) -> None:
+                 processor_ids: int | Collection[int] | None = None,
+                 link_ids: int | Collection[int] | None = None,
+                 incoming_processor: int | None = None,
+                 incoming_link: int | None = None,
+                 defaultable: bool | None = None,
+                 spinnaker_route: int | None = None) -> None:
         """
         .. note::
             The processor_ids and link_ids parameters are only optional if a
@@ -78,9 +78,9 @@ class RoutingEntry:
         :raise TypeError: if no spinnaker_route provided and either
             processor_ids or link_ids is missing or `None`
         """
-        self.__repr: Optional[str] = None
-        self._link_ids: Optional[frozenset[int]]
-        self._processor_ids: Optional[frozenset[int]]
+        self.__repr: str | None = None
+        self._link_ids: frozenset[int] | None
+        self._processor_ids: frozenset[int] | None
 
         # Add processor IDs, ignore duplicates
         if spinnaker_route is None:

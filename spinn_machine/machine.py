@@ -19,7 +19,6 @@ from typing import (
     TYPE_CHECKING,
     Iterable,
     Iterator,
-    Optional,
     Sequence,
 )
 
@@ -107,7 +106,7 @@ class Machine(metaclass=AbstractBase):
         # The list of chips with Ethernet connections
         self._ethernet_connected_chips: list[Chip] = []
         # Store the boot chip information
-        self._boot_ethernet_address: Optional[str] = None
+        self._boot_ethernet_address: str | None = None
 
         # The dictionary of chips
         self._chips: dict[XY, Chip] = {}
@@ -599,7 +598,7 @@ class Machine(metaclass=AbstractBase):
         """
         return len(self._chips)
 
-    def get_chip_at(self, x: int, y: int) -> Optional[Chip]:
+    def get_chip_at(self, x: int, y: int) -> Chip | None:
         """
         Get the chip at a specific (x, y) location.
         Also implemented as ``__getitem__((x, y))``
@@ -691,8 +690,8 @@ class Machine(metaclass=AbstractBase):
         return len(self._ethernet_connected_chips)
 
     def get_spinnaker_link_with_id(
-            self, spinnaker_link_id: int, board_address: Optional[str] = None,
-            chip_coords: Optional[XY] = None) -> Never:
+            self, spinnaker_link_id: int, board_address: str | None = None,
+            chip_coords: XY | None = None) -> Never:
         """
         Moved to SpinnakerLinks Object
 
@@ -705,8 +704,8 @@ class Machine(metaclass=AbstractBase):
 
     def get_fpga_link_with_id(
             self, fpga_id: int, fpga_link_id: int,
-            board_address: Optional[str] = None,
-            chip_coords: Optional[XY] = None) -> Never:
+            board_address: str | None = None,
+            chip_coords: XY | None = None) -> Never:
         """
         Moved to FPGALinks Object
 

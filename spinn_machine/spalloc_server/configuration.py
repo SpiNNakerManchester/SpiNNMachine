@@ -15,7 +15,6 @@ import csv
 import re
 from collections import namedtuple
 from itertools import chain
-from typing import Optional
 
 from .coordinates import chip_to_board
 from .links import Links
@@ -29,7 +28,7 @@ class Configuration(namedtuple(
     various parameters for the server.
     """
 
-    def __new__(cls, machines: Optional[list["MachineConfig"]] = None,
+    def __new__(cls, machines: list["MachineConfig"] | None = None,
                 port: int = 22244, ip_address: str = "",
                 timeout_check_interval: float = 5.0,
                 max_retired_jobs: int = 1200,
@@ -87,13 +86,13 @@ class MachineConfig(namedtuple(
     """
     def __new__(
             cls, name: str, tags: frozenset[str] = frozenset(["default"]),
-            width: Optional[int] = None, height: Optional[int] = None,
+            width: int | None = None, height: int | None = None,
             dead_boards: frozenset[tuple[int, int, int]] = frozenset(),
             dead_links: frozenset[tuple[int, int, int, Links]] = frozenset(),
-            board_locations: Optional[dict[tuple[int, int, int],
-                                           tuple[int, int, int]]] = None,
-            bmp_ips: Optional[dict[tuple[int, int], str]] = None,
-            spinnaker_ips: Optional[dict[tuple[int, int, int], str]] = None
+            board_locations: dict[tuple[int, int, int],
+                                  tuple[int, int, int]] | None = None,
+            bmp_ips: dict[tuple[int, int], str] | None = None,
+            spinnaker_ips: dict[tuple[int, int, int], str] | None = None
             ) -> "MachineConfig":
         """
 
@@ -194,8 +193,8 @@ class MachineConfig(namedtuple(
     @classmethod
     def single_board(
             cls, name: str, tags: frozenset[str] = frozenset(["default"]),
-            bmp_ip: Optional[str] = None,
-            spinnaker_ip: Optional[str] = None) -> "MachineConfig":
+            bmp_ip: str | None = None,
+            spinnaker_ip: str | None = None) -> "MachineConfig":
         """
         Create a machine with a single board, with the given BMP and
         SpiNNaker IP addresses.
@@ -221,11 +220,11 @@ class MachineConfig(namedtuple(
     @classmethod
     def with_standard_ips(
             cls, name: str, tags: frozenset[str] = frozenset(["default"]),
-            width: Optional[int] = None, height: Optional[int] = None,
+            width: int | None = None, height: int | None = None,
             dead_boards: frozenset[tuple[int, int, int]] = frozenset(),
             dead_links: frozenset[tuple[int, int, int, Links]] = frozenset(),
-            board_locations: Optional[dict[tuple[int, int, int],
-                                           tuple[int, int, int]]] = None,
+            board_locations: dict[tuple[int, int, int],
+                                  tuple[int, int, int]] | None = None,
             base_ip: str = "192.168.0.0",
             cabinet_stride: str = "0.0.5.0",
             frame_stride: str = "0.0.1.0",

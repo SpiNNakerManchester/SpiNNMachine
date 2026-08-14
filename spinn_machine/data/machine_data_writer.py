@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import logging
-from typing import Optional
 
 from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.log import FormatAdapter
@@ -124,8 +123,8 @@ class MachineDataWriter(UtilsDataWriter, MachineDataView):
         if all_chips:
             self.__data._all_monitor_cores += 1
 
-    def set_n_required(self, n_boards_required: Optional[int],
-                       n_chips_required: Optional[int]) -> None:
+    def set_n_required(self, n_boards_required: int | None,
+                       n_chips_required: int | None) -> None:
         """
         Sets (if not `None`) the number of boards/chips requested by the user.
 

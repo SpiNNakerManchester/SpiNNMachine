@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import math
-from typing import Optional, Sequence
+from typing import Sequence
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
@@ -87,7 +87,7 @@ class Version48Chips(AbstractVersion):
                 return NoWrapMachine(width, height, self.chip_core_map, origin)
 
     @overrides(AbstractVersion.illegal_ethernet_message)
-    def illegal_ethernet_message(self, x: int, y: int) -> Optional[str]:
+    def illegal_ethernet_message(self, x: int, y: int) -> str | None:
         if x % 4 != 0:
             return "Only Chip with X divisible by 4 may be an Ethernet Chip"
         if (x + y) % 12 != 0:

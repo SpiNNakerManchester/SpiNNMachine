@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Iterable, Iterator, Optional
+from typing import Iterable, Iterator
 
 from typing_extensions import Self
 
@@ -33,17 +33,17 @@ class Chip(XY):
     def __new__(cls, x: int, y: int, scamp_processors: Iterable[int],
                 placable_processors: Iterable[int], router: Router,
                 sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
-                ip_address: Optional[str] = None,
-                tag_ids: Optional[Iterable[int]] = None,
-                parent_link: Optional[int] = None) -> Self:
+                ip_address: str | None = None,
+                tag_ids: Iterable[int] | None = None,
+                parent_link: int | None = None) -> Self:
         return tuple.__new__(cls, (x, y))
 
     def __init__(self, x: int, y: int, scamp_processors: Iterable[int],
                  placable_processors: Iterable[int], router: Router,
                  sdram: int, nearest_ethernet_x: int, nearest_ethernet_y: int,
-                 ip_address: Optional[str] = None,
-                 tag_ids: Optional[Iterable[int]] = None,
-                 parent_link: Optional[int] = None):
+                 ip_address: str | None = None,
+                 tag_ids: Iterable[int] | None = None,
+                 parent_link: int | None = None):
         """
         :param x: the x-coordinate of the chip's position in the
             two-dimensional grid of chips
@@ -169,7 +169,7 @@ class Chip(XY):
         return self._sdram
 
     @property
-    def ip_address(self) -> Optional[str]:
+    def ip_address(self) -> str | None:
         """
         The IP address of the chip, or ``None`` if there is no Ethernet
         connected to the chip.
@@ -198,7 +198,7 @@ class Chip(XY):
         return self._tag_ids
 
     @property
-    def parent_link(self) -> Optional[int]:
+    def parent_link(self) -> int | None:
         """
         The link down which the parent is found in the tree of chips rooted
         at the machine root chip (probably 0, 0 in most cases).  This will

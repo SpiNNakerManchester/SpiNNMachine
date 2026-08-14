@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Iterable, Iterator, Union
+from typing import Iterable, Iterator
 
 from spinn_utilities.typing.coords import XY, XYP
 
@@ -127,7 +127,7 @@ class CoreSubsets:
         """
         return sum(len(subset) for subset in self._core_subsets.values())
 
-    def __contains__(self, x_y_tuple: Union[XY, XYP]) -> bool:
+    def __contains__(self, x_y_tuple: XY | XYP) -> bool:
         """
         True if the given coordinates are in the set.
 
