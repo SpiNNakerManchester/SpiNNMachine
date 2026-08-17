@@ -15,13 +15,11 @@ from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Iterable, Sequence
 from typing import (
     TYPE_CHECKING,
-    Iterable,
-    Sequence,
+    TypeAlias,
 )
-
-from typing_extensions import TypeAlias
 
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.config_holder import get_config_int_or_none

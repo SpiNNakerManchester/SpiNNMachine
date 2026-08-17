@@ -14,7 +14,7 @@
 
 import logging
 from collections import defaultdict
-from typing import Collection, Iterable
+from collections.abc import Collection, Iterable
 
 from spinn_utilities.config_holder import get_config_bool
 from spinn_utilities.log import FormatAdapter

@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Final, Sequence
+from collections.abc import Sequence
+from typing import Any, Final
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY

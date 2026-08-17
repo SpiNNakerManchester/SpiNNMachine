@@ -17,7 +17,7 @@ From https://github.com/project-rig/rig/blob/master/rig/geometry.py
 """
 
 import random
-from typing import Iterable
+from collections.abc import Iterable
 
 
 def to_xyz(xy: tuple[int, int]) -> tuple[int, int, int]:

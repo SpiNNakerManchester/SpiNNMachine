@@ -15,14 +15,11 @@ from __future__ import annotations
 
 import logging
 from collections import Counter
+from collections.abc import Iterable, Iterator, Sequence
 from typing import (
     TYPE_CHECKING,
-    Iterable,
-    Iterator,
-    Sequence,
+    Never,
 )
-
-from typing_extensions import Never
 
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from spinn_utilities.log import FormatAdapter
