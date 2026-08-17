@@ -13,10 +13,9 @@
 # limitations under the License.
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator
 from typing import (
     TYPE_CHECKING,
-    Iterable,
-    Iterator,
 )
 
 from spinn_machine.data import MachineDataView

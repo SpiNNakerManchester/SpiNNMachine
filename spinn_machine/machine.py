@@ -15,12 +15,8 @@ from __future__ import annotations
 
 import logging
 from collections import Counter
-from typing import (
-    TYPE_CHECKING,
-    Iterable,
-    Iterator,
-    Sequence,
-)
+from collections.abc import Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING
 
 from typing_extensions import Never
 

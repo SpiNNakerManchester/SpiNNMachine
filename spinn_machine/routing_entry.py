@@ -13,7 +13,8 @@
 # limitations under the License.
 from __future__ import annotations
 
-from typing import Any, Collection, overload
+from collections.abc import Collection
+from typing import Any, overload
 
 from spinn_machine.router import Router
 

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import math
-from typing import Sequence
+from collections.abc import Sequence
 
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY

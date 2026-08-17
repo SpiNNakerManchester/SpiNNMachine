@@ -13,7 +13,8 @@
 # limitations under the License.
 
 import re
-from typing import Final, Iterable
+from collections.abc import Iterable
+from typing import Final
 
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.exceptions import ConfigException
