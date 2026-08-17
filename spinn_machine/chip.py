@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from collections.abc import Iterable, Iterator
-from typing import Self
+
+from typing_extensions import Self
 
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.typing.coords import XY

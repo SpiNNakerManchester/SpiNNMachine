@@ -16,7 +16,9 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING, Never
+from typing import TYPE_CHECKING
+
+from typing_extensions import Never
 
 from spinn_utilities.config_holder import (
     check_user_cfg,
