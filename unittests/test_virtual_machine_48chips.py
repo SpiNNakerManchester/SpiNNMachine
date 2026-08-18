@@ -115,10 +115,10 @@ class TestVirtualMachine48Chips(unittest.TestCase):
         set_config("Machine", "version", ver_num)
         vm = virtual_machine(width=48, height=24)
         for eth_chip in vm._ethernet_connected_chips:
-            self.assertTrue(vm.get_chip_at(eth_chip.x, eth_chip.y),
-                            "Eth chip location x={}, y={} not in "
-                            "_configured_chips"
-                            .format(eth_chip.x, eth_chip.y))
+            self.assertTrue(
+                vm.get_chip_at(eth_chip.x, eth_chip.y),
+                f"Eth chip location x={eth_chip.x}, y={eth_chip.y} not in "
+                "_configured_chips")
 
     @parameterized.expand(BIG_BOARD_TYPES)
     def test_boot_chip(self, _: str, ver_num: str) -> None:

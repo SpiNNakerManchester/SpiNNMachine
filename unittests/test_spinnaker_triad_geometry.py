@@ -58,8 +58,8 @@ class TestingGeometry(unittest.TestCase):
                 qx, qy = q
                 self.assertEqual(
                     (-px, -py), q,
-                    "x at ({},{}): expected ({},{}) but got ({},{})".format(
-                        x, y, -px, -py, qx, qy))
+                    f"x at ({x},{y}): expected ({-px},{-py}) "
+                    f"but got ({qx},{qy})")
 
     def test_get_potential_ethernet_chips(self) -> None:
         g = SpiNNakerTriadGeometry.get_spinn5_geometry()

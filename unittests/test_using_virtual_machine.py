@@ -99,7 +99,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     width: int, height: int) -> None:
         new_target = ((source[0] + path[0] - path[2]) % width,
                       (source[1] + path[1] - path[2]) % height)
-        self.assertEqual(target, new_target, "{}{}".format(source, path))
+        self.assertEqual(target, new_target, f"{source}{path}")
 
     @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
     def test_nowrap_shortest_path(self, _: str, ver_num: str) -> None:
@@ -131,7 +131,7 @@ class TestUsingVirtualMachine(unittest.TestCase):
                 path = machine.get_vector(source, target)
                 self.assertEqual(
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
-                    "{}{}{}".format(source, target, path))
+                    f"{source}{target}{path}")
                 self._check_path(source, target, path, width, height)
 
     @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
@@ -152,12 +152,11 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     to_xyz(source), to_xyz(fake))
                 rig_len = min(rig_no, rig_with)
                 mac_len = machine.get_vector_length(source, target)
-                self.assertEqual(rig_len, mac_len, "{} {}".format(
-                    source, target))
+                self.assertEqual(rig_len, mac_len, f"{source} {target}")
                 path = machine.get_vector(source, target)
                 self.assertEqual(
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
-                    "{}{}{}".format(source, target, path))
+                    f"{source}{target}{path}")
                 self._check_path(source, target, path, width, height)
 
     @parameterized.expand(BIG_BOARD_TYPES)  # Needs multiple boards
@@ -178,12 +177,11 @@ class TestUsingVirtualMachine(unittest.TestCase):
                     to_xyz(source), to_xyz(fake))
                 rig_len = min(rig_no, rig_with)
                 mac_len = machine.get_vector_length(source, target)
-                self.assertEqual(rig_len, mac_len, "{} {}".format(
-                    source, target))
+                self.assertEqual(rig_len, mac_len, f"{source} {target}")
                 path = machine.get_vector(source, target)
                 self.assertEqual(
                     mac_len, abs(path[0]) + abs(path[1]) + abs(path[2]),
-                    "{}{}{}".format(source, target, path))
+                    f"{source}{target}{path}")
                 self._check_path(source, target, path, width, height)
 
     @parameterized.expand(ALL_BOARD_TYPES)
