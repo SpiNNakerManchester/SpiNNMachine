@@ -16,7 +16,7 @@ from __future__ import annotations
 import logging
 from collections import Counter
 from collections.abc import Iterable, Iterator, Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 from typing_extensions import Never
 
@@ -50,7 +50,8 @@ class Machine(metaclass=AbstractBase):
 
     # Table of the amount to add to the x and y coordinates to get the
     #  coordinates down the given link (0-5)
-    LINK_ADD_TABLE = [(1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
+    LINK_ADD_TABLE: Final = [
+        (1, 0), (1, 1), (0, 1), (-1, 0), (-1, -1), (0, -1)]
 
     __slots__ = (
         "_boot_ethernet_address",

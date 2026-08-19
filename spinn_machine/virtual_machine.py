@@ -14,6 +14,7 @@
 import logging
 import math
 from collections import defaultdict
+from typing import Final
 
 from spinn_utilities.config_holder import (
     get_config_int,
@@ -205,7 +206,7 @@ class _VirtualMachine:
         "_with_monitors"
     )
 
-    _4_chip_down_links = {
+    _4_chip_down_links: Final = {
         (0, 0, 3), (0, 0, 4), (0, 1, 3), (0, 1, 4),
         (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)
     }
