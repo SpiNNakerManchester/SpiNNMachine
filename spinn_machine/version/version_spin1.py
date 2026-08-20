@@ -54,7 +54,7 @@ class VersionSpin1(AbstractVersion, metaclass=AbstractBase):
     JOULES_PER_PACKET_WITH_PAYLOAD: Final = JOULES_PER_ROUTER_BIT * 72
 
     #: Cost of each packet type
-    COST_PER_PACKET_TYPE = {
+    COST_PER_PACKET_TYPE: Final = {
         "Local_Multicast_Packets": JOULES_PER_PACKET,
         "External_Multicast_Packets": JOULES_PER_PACKET,
         "Reinjected": JOULES_PER_PACKET,
