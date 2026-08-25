@@ -38,12 +38,12 @@ class TestDownCores(unittest.TestCase):
 
         try:
             IgnoreChip.parse_string("4,4,3,4:6,6,ignored_ip")
-        except Exception as ex:
+        except ValueError as ex:
             self.assertTrue("downed_chip" in str(ex))
 
         try:
             IgnoreCore.parse_string("3,3,3,4: 5,5,-5:7,7,7,ignored_ip")
-        except Exception as ex:
+        except ValueError as ex:
             self.assertTrue("downed_core" in str(ex))
 
         empty = IgnoreCore.parse_string(None)
@@ -51,7 +51,7 @@ class TestDownCores(unittest.TestCase):
 
         try:
             IgnoreLink.parse_string("1,3:5,3,3,ignored_ip")
-        except Exception as ex:
+        except ValueError as ex:
             self.assertTrue("downed_link" in str(ex))
 
     @parameterized.expand(MANY_BOARD_TYPES)
