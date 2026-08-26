@@ -371,7 +371,7 @@ class MachineDataView(UtilsDataView):
                 qx, qy, qp = cls.get_physical_quad(virtual_p)
                 return f" (qpe:{qx}, {qy}, {qp})"
             else:
-                return " (p?)"
+                return ""
         except Exception:  # NOQA
             return ""
 
