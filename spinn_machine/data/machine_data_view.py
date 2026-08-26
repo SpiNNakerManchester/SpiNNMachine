@@ -220,7 +220,7 @@ class MachineDataView(UtilsDataView):
             if m is not None:
                 chip = m._chips[(x, y)]
                 return chip.nearest_ethernet_x, chip.nearest_ethernet_y
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # NOQA
             pass
         return x, y
 
