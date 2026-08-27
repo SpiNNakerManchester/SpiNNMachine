@@ -62,6 +62,7 @@ class IgnoreLink:
 
         :param downed_link: representation of one link to ignore
         :return: An IgnoreLink object
+        :raises ValueError: If the forward_link is incorrect
         """
         parts = downed_link.split(",")
 
@@ -97,6 +98,7 @@ class IgnoreLink:
 
         :param downed_links: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreLinks
+        :raises ValueError: If the down_links is incorrect
         """
         ignored_links: set['IgnoreLink'] = set()
         if downed_links is None:

@@ -22,4 +22,19 @@
 # requires the spelling dicts
 # sudo apt-get -o Dpkg::Use-Pty=0 install --fix-missing enchant-2 hunspell hunspell-en-gb
 
-pylint --output-format=colorized --disable=R --persistent=no --jobs=1 --rcfile=../SupportScripts/actions/pylint/strict_rcfile --spelling-dict=en_GB --spelling-private-dict-file="../SupportScripts/actions/pylint/default_dict.txt"	spinn_machine
+if [ "$#" -eq  "0" ]
+  then
+    echo "Using previous setup. Provide an argument to run setup"
+    source ../SupportScripts/venv/ruff_runner/bin/activate
+  else
+    python3 -m venv ../SupportScripts/venv/ruff_runner
+    source ../SupportScripts/venv/ruff_runner/bin/activate
+    python3 -m pip install --upgrade pylint
+    pip3 install --upgrade ../SpiNNUtils[test]
+    rm -r ../SpiNNUtils/build
+    pip3 install --upgrade ../SpiNNMachine[test]
+    rm -r ../SpiNNMachine/build
+fi
+
+pylint --output-format=colorized --disable=R --persistent=no --jobs=1 --rcfile=../SupportScripts/actions/pylint/strict_rcfile	spinn_machine
+#pylint --output-format=colorized --disable=R --persistent=no --jobs=1 --rcfile=../SupportScripts/actions/pylint/strict_rcfile --spelling-dict=en_GB --spelling-private-dict-file="../SupportScripts/actions/pylint/default_dict.txt"	spinn_machine

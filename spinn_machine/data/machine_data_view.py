@@ -220,7 +220,7 @@ class MachineDataView(UtilsDataView):
             if m is not None:
                 chip = m._chips[(x, y)]
                 return chip.nearest_ethernet_x, chip.nearest_ethernet_y
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # NOQA
             pass
         return x, y
 
@@ -247,7 +247,7 @@ class MachineDataView(UtilsDataView):
             if m is not None:
                 return m.where_is_xy(x, y)
             return "No Machine created yet"
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # NOQA
             if cls.__data._machine is None:
                 return "No Machine created yet"
             return str(ex)
@@ -273,7 +273,7 @@ class MachineDataView(UtilsDataView):
             m = cls.__data._machine
             if m is not None:
                 return m.where_is_chip(chip)
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # NOQA
             if cls.__data._machine is not None:
                 return str(ex)
         return "Chip is from a previous machine"
@@ -372,7 +372,7 @@ class MachineDataView(UtilsDataView):
                 return f" (qpe:{qx}, {qy}, {qp})"
             else:
                 return ""
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # NOQA
             return ""
 
     @classmethod

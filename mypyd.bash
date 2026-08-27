@@ -24,8 +24,11 @@ else
     python3 -m venv ../SupportScripts/venv/mypy_runner
     source ../SupportScripts/venv/mypy_runner/bin/activate
     pip3 install --upgrade ../SpiNNUtils
+    rm -r ../SpiNNUtils/build
     pip3 install --upgrade ../SpiNNMachine[test]
+    rm -r ../SpiNNMachine/build
     python3 -m pip install --upgrade mypy
 fi
 
+echo mypy
 mypy --disallow-untyped-defs spinn_machine unittests

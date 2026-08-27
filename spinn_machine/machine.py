@@ -310,7 +310,7 @@ class Machine(metaclass=AbstractBase):
             (localx, localy) = self.get_local_xy(chip)
             return (f"global chip {chip.x}, {chip.y} on {chip00.ip_address} "
                     f"is chip {localx}, {localy} {ip_address}")
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # NOQA
             return str(chip)
 
     def where_is_xy(self, x: int, y: int) -> str:
