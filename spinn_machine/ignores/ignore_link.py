@@ -100,7 +100,7 @@ class IgnoreLink:
         :return: Set (possibly empty) of IgnoreLinks
         :raises ValueError: If the down_links is incorrect
         """
-        ignored_links: set['IgnoreLink'] = set()
+        ignored_links: set[IgnoreLink] = set()
         if downed_links is None:
             return ignored_links
         if downed_links.lower() == "none":

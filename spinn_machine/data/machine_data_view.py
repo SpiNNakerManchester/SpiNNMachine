@@ -48,7 +48,7 @@ class _MachineDataModel:
     What data is held where and how can change without notice.
     """
 
-    __singleton: '_MachineDataModel' | None = None
+    __singleton: _MachineDataModel | None = None
 
     __slots__ = [
         # Data values cached
@@ -66,7 +66,7 @@ class _MachineDataModel:
         "_v_to_p_map"
     ]
 
-    def __new__(cls) -> '_MachineDataModel':
+    def __new__(cls) -> _MachineDataModel:
         if cls.__singleton is not None:
             return cls.__singleton
         obj = object.__new__(cls)
