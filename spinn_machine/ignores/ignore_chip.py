@@ -103,7 +103,7 @@ class IgnoreChip:
         :param downed_chips: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreChips
         """
-        ignored_chips: set['IgnoreChip'] = set()
+        ignored_chips: set[IgnoreChip] = set()
         if downed_chips is None:
             return ignored_chips
         if downed_chips.lower() == "none":

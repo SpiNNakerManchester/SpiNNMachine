@@ -135,7 +135,7 @@ class IgnoreCore:
         :param downed_cores: representation of zero or chips to ignore
         :return: Set (possibly empty) of IgnoreCores
         """
-        ignored_cores: set['IgnoreCore'] = set()
+        ignored_cores: set[IgnoreCore] = set()
         if downed_cores is None:
             return ignored_cores
         if downed_cores.lower() == "none":
