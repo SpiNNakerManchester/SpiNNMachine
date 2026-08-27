@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any, TypeAlias
+from typing import TypeAlias
 
 _Intable: TypeAlias = int | str
 
@@ -109,7 +109,7 @@ class IgnoreLink:
             ignored_links.add(IgnoreLink.parse_single_string(downed_chip))
         return ignored_links
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, IgnoreLink):
             return False
         return (self.x == other.x) and (self.y == other.y) and (

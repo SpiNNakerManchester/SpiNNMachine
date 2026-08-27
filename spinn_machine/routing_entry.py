@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 from collections.abc import Collection
-from typing import Any, overload
+from typing import overload
 
 from spinn_machine.router import Router
 
@@ -179,7 +179,7 @@ class RoutingEntry:
             spinnaker_route=self.spinnaker_route | other.spinnaker_route,
             defaultable=False)
 
-    def __eq__(self, other_entry: Any) -> bool:
+    def __eq__(self, other_entry: object) -> bool:
         if not isinstance(other_entry, RoutingEntry):
             return False
         if self._spinnaker_route != other_entry._spinnaker_route:
@@ -189,7 +189,7 @@ class RoutingEntry:
     def __hash__(self) -> int:
         return self._spinnaker_route * 29 * int(self._defaultable) * 131
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:

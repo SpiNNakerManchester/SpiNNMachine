@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any
 
 from .abstract_tag import AbstractTag
 
@@ -104,7 +103,7 @@ class IPTag(AbstractTag):
             f"ip_address={self.ip_address}, strip_sdp={self.strip_sdp}, "
             f"traffic_identifier={self.traffic_identifier})")
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, IPTag):
             return False
         return (self._ip_address == other.ip_address and
@@ -118,5 +117,5 @@ class IPTag(AbstractTag):
         return hash((self._ip_address, self._strip_sdp, self._board_address,
                      self._port, self._tag, self._traffic_identifier))
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
