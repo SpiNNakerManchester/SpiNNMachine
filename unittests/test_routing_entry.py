@@ -28,12 +28,8 @@ class TestRoutingEntry(unittest.TestCase):
         unittest_setup()
 
     def test_creating_new_routing_entry(self) -> None:
-        link_ids = []
-        proc_ids = []
-        for i in range(6):
-            link_ids.append(i)
-        for i in range(18):
-            proc_ids.append(i)
+        link_ids = list(range(6))
+        proc_ids = list(range(18))
         a_multicast = RoutingEntry(
             processor_ids=proc_ids, link_ids=link_ids)
 
@@ -76,29 +72,17 @@ class TestRoutingEntry(unittest.TestCase):
 
     def test_merger(self) -> None:
         set_config("Machine", "version", str(Spin1Gen.FIVE.value))
-        link_ids = []
-        link_ids2 = []
-        proc_ids = []
-        proc_ids2 = []
-        for i in range(3):
-            link_ids.append(i)
-        for i in range(3, 6):
-            link_ids2.append(i)
-        for i in range(9):
-            proc_ids.append(i)
-        for i in range(9, 18):
-            proc_ids2.append(i)
+        link_ids = list(range(3))
+        link_ids2 = list(range(3, 6))
+        proc_ids = list(range(9))
+        proc_ids2 = list(range(9, 18))
         a_multicast = RoutingEntry(processor_ids=proc_ids, link_ids=link_ids)
         b_multicast = RoutingEntry(processor_ids=proc_ids2, link_ids=link_ids2)
 
         result_multicast = a_multicast.merge(b_multicast)
-        comparison_link_ids = []
-        comparison_proc_ids = []
-        for i in range(6):
-            comparison_link_ids.append(i)
+        comparison_link_ids = list(range(6))
+        comparison_proc_ids = list(range(18))
         self.assertEqual(link_ids + link_ids2, comparison_link_ids)
-        for i in range(18):
-            comparison_proc_ids.append(i)
         self.assertEqual(proc_ids + proc_ids2, comparison_proc_ids)
 
         self.assertEqual(result_multicast.link_ids, set(comparison_link_ids))
