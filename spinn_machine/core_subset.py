@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from collections.abc import Iterable, Iterator
-from typing import Any
 
 from spinn_utilities.ordered_set import OrderedSet
 
@@ -75,13 +74,13 @@ class CoreSubset:
     def __repr__(self) -> str:
         return f"{self._x}:{self._y}:{self._processor_ids}"
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, CoreSubset):
             return False
         return self.x == other.x and self._y == other.y and \
             self._processor_ids == other.processor_ids
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __hash__(self) -> int:

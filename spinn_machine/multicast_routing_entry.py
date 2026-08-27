@@ -13,8 +13,6 @@
 # limitations under the License.
 from __future__ import annotations
 
-from typing import Any
-
 from .exceptions import SpinnMachineInvalidParameterException
 from .routing_entry import RoutingEntry
 
@@ -121,7 +119,7 @@ class MulticastRoutingEntry:
         return MulticastRoutingEntry(
             self.key, self.mask, routing_entry)
 
-    def __eq__(self, other_entry: Any) -> bool:
+    def __eq__(self, other_entry: object) -> bool:
         if not isinstance(other_entry, MulticastRoutingEntry):
             return False
         if self.key != other_entry.key:
@@ -134,7 +132,7 @@ class MulticastRoutingEntry:
         return (self.key * 13 + self.mask * 19 +
                 hash(self._routing_entry))
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:
