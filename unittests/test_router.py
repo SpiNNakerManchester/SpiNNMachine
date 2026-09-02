@@ -66,7 +66,6 @@ class TestingRouter(unittest.TestCase):
 
     def test_creating_new_router_with_duplicate_links(self) -> None:
         links = []
-        (e, ne, n, w, sw, s) = range(6)
         links.append(Link(0, 0, 0, 0, 1))
         links.append(Link(0, 1, 0, 0, 1))
         with self.assertRaises(SpinnMachineAlreadyExistsException):
