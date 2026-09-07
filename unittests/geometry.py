@@ -59,17 +59,13 @@ def shortest_mesh_path_length(
 
     # max(x, y, z)
     maximum = x
-    if y > maximum:
-        maximum = y
-    if z > maximum:
-        maximum = z
+    maximum = max(maximum, y)
+    maximum = max(maximum, z)
 
     # min(x, y, z)
     minimum = x
-    if y < minimum:
-        minimum = y
-    if z < minimum:
-        minimum = z
+    minimum = min(minimum, y)
+    minimum = min(minimum, z)
 
     return maximum - minimum
 
@@ -125,13 +121,11 @@ def shortest_torus_path_length(
 
     # Wrap X
     wrap_x = w - x + y
-    if wrap_x < length:
-        length = wrap_x
+    length = min(length, wrap_x)
 
     # Wrap Y
     wrap_y = x + h - y
-    if wrap_y < length:
-        length = wrap_y
+    length = min(length, wrap_y)
 
     # Wrap X and Y
     dx = w - x

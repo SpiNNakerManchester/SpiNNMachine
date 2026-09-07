@@ -100,13 +100,11 @@ class FullWrapMachine(Machine):
 
         # negative x positive y so sum of abs
         negative_x = y_right - x_down
-        if negative_x < length:
-            length = negative_x
+        length = min(length, negative_x)
 
         # positive x negative Y so sum of abs
         negative_y = x_up - y_left
-        if negative_y < length:
-            length = negative_y
+        length = min(length, negative_y)
 
         # both negative so abs smaller (farthest from zero)
         if x_down > y_left:
