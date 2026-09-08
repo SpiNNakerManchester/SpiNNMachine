@@ -133,7 +133,7 @@ class TestMulticastRoutingEntry(unittest.TestCase):
         result_multicast = a_multicast.merge(b_multicast)
 
         self.assertEqual(result_multicast.key, key)
-        self.assertEqual(result_multicast.link_ids, set([3]))
+        self.assertEqual(result_multicast.link_ids, {3})
         self.assertEqual(result_multicast.mask, mask)
         self.assertEqual(result_multicast.processor_ids, set())
         assert not result_multicast.defaultable

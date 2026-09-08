@@ -48,7 +48,7 @@ class TestRoutingEntry(unittest.TestCase):
         a_multicast = RoutingEntry(
             processor_ids=[], link_ids=[4], incoming_link=1)
 
-        self.assertEqual(a_multicast.link_ids, set([4]))
+        self.assertEqual(a_multicast.link_ids, {4})
         self.assertEqual(a_multicast.processor_ids, set())
         # While we're here, let's check a few other basic operations
         self.assertEqual(str(a_multicast),
@@ -98,7 +98,7 @@ class TestRoutingEntry(unittest.TestCase):
 
         result_multicast = a_multicast.merge(b_multicast)
 
-        self.assertEqual(result_multicast.link_ids, set([1]))
+        self.assertEqual(result_multicast.link_ids, {1})
         self.assertEqual(result_multicast.processor_ids, set())
         self.assertNotEqual(result_multicast, a_multicast)
         self.assertNotEqual(hash(result_multicast), hash(a_multicast))
