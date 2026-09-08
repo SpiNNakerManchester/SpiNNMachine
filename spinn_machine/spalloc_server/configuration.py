@@ -16,6 +16,8 @@ import re
 from collections import namedtuple
 from itertools import chain
 
+from typing_extensions import Self
+
 from .coordinates import chip_to_board
 from .links import Links
 
@@ -32,7 +34,7 @@ class Configuration(namedtuple(
                 port: int = 22244, ip_address: str = "",
                 timeout_check_interval: float = 5.0,
                 max_retired_jobs: int = 1200,
-                seconds_before_free: int = 30) -> "Configuration":
+                seconds_before_free: int = 30) -> Self:
         """
 
         :param machines: A list of Machine objects describing the machines
@@ -93,7 +95,7 @@ class MachineConfig(namedtuple(
                                   tuple[int, int, int]] | None = None,
             bmp_ips: dict[tuple[int, int], str] | None = None,
             spinnaker_ips: dict[tuple[int, int, int], str] | None = None
-            ) -> "MachineConfig":
+            ) -> Self:
         """
 
         :param name: The name of the machine

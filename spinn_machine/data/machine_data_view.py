@@ -66,7 +66,7 @@ class _MachineDataModel:
         "_v_to_p_map"
     ]
 
-    def __new__(cls) -> _MachineDataModel:
+    def __new__(cls) -> _MachineDataModel:  # NOQA: PYI034
         if cls.__singleton is not None:
             return cls.__singleton
         obj = object.__new__(cls)
