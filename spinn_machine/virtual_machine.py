@@ -52,10 +52,10 @@ def virtual_machine_generator() -> Machine:
                 is_config_none("Machine", "height"):
             if MachineDataView.has_n_boards_required():
                 n_boards = MachineDataView.get_n_boards_required()
-                machine = virtual_machine_by_boards((n_boards))
+                machine = virtual_machine_by_boards(n_boards)
             elif MachineDataView.has_n_chips_needed():
                 n_chips = MachineDataView.get_n_chips_needed()
-                machine = virtual_machine_by_chips((n_chips))
+                machine = virtual_machine_by_chips(n_chips)
             else:
                 height = get_config_int_or_none("Machine", "height")
                 width = get_config_int_or_none("Machine", "width")
