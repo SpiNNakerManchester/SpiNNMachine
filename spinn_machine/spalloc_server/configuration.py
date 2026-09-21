@@ -166,18 +166,18 @@ class MachineConfig(namedtuple(
 
         # All boards must have their locations specified, unless they are
         # dead (in which case this is optional)
-        live_bords = set((x, y, z)
-                         for x in range(width)
-                         for y in range(height)
-                         for z in range(3)
-                         if (x, y, z) not in dead_boards)
+        live_bords = {(x, y, z)
+                      for x in range(width)
+                      for y in range(height)
+                      for z in range(3)
+                      if (x, y, z) not in dead_boards}
         missing_boards = live_bords - set(board_locations)
         if missing_boards:
             raise ValueError(
                 f"Board locations missing for {missing_boards}")
 
         # BMP IPs should be given for all frames which have been used
-        missing_bmp_ips = set((c, f) for c, f, _ in locations) - set(bmp_ips)
+        missing_bmp_ips = {(c, f) for c, f, _ in locations} - {bmp_ips}
         if missing_bmp_ips:
             raise ValueError(
                 f"BMP IPs not given for frames {missing_bmp_ips}")
@@ -297,8 +297,8 @@ class MachineConfig(namedtuple(
         board_locations = dict(board_locations) if board_locations else {}
 
         # Generate IP addresses for BMPs
-        cabinets_and_frames = set(
-            (c, f) for c, f, _ in board_locations.values())
+        cabinets_and_frames = {
+            (c, f) for c, f, _ in board_locations.values()}
         bmp_ips = {
             (c, f): int_to_ip(base_ip_int + (cabinet_stride_int * c) +
                               (frame_stride_int * f) + bmp_offset_int)
