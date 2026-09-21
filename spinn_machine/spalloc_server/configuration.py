@@ -177,7 +177,7 @@ class MachineConfig(namedtuple(
                 f"Board locations missing for {missing_boards}")
 
         # BMP IPs should be given for all frames which have been used
-        missing_bmp_ips = {(c, f) for c, f, _ in locations} - {bmp_ips}
+        missing_bmp_ips = {(c, f) for c, f, _ in locations} - set(bmp_ips)
         if missing_bmp_ips:
             raise ValueError(
                 f"BMP IPs not given for frames {missing_bmp_ips}")
