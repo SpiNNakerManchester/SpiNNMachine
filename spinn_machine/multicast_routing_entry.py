@@ -137,7 +137,7 @@ class MulticastRoutingEntry:
 
     def __repr__(self) -> str:
         return (f"0x{self._key:08X}:0x{self._mask:08X}:"
-                f"{repr(self._routing_entry)}")
+                f"{self._routing_entry!r}")
 
     def __str__(self) -> str:
         return self.__repr__()
