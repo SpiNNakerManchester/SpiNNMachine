@@ -117,7 +117,7 @@ def shortest_torus_path_length(
     # faster-executing IF statements for performance.
 
     # No wrap
-    length = x if x > y else y
+    length = max(y, x)
 
     # Wrap X
     wrap_x = w - x + y
@@ -130,7 +130,7 @@ def shortest_torus_path_length(
     # Wrap X and Y
     dx = w - x
     dy = h - y
-    wrap_xy = dx if dx > dy else dy
+    wrap_xy = max(dy, dx)
     if wrap_xy < length:
         return wrap_xy
     else:
