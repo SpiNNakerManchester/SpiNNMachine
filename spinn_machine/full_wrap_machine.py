@@ -96,7 +96,7 @@ class FullWrapMachine(Machine):
         y_left = y_right - h
 
         # Both positive so greater
-        length = x_up if x_up > y_right else y_right
+        length = max(y_right, x_up)
 
         # negative x positive y so sum of abs
         negative_x = y_right - x_down
@@ -127,7 +127,7 @@ class FullWrapMachine(Machine):
         y_left = y_right - h
 
         # Both positive so greater
-        length = x_up if x_up > y_right else y_right
+        length = max(y_right, x_up)
         dx = x_up
         dy = y_right
 
