@@ -407,7 +407,7 @@ class SpinnMachineTestCase(unittest.TestCase):
         machine = virtual_machine_by_boards(1)
         # Hack to get n_processors return a low number
         chip = next(machine.chips)
-        chip._placable_processors = tuple([1, 2])
+        chip._placable_processors = (1, 2)
         with self.assertRaises(SpinnMachineException):
             machine.validate()
 
