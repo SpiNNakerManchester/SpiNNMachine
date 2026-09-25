@@ -126,8 +126,8 @@ class TestJsonMachine(unittest.TestCase):
             if chip.ip_address is None:
                 break
         # Hack in an extra monitor
-        chip._scamp_processors = tuple([0, 1])
-        chip._placable_processors = tuple([2, 3, 4, 5, 6, 7, 8, 9])
+        chip._scamp_processors = (0, 1)
+        chip._placable_processors = (2, 3, 4, 5, 6, 7, 8, 9)
         jpath = mktemp("json")
         to_json_path(jpath)
         jm = machine_from_json(jpath)
