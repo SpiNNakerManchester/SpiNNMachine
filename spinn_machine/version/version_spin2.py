@@ -80,7 +80,6 @@ class VersionSpin2(AbstractVersion, metaclass=AbstractBase):
                          max_sdram_per_chip=1073741824)
         self._reverse_quad_map: dict[tuple[int, int, int], int] = {
             v: k for k, v in QUAD_MAP.items()}
-        a = 1
 
     @property
     @overrides(AbstractVersion.n_scamp_cores)
