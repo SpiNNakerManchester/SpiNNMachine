@@ -751,7 +751,7 @@ class Machine(metaclass=AbstractBase):
         """
         The minimum number of router_enteries found on any Chip
         """
-        return sorted(self._n_router_entries_counter.keys())[-1]
+        return min(self._n_router_entries_counter)
 
     def summary_string(self) -> str:
         """

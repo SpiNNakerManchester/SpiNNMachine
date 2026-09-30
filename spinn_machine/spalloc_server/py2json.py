@@ -26,7 +26,7 @@ def _parse_config(config_file_contents: str) -> dict:
     g: dict = {}
     g.update(configuration.__dict__)
     g.update(coordinates.__dict__)
-    exec(config_file_contents, g)  # pylint: disable=exec-used
+    exec(config_file_contents, g)  # pylint: disable=exec-used # noqa: S102
     return g
 
 
