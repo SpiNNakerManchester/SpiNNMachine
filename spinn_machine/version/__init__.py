@@ -20,6 +20,7 @@ from .version_factory import (
     FOUR_PLUS_BOARD_TYPES,
     FPGA_BOARD_TYPES,
     MANY_BOARD_TYPES,
+    SPIN1_BOARDS,
     version_factory,
 )
 
@@ -29,6 +30,7 @@ __all__ = [
     "FOUR_PLUS_BOARD_TYPES",
     "FPGA_BOARD_TYPES",
     "MANY_BOARD_TYPES",
+    "SPIN1_BOARDS",
     "Spin1Gen",
     "Spin2Gen",
     "version_factory",

@@ -49,6 +49,8 @@ FOUR_PLUS_BOARD_TYPES = [["THREE", str(Spin1Gen.THREE.value)],
 BIG_BOARD_TYPES = [["FIVE", str(Spin1Gen.FIVE.value)],
                    ["SPIN2_48CHIP", str(Spin2Gen.SPIN2_48CHIP.value)]]
 FPGA_BOARD_TYPES = [["FIVE", str(Spin1Gen.FIVE.value)]]
+SPIN1_BOARDS = [["THREE", str(Spin1Gen.THREE.value)],
+                ["FIVE", str(Spin1Gen.FIVE.value)]]
 if os.environ.get("SPINNAKER_TEST_ALL") == "true":
     MANY_BOARD_TYPES = ALL_BOARD_TYPES
 else:
