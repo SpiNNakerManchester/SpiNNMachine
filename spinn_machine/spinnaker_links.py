@@ -22,9 +22,11 @@ from typing import TypeAlias
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
 
-from spinn_machine.data import MachineDataView
+from spinn_machine.data.machine_data_view import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.link_data_objects import SpinnakerLinkData
+from spinn_machine.link_data_objects.spinnaker_link_data import (
+    SpinnakerLinkData,
+)
 from spinn_machine.version.version_spin1 import VersionSpin1
 
 logger = FormatAdapter(logging.getLogger(__name__))
