@@ -18,12 +18,12 @@ from collections.abc import Sequence
 from spinn_utilities.overrides import overrides
 from spinn_utilities.typing.coords import XY
 
-from spinn_machine import SpiNNakerTriadGeometry
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.full_wrap_machine import FullWrapMachine
 from spinn_machine.horizontal_wrap_machine import HorizontalWrapMachine
 from spinn_machine.machine import Machine
 from spinn_machine.no_wrap_machine import NoWrapMachine
+from spinn_machine.spinnaker_triad_geometry import SpiNNakerTriadGeometry
 from spinn_machine.vertical_wrap_machine import VerticalWrapMachine
 
 from .abstract_version import AbstractVersion
