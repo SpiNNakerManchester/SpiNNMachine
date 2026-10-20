@@ -18,7 +18,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from spinn_machine.data import MachineDataView
+from spinn_machine.data.machine_data_view import MachineDataView
 
 from .exceptions import (
     SpinnMachineAlreadyExistsException,

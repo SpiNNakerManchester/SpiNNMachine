@@ -15,7 +15,7 @@
 
 from spinn_utilities.config_holder import get_config_str_or_none
 
-from spinn_machine.data import MachineDataView
+from spinn_machine.data.machine_data_view import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
 from spinn_machine.version.version_spin2 import VersionSpin2
 

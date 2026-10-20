@@ -18,7 +18,7 @@ from spinn_utilities.data.utils_data_writer import UtilsDataWriter
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.overrides import overrides
 
-from spinn_machine import Machine
+from spinn_machine.machine import Machine
 
 from .machine_data_view import MachineDataView, _MachineDataModel
 
