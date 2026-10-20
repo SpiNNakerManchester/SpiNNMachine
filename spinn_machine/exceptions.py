@@ -82,7 +82,7 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         return self._parameter
 
     @property
-    def value(self) -> onject:
+    def value(self) -> object:
         """
         The value of the parameter.
         """
