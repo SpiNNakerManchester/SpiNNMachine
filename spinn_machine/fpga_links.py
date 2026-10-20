@@ -21,9 +21,9 @@ from typing import TypeAlias
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
 
-from spinn_machine.data import MachineDataView
+from spinn_machine.data.machine_data_view import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
-from spinn_machine.link_data_objects import FPGALinkData
+from spinn_machine.link_data_objects.fpga_link_data import FPGALinkData
 from spinn_machine.version.version_5 import Version5
 
 logger = FormatAdapter(logging.getLogger(__name__))

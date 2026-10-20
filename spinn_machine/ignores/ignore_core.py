@@ -13,7 +13,7 @@
 # limitations under the License.
 from typing import TypeAlias
 
-from spinn_machine.data import MachineDataView
+from spinn_machine.data.machine_data_view import MachineDataView
 
 _Intable: TypeAlias = int | str
 

@@ -19,7 +19,7 @@ from typing import NamedTuple
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.json import JsonArray, JsonObject, JsonValue
 
-from spinn_machine.data import MachineDataView
+from spinn_machine.data.machine_data_view import MachineDataView
 
 from .chip import Chip
 from .link import Link

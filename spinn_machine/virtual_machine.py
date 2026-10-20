@@ -25,8 +25,10 @@ from spinn_utilities.config_holder import (
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
 
-from spinn_machine.data import MachineDataView
-from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
+from spinn_machine.data.machine_data_view import MachineDataView
+from spinn_machine.ignores.ignore_chip import IgnoreChip
+from spinn_machine.ignores.ignore_core import IgnoreCore
+from spinn_machine.ignores.ignore_link import IgnoreLink
 
 from .chip import Chip
 from .exceptions import SpinnMachineException

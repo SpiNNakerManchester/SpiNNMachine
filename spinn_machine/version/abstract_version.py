@@ -26,7 +26,7 @@ from spinn_utilities.config_holder import get_config_int_or_none
 from spinn_utilities.log import FormatAdapter
 from spinn_utilities.typing.coords import XY
 
-from spinn_machine.data import MachineDataView
+from spinn_machine.data.machine_data_view import MachineDataView
 from spinn_machine.exceptions import SpinnMachineException
 
 if TYPE_CHECKING:

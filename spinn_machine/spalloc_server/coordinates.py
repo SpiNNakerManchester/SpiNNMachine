@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from spinn_machine import SpiNNakerTriadGeometry
+from spinn_machine.spinnaker_triad_geometry import SpiNNakerTriadGeometry
 
 
 def chip_to_board(x: int, y: int, w: int, h: int) -> tuple[int, int, int]:
