@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any
-
 
 class SpinnMachineException(Exception):
     """
@@ -29,7 +27,7 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
         "_item",
         "_value"]
 
-    def __init__(self, item: str, value: Any) -> None:
+    def __init__(self, item: str, value: object) -> None:
         """
         :param item: The item of which there is already one of
         :param value: The value of the item
@@ -47,7 +45,7 @@ class SpinnMachineAlreadyExistsException(SpinnMachineException):
         return self._item
 
     @property
-    def value(self) -> Any:
+    def value(self) -> object:
         """
         The value of the item.
         """
@@ -63,7 +61,7 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         "_problem",
         "_value"]
 
-    def __init__(self, parameter: str, value: Any, problem: str) -> None:
+    def __init__(self, parameter: str, value: object, problem: str) -> None:
         """
         :param parameter:
             The name of the parameter that has an invalid value
@@ -84,7 +82,7 @@ class SpinnMachineInvalidParameterException(SpinnMachineException):
         return self._parameter
 
     @property
-    def value(self) -> Any:
+    def value(self) -> object:
         """
         The value of the parameter.
         """
